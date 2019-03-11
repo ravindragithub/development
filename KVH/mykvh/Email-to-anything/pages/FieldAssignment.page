@@ -1,0 +1,1133 @@
+<apex:page standardController="ortoo_e2a__Pattern_Based_Rule__c" extensions="ortoo_e2a.FieldAssignmentExtension" id="thePage" tabStyle="Email_Services_Functions__tab">
+	<apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+	<link href="{!URLFOR($Resource.sumoselect, 'sumoselect/sumoselect.css')}" rel="stylesheet" media="screen"/>
+	<apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__sumoselect, 'sumoselect/jquery.sumoselect.js')}"/>
+	<style>
+    /*Sumo select CSS update*/
+    .SlectBoxTrigger { width: 200px; padding: 5px 8px;}
+    .SumoSelect > .CaptionCont {
+    	min-height:5px;
+    	height: 9px;
+    	width: 160px;
+    	border-spacing: 2px;
+  		border: 1px solid rgb(169, 169, 169);
+  		background: white;
+  		display: inline-block;
+  		text-align: start;
+  		font-family: Arial;
+	    font-size: 13.3333330154419px;
+	    font-style: normal;
+	    font-variant: normal;
+	    font-weight: normal;
+	    line-height: normal;
+    }
+    .SumoSelect > .CaptionCont > span{
+  		margin-top: -2px;
+    }
+    
+    </style>
+    
+    <!-- Multiselect Plugin Resources for IE - Javascript based component -->
+    <link href="{!URLFOR($Resource.MultiselectDropdown, '/MSDList.css')}" rel="stylesheet" media="screen"/>
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__MultiselectDropdown, '/MSDList.js')}"/>
+    <script type="text/javascript">
+		
+		function resetSearchInSelectBoxStyle()
+		{
+			var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+			if(isIE == false)
+			{
+				window.asd = $('.SelectBox').SumoSelect({ csvDispCount: 3 });
+				getSearchInValue();
+			}
+			else
+			{
+				if(document.getElementById('combobox2') != null)
+				{
+					var comboboxList = new MSDList("combobox2");
+					comboboxList.setFilterVisible(false);
+					comboboxList.render();
+					comboboxList.unselectAllItems();
+					getSearchInValueinMultiSelectList(comboboxList ,'thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden');
+				}
+				
+			}
+		}
+		
+		function resetTriggerSearchInSelectBoxStyle()
+		{
+			var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+			if(isIE == false)
+			{
+				window.asd = $('.SlectBoxTrigger').SumoSelect({ csvDispCount: 3 });
+				getTriggerSearchInValue();
+			}
+			else
+			{
+				//trigger search in reset SearchIn
+				if(document.getElementById('combobox4') != null)
+				{
+					var comboboxList = new MSDList("combobox4");
+					comboboxList.setFilterVisible(false);
+					comboboxList.render();
+					comboboxList.unselectAllItems();
+					getSearchInValueinMultiSelectList(comboboxList ,'thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden');
+				}
+			}
+		}
+		
+		function pageInit()
+		{
+			$(document).ready(
+				function()
+				{
+					var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+					if(isIE == false)
+					{
+						window.asd = $('.SelectBox').SumoSelect({ csvDispCount: 3 });
+						getSearchInValue();
+					}
+					else
+					{
+						if(document.getElementById('combobox2') != null)
+						{
+							var comboboxList = new MSDList("combobox2");
+							comboboxList.setFilterVisible(false);
+							comboboxList.render();
+							comboboxList.unselectAllItems();
+							getSearchInValueinMultiSelectList(comboboxList ,'thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden');
+						}
+						
+					}
+				}
+			);
+			
+			$(document).ready(
+				function()
+				{
+					var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+					if(isIE == false)
+					{
+						window.asd = $('.SlectBoxTrigger').SumoSelect({ csvDispCount: 3 });
+						getTriggerSearchInValue();
+					}
+					else
+					{
+						if(document.getElementById('combobox4') != null)
+						{
+							var comboboxList = new MSDList("combobox4");
+							comboboxList.setFilterVisible(false);
+							comboboxList.render();
+							comboboxList.unselectAllItems();
+							getSearchInValueinMultiSelectList(comboboxList ,'thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden');
+						console.log('comboboxList '+comboboxList);
+						}
+					}
+				}
+			);
+		}
+		function SetSearchInValue()
+		{
+			var ele = document.getElementById("combobox");
+
+			var SelVal = "";
+			var x = 0;
+			var saveIndex = 0;
+			for(x = 0; x < ele.length; x++)
+			{
+				if(ele[x].selected)
+				{
+					SelVal = SelVal + ele[x].value;
+					saveIndex = x+1;
+					break;
+				}
+			}
+			for(x = saveIndex; x < ele.length; x++)
+			{
+				if(ele[x].selected)
+				{
+					//alert(InvForm.SelBranch[x].value);
+					SelVal = SelVal + ";" + ele[x].value;
+				}
+			}
+			document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden').value = SelVal;
+			
+		}
+		
+		function triggerSetSearchInValue()
+		{
+			var trigger_search_in_value = document.getElementById("combobox3");
+			var SelVal = "";
+			var i = 0;
+			var save_index = 0;
+			for(i = 0; i < trigger_search_in_value.length; i++)
+			{
+				if(trigger_search_in_value[i].selected)
+				{
+					SelVal = SelVal + trigger_search_in_value[i].value; 
+					save_index = i+1;
+					break;
+				}
+			}
+			for(i = save_index; i < trigger_search_in_value.length; i++)
+			{
+				if(trigger_search_in_value[i].selected)
+				{
+					SelVal = SelVal + ";" + trigger_search_in_value[i].value;
+				}
+			}
+			
+			document.getElementById('thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden').value = SelVal;
+		}
+		function getSearchInValue()
+		{
+			//handling for view mode
+			if(document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden') != null)
+			{
+				var searchInValue = document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden').value;
+				var searchInList = searchInValue.split(";")
+				//alert(searchInValue);
+				var arrayLength = searchInList.length;
+				for (var i = 0; i < arrayLength; i++)
+				{
+					var j = 1;
+					if(searchInList[i].localeCompare("Attachment")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(0);
+					}
+					
+					if(searchInList[i].localeCompare("Subject")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(1);
+					}
+					else if(searchInList[i].localeCompare("Body (Text Only)")==0)
+			        {
+			            $('.SelectBox')[0].sumo.selectItem(2);
+			        }
+					else if(searchInList[i].localeCompare("Body")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(3);
+					}
+					else if(searchInList[i].localeCompare("Headers")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(4);
+					}
+					else if(searchInList[i].localeCompare("To")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(5);
+					}
+					else if(searchInList[i].localeCompare("From")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(6);
+					}
+					else if(searchInList[i].localeCompare("CC")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(7);
+					}
+					else if(searchInList[i].localeCompare("Email Service Address")==0)
+					{
+						$('.SelectBox')[0].sumo.selectItem(8);
+					}
+					
+				}
+			}
+			
+
+		}
+		
+		function getTriggerSearchInValue()
+		{
+			//TriggerRule view mode
+			if(document.getElementById('thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden') != null)
+			{
+				var searchInValue = document.getElementById('thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden').value;
+				var searchInList = searchInValue.split(";")
+				//alert(searchInValue);
+				var arrayLength = searchInList.length;
+				for (var i = 0; i < arrayLength; i++)
+				{
+					
+					if(searchInList[i].localeCompare("Attachment")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(0);
+					}
+					
+					if(searchInList[i].localeCompare("Subject")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(1);
+					}
+					else if(searchInList[i].localeCompare("Body (Text Only)")==0)
+			        {
+			            $('.SlectBoxTrigger')[0].sumo.selectItem(2);
+			        }
+					else if(searchInList[i].localeCompare("Body")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(3);
+					}
+					else if(searchInList[i].localeCompare("Headers")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(4);
+					}
+					else if(searchInList[i].localeCompare("To")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(5);
+					}
+					else if(searchInList[i].localeCompare("From")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(6);
+					}
+					else if(searchInList[i].localeCompare("CC")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(7);
+					}
+					else if(searchInList[i].localeCompare("Email Service Address")==0)
+					{
+						$('.SlectBoxTrigger')[0].sumo.selectItem(8);
+					}
+				}
+			}
+			
+		}
+		
+		function SetSearchInValueinMultiSelectList_local(SelVal , elementId)
+		{
+			try
+			{
+				if(elementId == 'combobox2')
+				{
+					document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:searchInBlockSectionItem:searchInValuehidden').value = SelVal;
+				}
+				if(elementId == 'combobox4')
+				{
+					document.getElementById('thePage:theForm:viewPageBlock:TriggerRules:triggerSearchInBlockSectionItem:triggerSearchInValuehidden').value = SelVal;
+				}
+			
+				
+			}
+			catch(e)
+			{
+				
+				console.log('SelVal : '+SelVal);
+				console.log('elementId : '+elementId);
+			}
+			
+		}
+		
+		function clearFieldValues(){
+		   
+		    try
+		    {
+		    
+		    var node2 = document.getElementById("thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:dynamicInputField");
+		    if(node2 != undefined && node2 != null)
+		    {
+		    	console.log('call'+node2.value);
+			    node2.value = null;
+			    
+		    }
+		    resetValue();
+		    
+			
+			   // var child_nodes = node.childNodes;
+			    //var i = child_nodes.length;
+			    //$( ".error" ).removeClass("error");
+			    //var node = $( ".errorMsg" );//.removeClass("errorMsg");
+			    
+			    //node.removeClass("errorMsg");
+			    //node.empty();
+			  
+		    }
+		    catch(e)
+		    {
+		    	console.log(e);
+		    }
+	    }
+	    
+	    function resetSearchInStyles()
+	    {
+		    resetTriggerSearchInSelectBoxStyle();
+		    resetSearchInSelectBoxStyle();
+	    }
+	    
+		pageInit();
+	</script>
+	
+	
+<apex:form id="theForm">
+		<apex:sectionHeader title="e2a Field Assignment Rule"/>
+	    &nbsp;&#171;&nbsp;
+		<apex:outputLink value="/apex/ortoo_e2a__EmailServicesFunction?id={!$CurrentPage.parameters.newid}&retURL={!$CurrentPage.parameters.retURL}">Back to:E2A Email Rules</apex:outputLink>
+		<br/><br/>
+		<apex:pageBlock id="headerPageBlock" rendered="{!editIsActive == false}">
+			
+			<apex:pageBlockButtons >
+			<apex:commandButton action="{!editRule}" value="Edit" />
+			</apex:pageBlockButtons>
+			<apex:pageblockSection title="Trigger Rules" collapsible="false" columns="1" id="TriggerRules">
+				<apex:pageBlockSectionItem helpText="{!triggerOn_HelpText}">
+					<apex:outputLabel value="Trigger On"/>
+					<apex:outputPanel >
+						<apex:outputText value="Create New Record"  rendered="{!triggerOnOptionSelected =='1'}"/>
+						<apex:outputText value="Update Record"  rendered="{!triggerOnOptionSelected =='2'}"/>
+						<apex:outputText value="Create or Update Record"  rendered="{!triggerOnOptionSelected =='3'}"/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="{!triggerType_HelpText}">
+					<apex:outputLabel value="Trigger Type"/>
+					<apex:outputPanel >
+						<apex:outputText value="Always"  rendered="{!triggerTypeOptionSelected =='1'}"/>
+						<apex:outputText value="Pattern Matched"  rendered="{!triggerTypeOptionSelected =='2'}"/>
+						<apex:outputText value="Pattern Not Matched"  rendered="{!triggerTypeOptionSelected =='3'}"/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="Regular expression to use for triggering either to execute match rule or not " rendered="{!OR(triggerTypeOptionSelected == '2',triggerTypeOptionSelected == '3')}">
+						<apex:outputLabel value="Trigger pattern"/>
+						<apex:outputText value="{!patternRule.ortoo_e2a__Trigger_Pattern__c}"/>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem id="triggerSearchInBlockSectionItem" helpText="Email fields to search and match regular exression in" rendered="{!OR(triggerTypeOptionSelected == '2',triggerTypeOptionSelected == '3')}">
+					<apex:outputLabel value="Triggr Search In"/>
+					<apex:outputText value="{!patternRule.ortoo_e2a__Trigger_Search_In__c}"/>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="Order in which this rule is processed with respect to others. Smaller number means early processing.">
+					<apex:outputLabel value="Processing Order"/>
+					<apex:outputText value="{!patternRule.ortoo_e2a__Order__c}"/>
+				</apex:pageBlockSectionItem>
+				
+			</apex:pageblockSection>
+			<apex:pageblockSection title="Field Assignment Rules" collapsible="false" columns="1" id="ViewBlockSectionForPatternBased">
+			
+			<apex:pageBlockSectionItem helpText="{!AssignmentType_HelpText}">
+				<apex:outputLabel value="Assignment Type"/>
+				<apex:outputPanel >
+					<apex:outputText value="Pattern Based Field Assignment"  rendered="{!patternBasedRuleType =='1'}"/>
+					<apex:outputText value="Patten Based Lookup Assignment"  rendered="{!patternBasedRuleType =='2'}"/>
+					<apex:outputText value="Fixed Value Assignment"  rendered="{!patternBasedRuleType =='3'}"/>
+					<apex:outputText value="Fixed Source"  rendered="{!patternBasedRuleType =='4'}"/>
+                    <apex:outputText value="Fixed Value Lookup Assignment"  rendered="{!patternBasedRuleType =='5'}"/>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:pageBlockSectionItem helpText="Regular expression to use for matching" rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+				<apex:outputLabel value="Match pattern"/>
+				<apex:outputText value="{!patternRule.ortoo_e2a__Pattern__c}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="Capturing group to use from regular expression match result." rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+				<apex:outputLabel value="Capturing Group"/>
+				<apex:outputText value="{!patternRule.ortoo_e2a__Capture_Group__c}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem id="searchInBlockSectionItem" helpText="Email fields to search and match regular exression in" rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+					<apex:outputLabel value="Search In"/>
+					<apex:outputText value="{!patternRule.ortoo_e2a__Search_In__c}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!StoreResultIn_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+				<apex:outputLabel value="Store result in: "/>
+				<apex:outputText value="{!DestinationFieldLabel}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!SaveInPicklist_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+				<apex:outputLabel value="Value to Save in Picklist: "/>
+				<apex:outputPanel >
+				<apex:outputText value="{!getDestinationValueField}" rendered="{!patternRule.ortoo_e2a__Destination_Value_Field__c!=null}"/>
+				<apex:outputText value="- - Regex Result - -" rendered="{!patternRule.ortoo_e2a__Destination_Value_Field__c==null}"/>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(isAppendValues == true && patternBasedRuleType == '1',true,false)}">
+				<apex:outputLabel value="Append Values"/>
+				
+				<apex:outputField value="{!patternRule.ortoo_e2a__Append_Values__c}" />
+        		
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true && patternBasedRuleType == '1',true,false)}">
+				<apex:outputLabel value="Separator"/>
+				<apex:outputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!AppendPicklistValues_HelpText}" rendered="{!IF(patternBasedRuleType == '1' && isFieldMultiValuedPickList==true,true,false)}">
+				<apex:outputLabel value="Append Picklist Values: "/>
+				<apex:outputField value="{!patternRule.ortoo_e2a__Append_Picklist_Values__c}" />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!ApplyEmptyResult_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+				<apex:outputLabel value="Apply Empty Result "/>
+				<apex:outputField value="{!patternRule.ortoo_e2a__Apply_Empty_Result__c}"/>
+			</apex:pageBlockSectionItem>
+			<!-- <apex:pageBlockSectionItem helpText="{!OverwriteAllowed_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+				<apex:outputLabel value="Overwrite Allowed "/>
+				<apex:outputField value="{!patternRule.Overwrite_Allowed__c}"/>
+			</apex:pageBlockSectionItem> -->
+			<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+				<apex:outputLabel value="Overwrite non-blank values"/>
+				<apex:outputField value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!MatchObject_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+				<apex:outputLabel value="Match Object"/>
+				<apex:outputText value="{!LookupObjectLabel}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!MatchField_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+				<apex:outputLabel value="Match Field" />
+				<apex:outputText value="{!LookupObjectFieldLabel}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!MatchedRecordIdIn_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+				<apex:outputLabel value="Store Matched Record ID in"/>
+				<apex:outputText value="{! DestinationFieldLabel}"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem helpText="{!MatchType_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+				<apex:outputLabel value="Match Type"/>
+				<apex:outputText value="{!patternRule.ortoo_e2a__Lookup_Order__c}"/>
+			</apex:pageBlockSectionItem>
+			<!-- <apex:pageBlockSectionItem helpText="{!OverwriteAllowed_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+					<apex:outputLabel value="Overwrite Allowed "/>
+					<apex:outputField value="{!patternRule.Overwrite_Allowed__c}"/>
+			</apex:pageBlockSectionItem>-->
+			<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+					<apex:outputLabel value="Overwrite non-blank values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}"/>
+			</apex:pageBlockSectionItem>
+			</apex:pageblockSection>
+			
+			<apex:pageblockSection collapsible="false" columns="1"  id="FixedValueAssignment" rendered="{!patternBasedRuleType == '3'}" >
+				<apex:pageBlockSectionItem helpText="{!selectField_HelpText}" >
+					<apex:outputLabel value="Select Field"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Destination_Field__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem id="dynamicInputFieldBlock" helpText="{!fieldValue_HelpText}" rendered="{!IF( (getsObjectFieldType != 'DATE' && getsObjectFieldType != 'DATETIME') ,true,false)}" >
+					<apex:outputLabel value="Field Value" />
+					<apex:outputPanel >
+						<apex:outputField id="dynamicInputField" value="{!inputObj[patternRule.ortoo_e2a__Destination_Field__c]}" rendered="{!IF((relatedObjectName == 'Lead' || relatedObjectName == 'lead') && patternRule.ortoo_e2a__Destination_Field__c == 'CampaignId',false,IF(getsObjectFieldType != 'TEXTAREA' && getsObjectFieldType != 'DATE' && getsObjectFieldType != 'DATETIME',true,false))}" />
+						<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(JSENCODE(patternRule.ortoo_e2a__Destination_Value_Field__c),'\n','<br/>'),'\r','')}" escape="false"  rendered="{!getsObjectFieldType == 'TEXTAREA'}"/>
+						<apex:outputText value="{!campaignName}" rendered="{!IF((relatedObjectName == 'Lead' || relatedObjectName == 'lead') && patternRule.ortoo_e2a__Destination_Field__c == 'CampaignId',true,false)}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" rendered="{!IF( (getsObjectFieldType == 'DATE' || getsObjectFieldType == 'DATETIME') && (patternRule.ortoo_e2a__Date_Literal__c == null || patternRule.ortoo_e2a__Date_Literal__c == 'false') ,true,false)}">
+					<apex:outputLabel value="Field Value"/>
+					<apex:outputField value="{!inputObj[patternRule.ortoo_e2a__Destination_Field__c]}"  />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!useDateLiteral_HelpText}" rendered="{!IF(getsObjectFieldType == 'DATETIME' || getsObjectFieldType == 'DATE',true,false)}">
+					<apex:outputLabel value="Field Value"/>
+					<apex:outputText value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}"/>
+					
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!AppendPicklistValues_HelpText}" rendered="{!getsObjectFieldType == 'MULTIPICKLIST'}" >
+					<apex:outputLabel value="Append Picklist Values "/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Append_Picklist_Values__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(isAppendValues == true,true,false)}">
+					<apex:outputLabel value="Append Values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Append_Values__c}" />								
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true,true,false)}">
+					<apex:outputLabel value="Separator"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+				</apex:pageBlockSectionItem>
+			
+				<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" >
+					<apex:outputLabel value="Overwrite non-blank values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+				</apex:pageBlockSectionItem>
+		</apex:pageblockSection>
+			
+		<apex:pageblockSection collapsible="false" columns="1"  id="FixedSource" rendered="{!patternBasedRuleType == '4'}" >
+				<apex:pageBlockSectionItem helpText="{!fixedSourceSelectField_HelpText}" >
+					<apex:outputLabel value="Source Value in Email"/>
+					<apex:outputText value="{!fixedSourceDestinationValue}"  />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!fixedSourceFieldValue_HelpText}" >
+					<apex:outputLabel value="Save in"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Destination_Field__c}"/>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(isAppendValues == true,true,false)}">
+					<apex:outputLabel value="Append Values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Append_Values__c}" />								
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true,true,false)}">
+					<apex:outputLabel value="Separator"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" >
+					<apex:outputLabel value="Overwrite non-blank values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+				</apex:pageBlockSectionItem>
+		</apex:pageblockSection>
+	 		<apex:pageblockSection collapsible="false" columns="1"  id="FixedValueLookupAssignment" rendered="{!patternBasedRuleType == '5'}">
+                <apex:pageBlockSectionItem helpText="{!MatchObject_HelpText}">
+                    <apex:outputLabel value="Match Object"/>
+                    <apex:outputText value="{!LookupObjectLabel}"/>
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!MatchField_HelpText}">
+                    <apex:outputLabel value="Match Field" />
+                    <apex:outputText value="{!LookupObjectFieldLabel}"/>
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" rendered="{!IF( (sObjectFieldTypeForFixeLookup != 'DATE' && sObjectFieldTypeForFixeLookup != 'DATETIME') ,true,false)}" >
+					<apex:outputLabel value="Field Value" />
+					<apex:outputPanel >
+						<apex:outputField value="{!inputObjForFixedLookup[patternRule.ortoo_e2a__Lookup_Object_Field__c]}" rendered="{!IF(sObjectFieldTypeForFixeLookup != 'TEXTAREA' && sObjectFieldTypeForFixeLookup != 'DATE' && sObjectFieldTypeForFixeLookup != 'DATETIME',true,false)}" />
+						<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(JSENCODE(patternRule.ortoo_e2a__Destination_Value_Field__c),'\n','<br/>'),'\r','')}" escape="false"  rendered="{!sObjectFieldTypeForFixeLookup == 'TEXTAREA'}"/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" rendered="{!IF( (sObjectFieldTypeForFixeLookup == 'DATE' || sObjectFieldTypeForFixeLookup == 'DATETIME'),true,false)}">
+					<apex:outputLabel value="Field Value"/>
+					<apex:outputField value="{!inputObjForFixedLookup[patternRule.ortoo_e2a__Lookup_Object_Field__c]}"  />
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!MatchedRecordIdIn_HelpText}">
+                    <apex:outputLabel value="Store Matched Record Id in"/>
+                    <apex:outputText value="{! DestinationFieldLabel}"/>
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!MatchType_HelpText}">
+                    <apex:outputLabel value="Match Type"/>
+                    <apex:outputText value="{!patternRule.ortoo_e2a__Lookup_Order__c}"/>
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" >
+					<apex:outputLabel value="Overwrite non-blank values"/>
+					<apex:outputField value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}"/>
+				</apex:pageBlockSectionItem>
+			</apex:pageblockSection>
+		</apex:pageBlock>
+			<apex:pageBlock id="viewPageBlock" rendered="{!EditIsActive == true}">
+				<apex:pageBlockButtons >
+					<apex:commandButton action="{!Save}" value="Save"/>
+					<apex:commandButton action="{!Cancel}" value="Cancel"/>
+				</apex:pageBlockButtons>
+				<apex:pageMessages />
+				<apex:actionFunction name="resetValue" status="refreshStatus"  oncomplete="resetSearchInStyles();" reRender="viewPageBlock" />
+				<apex:pageblockSection title="Trigger Rules" collapsible="false" columns="1" id="TriggerRules">
+					<apex:pageBlockSectionItem helpText="{!triggerOn_HelpText}">
+						<apex:outputLabel value="Trigger On"/>
+						<apex:selectList value="{!triggerOnOptionSelected}" size="1">
+							<apex:selectOptions value="{!triggerOnOptions}"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem helpText="{!triggerType_HelpText}">
+						<apex:outputLabel value="Trigger Type"/>
+						<apex:selectList value="{!triggerTypeOptionSelected}" size="1">
+							<apex:selectOptions value="{!triggerTypeOptions}"/>
+							<apex:actionSupport event="onchange" oncomplete="resetTriggerSearchInSelectBoxStyle();" reRender="TriggerRules"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem helpText="Regular expression to use for triggering either to execute match rule or not " rendered="{!OR(triggerTypeOptionSelected == '2',triggerTypeOptionSelected == '3')}">
+							<apex:outputLabel value="Trigger Pattern"/>
+							<apex:outputPanel layout="block">
+							<apex:inputField value="{!patternRule.ortoo_e2a__Trigger_Pattern__c}" id="TriggerPattern"/>
+							<a title="Regex Builder" onclick="OpenRegexPopup('{!$Component.TriggerPattern}');"><b>[.*]</b></a>
+							</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem id="triggerSearchInBlockSectionItem" helpText="Email fields to search and match regular exression in" rendered="{!OR(triggerTypeOptionSelected == '2',triggerTypeOptionSelected == '3')}">
+						<apex:outputLabel value="Search In"/>
+						<apex:outputPanel >
+						<apex:outputPanel rendered="{!isIE == true}">
+							<select id="combobox4" name="combobox4">
+							   <option value="Attachment">Attachment</option>
+						       <option value="Subject">Subject</option>
+						       <option value="Body (Text Only)">Body (Text Only)</option>
+						       <option value="Body">Body</option>
+						       <option value="Headers">Headers</option>
+						       <option value="To">To</option>
+						       <option value="From">From</option>
+						       <option value="CC">CC</option>
+						       <option value="Email Service Address">Email Service Address</option>
+							</select>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!isIE == false}">
+							<select size="1" multiple="multiple"  class="SlectBoxTrigger" id="combobox3" name="combobox" onchange="triggerSetSearchInValue();" align="left">
+								<option value="Attachment" align="left">Attachment</option>
+								<option value="Subject" align="left">Subject</option>
+								<option value="Body (Text Only)">Body (Text Only)</option>
+								<option value="Body" align="left">Body</option>
+								<option value="Headers" align="left">Headers</option>
+								<option value="To" align="left">To</option>
+								<option value="From" align="left">From</option>
+								<option value="CC" align="left">CC</option>
+								<option value="Email Service Address" align="left">Email Service Address</option>
+							</select>
+						</apex:outputPanel>
+						<apex:inputText value="{!patternRule.ortoo_e2a__Trigger_Search_In__c}" id="triggerSearchInValuehidden" style="display:none"/>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem helpText="Order in which this rule is processed with respect to others. Smaller number means early processing.">
+						<apex:outputLabel value="Processing Order "/>
+						<apex:inputText value="{!patternRule.ortoo_e2a__Order__c}"/>
+					</apex:pageBlockSectionItem>
+					
+					
+				</apex:pageblockSection>
+				<apex:pageblockSection title="Field Assignment Rules" collapsible="false" columns="1" id="BlockSectionForPatternBased">
+				
+				<apex:pageBlockSectionItem helpText="{!AssignmentType_HelpText}">
+					<apex:outputLabel value="Assignment Type"/>
+						<apex:selectList value="{!patternBasedRuleType}" onchange="clearFieldValues();" size="1">
+							<apex:selectOptions value="{!patternBasedRuleTypeOptions}"/>
+							<apex:actionSupport event="onchange" oncomplete="resetSearchInSelectBoxStyle();" reRender="BlockSectionForFieldBased,BlockSectionForPatternBased"/>
+						</apex:selectList>
+					
+
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem helpText="Regular expression to use for matching" rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+						<apex:outputLabel value="Match pattern"/>
+						<apex:outputPanel layout="block">
+						<apex:inputField value="{!patternRule.ortoo_e2a__Pattern__c}" id="FieldPattern"/>
+						<a title="Regex Builder" onclick="OpenRegexPopup('{!$Component.FieldPattern}');"><b>[.*]</b></a>
+						</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+					
+				<apex:pageBlockSectionItem helpText="Capturing group to use from regular expression match result." rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+					<apex:outputLabel value="Capturing Group"/>
+					<apex:inputField value="{!patternRule.ortoo_e2a__Capture_Group__c}"/>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem id="searchInBlockSectionItem" helpText="Email fields to search and match regular exression in" rendered="{!IF(patternBasedRuleType == '1' || patternBasedRuleType == '2' ,true,false)}">
+						<apex:outputLabel value="Search In"/>
+						<apex:outputPanel id="searchInOutputPanel" >
+						<apex:outputPanel rendered="{!isIE == true}">
+							<select id="combobox2" name="combobox2">
+							   <option value="Attachment">Attachment</option>
+						       <option value="Subject">Subject</option>
+						       <option value="Body (Text Only)">Body (Text Only)</option>
+						       <option value="Body">Body</option>
+						       <option value="Headers">Headers</option>
+						       <option value="To">To</option>
+						       <option value="From">From</option>
+						       <option value="CC">CC</option>
+						       <option value="Email Service Address">Email Service Address</option>
+							</select>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!isIE == false}">
+							<select size="1" multiple="multiple"  class="SelectBox" id="combobox" name="combobox" onchange="SetSearchInValue();" align="left">
+								<option value="Attachment" align="left">Attachment</option>
+								<option value="Subject" align="left">Subject</option>
+								<option value="Body (Text Only)">Body (Text Only)</option>
+								<option value="Body" align="left">Body</option>
+								<option value="Headers" align="left">Headers</option>
+								<option value="To" align="left">To</option>
+								<option value="From" align="left">From</option>
+								<option value="CC" align="left">CC</option>
+								<option value="Email Service Address" align="left">Email Service Address</option>
+							</select>
+						</apex:outputPanel>
+						<apex:inputText value="{!patternRule.ortoo_e2a__Search_In__c}" id="searchInValuehidden" style="display:none"/>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<input name="thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name_mod" id="thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name_mod" value="0" type="hidden"/>
+            		<!-- <input name="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkid" id="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkid" value="" type="hidden"/>-->
+           			 <input name="thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name_lkold" id="thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name_lkold" value="" type="hidden"/>
+					<apex:pageblockSection collapsible="false" columns="1"  id="FixedValueAssignment" rendered="{!patternBasedRuleType == '3'}" >
+					
+						<apex:pageBlockSectionItem helpText="{!selectField_HelpText}">
+							<apex:outputLabel value="Select Field"/>
+							<apex:outputPanel >
+							<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Field__c}"  onchange="clearFieldValues();"  size="1">
+								<apex:selectOptions value="{!DestinationFieldOptions}"/>
+								<apex:actionSupport event="onchange" action="{!clearAllFieldValues}" />
+							</apex:selectList>
+						<apex:actionStatus id="refreshStatus"  >
+				            <apex:facet name="start" >
+					            <img src="/img/loading.gif" />                        
+					        </apex:facet>
+				        </apex:actionStatus>
+		        	</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem id="dynamicInputFieldBlock" helpText="{!fieldValue_HelpText}" rendered="{!IF( (getsObjectFieldType != 'DATE' && getsObjectFieldType != 'DATETIME') ,true,false)}" >
+							<apex:outputLabel value="Field Value" />
+							<apex:outputPanel >
+								<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}" multiselect="false" size="1" rendered="{!getsObjectFieldType == 'PICKLIST'}">
+									 <apex:selectOptions value="{!PicklistOptions}"/>
+								</apex:selectList>
+								<apex:selectList value="{!multipicklist}" multiselect="true" size="3" rendered="{!getsObjectFieldType == 'MULTIPICKLIST'}">
+									 <apex:selectOptions value="{!PicklistOptions}"/>
+								</apex:selectList>
+								<apex:inputField id="dynamicInputField" value="{!inputObj[patternRule.ortoo_e2a__Destination_Field__c]}" rendered="{!IF((relatedObjectName == 'Lead' || relatedObjectName == 'lead') && patternRule.ortoo_e2a__Destination_Field__c == 'CampaignId',false,IF(getsObjectFieldType != 'PICKLIST' && getsObjectFieldType != 'MULTIPICKLIST' && getsObjectFieldType != 'TEXTAREA' && getsObjectFieldType != 'DATE' && getsObjectFieldType != 'DATETIME',true,false))}" required="false"  />
+								<apex:inputTextarea value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}" rendered="{!getsObjectFieldType == 'TEXTAREA'}"/>
+									<apex:outputPanel rendered="{!IF((relatedObjectName == 'Lead' || relatedObjectName == 'lead') && patternRule.ortoo_e2a__Destination_Field__c == 'CampaignId',true,false)}">
+										 <apex:inputHidden value="{!campaignObjectPrefix}" id="campaign_prefix"/>
+										<apex:inputText id="campaign_name" value="{!campaignName}" />
+                            			<apex:inputHidden value="{!campaignId}" id="campaign_name_lkid"/>
+										<apex:outputLink value="JavaScript:openLookup('/_ui/common/data/LookupPage?lkfm=thePage:theForm&lknm=thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name&lktp='+document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_prefix').value,670,'1','&lksrch='+document.getElementById('thePage:theForm:viewPageBlock:BlockSectionForPatternBased:FixedValueAssignment:dynamicInputFieldBlock:campaign_name').value)" onclick="setLastMousePosition(event)" title="Related To Lookup (New Window)"  style="vertical-align:top">
+                               			 	<img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            			</apex:outputLink>
+								</apex:outputPanel>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" rendered="{!IF( (getsObjectFieldType == 'DATE' || getsObjectFieldType == 'DATETIME') && (patternRule.ortoo_e2a__Date_Literal__c == null || patternRule.ortoo_e2a__Date_Literal__c == 'false') ,true,false)}">
+							<apex:outputLabel value="Field Value"/>
+							<apex:inputField value="{!inputObj[patternRule.ortoo_e2a__Destination_Field__c]}"  required="false" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!useDateLiteral_HelpText}" rendered="{!IF(getsObjectFieldType == 'DATETIME' || getsObjectFieldType == 'DATE',true,false) }">
+							<apex:outputLabel value="Today"/>
+							<apex:outputPanel >
+								<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Date_Literal__c}" >
+									<apex:actionSupport event="onchange" reRender="FixedValueAssignment" />
+								</apex:inputCheckbox>
+								&nbsp;
+								<apex:inputField style="width: 50px;" value="{!patternRule.ortoo_e2a__Time_Offset__c}" rendered="{!IF((getsObjectFieldType == 'DATETIME' || getsObjectFieldType == 'DATE') && patternRule.ortoo_e2a__Date_Literal__c == 'true',true,false)}"/>
+								&nbsp;
+								<apex:inputField value="{!patternRule.ortoo_e2a__Time__c}" rendered="{!IF((getsObjectFieldType == 'DATETIME' || getsObjectFieldType == 'DATE') && patternRule.ortoo_e2a__Date_Literal__c == 'true',true,false)}"/>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						
+						<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(isAppendValues == true,true,false)}">
+							<apex:outputLabel value="Append Values"/>
+							
+							<apex:outputPanel >
+								<apex:inputField value="{!patternRule.ortoo_e2a__Append_Values__c}" >
+										<apex:actionSupport event="onchange" reRender="FixedValueAssignment" status="refreshFixedValueAssignement" />
+								</apex:inputField>
+									<apex:actionStatus id="refreshFixedValueAssignement"  >
+							            <apex:facet name="start" >
+								            <img src="/img/loading.gif" />                        
+								        </apex:facet>
+							        </apex:actionStatus>
+			        		</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true,true,false)}">
+							<apex:outputLabel value="Separator"/>
+							<apex:inputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!AppendPicklistValues_HelpText}" rendered="{!getsObjectFieldType == 'MULTIPICKLIST'}" >
+							<apex:outputLabel value="Append Picklist Values "/>
+							<apex:inputField value="{!patternRule.ortoo_e2a__Append_Picklist_Values__c}" />
+						</apex:pageBlockSectionItem>
+					
+						<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" >
+							<apex:outputLabel value="Overwrite non-blank values"/>
+							<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+						</apex:pageBlockSectionItem>
+					</apex:pageblockSection>					
+					<apex:pageblockSection collapsible="false" columns="1"  id="FixedSource" rendered="{!patternBasedRuleType == '4'}" >
+						<apex:pageBlockSectionItem helpText="{!fixedSourceSelectField_HelpText}" >
+							<apex:outputLabel value="Source Value in Email"/>
+							<apex:outputPanel >
+							<apex:selectList value="{!fixedSourceDestinationValue}" size="1">
+								<apex:selectOptions value="{!fixedSourceOptions}"/>
+								<apex:actionSupport event="onchange" reRender="FixedSource" status="refreshAppendValue"/>
+							</apex:selectList>
+							<apex:actionStatus id="refreshAppendValue"  >
+					            <apex:facet name="start" >
+						            <img src="/img/loading.gif" />                        
+						        </apex:facet>
+					        </apex:actionStatus>
+					        </apex:outputPanel>
+							
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!fixedSourceFieldValue_HelpText}" >
+							<apex:outputLabel value="Save in"/>
+							<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Field__c}" size="1">
+								<apex:selectOptions value="{!DestinationFieldOptions}"/>
+								<apex:actionSupport event="onchange" reRender="FixedSource" />
+							</apex:selectList>
+								
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(isAppendValues == true,true,false)}">
+							<apex:outputLabel value="Append Values"/>
+							
+							<apex:outputPanel >
+								<apex:inputField value="{!patternRule.ortoo_e2a__Append_Values__c}" >
+										<apex:actionSupport event="onchange" reRender="FixedSource" status="refreshFixedSource" />
+								</apex:inputField>
+									<apex:actionStatus id="refreshFixedSource"  >
+							            <apex:facet name="start" >
+								            <img src="/img/loading.gif" />                        
+								        </apex:facet>
+							        </apex:actionStatus>
+			        		</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true,true,false)}">
+							<apex:outputLabel value="Separator"/>
+							<apex:inputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" >
+							<apex:outputLabel value="Overwrite non-blank values"/>
+							<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+						</apex:pageBlockSectionItem>
+					</apex:pageblockSection>
+					
+				</apex:pageblockSection>
+				
+				<apex:pageblockSection collapsible="false" columns="1"  id="BlockSectionForFieldBased" >
+					<apex:pageBlockSectionItem helpText="{!StoreResultIn_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+						<apex:outputLabel value="Store result in: "/>
+						<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Field__c}" size="1">
+							<apex:selectOptions value="{!DestinationFieldOptions}"/>
+							<apex:actionSupport event="onchange" reRender="dest_value_panel,BlockSectionForFieldBased" action="{!CheckMultiValuedPicklist}"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!SaveInPicklist_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+						<apex:outputLabel value="Value to Save in Picklist: "/>
+						<apex:outputPanel id="dest_value_panel">
+							<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}" size="1">
+								<apex:selectOptions value="{!DestinationFieldValueOptions}"/>
+							</apex:selectList>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!AppendValues_HelpText}"  rendered="{!IF(relatedObjectName == 'Lead' && patternRule.ortoo_e2a__Destination_Field__c == 'CampaignId' ,false,IF(isAppendValues == true && patternBasedRuleType == '1',true,false))}">
+						<apex:outputLabel value="Append Values"/>
+						
+						<apex:outputPanel >
+							<apex:inputField value="{!patternRule.ortoo_e2a__Append_Values__c}" >
+									<apex:actionSupport event="onchange" reRender="BlockSectionForFieldBased" status="refreshBlockSectionForFieldBased" />
+							</apex:inputField>
+								<apex:actionStatus id="refreshBlockSectionForFieldBased"  >
+						            <apex:facet name="start" >
+							            <img src="/img/loading.gif" />                        
+							        </apex:facet>
+						        </apex:actionStatus>
+		        		</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!Separator_HelpText}"  rendered="{!IF(isAppendValues == true && patternRule.ortoo_e2a__Append_Values__c == true && patternBasedRuleType == '1',true,false)}">
+						<apex:outputLabel value="Separator"/>
+						<apex:inputField value="{!patternRule.ortoo_e2a__Separator__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!AppendPicklistValues_HelpText}" rendered="{!IF(patternBasedRuleType == '1' && isFieldMultiValuedPickList==true,true,false)}" id="appendpicklistvalues">
+						<apex:outputLabel value="Append Picklist Values: "/>
+						<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Append_Picklist_Values__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!ApplyEmptyResult_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+						<apex:outputLabel value="Apply Empty Result "/>
+						<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Apply_Empty_Result__c}" />
+					</apex:pageBlockSectionItem>
+					<!-- <apex:pageBlockSectionItem helpText="{!OverwriteAllowed_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+						<apex:outputLabel value="Overwrite Allowed "/>
+						<apex:inputCheckbox value="{!patternRule.Overwrite_Allowed__c}" />
+					</apex:pageBlockSectionItem> -->
+					<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" rendered="{!patternBasedRuleType == '1'}">
+						<apex:outputLabel value="Overwrite non-blank values"/>
+						<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!MatchObject_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Match Object"/>
+						<apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Object__c}" size="1">
+							<apex:selectOptions value="{!LookupMappingMatchObjectOptions}"/>
+							<apex:actionSupport event="onchange" reRender="match_field_panel"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!MatchField_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Match Field" />
+						<apex:outputPanel id="match_field_panel">
+							<apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Object_Field__c}" size="1">
+							<apex:selectOptions value="{!LookupMappingMatchFieldOptions}"/>
+							<apex:actionSupport event="onchange" reRender="match_record_panel"/>
+						</apex:selectList>
+						</apex:outputPanel> 
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!MatchedRecordIdIn_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Store Matched Record ID in"/>
+						<apex:outputPanel id="match_record_panel">
+						<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Field__c}" size="1">
+							<apex:selectOptions value="{!LookupMappingDestinationFieldOptions}"/>
+						</apex:selectList>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!MatchType_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Match Type"/>
+						<apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Order__c}" size="1">
+							<apex:selectOptions value="{!ContactMatchTypeOptions}"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<!-- <apex:pageBlockSectionItem helpText="{!OverwriteAllowed_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Overwrite Allowed "/>
+						<apex:inputCheckbox value="{!patternRule.Overwrite_Allowed__c}" />
+					</apex:pageBlockSectionItem> -->
+					
+					
+					<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}" rendered="{!patternBasedRuleType == '2'}">
+						<apex:outputLabel value="Overwrite non-blank values"/>
+						<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+					</apex:pageBlockSectionItem>
+				</apex:pageblockSection>
+                <!-- Fixed Value lookup Assignment -->
+                <apex:actionFunction name="resetFixedValueLookup"  action="{!resetFixedValueLookup}" reRender="fixedlookupassignment" />
+                 <apex:actionFunction name="resetFixedValueLookupForMatchField"  reRender="fixedlookupassignment" />
+                <apex:pageblockSection collapsible="false" columns="1"  id="fixedlookupassignment" rendered="{!IF(patternBasedRuleType == '5',true,false)}">
+					<apex:pageBlockSectionItem helpText="{!MatchObject_HelpText}" id="matchObjectFixedLookup">
+						<apex:outputLabel value="Match Object"/>
+						<apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Object__c}" size="1" onchange="resetFixedLookupAssignment();">
+							<apex:selectOptions value="{!LookupMappingMatchObjectOptions}"/>
+							<apex:actionSupport event="onchange" reRender="fixedlookupmatch_field_panel,fixedlookupdynamicInputFieldBlock"  />
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem helpText="{!MatchField_HelpText}">
+						<apex:outputLabel value="Match Field" />
+						<apex:outputPanel id="fixedlookupmatch_field_panel">
+                            <apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Object_Field__c}" size="1" onchange="resetFixedLookupAssignmentForMatchField();">
+							<apex:selectOptions value="{!LookupMappingMatchFieldOptions}"/>
+							<apex:actionSupport event="onchange" reRender="fixedlookupdynamicInputFieldBlock,fixedlookupdynamicInputFieldBlockDate,match_record_panel_fixed_lookup"/> 
+						</apex:selectList>
+						</apex:outputPanel> 
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" id="fixedlookupFieldValuePBSI" rendered="{!IF( (sObjectFieldTypeForFixeLookup != 'DATE' && sObjectFieldTypeForFixeLookup != 'DATETIME') ,true,false)}" >
+							<apex:outputLabel value="Field Value" />
+							<apex:outputPanel id="fixedlookupdynamicInputFieldBlock">
+								<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}" multiselect="false" size="1" rendered="{!sObjectFieldTypeForFixeLookup == 'PICKLIST'}">
+									 <apex:selectOptions value="{!PicklistOptionsforFixedLookup}"/>
+								</apex:selectList>
+								<apex:selectList value="{!multipicklist}" multiselect="true" size="3" rendered="{!sObjectFieldTypeForFixeLookup == 'MULTIPICKLIST'}">
+									 <apex:selectOptions value="{!PicklistOptionsforFixedLookup}"/>
+								</apex:selectList>
+								<apex:inputField id="fixedlookupdynamicInputField" value="{!inputObjForFixedLookup[patternRule.ortoo_e2a__Lookup_Object_Field__c]}" rendered="{!IF(sObjectFieldTypeForFixeLookup != '' && sObjectFieldTypeForFixeLookup != 'PICKLIST' && sObjectFieldTypeForFixeLookup != 'MULTIPICKLIST' && sObjectFieldTypeForFixeLookup != 'TEXTAREA' && sObjectFieldTypeForFixeLookup != 'DATE' && sObjectFieldTypeForFixeLookup != 'DATETIME',true,false)}" required="false"  />
+								<apex:inputTextarea value="{!patternRule.ortoo_e2a__Destination_Value_Field__c}" rendered="{!sObjectFieldTypeForFixeLookup == 'TEXTAREA'}"/>
+						    </apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem helpText="{!fieldValue_HelpText}" rendered="{!IF( (sObjectFieldTypeForFixeLookup == 'DATE' || sObjectFieldTypeForFixeLookup == 'DATETIME') ,true,false)}">
+							<apex:outputLabel value="Field Value"/>
+                            <apex:outputPanel id="fixedlookupdynamicInputFieldBlockDate">
+								<apex:inputField value="{!inputObjForFixedLookup[patternRule.ortoo_e2a__Lookup_Object_Field__c]}"  required="false" />
+                            </apex:outputPanel>
+						</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem helpText="{!MatchedRecordIdIn_HelpText}">
+						<apex:outputLabel value="Store Matched Record Id in"/>
+						<apex:outputPanel id="match_record_panel_fixed_lookup">
+						<apex:selectList value="{!patternRule.ortoo_e2a__Destination_Field__c}" size="1">
+							<apex:selectOptions value="{!LookupMappingDestinationFieldOptions}"/>
+						</apex:selectList>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem helpText="{!MatchType_HelpText}">
+						<apex:outputLabel value="Match Type"/>
+						<apex:selectList value="{!patternRule.ortoo_e2a__Lookup_Order__c}" size="1">
+							<apex:selectOptions value="{!ContactMatchTypeOptions}"/>
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+									
+					<apex:pageBlockSectionItem helpText="{!NonBlankValues_HelpText}">
+						<apex:outputLabel value="Overwrite non-blank values"/>
+						<apex:inputCheckbox value="{!patternRule.ortoo_e2a__Overwrite_Non_Blank_Values__c}" />
+					</apex:pageBlockSectionItem>
+						
+				</apex:pageblockSection>
+			</apex:pageBlock>
+</apex:form>
+<script>
+     function resetFixedLookupAssignmentForMatchField()
+     {
+         try
+		 {
+		    
+		    var node2 = document.getElementById("thePage:theForm:viewPageBlock:fixedlookupassignment:fixedlookupFieldValuePBSI:fixedlookupdynamicInputField");
+		    if(node2 != undefined && node2 != null)
+		    {
+		    	console.log('call resetFixedLookupAssignmentForMatchField:'+node2.value);
+			    node2.value = null;
+			    
+		    }
+		    resetFixedValueLookupForMatchField();
+		  
+		 }
+		 catch(e)
+		 {
+		    	
+		 }
+         
+     }
+     function resetFixedLookupAssignment()
+     {
+         try
+		 {
+		    
+		    var node2 = document.getElementById("thePage:theForm:viewPageBlock:fixedlookupassignment:fixedlookupFieldValuePBSI:fixedlookupdynamicInputField");
+		    if(node2 != undefined && node2 != null)
+		    {
+		    	console.log('call resetFixedLookupAssignment:'+node2.value);
+			    node2.value = null;
+			    
+		    }
+		    resetFixedValueLookup();
+		  
+		 }
+		 catch(e)
+		 {
+		    	
+		 }
+         
+     }
+	 function OpenRegexPopup(name)
+	 {
+	    	var regex = document.getElementById(name).value;
+	       	var url="/apex/ortoo_e2a__RegexGenerator?namefield=" + name +"&oldregex="+regex;
+	       	console.log('url'+url);
+	       	try
+	       	{
+	       	    //Code for Client Potential DOM Open Redirect
+		        if (validateURL(url))
+		        {
+			        var newWin=window.open(url, 'Popup','height=600,width=670,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+			        if (window.focus) 
+			        {
+			            newWin.focus();
+			        }
+			        else 
+			        {
+               			 throw new InvalidURLException();
+           		 	}
+			    }
+			}
+			catch (e)
+		    {
+              if (e instanceof InvalidURLException)
+                 alert(e.message);
+            }
+	            
+	        return false;
+	 }
+	 function InvalidURLException()
+	 {            
+        this.message = "An attempt was made to open a webpage of foreign domain. No allowed.";
+        this.toString = function()
+        {
+            return this.message
+        };
+     }
+
+    function validateURL(surl)
+    {
+        var url = parseURL(surl);
+        var url_host_name = url.hostname.trim();
+
+        if (url_host_name == '')
+        {
+            return true;
+        }
+        else {
+            if (url_host_name.toUpperCase() == location.hostname.trim().toUpperCase()) 
+            {
+                return true;
+            }
+            else
+                return false;
+        }            
+    }
+
+    function parseURL(url) 
+    {
+        var a = document.createElement('a');
+        a.href = url;
+        return {
+            source: url,
+            protocol: a.protocol.replace(':', ''),
+            hostname: a.hostname,
+            host: a.host,
+            port: a.port,
+            query: a.search,
+            params: (function () {
+                var ret = {},
+                    seg = a.search.replace(/^\?/, '').split('&'),
+                    len = seg.length, i = 0, s;
+                for (; i < len; i++) {
+                    if (!seg[i]) { continue; }
+                    s = seg[i].split('=');
+                    ret[s[0]] = s[1];
+                }
+                return ret;
+            })(),
+            file: (a.pathname.match(/\/([^\/?#]+)$/i) || [, ''])[1],
+            hash: a.hash.replace('#', ''),
+            path: a.pathname.replace(/^([^\/])/, '/$1'),
+            relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
+            segments: a.pathname.replace(/^\//, '').split('/')
+        };
+    } 
+	</script>
+</apex:page>

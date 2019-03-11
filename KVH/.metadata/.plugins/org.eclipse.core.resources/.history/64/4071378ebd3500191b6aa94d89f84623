@@ -1,0 +1,58 @@
+<apex:page showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/a343804bcf.js"></script>  
+    <head>
+        <title>Partner Portal Login</title>       
+        
+    </head>
+    <body>
+    <div class="fa-events-icons-ready" >
+        <header>
+            <div class="logo">
+                <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+        </header>       
+        <div class="content">
+            <apex:form >
+            <h1>Welcome to the KVH Partner Portal</h1>
+            <p>Log in or register now for the latest sales and technical bulletins, sales aids, manuals and more, exclusively for KVH dealers and distributors!</p>
+            
+            <div class="section group">
+                <div class="col span_4_of_12 matchheight border white-bg pad-inside" style="height: 240px;">
+                    <h4>Portal Access for a New Contact <br/>at an <strong>Existing KVH Partner Account</strong></h4>
+                    <p>Your company is already a KVH Partner and you need access to training, sales documentation, bulletins and more.</p>
+                    <br/>
+                    <a href="/partnerregtech" class="button button-blue">Register</a>
+                </div>
+                <div class="col span_4_of_12 matchheight border white-bg pad-inside" style="height: 240px;">
+                    <h4>Register for Portal Access and/or Become a <strong>KVH Indirect Partner</strong></h4>
+                    <p>Your company is not a KVH Partner, buys from a distributor, or you're not sure, but you still need access to training, sales documentation, bulletins and more.</p>
+                    <a href="/partnerregindirect" class="button button-blue">Register</a>
+                </div>
+                <div class="col span_4_of_12 matchheight border white-bg pad-inside" style="height: 240px;">
+                    <h4>Become a <strong>KVH Direct Partner</strong></h4>
+                    <p>Become a KVH Partner to buy directly from KVH, apply for credit terms, be listed on our Where to Buy, as well as get full access to the Partner Portal.</p>
+                    <br/>
+                    <a href="/partnerregistration" class="button button-blue">Apply</a>
+                </div>
+            </div>
+            </apex:form>
+        </div>
+        
+        <script src="../assets/jquery.matchHeight-min.js"></script>
+        <script type="text/javascript">
+        jQuery(function($){
+            $('.matchheight').matchHeight();
+        });
+        </script>
+
+  </div>  
+</body>
+</apex:page>

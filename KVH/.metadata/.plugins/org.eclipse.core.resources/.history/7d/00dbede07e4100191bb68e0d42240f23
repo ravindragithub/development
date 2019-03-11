@@ -1,0 +1,11 @@
+.THIS .tableheader {
+    background:#f3f3f3;
+    font-weight:bold;
+    padding:5px 10px;
+    font-size:85%;
+    text-align:left;
+    text-transform:initial;
+    color:#000;
+    letter-spacing:0;
+    font-family: sans-serif
+}

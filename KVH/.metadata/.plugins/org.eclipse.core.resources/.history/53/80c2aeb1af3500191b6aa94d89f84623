@@ -1,0 +1,7 @@
+.THIS {
+    position: relative;
+    overflow: hidden;
+}
+.THIS .slds-form-element__label{
+    font-size: 1rem;
+}

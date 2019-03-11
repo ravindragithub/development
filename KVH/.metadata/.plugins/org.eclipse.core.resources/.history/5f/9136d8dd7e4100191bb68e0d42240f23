@@ -1,0 +1,40 @@
+<aura:component description="FilterOptions"
+                controller="FilterServices"
+                access="global">
+
+    <ltng:require styles="/resource/SLDS/assets/styles/salesforce-lightning-design-system.min.css" />
+
+    <!--<ltng:require styles="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/themes/default/style.min.css"
+                  scripts="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js,
+                  https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/jstree.min.js"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>-->
+
+    <ltng:require styles="{!$Resource.jstree + '/style.css'}"
+                  scripts="{!join(',',
+                          $Resource.jstree + '/jquery-2.2.4.min.js',
+                          $Resource.jstree + '/jstree.js')}"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>
+
+    <aura:attribute name="ready" type="Boolean" default="false"/>
+    <aura:attribute name="parentSection" type="String" />
+    <aura:attribute name="methodName" type="String" />
+    <aura:attribute name="filterCollection" type="Product_Catalogue__c[]"/>
+	
+    <aura:handler event="c:ClearOptionsEvent"
+                  action="{!c.handleClearEvent}"/>
+                  <!--description="handles the clear button by clearing the selections-->
+    
+    <aura:handler event="c:QuickLinkAppEvent"
+                  action="{!c.handleQuickAppEvent}"/>
+    
+    <aura:registerEvent name="filterOptionEvent"
+                        type="c:FilterOptionEvent"
+                        description="Used to send the selected option to the parent component."/>
+    
+    <aura:registerEvent name="SpinnerEvent"
+                        type="c:SpinnerEvent"
+                        description="Used to show the Spinner."/>
+
+    <div aura:id="jstree" style="font-family:sans-serif;" ></div>
+
+</aura:component>

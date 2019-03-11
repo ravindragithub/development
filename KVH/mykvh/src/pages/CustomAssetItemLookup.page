@@ -1,0 +1,95 @@
+<apex:page controller="CustomAssetItemLookupController"  title="Search" showHeader="false"  sideBar="false"  tabStyle="Account"   id="pg">
+    <apex:includeScript value="{!$Resource.CreateAsset_VFJQ2}"/>
+    <apex:includeScript value="{!$Resource.CreateAsset_VFJQ1}"/>
+    <script language="javascript">
+    $( document ).ready(function() {
+        document.getElementById("pg:form:txtSearch").value = "{!$CurrentPage.parameters.inputval}";
+        if("{!$CurrentPage.parameters.inputval}" !=null || "{!$CurrentPage.parameters.inputval}" != '')
+            onloadcheck();
+    });
+    
+    window.onload = new function() 
+    {   
+        // bring popup window to front
+        window.focus(); 
+        var ele=document.getElementById('{!$Component.form.txtSearch}');
+        if (ele)
+        {
+            ele.focus();
+        }
+    }
+    
+    function fillIn(name, id)
+    {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+            winMain=window.parent.opener;
+        }
+        var ele=winMain.document.getElementById('{!$CurrentPage.parameters.namefield}');
+        ele.value=name;
+        CloseWindow(id);
+    }
+    
+    function CloseWindow(id)
+    {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+            winMain=window.parent.opener;
+        }
+        if(id !=null){
+            winMain.loadproduct(id);
+        }
+        winMain.closeLookupPopup();
+    }
+    </script>
+    <apex:form id="form">
+        <apex:actionFunction name="onloadcheck" action="{!Search}" reRender="form" status="status"/>
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                    <div class="waitingHolder" style="margin-left: 30%;position: fixed;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        <apex:outputPanel id="page" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+            <apex:tabPanel switchType="client" selectedTab="name1" id="tabbedPanel">
+                
+                <!-- SEARCH TAB -->
+                <apex:tab label="Search" name="tab1" id="tabOne">
+                    
+                    <apex:actionRegion >  
+                        <apex:outputPanel id="top" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+                            <apex:outputLabel value="Search" style="font-weight:Bold;padding-right:10px;" for="txtSearch"/>
+                            <apex:inputText id="txtSearch" value="{!searchString}" />
+                            <span style="padding-left:5px"><apex:commandButton id="btnGo" value="Go" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block">
+                            <apex:pageBlock id="searchResults"> 
+                                <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+                                    <apex:column >
+                                        <apex:facet name="header">
+                                            <apex:outputPanel >Item Number</apex:outputPanel>
+                                        </apex:facet>
+                                        <apex:outputLink value="#" onclick="fillIn('{!a.ProductCode}', '{!a.Id}')" rendered="{!NOT(ISNULL(a.Id))}">{!a.Product_ID__c}</apex:outputLink>     
+                                    </apex:column>
+                                    <apex:column >
+                                        <apex:facet name="header">
+                                            <apex:outputPanel >Name</apex:outputPanel>
+                                        </apex:facet>
+                                        <apex:outputtext value="{!a.Name}" />   
+                                    </apex:column>
+                                </apex:pageBlockTable>
+                            </apex:pageBlock>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:tab>
+            </apex:tabPanel>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,21 @@
+.THIS .bluespin{
+    position: fixed;
+}
+.THIS .heading {
+    background:#999999;
+    margin:0; 
+    font-weight: lighter;
+    cursor: pointer;
+}
+.THIS h3{
+    font-size: 1.3em;
+    font-weight: 100;
+    line-height: normal;
+    font-family: sans-serif;
+}
+.THIS .buttonicon{
+    padding: 1px 10px;
+    border: none;
+    outline: none;
+    float : left;
+}

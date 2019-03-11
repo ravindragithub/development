@@ -1,0 +1,275 @@
+<apex:page standardController="invoiceit_s__Quote_Rate_Plan_Charge__c" extensions="ControllerAssignTitlesToQuoteCharge">
+ <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, '/js/jquery-1.5.1.min.js')}"  />
+    <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, '/js/jquery-ui-1.8.14.custom.min.js')}"/>
+    
+      <script>
+        function selectAllCheckboxes(obj,receivedInputID){
+                var inputCheckBox = document.getElementsByTagName("input");                 
+                for(var i=0; i<inputCheckBox.length; i++){         
+                    if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                    
+                        inputCheckBox[i].checked = obj.checked;
+                    }
+                    if (inputCheckBox[i].className == receivedInputID) {
+                        inputCheckBox[i].checked = obj.checked;
+                    }
+                }
+            } 
+        $j = jQuery.noConflict();    
+        function unSelectMainCheckbox(){
+            $j(".unSelectMain").attr('checked', false);  
+        }
+        
+          
+      </script>
+      
+<apex:form >
+ <apex:pageMessages id="message" />
+ <apex:sectionHeader title="Bulk Manage Subscriber screen" subtitle="Quote Name : {!quoteCharge.invoiceit_s__Quote__r.Name}"/>
+    <div class="bPageTitle">
+        <div class="ptBreadcrumb">&nbsp;«&nbsp;
+            <a href="/{!quoteCharge.invoiceit_s__Quote__c}">Back to Quote :   {!quoteCharge.invoiceit_s__Quote__r.Name}</a><br/><br/>
+            &nbsp;«&nbsp;<a href="/{!quoteCharge.id}">Back to Quote Charge :  {!quoteCharge.Name}</a>
+        </div>
+    </div>
+    
+    <apex:pageBlock title="Charge Information">
+       <apex:pageBlockSection >
+           <apex:outputField value="{!quoteCharge.invoiceit_s__Quote__r.Name}"/>
+           <apex:outputField value="{!quoteCharge.invoiceit_s__Quote__r.invoiceit_s__Account__c}"/>
+           <apex:outputField value="{!quoteCharge.Name}"/>
+           <apex:outputField value="{!quoteCharge.invoiceit_s__Quote_Rate_Plan__r.invoiceit_s__Quote_Product__r.invoiceit_s__Product_Code__c}"/>
+           <apex:outputField value="{!quoteCharge.invoiceit_s__Quantity__c}"/>
+       </apex:pageBlockSection>
+       
+       
+     </apex:pageBlock>
+    
+    <apex:pageBlock title="Selected Titles (Count : {!quoteCharge.Count_Of_Titles__c})" id="selectedTitles"> 
+        <apex:pageMessages /> 
+        <apex:pageBlockButtons location="top">
+           
+            <apex:actionStatus id="SaveButtonsStatus">
+              <apex:facet name="stop">
+               <apex:outputPanel >
+                <apex:commandButton value="Quick Save" action="{!saveTitles}" reRender="selectedTitles" status="SaveButtonsStatus" />
+                <apex:commandButton value="Save" action="{!saveTitlesAndRedirect}"/>
+               </apex:outputPanel>
+              </apex:facet>
+              <apex:facet name="start">
+               <apex:outputPanel >
+                <apex:commandButton value="Saving..." disabled="true" />
+                <apex:commandButton value="Saving..." disabled="true" />
+               </apex:outputPanel>
+              </apex:facet>
+             </apex:actionStatus>
+             
+        </apex:pageBlockButtons>
+        
+        <table cellspacing="0" cellpadding="0" border="0" class="list">
+                    <thead class="rich-table-thead">
+                        <tr class="headerRow">
+                            <th colspan="1" scope="col" class="headerRow"> Remove </th>
+                            <th colspan="1" scope="col" class="headerRow"> Quote Rate Plan Charge </th>
+                            <th colspan="1" scope="col" class="headerRow"> Titles </th>
+                            <th colspan="1" scope="col" class="headerRow"> Format Types</th>
+                        </tr>
+                     </thead>
+                     
+                     <tbody>
+                            <apex:repeat value="{!mapOfquoteChargeTitles}" var="ChargeTitles">
+                                
+                                <tr class="dataRow even odd first">
+                                 <td colspan="1" class="dataCell" width="15%">
+                                      
+                                       <apex:actionStatus id="removeButtonStatus">   
+                                           <apex:facet name="stop"> 
+                                               <apex:commandButton value="Remove" action="{!removeTitles}" reRender="selectedTitles,availableTitlesMsg" status="removeButtonStatus">
+                                                   <apex:param value="{!ChargeTitles}" name="removeTitles"/>
+                                              </apex:commandButton>
+                                           </apex:facet>
+                                           <apex:facet name="start">
+                                               <apex:commandButton value="Removing..." disabled="true" />
+                                           </apex:facet>   
+                                      </apex:actionStatus>
+         
+                                  </td> 
+                                  <td colspan="1" class="dataCell" width="15%">
+                                     <apex:outputField value="{!mapOfquoteChargeTitles[ChargeTitles].Quote_Rate_Plan_Charge__c}"/>
+                                  </td>
+                                  <td colspan="1" class="dataCell" width="20%"> 
+                                     <apex:outputField value="{!mapOfquoteChargeTitles[ChargeTitles].Titles__c}"/>
+                                  </td> 
+                                  <td colspan="1" class="dataCell" width="20%"> 
+                                     <apex:outputField value="{!mapOfquoteChargeTitles[ChargeTitles].Format_Type__c}"/>
+                                  </td> 
+                                </tr>
+                            </apex:repeat>
+                     </tbody>       
+                 </table>           
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="Available Titles (Titles Count : {!iCount})" id="availableTitles"> 
+        <apex:pageMessages id="availableTitlesMsg" />
+        <apex:pageBlockButtons location="top">
+            
+          <apex:actionStatus id="SaveAddButtonStatus">   
+           <apex:facet name="stop"> 
+               <apex:commandButton value="Add Selected" action="{!addTitles}" reRender="selectedTitles,availableTitles" onclick="unSelectMainCheckbox();" status="SaveAddButtonStatus"/>
+           </apex:facet>
+           <apex:facet name="start">
+               <apex:commandButton value="Adding Selected..." disabled="true" />
+           </apex:facet>   
+         </apex:actionStatus>
+         
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection > 
+            <apex:outputField value="{!quoteCharge.invoiceit_s__quote__r.Wet_or_Dry_Cargo__c}" rendered="{!quoteCharge.invoiceit_s__Product_Rate_Plan_Charge__r.invoiceit_s__Product_Rate_Plan__r.Name = 'Full VOD'}"/>
+            <apex:outputField value="{!quoteCharge.invoiceit_s__quote__r.Wet_or_Dry_Cargo__c}" rendered="{!quoteCharge.invoiceit_s__Product_Rate_Plan_Charge__r.invoiceit_s__Product_Rate_Plan__r.Name = 'Midi VOD' || quoteCharge.invoiceit_s__Product_Rate_Plan_Charge__r.invoiceit_s__Product_Rate_Plan__r.Name = 'Mini VOD'}"/>
+            <apex:outputField value="{!quoteCharge.invoiceit_s__quote__r.Quote_Type_KVH__c}"/>
+            <apex:outputField value="{!quoteCharge.invoiceit_s__quote__r.Platform_or_Vessel_Detail__c}"/>
+       </apex:pageBlockSection> 
+        <br/>
+        Search Titles &nbsp; : &nbsp; &nbsp; &nbsp; &nbsp;<apex:inputText value="{!sSearchString}" /> 
+        <img src="/s.gif" alt="Help" class="helpIcon" title="Search on Title Name (or) Series"/> 
+        &nbsp; &nbsp;  
+        
+         <apex:actionStatus id="searchTitles">   
+           <apex:facet name="stop"> 
+               <apex:commandButton value="Search" action="{!searchTitles}" reRender="availableTitles" status="searchTitles"/>
+           </apex:facet>
+           <apex:facet name="start">
+               <apex:commandButton value="Searching..." disabled="true" />
+           </apex:facet>   
+         </apex:actionStatus>
+         
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputPanel rendered="{!If(quoteCharge.invoiceit_s__Quote_Rate_Plan__r.invoiceit_s__Quote_Product__r.invoiceit_s__Product__r.Name = 'VOD' && quoteCharge.invoiceit_s__Quote__r.Quote_Type_KVH__c = 'Rental' ,false,true) }">        
+         Search Format &nbsp; : &nbsp; &nbsp; &nbsp; &nbsp;<apex:inputText value="{!sSearchStringFormat}" /> 
+         <img src="/s.gif" alt="Help" class="helpIcon" title="Search on Format (or) Language"/>
+         &nbsp; &nbsp;
+         <apex:actionStatus id="searchFormats">   
+           <apex:facet name="stop"> 
+               <apex:commandButton value="Search" action="{!searchFormats}" reRender="availableTitles" status="searchFormats"/>
+           </apex:facet>
+           <apex:facet name="start">
+               <apex:commandButton value="Searching..." disabled="true" />
+           </apex:facet>   
+         </apex:actionStatus>
+</apex:outputPanel>
+        <br/><br/>
+        
+     <div style="text-align:center" >
+         <!--  <apex:commandButton value=" << " action="{!first}" disabled="{!!hasPrevious}" reRender="availableTitles" />
+           <apex:commandButton value=" Previous " action="{!previous}"  disabled="{!!hasPrevious}" reRender="availableTitles" />
+           <apex:commandButton value=" Next " action="{!next}" disabled="{!!hasNext}" reRender="availableTitles"/>
+           <apex:commandButton value=" >> "  action="{!last}" disabled="{!!hasNext}" reRender="availableTitles"/>  -->
+           
+           <apex:actionStatus id="first">   
+               <apex:facet name="stop"> 
+                   <apex:commandButton value=" << " action="{!first}" reRender="availableTitles" status="first" disabled="{!!hasPrevious}" onclick="unSelectMainCheckbox();"/>
+               </apex:facet>
+               <apex:facet name="start">
+                   <apex:commandButton value="Processing Please Wait..." disabled="true" />
+               </apex:facet>   
+             </apex:actionStatus>
+             
+             <apex:actionStatus id="previous">   
+               <apex:facet name="stop"> 
+                   <apex:commandButton value=" Previous " action="{!previous}" reRender="availableTitles" status="previous" disabled="{!!hasPrevious}" onclick="unSelectMainCheckbox();"/>
+               </apex:facet>
+               <apex:facet name="start">
+                   <apex:commandButton value="Processing Please Wait..." disabled="true" />
+               </apex:facet>   
+             </apex:actionStatus>
+             
+             
+             <apex:actionStatus id="next">   
+               <apex:facet name="stop"> 
+                   <apex:commandButton value=" Next " action="{!next}" reRender="availableTitles" status="next" disabled="{!!hasNext}" onclick="unSelectMainCheckbox();"/>
+               </apex:facet>
+               <apex:facet name="start">
+                   <apex:commandButton value="Processing Please Wait..." disabled="true" />
+               </apex:facet>   
+             </apex:actionStatus>
+             
+             <apex:actionStatus id="last">   
+               <apex:facet name="stop"> 
+                   <apex:commandButton value=" >> " action="{!last}" reRender="availableTitles" status="last" disabled="{!!hasNext}" onclick="unSelectMainCheckbox();"/>
+               </apex:facet>
+               <apex:facet name="start">
+                   <apex:commandButton value="Processing Please Wait..." disabled="true" />
+               </apex:facet>   
+             </apex:actionStatus> 
+       </div>
+       <br/><br/>
+        <apex:pageBlockTable value="{!listofTitlesClass}" var="innerTitels" rendered="{!If(quoteCharge.invoiceit_s__Quote_Rate_Plan__r.invoiceit_s__Quote_Product__r.invoiceit_s__Product__r.Name = 'VOD' && quoteCharge.invoiceit_s__Quote__r.Quote_Type_KVH__c = 'Rental' ,false,true) }">
+            <apex:column >
+               <apex:facet name="header">
+                    <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" styleClass="unSelectMain" />
+                </apex:facet>
+               <apex:inputCheckbox value="{!innerTitels.isSelected}" id="inputId"/>
+             </apex:column>
+             <apex:column value="{!innerTitels.title.Name}"/>
+             <apex:column value="{!innerTitels.title.Included_in_VOD__c}"/>
+             <apex:column value="{!innerTitels.title.Platform_Type__c}"/>
+             <apex:column value="{!innerTitels.title.Series__c}"/>
+             <apex:column value="{!innerTitels.title.CODE_NO__c}"/>
+             
+             <apex:column headerValue="Format Types" width="45%"> 
+                <apex:facet name="header">
+                  <apex:inputCheckbox onclick="selectAllCheckboxes(this,'selectFormat')" styleClass="unSelectMain"/>
+                </apex:facet>
+                 
+                   <table cellspacing="0" cellpadding="0" border="0" class="list">
+                    <thead class="rich-table-thead">
+                        <tr class="headerRow">
+                            <th colspan="1" scope="col" class="headerRow"> <apex:inputCheckbox onclick="selectAllCheckboxes(this,'{!innerTitels.title.Id}')" styleClass="unSelectMain" /> </th>
+                            <th colspan="1" scope="col" class="headerRow"> Format </th>
+                            <th colspan="1" scope="col" class="headerRow"> Regional Format </th>
+                            <th colspan="1" scope="col" class="headerRow"> Language </th>
+                            <th colspan="1" scope="col" class="headerRow"> Delivery Method(s) </th>
+                        </tr>
+                     </thead>
+                     
+                     <tbody>
+                            <apex:repeat value="{!innerTitels.listofinnerFormats}" var="formats">
+                                
+                                <tr class="dataRow even odd first">
+                                 <td colspan="1" class="dataCell" width="5%" >
+                                     <apex:inputCheckbox value="{!formats.isSelected}" styleClass="{!innerTitels.title.Id}" id="selectFormat"/>
+                                  </td> 
+                                 <td colspan="1" class="dataCell" width="10%">
+                                     {!formats.formatType.Format__c}
+                                  </td>
+                                  <td colspan="1" class="dataCell" width="20%">
+                                     {!formats.formatType.Regional_Format__c}
+                                  </td> 
+                                  <td colspan="1" class="dataCell" width="15%"> 
+                                     {!formats.formatType.Language__c}
+                                  </td>
+                                  <td colspan="1" class="dataCell" width="50%">
+                                     {!formats.formatType.Delivery_Method_s__c}
+                                  </td>  
+                                </tr>
+                            </apex:repeat>
+                     </tbody>       
+                 </table>  
+             </apex:column>
+             
+        </apex:pageBlockTable>
+        
+         <apex:pageBlockTable value="{!listofTitlesClass}" var="innerTitels" rendered="{! If(quoteCharge.invoiceit_s__Quote_Rate_Plan__r.invoiceit_s__Quote_Product__r.invoiceit_s__Product__r.Name = 'VOD' && quoteCharge.invoiceit_s__quote__r.quote_Type_KVH__c = 'Rental' ,true,false) }"> 
+            <apex:column >
+               <apex:facet name="header">
+                    <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" styleClass="unSelectMain" />
+                </apex:facet>
+               <apex:inputCheckbox value="{!innerTitels.isSelected}" id="inputId"/>
+             </apex:column>
+             <apex:column value="{!innerTitels.title.Name}" width="75%"/>
+             <apex:column value="{!innerTitels.title.CODE_NO__c}"/>
+        </apex:pageBlockTable>
+        
+    </apex:pageBlock>
+  </apex:form> 
+</apex:page>

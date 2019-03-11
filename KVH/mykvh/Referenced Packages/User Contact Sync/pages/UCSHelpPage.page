@@ -1,0 +1,85 @@
+<apex:page title="User Contact Sync by Applied Concepts Institute" showheader="false" sidebar="false" tabStyle="User_Contact_Sync_Settings__tab">
+<head>
+<title>User Contact Sync by Applied Concepts Institute</title>
+</head>
+<apex:image value="{!$Resource.uas__UCSLogo}" />
+<apex:pageBlock >
+    <p>
+        <b>About User Contact Sync</b></p>
+    <p>
+        User Contact Sync allows your system administrator to automatically keep a Contact record in sync with a User record.
+    </p>
+    <p><b>Benefits of having both a Contact and User record: </b>
+        <ul>
+        	<li>Contact records can be synced with email clients, Users cannot</li>
+        	<li>Activities can be associated with Contacts but not with Users</li>
+        	<li>Contacts can be put into Contact Roles on both Accounts and Opportunities, Users cannot</li>
+        	<li>Email to Salesforce works with Contacts, not Users</li>        	
+        </ul>
+   	</p>
+   	<p><b>Configuration:</b></p>
+   	<p>
+        <ol>
+        <li>Open the User Contact Sync Settings tab.</li>
+        <li>Enter or select the Account record you wish to have the Contacts records linked to.</li>
+        	<ul>
+        		<li>Make sure that the Account is shared so that all Users have at least Read access to it.</li>
+        	</ul>
+        <li>For each User Page Layout, add the Home Phone and Sync to Contact fields.</li>
+        	<ul>
+        		<li>If the Sync to Contact field is checked, a new Contact record will be created related to the Account selected in Step 2</li>
+        	</ul>
+        <li>For each Contact Page Layout, add the Active User and User fields.      </li>
+        	<ul>
+        		<li>We recommend making the User field read only on the page layouts for all Profiles other than System Administrator.</li>
+        		<li>If a Contact already exists for a given User, select the User record in the User field.  The Contact record will be kept in sync with the User record going forward.</li>
+        	</ul>
+  
+        </ol>
+   	</p>
+   	<p><b>Sync Rules:</b></p>
+   	<p>
+        <ul>
+        <li>The User record always updates the Contact record and overwrites any values in the Contact record.</li>
+       	<li>Updates made directly to the Contact record will NOT affect the User record.</li>
+        <li>When a User updates their User record, their related Contact will be updated.</li>
+        <li>If a Contact being synced is deleted, it will be automatically recreated the next time the User record is updated.</li>
+        </ul>
+        	
+   	</p>
+   	
+    <p>
+        <b>About Applied Concepts</b></p>
+    <p>
+        Applied 
+        Concepts Institute is an innovative sales performance and productivity company. 
+        We are both a Premier salesforce.com Consulting Partner and an AppExchange 
+        Partner. Our organization has extensive experience in Salesforce CRM deployment 
+        with expertise in configuration, implementation, user adoption and support. We 
+        specialize in sales, management and customer service process implementation, 
+        focused on creating a healthy pipeline, winning all winnable deals and 
+        retention/growth of existing base of business. We also provide world class 
+        sales, management and customer service training with programs focused on the 
+        following competencies: Sales management leadership; Opportunity, Account and 
+        Territory Optimization; New hire, basic and executive selling skills; 
+        Tele-Prospecting, Tele-Sales and customer service skills.</p>
+    <p>For more information about Applied Concepts, please visit our website at <a href="http://www.salesoptimizer.com" target="_blank">
+    http://www.salesoptimizer.com</a></p>
+    <p>
+        <b>Questions / Comments / Suggestions / Ideas</b></p>
+    <ul>
+        <li>
+            If you have a question about User Contact Sync, please email Steve Wasula at <a href="mailto:steve.wasula@salesoptimizer.com">steve.wasula@salesoptimizer.com</a> or call him at 
+            407-389-6060.</li>
+    </ul>
+    <p>
+        <b>Help With Salesforce.com</b></p>
+
+    <ul>
+        <li>Applied Concepts is a Premier Salesforce.com Consulting Partner and can help 
+            your organization with all aspects of Salesforce.&nbsp; Please email Steve Wasula 
+            at <a href="mailto:steve.wasula@salesoptimizer.com">steve.wasula@salesoptimizer.com</a> 
+            or call him at 407-389-6060 to discuss your needs.</li>
+    </ul>
+    </apex:pageBlock>
+</apex:page>

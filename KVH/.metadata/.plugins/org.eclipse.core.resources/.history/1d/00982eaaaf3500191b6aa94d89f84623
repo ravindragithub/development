@@ -1,0 +1,70 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/> 
+    <aura:attribute name="payInfoRequired" type="boolean"/>
+    <aura:attribute name="validatePrimaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="validateSecondaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="invalidPrimaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="invalidSecondaryCC" type="boolean" default ="false"/>
+    <lightning:card title="Payment Information">
+        <div class="note">All major credit cards accepted.</div>
+       <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.payInfoRequired}">
+                <lightning:icon iconName="action:remove" title="Atleast one credit card information is required." size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 leftPanel">                    
+                    <ui:inputText aura:id="PrimaryCC" label="Primary Credit Card No." class="slds-input"
+                                     value="{!v.simpleLTEActivation.Primary_Credit_Card_No__c}"
+                                     blur="{!c.validatePrimaryPayInfo}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12 middlePanel">                    
+                    <ui:inputText aura:id="PrimaryCCDate" label="Exp. Date" class="slds-input" placeholder="(MM/YYYY)"
+                                     value="{!v.simpleLTEActivation.Primary_CC_Exp_Date__c}"
+                                     blur="{!c.validatePrimaryDateInfo}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 rightPanel">
+                    <ui:inputText aura:id="PrimaryCCName" label="Name on Card" class="slds-input"
+                                  value="{!v.simpleLTEActivation.Primary_Name_on_Card__c}"
+                                  blur="{!c.validatePrimaryNameInfo}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12" style="display: flex;">
+                    <lightning:helptext content="A CVV number is an anti-fraud security feature to help verify that you are in possession of your credit card. For Visa/Mastercard, the three-digit CVV number is printed on the signature panel on the back of the card immediately after the card's account number. For American Express, the four-digit CVV number is printed on the front of the card above the card account number." iconName="utility:info" class="popover"/>
+                    <ui:inputText aura:id="PrimaryCVV" label="CVV" class="slds-input"
+                                  value="{!v.simpleLTEActivation.Primary_CVV__c}"
+                                  blur="{!c.validatePrimaryCVVInfo}" required="true"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 leftPanel">
+                    <ui:inputText aura:id="SecondaryCC" label="Secondary Credit Card No." class="slds-input"
+                                  value="{!v.simpleLTEActivation.Secondary_Credit_Card_No__c}"
+                                     blur="{!c.validateSecondaryPayInfo}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12 middlePanel">                    
+                    <ui:inputText aura:id="SecondaryCCDate" label="Exp. Date" class="slds-input" placeholder="(MM/YYYY)"
+                                     value="{!v.simpleLTEActivation.Secondary_CC_Exp_Date__c}"
+                                     blur="{!c.validateSecondaryDateInfo}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 rightPanel">
+                    <ui:inputText aura:id="SecondaryCCName" label="Name on Card" class="slds-input"
+                                  value="{!v.simpleLTEActivation.Secondary_Name_on_Card__c}"
+                                  blur="{!c.validateSecondaryNameInfo}" required="true" />
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12" style="display: flex;">
+                    <lightning:helptext content="A CVV number is an anti-fraud security feature to help verify that you are in possession of your credit card. For Visa/Mastercard, the three-digit CVV number is printed on the signature panel on the back of the card immediately after the card's account number. For American Express, the four-digit CVV number is printed on the front of the card above the card account number." iconName="utility:info" class="popover"/>
+                    <ui:inputText aura:id="SecondaryCVVName" label="CVV" class="slds-input"
+                                  value="{!v.simpleLTEActivation.Secondary_CVV__c}"
+                                  blur="{!c.validateSecondaryCVVInfo}" required="true"/>
+                </div>
+                
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

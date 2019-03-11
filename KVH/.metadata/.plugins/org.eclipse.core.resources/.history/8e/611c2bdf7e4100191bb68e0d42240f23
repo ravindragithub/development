@@ -1,0 +1,15 @@
+.THIS .hide{
+  display: none;
+}
+.THIS .err svg{
+  fill: red;
+}
+.THIS .warn svg{
+  fill: gold;
+}
+.THIS .warn {
+  background-color: black !important;
+}
+.THIS .ok svg{
+  fill: green
+}

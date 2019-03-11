@@ -1,0 +1,47 @@
+<apex:component controller="SelfRegRegisterController" id="registerComponent" allowDML="true">
+    
+    <apex:form id="theForm" forceSSL="true">
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here">
+        </div>
+        <!--** div contain error msg contents -End **-->   
+        <apex:pageMessages id="error"/>
+        
+        <p>
+            <label for="firstname">First/Given Name:</label>
+            <apex:inputText required="true" styleClass="requiredRedMarkFld" id="firstname" value="{!firstname}" style="width :320px;"/>
+        </p>
+        <p>
+            <label for="lastname">Last/Family Name/Surname:</label>
+            <apex:inputText required="true" styleClass="requiredRedMarkFld" id="lastname" value="{!lastname}" style="width :320px;"/>
+        </p>
+        <p>
+            <label for="username">Email:</label>
+            <apex:inputText required="true" styleClass="requiredRedMarkFld" id="username" value="{!username}" style="width :320px;"/>
+        </p>
+        <p>
+            <label for="country">Country:</label>
+            <apex:actionRegion >
+                <apex:selectList id="country"  value="{!country}" multiselect="false"  size="1" styleClass="requiredRedMarkFld" style="width :320px;">
+                    <apex:actionSupport action="{!componentCountryChangeHandlerBilling}" event="onchange" reRender="State_Province__c" />
+                    <apex:selectOptions value="{!CountriesList}"/>
+                </apex:selectList>
+            </apex:actionRegion>
+        </p>
+        <p>
+            <label for="State">State:</label>
+            <apex:selectList id="State_Province__c"  value="{!state}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}" style="width :320px;">
+                <apex:selectOptions value="{!StatesList}"/>
+            </apex:selectList>
+        </p>
+        
+        <br/>
+        
+        <apex:commandButton style="background-color:#78ac49;border-radius:3px;color:#fff;min-width: 70px;border:none;padding: 10px;" id="submit" onclick="validateError('siteRegister'); return false;" value="{!$Label.site.submit}"> 
+        </apex:commandButton>
+        <apex:outputLink value="{!$Page.SiteLogin}" style="padding-left:20px;" rendered="{!$Site.RegistrationEnabled}">Cancel</apex:outputLink>
+        <apex:actionFunction name="callSubmit" action="{!registerUser}" rerender="siteRegister" onbeforedomupdate="j$('[id$=submit]').attr('disabled', 'disabled');">
+        </apex:actionFunction>
+    </apex:form>
+    
+</apex:component>

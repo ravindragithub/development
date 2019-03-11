@@ -1,0 +1,101 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+                description="ProductSearchComponent">
+    
+    <ltng:require styles="/resource/SLDS/assets/styles/salesforce-lightning-design-system.min.css" />
+    
+    <aura:attribute name="searchString" type="String"
+                    description="holds the search box text"/>
+    
+    <aura:attribute name="selectedoptions" type="Object"/>
+    
+    <aura:attribute name="selectedProductsAct" type="String[]"/>
+    <aura:attribute name="selectedProductsRet" type="String[]"/>
+    <aura:attribute name="selectedContent" type="String[]"/>
+    
+    <aura:attribute name="selectedProductsMap" type="Map"/>
+    <aura:attribute name="selectedContentMap" type="Map"/>
+    
+    <aura:attribute name="view" type="String"/>
+    
+    <aura:registerEvent name="productSearch"
+                        type="c:ProductSearchEvent"
+                        description="Event fired for searching the results from salesforce. This event is handled by ProductSearchResult"/>
+    
+    <aura:registerEvent name="ClearOptionsEvent" type="c:ClearOptionsEvent"/>
+    
+    <aura:handler name="filterOptionEvent"
+                  event="c:FilterOptionEvent"
+                  action="{!c.handleFilterEvent}"/>
+    
+    <div>
+        <lightning:spinner variant="brand" alternativeText="Loading..." size="large" title="Loading..." aura:id="mySpinner1" class="bluespin slds-hide"/>
+    </div>
+    
+    <div class="slds">
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+            <div class="slds-p-horizontal--small slds-size--1-of-1">
+                <div class="slds-m-vertical--medium" style="border-radius: 0px;">
+                    <ui:inputText value="{!v.searchString}" aura:id="searchInput" class="slds-input searchicon"
+                                  
+                                  placeholder="Search..."/>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slds">
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+            <div class="slds-p-left--small slds-p-right--small slds-size--1-of-1 slds-large-size--7-of-12" style="margin-top:1%">
+                <div>
+                    <lightning:button variant="destructive"
+                                      label="APPLY"
+                                      onclick="{!c.search}"
+                                      class="applybutton"/>
+                </div>
+            </div>
+            <div class="slds-size--0-of-1  slds-large-size--1-of-12"></div>
+            <div class="slds-p-left--small slds-p-right--small slds-size--1-of-1 slds-large-size--4-of-12" style="margin-top:1%">
+                <div>
+                    <button onclick="{!c.clear}" class="slds-button slds-button_neutral clearbutton">CLEAR</button>
+
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+            <div class="slds-p-horizontal--small slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--6-of-6">
+                <h4 style="font-size: 1em;font-weight: bold;">Refine by:</h4>
+            </div>
+        </div>
+        
+        
+        <div class="slds-grid slds-wrap
+                    slds-grid--pull-padded">
+            <div class="slds-p-horizontal--small slds-size--1-of-1">
+                
+                <c:FilterBlock methodName="productSelection"
+                               sectiontitle="Active Products">
+                </c:FilterBlock>
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap
+                    slds-grid--pull-padded">
+            <div class="slds-p-horizontal--small slds-size--1-of-1">
+                
+                <c:FilterBlock methodName="productSelection"
+                               sectiontitle="Retired Products" hidesection="slds-is-collapsed" iconname="chevron-right">
+                </c:FilterBlock>
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap
+                    slds-grid--pull-padded">
+            <div class="slds-p-horizontal--small slds-p-bottom--small slds-size--1-of-1">
+                <c:FilterBlock methodName="loadContentFilter"
+                               sectiontitle="Content Types">
+                </c:FilterBlock>
+            </div>
+        </div>
+    </div>
+</aura:component>

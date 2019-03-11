@@ -1,0 +1,511 @@
+<apex:page standardController="Prod_Documents__c" extensions="UpdateDocumentController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" sidebar="false" title="Update Content File" >
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <script type="text/javascript">
+    
+    Visualforce.remoting.timeout = 1200000; // Set timeout at page level - this is for HUGE files on the portal
+    
+    </script>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        
+        
+    </style>
+    <apex:define name="body">  
+        <apex:sectionHeader title="Content Administration" subtitle="Update Content File"/>
+        
+        <div id="load-status" style="display:none;">
+            <div class="overlay"></div>
+            <div class="status">                               
+                <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                <span id="load-statustext">File updating in progress...</span>
+            </div>
+        </div>
+        <apex:actionStatus id="subtypestatus">
+            <apex:facet name="start">
+                <div >
+                    <div class="overlay"></div>
+                    <div class="status">                               
+                        <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                        <span id="load-statustext">Fetching sub types...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        
+        
+        
+        <apex:form id="frm" >
+            
+            <apex:actionFunction name="saveRecordstool" action="{!saveRecords}" oncomplete="backtotool();">
+                <apex:param name="filename" assignTo="{!prodDoc.Name}" value=""/>
+            </apex:actionFunction>
+            <apex:actionFunction name="saveRecordslibs" action="{!saveRecords}" oncomplete="libraries('{!prodDoc.Id}');">
+                <apex:param name="filename" assignTo="{!prodDoc.Name}" value=""/>
+            </apex:actionFunction>
+            <apex:pageBlock >
+                <apex:pageMessages ></apex:pageMessages>
+                <div id="results"></div>
+                
+                <apex:pageBlockSection collapsible="false" title="Search for Product Document" columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Product Document Name" ></apex:outputLabel>
+                        <apex:outputPanel >
+                            <input style="width: 100%;" id="filename" value="{!prodDoc.Name}"/>
+                            <span id="productname" style="display:none"></span>  
+                            <img id="closeicon" style="display:none;" src="https://cdn2.iconfinder.com/data/icons/flat-icons-web/40/Remove-16.png" onclick="showsearchinput();"/>                  
+                            <apex:actionRegion >
+                                <apex:actionFunction name="fetchProdDocumentObject" action="{!fetchProdDocumentObject}" oncomplete="reloadwithid('{!prodDoc.Id}');">
+                                    <apex:param value="" assignTo="{!productDocId}" name="prodDocID"/>
+                                </apex:actionFunction>
+                                <apex:actionFunction name="blankProd_DocmentObject" action="{!init}" reRender="proddocsection" oncomplete="hidestatus();"/>
+                            </apex:actionRegion>
+                        </apex:outputPanel>    
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:outputPanel layout="none" id="proddocsection">              
+                    <apex:pageBlockSection collapsible="false" title="Product Document File" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Replacement File"></apex:outputLabel>
+                            <input type="file" id="file-chooser" onchange="setfiletype();" />  
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <div id="docdata" ></div>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Content Information ">
+                        <apex:inputField style="width: 100%;" id="Title_Display_Name" value="{!prodDoc.Title_Display_Name__c}"/>
+                        <apex:outputField style="width: 100%;" value="{!prodDoc.Image_URL__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Sub_Title__c}"/>
+                        <apex:outputField style="width: 100%;" value="{!prodDoc.Production_URL__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Alternate_Text__c}"/>
+                        <apex:outputField style="width: 100%;" value="{!prodDoc.Hosting_URL__c}"/>
+                        <apex:outputField label="File Access" id="isPrivate" value="{!prodDoc.File_Access__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Marketo_URL__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Size_Description__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Site_Core_URL__c}"/>
+                        <apex:inputField id="FileType" value="{!prodDoc.File_Extension__c}"/>
+                        <apex:inputField value="{!prodDoc.Language__c}"/>
+                        <apex:inputField value="{!prodDoc.Hide_for_Partner_Type__c}"/>
+                        <apex:inputField style="width: 100%;height: 100px;" value="{!prodDoc.Insertion_Code__c}"/>
+                        <apex:inputField style="width: 50%;" value="{!prodDoc.Revision__c}"/>
+                        <apex:inputField value="{!prodDoc.Active__c}"/>
+                        <apex:inputField value="{!prodDoc.Partner_Portal__c}"/>
+                        <apex:inputField value="{!prodDoc.KVH_com__c}"/>
+                        <apex:inputField value="{!prodDoc.Gated_Document__c}"/>
+                    </apex:pageBlockSection>
+                    
+                    <apex:outputPanel >
+                        <apex:actionRegion >
+                            <apex:pageBlockSection collapsible="false" title="Content Types" columns="1">
+                                <apex:pageBlockTable columns="4" title="Content Types and Sub Types" value="{!wrappers}" var="wrapper" id="wtable" styleClass="width: 100%;">
+                                    <apex:column headerValue="Content Type">
+                                        <apex:inputField value="{!wrapper.ct.Content_Main_Type__c}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Sub Type">
+                                        <apex:inputField value="{!wrapper.ct.Content_Sub_Type__c}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Tool Kits">
+                                        <apex:inputField value="{!wrapper.ct.Sales_Tool_Kit_s__c}"/>
+                                    </apex:column>
+                                    <apex:column headerValue=" ">
+                                        <apex:commandButton value="Delete" action="{!delWrapper}" style="padding: 1px;" rerender="wtable">
+                                            <apex:param name="toDelIdent" value="{!wrapper.ident}" assignTo="{!toDelIdent}"/> 
+                                        </apex:commandButton>
+                                    </apex:column>
+                                </apex:pageBlockTable>
+                                <br/>
+                                <apex:commandButton value="Add Row" action="{!addRow}" style="padding: 1px;" rerender="wtable">
+                                    <apex:param name="addCount" value="1" assignTo="{!addCount}"/>
+                                </apex:commandButton>   
+                            </apex:pageBlockSection>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:pageBlockSection collapsible="false" columns="2" title="Additional Pages">
+                    <apex:inputField value="{!prodDoc.Display_HTML_Page__c}"/>
+                    <apex:inputField value="{!prodDoc.Display_Terms_and_Conditions_Page__c}"/>
+                    <apex:inputField style="width: 100%;" value="{!prodDoc.Html_Field__c}"/>
+                    <apex:inputField value="{!prodDoc.Terms_and_Conditions_1__c}"/>
+                </apex:pageBlockSection>  
+                <apex:pageBlockSection collapsible="false" columns="2" title="Sales Aid Fields">
+                    <apex:inputField value="{!prodDoc.Sales_Aid__c}"/>
+                    <br/>
+                    <apex:inputField label="Sales Aid Description" value="{!prodDoc.File_Description__c}"/>                     
+                </apex:pageBlockSection>
+                <apex:inputHidden value="{!delhostingurl}" id="delhostingurl"/>
+                <apex:inputHidden value="{!deleteDocument}" id="deleteDocument"/>
+                <apex:inputHidden value="{!newFileName}" id="newFileName"/>
+                <apex:inputHidden value="{!prodDoc.Filename_in_AWS__c}" id="awsid"/>
+                <apex:inputHidden value="{!prodDoc.Hosting_URL__c}" id="hostingurl"/>
+                <apex:pageBlockButtons location="bottom">
+                    <input type="button" id="upload-button"  style="float: right;" onclick="uploaddownloadfiles('{!prodDoc.Filename_in_AWS__c}', false); return false;" value="Update Content"/>             
+                    &nbsp;
+                    <input type="button" id="lib-button"  style="float: right;margin-right:10px" onclick="uploaddownloadfiles('{!prodDoc.Filename_in_AWS__c}', true); return false;" value="Update and Continue to Libraries"/>   
+                    <input type="button" id="back-button"  style="float: right;margin-right:10px" onclick="backbuttonclick()" value="Back"/>             
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            
+        </apex:form> 
+    </apex:define> 
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    
+    <apex:outputPanel id="scriptpannel">
+        <script>
+        var isPrivate = '{!prodDoc.File_Access__c}';
+    console.log('IP initial: '+ isPrivate);
+    var oldfileName = '{!prodDoc.Name}';
+    var access = '{!prodDoc.File_Access__c}';
+    console.log('access initial: '+ access);
+   
+    </script>
+    </apex:outputPanel>
+
+    <script>
+
+var filetype;
+var filename;
+
+var newFileName;
+$( function() {    
+    
+    $( "#filename" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax( {
+                url: "{!$Label.ContentFilesSearch}",         
+                data: {
+                    term: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            } );
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+            var productlink = '<a href="/' + ui.item.data + '" target="_blank">' + ui.item.value + '</a>'; 
+            $('[id*="productname"]').html(productlink);          
+            $('[id*="productname"]').show();
+            $('[id*="filename"]').hide();   
+            $('[id*="closeicon"]').show(); 
+            $('[id*="filename"]').addClass("error");    
+            $('[id*="filenameerrormsg"]').remove(); 
+            showstatusmessage('Fetching fields of ' + ui.item.value + ' from salesforce');
+            fetchProdDocumentObject(ui.item.data);
+            
+        }
+    });
+    
+} );
+
+
+
+function fetchProductfun(){
+    
+}
+
+function showstatusmessage(msg){
+    $("#load-statustext").text(msg);
+    $("#load-status").show();
+}
+
+function hidestatus(){
+    $("#load-status").hide();
+    $("#load-statustext").text("");
+}
+
+function uploaddownloadfiles(docId, lib){
+    console.log(docId);
+    var pdid = docId.substring(0, 18);
+    var confFlag = false;
+    var differFilename = false;
+    var fileChooser = document.getElementById('file-chooser');                
+    var file = fileChooser.files[0];
+    if(newFileName != undefined && newFileName != oldfileName ){
+        confFlag = confirm("New File name is different.  This will delete the old file and create new file. Are you sure?");
+        differFilename = true;
+    }
+    
+    if(!formvalidation() && confFlag){
+        $("#load-statustext").text("File uploading in progress...");
+        $("#load-status").show();
+        if(access == 'Public'){
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.UpdateDocumentController.fetchCredentials}',
+                function(result, event){
+                    if (event.status) {
+                        AWS.config.region = 'us-east-1'; // 1. Enter your region
+                        if(differFilename){
+                            deleteFile(result.Algorithm__c,result.Key__c,result.Bucket__c,docId, lib);                   
+                        }else{
+                            uploadFile(result.Algorithm__c,result.Key__c,result.Bucket__c,docId, lib);
+                        }                   
+                    } else if (event.type === 'exception') {
+                        console.log("Error ==>" + event.message + ' ' + event.where);
+                        
+                    } else {
+                        console.log("Messge ==>" + event.message);
+                    }
+                }, 
+                {escape: true}
+            ); 
+        } else {
+            if(access == isPrivate){
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('id: '+pdid);
+                    var file1 = reader.result.split(',')[1];
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.UpdateDocumentController.updatecontent}',
+                        file.name, file1, file.type, pdid,
+                        function(result, event){
+                            if (event.status) {
+                                console.log('2' + pdid);
+                                if(lib == true){
+                                    saveRecordslibs(file.name);
+                                } else {
+                                    saveRecordstool(file.name);
+                                }
+                            } else if (event.type === 'exception') {
+                                console.log("Error ==>" + event.message + ' ' + event.where);
+                            } else {
+                                console.log("Message ==>" + event.message);
+                            }
+                        }, 
+                        {escape: true}
+                    );
+                    
+                }
+                reader.readAsDataURL(file, 'UTF-8');
+            } else{
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.UpdateDocumentController.fetchCredentials}',
+                    function(result, event){
+                        if (event.status) {
+                            AWS.config.region = 'us-east-1'; // 1. Enter your region                 
+                            uploadFile(result.Algorithm__c,result.Key__c,result.Bucket__c, docId, lib);              
+                        } else if (event.type === 'exception') {
+                            console.log("Error ==>" + event.message + ' ' + event.where);
+                            
+                        } else {
+                            console.log("Message ==>" + event.message);
+                        }
+                    }, 
+                    {escape: true}
+                ); 
+            }
+        }
+    } else if(file == undefined && lib){
+        saveRecordslibs(oldfileName);
+    } else if(file == undefined){
+        saveRecordstool(oldfileName);
+    }
+}
+
+function uploadFile(key,secret,bucketName, pdid, lib){
+    var creds = new AWS.Credentials(key,secret);
+    AWS.config.credentials = creds;
+    var bucket = new AWS.S3({
+        params: {
+            Bucket: bucketName
+        }
+    });
+    
+    var fileChooser = document.getElementById('file-chooser');            
+    var results = document.getElementById('results');
+    
+    var file = fileChooser.files[0];
+    
+    if (file) {
+        
+        results.innerHTML = '';
+        var objKey = pdid;
+        var params = {
+            Key: objKey,
+            ContentType: file.type,
+            Body: file,
+            ACL: 'public-read'
+        };
+        
+        
+        //alert('Upload File==>'+bucketName);
+        bucket.putObject(params, function(err, data) {
+            // add the following debug line                
+            if (err) {
+                results.innerHTML = 'ERROR: ' + err;
+            }else{
+                //alert('File successfully uploaded.');
+                $('[id*="Prod_Doc_Lib_Name"]').val(file.name);
+                $('[id*="Prod_Doc_Name"]').val(file.name);                                       
+                var downloadparams = {Bucket: bucketName, Key: objKey,Expires : 315360000};
+                
+                var url = 'https://kpp-public.s3.amazonaws.com/'+objKey;
+                
+                $('[id*="hostingurl"]').val(url);
+                if(lib == true){
+                    saveRecordslibs(file.name);
+                } else {
+                    saveRecordstool(file.name);
+                }
+            }
+        });
+    } else {
+        results.innerHTML = 'Nothing to upload.';
+    }
+    AWS.config.credentials = null;
+}
+
+function showsearchinput(){
+    $('[id*="productname"]').hide();
+    $('[id*="filename"]').show(); 
+    $('[id*="filename"]').val('');
+    $('[id*="closeicon"]').hide();
+    $('[id*="postalviewselectlist"]').show(); 
+    $('[id*="productportalviews"]').hide();  
+    $('[id*="productportalviews"]').html(''); 
+    $("#load-statustext").text("Refreshing...");
+    $("#load-status").show();
+    blankProd_DocmentObject();
+}
+
+function libraries(docId){
+    $("#load-statustext").text("Success!!");
+    $("#load-status").show();
+    window.setTimeout(function(){ 
+            location.href = '/apex/MarketUpdate?retURL=update&id='+ docId; }, 1000);
+}
+
+function backtotool(){
+    $("#load-statustext").text("Success!!");
+    $("#load-status").show();
+    window.setTimeout(function(){ 
+            location.href = '/apex/updateDocument'; }, 1000);
+}
+
+function reloadwithid(pdid){
+    location.href = '/apex/updateDocument?id='+ pdid;
+}
+
+function formvalidation(){
+    $(".errorMsg").remove();
+    $(".error").removeClass("error"); 
+    var file = document.getElementById('file-chooser').files[0];
+    var isError = false;   
+    return isError;
+}
+function adderrorMessage(elm,msg){
+    //alert($(elm).attr("id"));
+    $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+    $(elm).addClass("error");
+    var offset = $(elm).offset();
+        offset.left -= 20;
+        offset.top -= 20;
+        $('html, body').animate({
+            scrollTop: offset.top,
+            scrollLeft: offset.left
+        });
+}     
+
+function setfiletype(){
+    var fileChooser = document.getElementById('file-chooser');   
+    var file = fileChooser.files[0];
+    filename = file.name;
+    var selectfiletype = filename.split('.').pop();
+    selectfiletype = selectfiletype.toLowerCase();
+    filetype = selectfiletype;
+    $('[id$="FileType"]').val(filetype);
+    
+    newFileName = file.name;
+    $('[id$="filename"]').val(file.name);
+    
+}
+
+function backbuttonclick(){
+    window.history.back();
+}
+
+function deleteFile(key,secert,bucketName, docid, lib) {
+    var creds = new AWS.Credentials(key,secert);
+    AWS.config.credentials = creds;
+    
+    var bucket = new AWS.S3({
+        params: {
+            Bucket: bucketName,                
+        }
+    });    
+    
+    var params = {
+        Bucket: bucketName,
+        Key: docid
+    };
+    bucket.deleteObject(params, function (err, data) {
+        if (data) {
+            console.log(data,err);
+            console.log("File deleted successfully");
+            if(access == isPrivate){
+                var downloadparams = {Bucket: bucketName, Key: docid,Expires : 315360000};            
+                uploadFile(key,secert,bucketName, docid, lib);
+            } else{
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('3.2');
+                    var file1 = reader.result.split(',')[1];
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.UpdateDocumentController.updatecontent}',
+                        file.name, file1, file.type, pdid,
+                        function(result, event){
+                            if (event.status) {
+                                console.log('2' + pdid);
+                                if(lib == true){
+                                    saveRecordslibs(file.name);
+                                } else {
+                                    saveRecordstool(file.name);
+                                }
+                            } else if (event.type === 'exception') {
+                                console.log("Error ==>" + event.message + ' ' + event.where);
+                            } else {
+                                console.log("Message ==>" + event.message);
+                            }
+                        }, 
+                        {escape: true}
+                    );
+                    
+                }
+                reader.readAsDataURL(file, 'UTF-8');
+            }
+        }
+    });
+}
+</script>
+</apex:page>

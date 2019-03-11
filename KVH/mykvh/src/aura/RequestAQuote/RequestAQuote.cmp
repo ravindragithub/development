@@ -1,0 +1,164 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" controller="RequestAQuoteClass" access="global" >
+    
+    <aura:attribute name="accountName" type="String" default=""/>    
+    <aura:attribute name="accountStreet" type="String" default=""/>
+    <aura:attribute name="accountCity" type="String" default=""/>
+    <aura:attribute name="accountStateZip" type="String" default=""/>
+    <aura:attribute name="accountCountry" type="String" default=""/>
+    <aura:attribute name="market" type="String" default=""/>
+    <aura:attribute name="sector" type="String" default=""/>
+    <aura:attribute name="product" type="String" default=""/>
+    <aura:attribute name="productLine" type="String" default=""/>
+    <aura:attribute name="productSeries" type="String" default=""/>
+    <aura:attribute name="salutation" type="String" default=""/>
+    <aura:attribute name="firstName" type="String" default=""/>
+    <aura:attribute name="lastName" type="String" default=""/>
+    <aura:attribute name="email" type="String" default=""/>
+    <aura:attribute name="phoneNumber" type="String" default=""/>
+    <aura:attribute name="salutationNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="firstNameNotEntered" type="Boolean" default="false"/>
+    <aura:attribute name="lastNameNotEntered" type="Boolean" default="false"/>
+    <aura:attribute name="emailNotEntered" type="Boolean" default="false"/>
+    <aura:attribute name="phoneNumberNotEntered" type="Boolean" default="false"/>
+    <aura:attribute name="country" type="String" default=""/>
+    <aura:attribute name="state" type="String" default=""/>
+    <aura:attribute name="comments" type="String" default=""/>
+    <aura:attribute name="companyName" type="String" default=""/>
+    <aura:attribute name="accountId" type="String" default=""/>
+    <aura:attribute name="contactId" type="String" default=""/>
+    <aura:attribute name="productId" type="String" default=""/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="searchOption" type="String" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    
+    <div class="slds-p-horizontal_xx-large" style="background-color:#fff; max-width:800px;margin:0 auto 100px auto; padding-bottom:40px;">
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner variant="brand"
+                           size="large"
+                           alternativeText="Searching Partners"/>
+    </aura:if>
+        
+        <aura:if isTrue="{!v.errorMessage!=null}">
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container ">
+                    <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+                    <div class="slds-modal__header slds-theme_error">
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Error</h2>
+                    </div>
+                    <!--###### MODAL BOX BODY Part Start From Here ######-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <p><b>{!v.errorMessage}
+                            </b>
+                        </p>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button--neutral" onclick="{!c.closeModel}" >Close</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </aura:if>
+        
+        
+        
+        <h1 class="slds-text-heading--medium slds-truncate slds-p-horizontal_small">
+            Request a Quote
+        </h1>
+        
+        <div class="slds-grid slds-gutters slds-grid_align-center slds-wrap">
+                <div class="slds-col slds-small-size_4-of-12 slds-medium-size_4-of-12  slds-large-size_4-of-12">
+                    <div class="slds-p-vertical_x-small slds-size_1-of-1 slds-large-size_2-of-2">
+                        <h3 class="" title="" style="font-family:arial, san-serif; font-weight:bold; font-size:1.2em; color: #1f83ad;margin-top:15px;">{!v.accountName}</h3>
+                        <p>{!v.accountStreet}<br></br>
+                            {!v.accountCity}, {!v.accountStateZip}<br></br>
+                            {!v.accountCountry}</p>
+                    </div>
+                    <div class="slds-p-vertical_x-small slds-size_1-of-1 slds-large-size_2-of-2">
+                        <p class="" title="" style="line-height: 125%;font-weight: bold;color:#555">Market: </p>
+                        <div class="">
+                            <p class="" title="" style="line-height: 125%;color:#555">{!v.market}</p>
+                        </div>
+                    </div>
+                    <div class="slds-p-vertical_x-small slds-size_1-of-1 slds-large-size_2-of-2">
+                        <p class="" title="" style="font-weight: bold;color:#555">Sector: </p>
+                        <div class="">
+                            <p class="" title="" style="line-height: 125%;color:#555">{!v.sector}</p>
+                        </div>
+                    </div>
+                    <div class="slds-p-vertical_x-small slds-size_1-of-1 slds-large-size_2-of-2">
+                        <p class="" title="" style="line-height: 125%;font-weight: bold;color:#555">Product: </p>
+                        <div class="">
+                            <p class="" title="" style="line-height: 125%;color:#555">{!v.productLine}</p>
+                        </div>
+                        <div class="">
+                            <p class="" title="" style="line-height: 125%;color:#555">{!v.productSeries}</p>
+                        </div>
+                        <div class="">
+                            <p class="" title="" style="line-height: 125%;color:#555">{!v.product}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-small-size_8-of-12 slds-medium-size_8-of-12 slds-large-size_8-of-12"  style="border-left:1px solid #ddd;padding-left:30px;">
+                    <div class="slds-p-top_x-small slds-size_1-of-1 slds-large-size_1-of-1 pad-bottom">
+                        <c:PickList objName="Quote_Request__c"
+                                    fieldName="Salutation__c"
+                                    selectedValue="{!v.salutation}"
+                                    fieldDefault="Select Salutation"
+                                    pickListId="salutationId"
+                                    pickListName="salutationPickList"
+                                    pickListLabel="salutationPickListLabel"/>
+                        
+                        <aura:if isTrue="{!v.salutationNotSelected}">
+                            <div class="error-box">Please select a salutation</div> 
+                        </aura:if>
+                    </div>
+                    <div class="slds-size_1-of-1 pad-bottom">
+                        <lightning:input label="First/Given Name:" type="name" aura:id="firstName" value="{!v.firstName}"/>
+                        
+                        <aura:if isTrue="{!v.firstNameNotEntered}">
+                            <div class="error-box">Please enter a first/given name</div> 
+                        </aura:if>
+                    </div>
+                    <div class="pad-bottom">
+                        <lightning:input label="Last/Family/Surname:" type="name" aura:id="lastName" value="{!v.lastName}"/>
+                        
+                        <aura:if isTrue="{!v.lastNameNotEntered}">
+                            <div class="error-box">Please enter a last/family/surname name</div> 
+                        </aura:if>
+                    </div>
+                    <div class="pad-bottom">
+                        <lightning:input label="Company Name:" name="companyName" type="companyName" aura:id="companyName" value="{!v.companyName}"/>
+                        
+                     
+                    </div>
+                    <div class="pad-bottom">
+                        <lightning:input type="email" label="Email:" name="email" aura:id="email" value="{!v.email}"/>
+                        
+                        <aura:if isTrue="{!v.emailNotEntered}">
+                            <div class="error-box">Please enter an email</div> 
+                        </aura:if>
+                    </div>
+                    <div class="pad-bottom">
+                        <lightning:input type="tel" label="Contact Phone No.:" name="phoneNumber" aura:id="phoneNumber" value="{!v.phoneNumber}"/>
+                        
+                        <aura:if isTrue="{!v.phoneNumberNotEntered}">
+                            <div class="error-box">Please enter a contact phone number</div> 
+                        </aura:if>
+                    </div>
+                    <div class="pad-bottom">
+                        <lightning:textarea name="comments" label="Comments:" aura:id="comments" value="{!v.comments}"/>
+                    </div>  
+                    <div class="slds-grid_align-right" style="font-size: 11px;font-weight: bold;border-radius: 0px;color: #fff;float:right;" >
+                        <lightning:button variant="destructive" class="slds-button_destructive" label="Request A Quote" onclick="{!c.requestQuoteWithData}"/>
+                    </div>   
+                </div>
+            </div>
+    </div>
+    
+</aura:component>

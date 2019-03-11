@@ -1,0 +1,78 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>    
+    <aura:attribute name="billingInfoRequired" type="boolean"/>
+    <aura:attribute name="billingInfoFlag" type="boolean"/>
+    <aura:attribute name="billingCheckFlag" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:attribute name="LTEActivationBillingError" type="string"/>
+    <aura:attribute name="inhibitTransform" type="boolean"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    <aura:handler name="change" value="{!v.billingInfoFlag}" action="{!c.handlebillingInfoFlag}"/>
+    <lightning:card title="Billing Information">
+        <!--
+        <aura:set attribute="actions">	
+            <aura:if isTrue="{!v.billingInfoRequired}">                
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+        -->
+        <div class="slds-p-horizontal--small">
+            <lightning:input label="Same as Subscriber Information" type="checkbox" aura:id="subCheckFlag"
+                             class="checkBoxSideBar" onchange="{!c.updateBillingInfo}" checked="{!v.billingCheckFlag}"/>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input aura:id="LTEBillingField" name="First_Name" label="Main Contact First/Given Name"
+                                     value="{!v.simpleLTEActivation.Main_Contact_FirstName_Billing__c}"
+                                     required="true" onblur="{!c.billingValidation}"/>
+                    <lightning:input aura:id="LTEBillingField" name="Last_Name" label="Main Contact Last/Family Name/Surname"
+                                     value="{!v.simpleLTEActivation.Main_Contact_LastName_Billing__c}"
+                                     required="true" onblur="{!c.billingValidation}"/>   
+                    <lightning:input aura:id="LTEBillingField" label="Company Name(if applicable)"
+                                     value="{!v.simpleLTEActivation.Billing_Company_Name__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    <lightning:input aura:id="LTEBillingField" type="email" label="Email" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Email__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    <lightning:input aura:id="LTEBillingField" type="tel" label="Phone Number" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Phone_No__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                    <lightning:input aura:id="LTEBillingField" label="Address" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Address__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    <lightning:input aura:id="LTEBillingField" label="City" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_City__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    <aura:if isTrue="{!v.billingCheckFlag}">
+                        <lightning:input aura:id="LTEBillingField" label="Country" required="true" 
+                                         value="{!v.simpleLTEActivation.Billing_Country__c}"
+                                         onblur="{!c.billingValidation}"/>
+                        <lightning:input aura:id="LTEBillingField" label="State/Province/Territory" required="true" 
+                                         value="{!v.simpleLTEActivation.Billing_State_Province_Territory__c}"
+                                         onblur="{!c.billingValidation}"/>
+                        <aura:set attribute="else">                            
+                            <c:Country_Picklist_cmp countryList="{!v.countryList}" stateMap="{!v.stateMap}" 
+                                                    selectedCountry="{!v.selectedCountry}" selectedState="{!v.selectedState}" 
+                                                    componentID="BillingCountryState"/>                             
+                        </aura:set>
+                    </aura:if>
+                    
+                    <lightning:input aura:id="LTEBillingField" label="Postal/Zip Code" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Postal_Zip_Code__c}"
+                                     onblur="{!c.billingValidation}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+    {!v.body }
+</aura:component>

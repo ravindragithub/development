@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Opportunity__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Opportunity</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>Quotes</relationshipLabel>
+        <relationshipName>Quotes</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <validationRules>
+        <fullName>Cannot_Modify_the_Sync_Quote</fullName>
+        <active>false</active>
+        <description>Once the quote is synced user should not modify the quote fields</description>
+        <errorConditionFormula>If( invoiceit_s__Sync_Quote__c,  OR(ISCHANGED(invoiceit_s__Discount_Percent__c),ISCHANGED(invoiceit_s__Discount_Value__c),ISCHANGED(invoiceit_s__Tax__c),ISCHANGED(invoiceit_s__Sub_Total__c),ISCHANGED(invoiceit_s__Net_Total__c),ISCHANGED(invoiceit_s__Total__c),ISCHANGED(invoiceit_s__Total_Contract_Value__c),ISCHANGED(invoiceit_s__Total_Quote_Products__c),ISCHANGED(invoiceit_s__VAT__c)) , false)</errorConditionFormula>
+        <errorMessage>You cannot modify the Quote as it has already been synchronized with an Opportunity record</errorMessage>
+    </validationRules>
+</CustomObject>

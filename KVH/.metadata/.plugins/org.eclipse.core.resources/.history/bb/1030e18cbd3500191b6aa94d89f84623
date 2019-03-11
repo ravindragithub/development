@@ -1,0 +1,37 @@
+<apex:page standardController="invoiceit_s__Job__c" extensions="IITControllerCreateAdhocInvoice">
+<apex:form >
+    <apex:sectionHeader title="Generate Ad-hoc Invoice" subtitle="Generate Ad-hoc Invoice"/>
+        <apex:pageMessages id="messages"/>
+        <apex:pageMessage title="Cut Off Date is the date till what period of time you want to bill. If the Cut Off Date is 1st Jan,2015 then billing we be done till 31st Dec,2014" severity="Low"></apex:pageMessage>
+        <apex:actionFunction action="{!onChangefirstInvoice}" name="onChangefirstInvoiceJS" reRender="messages,pb"/>
+        
+        <apex:pageBlock title="Choose Invoice Date and Cut Off Date" id="pb">
+            <apex:pageBlockSection columns="1">
+                <apex:pageblockSectionItem >
+                    First Invoice? <apex:inputCheckbox value="{!firstInvoice}" onchange="onChangefirstInvoiceJS()"/>
+                </apex:pageblockSectionItem>
+                <apex:outputField value="{!order.Name}" />               
+                <!-- The following 3 fields are used as a dummy to bind the values to the controller -->
+                <apex:inputField value="{!job.invoiceit_s__Service_Activation_Date__c}" label="Invoice Date"/>
+                <apex:outputField value="{!job.invoiceit_s__Service_End_Date__c}"  label="Cut Off Date" rendered="{!firstInvoice}"/> 
+                <apex:inputField value="{!job.invoiceit_s__Service_End_Date__c}"  label="Cut Off Date" rendered="{!!firstInvoice}"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                    <apex:actionStatus id="SaveButtonStatus">
+              <apex:facet name="stop">
+               <apex:outputPanel >
+                <apex:commandButton action="{!createAdhocInvoice}" value="Generate Invoice" reRender="messages,pb" status="SaveButtonStatus"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+               </apex:outputPanel>
+              </apex:facet>
+              <apex:facet name="start">
+               <apex:outputPanel >
+                <apex:commandButton value="Processing..." disabled="true" />
+                <apex:commandButton value="Processing..." disabled="true" />
+               </apex:outputPanel>
+              </apex:facet>
+             </apex:actionStatus>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

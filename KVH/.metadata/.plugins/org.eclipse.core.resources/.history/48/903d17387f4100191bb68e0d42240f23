@@ -1,0 +1,6 @@
+Name,RecordTypeID__c
+Platform_Vessel_Leisure,012a0000001Vz7nAAC
+Platform_Vehicle_Commercial_MIL_GOV,012a0000001Vz7kAAC
+Platform_Vehicle_Leisure_Auto_12Volt,012a0000001Vz7lAAC
+Platform_Vessel_Maritime,012a0000001Vz7oAAC
+Platform_Vehicle_Leisure_RV,012a0000001Vz7mAAC

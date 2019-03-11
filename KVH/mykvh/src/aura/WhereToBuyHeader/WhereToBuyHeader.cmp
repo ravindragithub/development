@@ -1,0 +1,29 @@
+<!--
+ - Created by jaichaturvedi on 14/09/17.
+ -->
+
+<aura:component description="WhereToBuyHeader" implements="forceCommunity:availableForAllPageTypes" access="global">
+
+    <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-small-size_1-of-1"
+         style="background-color: #b00;max-height: 60px;">
+
+        <div class="slds-small-size_1-of-2 slds-medium-size_1-of-4 slds-large-size_1-of-12"
+             style="background-color: #cc0000;border-right: 1px solid #f03838;width:200px;max-height: 60px;">
+            <div class="slds-grid_vertical-align-center slds-align--absolute-center" style="width:140px;max-height: 60px;">
+                <img src="{!$Resource.icons + '/KVHLogo.gif'}"
+                    style="width:140px" />
+            </div>
+        </div>
+        <div class="slds-small-size_1-of-2 slds-medium-size_1-of-4 slds-large-size_2-of-12">
+            <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-end slds-p-around_medium" style="max-height:60px">
+                <a href="http://www.kvh.com/"
+                   class="slds-button slds-button_destructive"
+                   style="background-color: #cc0000;max-height:60px">
+                    BACK TO KVH.COM
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</aura:component>

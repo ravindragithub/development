@@ -1,0 +1,946 @@
+<apex:page standardcontroller="ortoo_e2a__EmailMessage__c" extensions="ortoo_e2a.CentralEmailDetailExtension" id="page" action="{!Init}" standardStylesheets="true">
+<style>
+    .inputField
+    {
+        width: 80%;
+    }
+    .wrapText
+    {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+     
+    } 
+    .dont-break-out 
+    {
+
+    /* These are technically the same, but use both */
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+
+        -ms-word-break: break-all;
+        /* This is the dangerous one in WebKit, as it breaks things wherever */
+        word-break: break-all;
+        /* Instead use this non-standard one: */
+        word-break: break-word;
+
+        /* Adds a hyphen where the word breaks, if supported (No Blink) */
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+
+    }
+    .mce-colorbtn-trans div
+    {
+        display: none;
+    }
+    
+    .document tr:hover{
+        background-color: #e5c130;
+        color: #FFF;
+    }
+    
+    .selected {
+        background-color: #e5c130;
+        color: #FFF;
+    }
+    
+    body.mceEditor {
+		background: #234865;
+		color: #e7eff6;
+	}
+    
+</style>
+<apex:includeScript value="/support/console/33.0/integration.js"/>
+<script src="/soap/ajax/17.0/connection.js" type="text/javascript"></script>
+<script type="text/javascript">
+	
+    function init() 
+    {   
+        var editor_instance = document.getElementById('{!$Component.page.form.pb_view.emailInformationId.emailHtmlBodyId.HtmlBodyViewId}');
+        console.log(editor_instance);
+        console.log('test');
+        if(editor_instance != null)
+        {
+            if({!JSENCODE(HtmlBody) != null})
+            {       
+                editor_instance.innerHTML = tidyHtml('{!JSENCODE(HtmlBody)}');
+            }
+            addTargetToLink();
+        }
+        setTitle();
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        if(document.getElementById('{!$Component.page.form.thepb.pbs.pbSI_body.editor_panel}') != null)
+        document.getElementById('{!$Component.page.form.thepb.pbs.pbSI_body.editor_panel}').style.display='';
+        
+    } 
+    document.addEventListener('DOMContentLoaded', init, false);
+    function setTitle() {
+        console.log('setting title');
+        if (sforce.console.isInConsole())
+        {
+            sforce.console.setTabTitle('Email Details');
+        } 
+    }
+    
+    function addTargetToLink()
+    {
+      var anchors = document.getElementById('{!$Component.page.form.pb_view.emailInformationId.emailHtmlBodyId.HtmlBodyViewId}').getElementsByTagName('a');
+      for (var i=0; i<anchors.length; i++){
+        anchors[i].setAttribute('target', '_blank');
+      }
+    }    
+    
+    //Tidy Html
+    //I have call it on id HtmlBodyViewId by removing previous dynamic component
+    
+    function tidyHtml(html) 
+    {
+        var html = html.trim().replace(/>[^<]+</gm, function ($1) {
+            return '>' + $1.substr(1, $1.length - 2).trim() + '<';
+        }).replace(/>\s+</gm, '><');
+        var containerElement = document.createElement('div');
+        containerElement.innerHTML = html;
+        var result = containerElement.innerHTML;
+        
+        return result;
+    }
+    
+    
+</script> 
+<apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+<script type="text/javascript" src="{!URLFOR($Resource.tinymce,'tinymce/tinymce.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.Selectize,'Selectize/selectize.js')}"></script>
+<apex:stylesheet value="{!URLFOR($Resource.ortoo_e2a__Selectize,'Selectize/selectize.default.css')}" />
+<script type="text/javascript">
+    
+    function getExtension(path) {
+        var basename = path.split(/[\\/]/).pop(),  // extract file name from full path ...
+                                                   // (supports `\\` and `/` separators)
+            pos = basename.lastIndexOf(".");       // get last position of `.`
+    
+        if (basename === "" || pos < 1)            // if file name is empty or ...
+            return "";                             //  `.` not found (-1) or comes first (0)
+    
+        return basename.slice(pos + 1);            // extract extension ignoring `.`
+    }
+    
+    
+    function highlight(node) {
+        var table = document.getElementById('table')
+        selected = table.getElementsByClassName('selected');
+        if (selected[0]) selected[0].className = '';
+        node.parentNode.className = 'selected';
+    }
+    
+    var selected_image_src = '';
+    function selectImage(documnet_id)
+    {
+        selected_image_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + documnet_id.id + '&oid={!getOrgId}';
+        $("#preview_image").html('<img data-mce-selected="1" style="width: 100%;" src="' + selected_image_src + '" data-mce-selected="1" ><br data-mce-bogus="1">');
+        highlight(documnet_id);
+    }
+    
+    function loaded(evt) {
+            var filename = 'test';
+            var fileContent = String(evt.target.result);
+            fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+            uploadContentVersion(filename, fileContent,getExtension(filename));  
+        }
+
+        function errorHandler(evt) {
+            if (evt.target.error.name == 'NotReadableError') {
+                alert('File could not be read');
+            }
+            else {
+                alert(evt.target.error);
+            }
+        }
+    
+    function uploadContentVersion(filename, filecontent, type) {
+    
+    	client.getCurrentUserId(function (response){
+			console.log(response);
+			var document = {Name: filename , Body : filecontent , Type: type , Ispublic : true , FolderId : response};	
+		 	console.log(document);		
+			client.create('Document' , document , function (response){
+				console.log(response);
+				if(response.success)
+				{
+					console.log('success');
+					return response.id;
+				}
+				else
+				{
+					console.log('Record Creation Failed');
+					console.log(response.errors);
+				}
+				
+			});	   
+		});
+           
+    }
+    
+    var toolbar_items = "insertfile undo redo | fontselect | fontsizeselect | styleselect | forecolor backcolor | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link customimg";
+    var menu_bar = true;
+    
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true) {
+        
+        tinymce.init({
+            editor_selector : "mceEditor",
+            editor_deselector : "mceNoEditor",
+            mode: "textareas",
+            browser_spellcheck : true,
+            branding: false,
+            plugins: [
+            "textcolor",
+            "advlist anchor autolink autoresize charmap colorpicker hr image",
+            "lists link media nonbreaking searchreplace template",
+            "insertdatetime table paste"
+            ],
+            toolbar: toolbar_items,
+            menubar: menu_bar,
+            button_tile_map : true,
+            use_salesforce_proxy : "TRUE",
+            width : "775",
+            height : "500",
+            textcolor_map: [
+                "000000", "Black",
+                "993300", "Burnt orange",
+                "333300", "Dark olive",
+                "003300", "Dark green",
+                "003366", "Dark azure",
+                "000080", "Navy Blue",
+                "333399", "Indigo",
+                "333333", "Very dark gray",
+                "800000", "Maroon",
+                "FF6600", "Orange",
+                "808000", "Olive",
+                "008000", "Green",
+                "008080", "Teal",
+                "0000FF", "Blue",
+                "666699", "Grayish blue",
+                "808080", "Gray",
+                "FF0000", "Red",
+                "FF9900", "Amber",
+                "99CC00", "Yellow green",
+                "339966", "Sea green",
+                "33CCCC", "Turquoise",
+                "3366FF", "Royal blue",
+                "800080", "Purple",
+                "999999", "Medium gray",
+                "FF00FF", "Magenta",
+                "FFCC00", "Gold",
+                "FFFF00", "Yellow",
+                "00FF00", "Lime",
+                "00FFFF", "Aqua",
+                "00CCFF", "Sky blue",
+                "993366", "Red violet",
+                "FFFFFF", "White",
+                "FF99CC", "Pink",
+                "FFCC99", "Peach",
+                "FFFF99", "Light yellow",
+                "CCFFCC", "Pale green",
+                "CCFFFF", "Pale cyan",
+                "99CCFF", "Light sky blue",
+                "CC99FF", "Plum"
+              ],
+            // Theme options
+            theme_advanced_buttons1 : "fontselect,fontsizeselect,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,fullscreen",
+            theme_advanced_buttons2 : "pastetext,pasteword,selectall,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,code,|,forecolor,backcolor,|,spellchecker,|,print,|,help",
+            theme_advanced_buttons3 : "",
+            theme_advanced_buttons4 : "",
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "none",
+            theme_advanced_resizing : true,
+            setup: function(ed) {
+            
+            ed.addButton('customimg', {
+            title : 'Insert Inline Image',
+            icon: 'image',
+            stateSelector: "img:not([data-mce-object],[data-mce-placeholder])",
+            onclick : function() {
+                ed.windowManager.open({
+                    title: 'Insert Image',
+                    bodyType: 'tabpanel',
+                    body: [
+                            
+                            {
+                               id: 'upload_image_tab',
+                               title: 'Upload Image',
+                               type: "form",
+                               items: [
+                                   {type: 'textbox',id: 'file_upload', name: 'source', label: 'Source', class:'input', subtype: 'file'},
+                               ]
+                           },
+                           {
+                               title: 'Link Image',
+                               type: "form",
+                               items: [
+                                   { name: 'url', id:'image_url', type: 'textbox', label: 'Image URL' },
+                                   { name: 'desc', id:'image_desc', type: 'textbox', label: 'Image description' },
+                               ]
+                           },
+                           {
+                               id: 'document_tab',
+                               title: 'Documents',
+                               html: '<input type="hidden" value="0" id="theValue" />'+
+                                     '<div style="width: 50%;height: 140px;overflow-y: scroll;float:left;" >'+
+                                        '<table id="table" style="border-collapse: collapse;" >'+
+                                          '<thead><tr><th style="padding: 8px; text-align: center;border-bottom: 1px solid #ddd;font-size: large;">Document Name</th></tr></thead><tbody class="document">'+
+                                            '<apex:repeat value="{!documents}" var="doc" id="theRepeat">'+
+                                               '<tr ><td id="{!doc.Id}" onclick="selectImage(this);return false;" style="padding: 8px; text-align: left;border-bottom: 1px solid #ddd;">{!JSENCODE(doc.Name)}</td></tr>'+
+                                            '</apex:repeat>'+
+                                         '</tbody></table>'+
+                                     '</div>'+
+                                     '<div id="preview_image" style="float:left;width:50%;height: 100%;display: table-cell;vertical-align:middle;text-align:center;overflow-y: auto;"> <p style="margin-top: 33%;text-align:center;">Preview not Available</p></div>',
+                           },
+                                                   
+                    ],
+                    onsubmit: function(e) 
+                    {
+                      var is_upload_image_selecetd = $('[aria-controls="upload_image_tab"]').attr("aria-selected");// document.getElementById("upload_image_tab").selected;
+                      var is_documents_selected = $('[aria-controls="document_tab"]').attr("aria-selected");
+                      console.log('is_upload_image_selecetd :'+is_upload_image_selecetd);
+                      if(is_upload_image_selecetd == 'true')
+                      {
+                        var file = document.getElementById("file_upload").files[0];
+                        var reader = new FileReader();
+                           reader.onloadend = function()
+                           {
+                             var fileContent = String(reader.result);
+                             fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+                             
+                             client.getCurrentUserId(function (response){
+								var document = {Name: file.name , Body : fileContent , Type: getExtension(e.data.source) , Ispublic : true , FolderId : response};	
+							 	
+								client.create('Document' , document , function (response){
+									console.log(response);
+									if(response.success)
+									{
+										console.log('success');
+										var id = response.id;
+										
+										var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}'; 
+							             
+							            ed.selection.setContent('<div ><img data-mce-selected="1" src="' + custom_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+									}
+									else
+									{
+										console.log('Record Creation Failed');
+										console.log(response.errors);
+									}
+									
+								});	   
+							});
+                                     
+                           }
+                           reader.onerror = errorHandler;
+                           if(file)
+                           {
+                              reader.readAsDataURL(file);
+                           }
+                           
+                      }
+                      else if(is_documents_selected == 'true')
+                      {
+                          if(selected_image_src != '')
+                          {
+                            ed.selection.setContent('<div ><img data-mce-selected="1" src="' + selected_image_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+                          }
+                      }
+                      else
+                      {
+                        var custom_src = document.getElementById("image_url").value;
+                        var custom_desc = document.getElementById("image_desc").value;
+                        console.log('custom_src :'+custom_src);
+                        if(custom_src != '')
+                        {
+                            ed.selection.setContent('<div ><img data-mce-selected="1" alt="'+ custom_desc +'" src="' + custom_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+                        }                       
+                      }
+                                                
+                    }
+                });
+            }
+        });
+            
+            //Hyperlink will work on Coltrol key (Key Code is 17) pressed 
+            ed.on('keydown', function(e) {
+                 if (e.keyCode === 17) 
+                {
+                    var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        aTags[i].addEventListener('mouseover', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        aTags[i].addEventListener('mouseleave', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', true);
+                        });
+                    }
+                    
+                }
+                ed.on('keyup', function(e) {
+                if (e.keyCode === 17) 
+                {
+                   var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        var new_element = aTags[i].cloneNode(true);
+                        aTags[i].parentNode.replaceChild(new_element, aTags[i]);
+                    }
+                    tinymce.activeEditor.getBody().setAttribute('contenteditable', true); 
+                }
+                
+                var parent_ol = tinyMCE.activeEditor.selection.getNode().parentNode.parentNode.parentNode.nodeName;
+                var child_ol = tinyMCE.activeEditor.selection.getNode().parentNode.nodeName;
+                var child_node = tinyMCE.activeEditor.selection.getNode().parentNode;
+                
+                if(parent_ol == 'OL' && child_ol == 'OL' )
+                {
+                    var parent_ol_style = tinyMCE.activeEditor.selection.getNode().parentNode.parentNode.parentNode.style.cssText;
+                    if(parent_ol_style == '')
+                    {
+                        child_node.style.cssText = 'list-style-type: lower-alpha;';
+                    }
+                    else if(parent_ol_style == 'list-style-type: lower-alpha;')
+                    {
+                        child_node.style.cssText = 'list-style-type: lower-greek;';
+                    }
+                    else if(parent_ol_style == 'list-style-type: lower-greek;')
+                    {
+                        child_node.style.cssText = 'list-style-type: lower-roman;';
+                    }
+                    else if(parent_ol_style == 'list-style-type: lower-roman;')
+                    {
+                        child_node.style.cssText = '';
+                    }
+                    else
+                    {
+                        //checking one if at a time 
+                    }
+                }
+                
+            });
+            });
+        }
+        });
+        
+    }
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == false) {
+   
+        tinymce.init({
+            editor_deselector : "mceEditor",
+            editor_selector : "mceNoEditor",
+            mode: "textareas",
+            button_tile_map : true,
+            use_salesforce_proxy : "TRUE",
+            width : "775",
+            height : "500",
+            forced_root_block : false,
+            force_br_newlines : true,
+            force_p_newlines : false,
+            branding: false,
+            valid_elements: "br",
+            // Theme options
+            theme_advanced_buttons1 : "pastetext,selectall,|,search,replace,|,spellchecker,|,print,|,help",
+            theme_advanced_buttons2 : "",
+            theme_advanced_buttons3 : "",
+            theme_advanced_buttons4 : "",
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "none",
+            theme_advanced_resizing : true,
+            setup: function(ed) {
+            //Hyperlink will work on Coltrol key (Key Code is 17) pressed 
+            ed.on('keydown', function(e) {
+                 if (e.keyCode === 17) 
+                {
+                    var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        aTags[i].addEventListener('mouseover', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        aTags[i].addEventListener('mouseleave', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', true);
+                        });
+                    }
+                    
+                }
+                ed.on('keyup', function(e) {
+                if (e.keyCode === 17) 
+                {
+                   var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        var new_element = aTags[i].cloneNode(true);
+                        aTags[i].parentNode.replaceChild(new_element, aTags[i]);
+                    }
+                    tinymce.activeEditor.getBody().setAttribute('contenteditable', true); 
+                }
+            });
+            });
+        }
+        });
+        
+    }
+    
+    
+    
+    //Map for storing unique keys
+    var tag_map = new Object(); 
+    function isTagExist(k) {
+        return tag_map[k];
+    }
+    
+    $(document).ready(function() {
+         <apex:repeat value="{!tagObjectList}" var="e">
+            var key = '{!e.ortoo_e2a__Tag_Value__c}';
+            key = key.toLowerCase();
+            tag_map[key] = true;
+         </apex:repeat>
+         
+    $("#tags").selectize({
+       create: true,
+       plugins: ['remove_button'],
+       delimiter: '{!tagDelimiter}',
+       valueField: 'title',
+        labelField: 'title',
+        searchField: 'title',
+        options: [
+             <apex:repeat value="{!tagObjectList}" var="e">
+                        {
+                            title: '{!e.ortoo_e2a__Tag_Value__c}',
+                            color: '{!e.ortoo_e2a__Colour__c}'
+                            
+                        },
+             </apex:repeat>
+        ],
+       create: function(input) { 
+                        if(input.length > 20 || isTagExist(input.toLowerCase()))
+                        {
+                            alert('Tag can not contains more than 20 characters or Value already exist!');
+                            return null;
+                        }
+                        else
+                        {
+                            return {title:input};
+                        }
+                        },
+       onChange: function(value) {
+            
+            try
+              {
+               if(document.getElementById('page:form:thepb:informationBlock:tabSectionItem:hiddenTagValue') !=null)
+               {    
+                 document.getElementById('page:form:thepb:informationBlock:tabSectionItem:hiddenTagValue').value = document.getElementById('tags').value;
+               }
+              }
+              catch(e)
+              {
+                if(document.getElementById('page:form:pb_view:information:tagBlockSectionItem:hiddenTagValue') != null)
+                {
+                  document.getElementById('page:form:pb_view:information:tagBlockSectionItem:hiddenTagValue').value = document.getElementById('tags').value;
+                }
+              }
+               
+                return false;
+          },
+        onItemAdd: function (value, $item) {    
+        	console.log('On Item Add');
+        	console.log(value);
+        	console.log(value);
+            var data = this.options[value];
+            
+            if(data.color == undefined || data.color == null)
+            {
+              data.color= "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+            }
+            
+            if(isTagExist(data.title.toLowerCase()) == undefined || isTagExist(data.title.toLowerCase()) == null)
+            {
+                var key = data.title;
+                key = key.toLowerCase();
+                tag_map[key] = true;
+               
+            }
+            console.log(data.title+':'+data.color);
+            $('[data-value="'+value+'"]').css('background', data.color);
+           
+            saveTag(data.title,data.color);
+                       
+            
+    },
+     onItemRemove:function(value)
+     {
+         var data = this.options[value];
+         removeTag(data.title,data.color);
+     }
+      
+    })
+          
+    var selectize_tags = $("#tags")[0].selectize;
+    selectize_tags.clear();
+     <apex:repeat value="{!notPresentTagList}" var="e">
+      
+    </apex:repeat>
+
+     
+    <apex:repeat value="{!notPresentTagList}" var="e">
+        selectize_tags.addOption({
+                            title: '{!e.ortoo_e2a__Tag_Value__c}',
+                            color: '{!e.ortoo_e2a__Colour__c}'
+                            
+                        });
+        selectize_tags.addItem('{!e.ortoo_e2a__Tag_Value__c}');
+    </apex:repeat>
+    <apex:repeat value="{!presentTagList}" var="e">
+        selectize_tags.addOption({
+                            title: '{!e.ortoo_e2a__Tag_Value__c}',
+                            color: '{!e.ortoo_e2a__Colour__c}'
+                            
+                        });
+        selectize_tags.addItem('{!e.ortoo_e2a__Tag_Value__c}');
+    </apex:repeat>
+    
+});
+
+
+ function start()
+ {
+    $("#tags")[0].selectize.disable();  
+ }
+ 
+ function stop()
+ {
+    $("#tags")[0].selectize.enable();
+ }
+ function setFocusOnLoad() {}
+ 
+ function removeAllTags()
+ {
+    var selectize_tags = $("#tags")[0].selectize;
+    selectize_tags.clear();
+    
+    updateRecord();
+    
+ }
+</script>
+  
+<apex:sectionHeader title="e2a Email" subtitle="{!emaildetail.ortoo_e2a__Subject__c}"/>
+<apex:repeat value="{!objCustomLookup}" var="c">
+           
+               <apex:outputLink value="/{!c.ObjectId}">{!c.ObjectName}</apex:outputLink>
+               <br/>
+          
+</apex:repeat>
+<br/>
+<br/>
+<apex:pagemessages id="errorMessages" escape="false" />
+
+<apex:form id="form" >
+    <apex:actionStatus id="actStatusId" onStart="start();" onStop="stop();">
+    </apex:actionStatus>
+    <apex:actionfunction name="saveTag" action="{!saveTags}" immediate="true" reRender="errorMessages" status="actStatusId"> 
+                    <apex:param name="title" value=""/>
+                    <apex:param name="color" value=""/>
+     
+    </apex:actionfunction>
+    <apex:actionfunction name="updateRecord" action="{!clearAllTags}" immediate="true" reRender="errorMessages"  status="actStatusId">      
+    </apex:actionfunction>
+    <apex:actionfunction name="removeTag" action="{!removeTags}" immediate="true" reRender="errorMessages"  status="actStatusId"> 
+                    <apex:param name="title" value=""/>
+                    <apex:param name="color" value=""/>
+     
+    </apex:actionfunction>
+    <apex:pageBlock title="e2a Email Detail" rendered="{!editIsActive == false}" id="pb_view" >
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!goToPreviousRecord}" value="Previous" disabled="{!firstRecord}"/>
+            <apex:commandButton Value="Edit" action="{!EditButton}" rendered="{!EditIsAllowed}"/>
+            <apex:commandButton action="{!URLFOR($Action.EmailMessage__c.Delete, RecordId,[retURL=ParentId])}" Value="Delete" rendered="{!DeleteIsAllowed}"/>
+            <apex:commandButton action="{!Reply}" value="Reply"/>
+            <apex:commandButton action="{!ReplyAll}" value="Reply To All"/>
+            <apex:commandButton action="{!Forward}" value="Forward"/>
+            <apex:commandButton action="{!goToNextRecord}" value="Next" disabled="{!lastRecord}"/>
+            
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection id="information" title="Information" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Attachment"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Has_Attachment__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Owner"/>
+                <apex:outputPanel >
+                    <apex:outputLink value="/{!emaildetail.OwnerId}">{!emaildetail.Owner.Name}</apex:outputLink>&nbsp;
+                    <apex:outputLink value="/{!emaildetail.Id}%2Fa?retURL=/apex/ortoo_e2a__CentralEmailStorageDetailPage?id={!emaildetail.Id}">[Change]</apex:outputLink>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Importance"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Importance__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Message Date"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Message_Date__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Status"/>
+                <apex:outputPanel id="statusOutputPanel">
+                    <apex:outputField value="{!emaildetail.ortoo_e2a__Status__c}"/>&nbsp;
+                    <apex:commandLink action="{!changeEmailStatusToNew}" reRender="statusOutputPanel" rendered="{!enableChangeEmailStatusToNew}" status="actStatus" >[Mark as New]</apex:commandLink>
+                    <apex:actionStatus id="actStatus">
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Flag"/>
+                <apex:commandLink action="{!changeFlag}" rerender="flag">
+                <apex:variable var="imageVar" value="{!flagValue}"/>
+                <apex:image url="{!URLFOR($Resource.ortoo_e2a__Flag, imageVar)}" id="flag" />
+                </apex:commandLink>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Owner Object"/>
+                <apex:outputPanel >
+                    <apex:outputText value="{!OwnerObject}"/>&nbsp;
+                    <apex:outputLink value="/apex/ortoo_e2a__OwnerObjectChange?id={!emaildetail.Id}" rendered="{!ShowChangeOwner}">[Change]</apex:outputLink>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="{!ParentObjectName}"/>
+                <apex:outputPanel >
+                    <apex:outputLink value="/{!ParentId}">{!ParentName}</apex:outputLink>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" for="created_by"/>
+                    <apex:outputPanel >
+                        <apex:outputLink value="/{!emaildetail.CreatedById}">{!emaildetail.CreatedBy.Name}</apex:outputLink>,&nbsp;
+                        <apex:outputField value="{!emaildetail.CreatedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" for="modified_by"/>
+                    <apex:outputPanel >
+                        <apex:outputLink value="/{!emaildetail.LastModifiedById}">{!emaildetail.LastModifiedBy.Name}</apex:outputLink>,&nbsp;
+                        <apex:outputField value="{!emaildetail.LastModifiedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem id="tagBlockSectionItem">
+                    <apex:outputLabel value="Tags"/>
+                    <apex:outputPanel id="tagSettings" >    
+                        <input id="tags" type="text" />
+                        <apex:inputText value="{!emailTags}" id="hiddenTagValue"  style="display: none;"/>
+                        <apex:commandbutton value="Clear All Tags" onclick="removeAllTags();return false;"/>
+                   </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Other Related Objects" columns="2" collapsible="false">
+            <apex:repeat value="{!lookup_OUT}" var="lo">
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!lo.FieldLabel}"/>
+                    <apex:outputLink value="/{!lo.RecordId}">{!lo.RecordName}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Address Information" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Email Address"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Email_Address__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="From Address"/>
+                <apex:outputPanel >
+                    <apex:outputField value="{!emaildetail.ortoo_e2a__From_Address__c}" rendered="{!emaildetail.ortoo_e2a__From_Address__c != null}"/>
+                    <apex:outputText value="{!emaildetail.ortoo_e2a__New_From_Address__c}" rendered="{!AND(emaildetail.ortoo_e2a__From_Address__c == null,emaildetail.ortoo_e2a__New_From_Address__c!=null)}"/>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="From Name"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__From_Name__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="To Address"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__To_Address__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Cc Address"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Cc_Address__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Bcc Address"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Bcc_Address__c}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="emailInformationId" title="Email Information" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Subject"/>
+                <apex:outputField value="{!emaildetail.ortoo_e2a__Subject__c}"/>
+            </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem rendered="{!HtmlBody == null}" >
+                <apex:outputLabel value="Body"/>
+                <apex:outputText value="{!TextBody}" styleClass="wrapText dont-break-out"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="emailHtmlBodyId" rendered="{!HtmlBody != null}" >
+                <apex:outputLabel value="Body"/>
+                <apex:outputText id="HtmlBodyViewId" value="{!HtmlBodyValidated}" styleClass="wrapText dont-break-out"/>
+            </apex:pageBlockSectionItem>
+            <!-- <apex:pageBlockSectionItem id="pbSI_body">
+                <apex:outputLabel value="Body" for="email_body"/>
+                <apex:outputPanel id="editor_panel" layout="block" style="width:90%">
+                    <apex:inputTextarea id="email_body" styleClass="mceEditor" value="{!HtmlBodyOutput}" rows="15" cols="130" rendered="{!HtmlBody != null}"/>
+                    <apex:inputTextarea value="{!TextBodyOutput}" StyleClass="inputField" rendered="{!HtmlBody == null}" rows="8" readonly="true"/>              
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>-->
+            
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="e2a Email Edit" rendered="{!editIsActive == true}" id="thepb" >
+        <apex:pageBlockButtons >
+            <apex:commandbutton value="Save" action="{!SaveButton}"/>
+            <apex:commandbutton value="Cancel" action="{!CancelButton}"/>
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection id="informationBlock" title="Information" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Attachment"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Has_Attachment__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Owner"/>
+                <apex:outputText value="{!emaildetail.Owner.Name}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Importance"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Importance__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Message Date"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Message_Date__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Status"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Status__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!ParentFieldAPIName !=null}">
+                <apex:outputLabel value="Flag"/>
+                <apex:commandLink action="{!changeFlag}" rerender="flag1">
+                <apex:variable var="imageVar" value="{!flagValue}"/>
+                <apex:image url="{!URLFOR($Resource.ortoo_e2a__Flag, imageVar)}" id="flag1"/>
+                </apex:commandLink>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!ParentFieldAPIName !=null}">
+                <apex:outputLabel value="{!ParentObjectName}"/>
+                <!-- <apex:outputpanel >
+                    <apex:inputField value="{!emaildetail.Lead_Id__c}"  rendered="{!IF(ParentObjectName ='Lead' ,true,false)}"/>
+                    <apex:inputField value="{!emaildetail.Account_Id__c}"  rendered="{!IF(ParentObjectName ='Account' ,true,false)}"/>
+                    <apex:inputField value="{!emaildetail.Opportunity_Id__c}"  rendered="{!IF(ParentObjectName ='Opportunity' ,true,false)}"/>
+                </apex:outputpanel>-->
+                <apex:dynamicComponent componentValue="{!ParentLookup}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="tabSectionItem" >
+                <apex:outputLabel value="Tags"/>
+                <apex:outputPanel >    
+                    <input id="tags" type="text" />
+                    <apex:commandbutton value="Clear All Tags" onclick="removeAllTags();return false;"/>
+               </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:dynamicComponent componentValue="{!AdditionalLookups}"/>
+        
+        <apex:pageBlockSection title="Address Information" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Email Address"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Email_Address__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="From Address"/>
+                <apex:outputPanel >
+                    <apex:inputField value="{!emaildetail.ortoo_e2a__From_Address__c}" StyleClass="inputField" rendered="{!emaildetail.ortoo_e2a__From_Address__c != null}"/>
+                    <apex:inputField value="{!emaildetail.ortoo_e2a__New_From_Address__c}" StyleClass="inputField" rendered="{!AND(emaildetail.ortoo_e2a__From_Address__c == null,emaildetail.ortoo_e2a__New_From_Address__c!=null)}"/>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="From Name"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__From_Name__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="To Address"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__To_Address__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Cc Address"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Cc_Address__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Bcc Address"/>
+                <apex:inputField value="{!emaildetail.ortoo_e2a__Bcc_Address__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Email Information" columns="1" collapsible="false" id="pbs">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Subject"/>
+                <apex:inputText value="{!emaildetail.ortoo_e2a__Subject__c}" StyleClass="inputField"/>
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Email Format" for="html_switch"/>
+                <apex:outputText >{!CurrentMailFormat} [
+                    <apex:commandLink id="html_switch" action="{!SwitchMailFormat}" onclick="if (!switchMailAlert()) return false;">
+                    Switch to: {!SwitchToMailFormat}
+                    </apex:commandLink> 
+                ]
+                </apex:outputText>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="pbSI_body">
+                <apex:outputLabel value="Body" for="email_body"/>
+                <apex:outputPanel id="editor_panel" layout="block" style="width:90%">
+                    <apex:inputTextarea id="email_body" styleClass="mceEditor" value="{!HtmlBody}" rows="15" cols="130" rendered="{!ishtmlrender}"/>
+                    <apex:inputTextarea value="{!TextBody}" StyleClass="inputField" rendered="{!ishtmlrender == false}" rows="8"/>              
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>    
+    </apex:pageBlock>
+    
+</apex:form> 
+
+<apex:relatedList list="CombinedAttachments" rendered="{!editIsActive == false}"/>
+
+<script>
+
+   /*if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == false) 
+   {
+        document.getElementById('thePage:form:thePB:pbS:pbSI_body:email_body').className = 'ckeditorToNone';
+        var textarea_instance = document.getElementById('thePage:form:thePB:pbS:pbSI_body:email_body');
+        textarea_instance.value = textarea_instance.value.replace(/\n\s*\n/g, '\n');
+   }*/
+   function switchMailAlert()
+   {
+       if (!window.confirm('All changes will be removed.\n\nAre you sure?'))
+       {
+           return false;
+       }
+       else
+       {
+           return true;
+       }
+   }
+</script>
+</apex:page>

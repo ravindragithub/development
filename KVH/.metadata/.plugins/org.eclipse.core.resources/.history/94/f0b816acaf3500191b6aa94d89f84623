@@ -1,0 +1,9 @@
+.THIS .slds-form-element {
+    margin-bottom: 0;
+}
+.THIS .slds-wrap{
+    padding: 0 0 1rem 0;
+}
+.THIS p{
+    font-weight: 100;
+}

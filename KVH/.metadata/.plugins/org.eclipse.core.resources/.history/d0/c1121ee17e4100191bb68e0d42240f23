@@ -1,0 +1,28 @@
+<aura:component description="SalesKit.Component used to store the saleskit options.
+                Called from ProductSearchResult component to generate the sales kit options ">
+
+    <aura:attribute name="saleskit"
+                    type="Quick_Link__c"
+                    description="Used to store the single sales kit option"/>
+
+    <aura:registerEvent name="SalesKitQuickLink"
+                        type="c:QuickLinkEvent"
+                        description="Event used to send the selected sales kit option details to ProductSearchResult component."/>
+
+    <div class="slds-p-horizontal--small slds-p-bottom--small slds-size--1-of-3" >
+        <aura:if isTrue="{!v.saleskit.Sales_Tool_Kit_Label__c != null}">
+        <div class="slds-box">
+            <div class="slds-grid slds-grid--pull-padded-small slds-p-left_xx-large slds-size--7-of-8 ">
+                <div class="slds-p-left-small slds-size--1-of-2  ">
+                    <img src="{!v.saleskit.Image_URL__c}" 
+                         style="height:75px; "/>
+                </div>
+                <div class="slds-p-left--none slds-size--1-of-2">
+                    <a onclick="{!c.fireQuickLinkEvent}" >{!v.saleskit.Sales_Tool_Kit_Label__c}</a>
+                </div>
+            </div>
+        </div>
+            </aura:if>
+    </div>
+
+</aura:component>

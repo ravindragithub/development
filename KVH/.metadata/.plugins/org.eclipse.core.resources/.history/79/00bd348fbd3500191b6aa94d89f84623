@@ -1,0 +1,67 @@
+<apex:page standardStylesheets="false" sidebar="false" docType="html-5.0" controller="Act_Product_Registration_Controller" action="{!readActivationOrder}" >
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head> 
+            <link href="{!URLFOR($Resource.myKVHProductRegistration, 'css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVHProductRegistration, 'css/grid.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVHProductRegistration, 'css/styles.css')}" rel="stylesheet"/>
+        </head>
+        <style>
+            a:hover{
+            text-decoration: none;
+            color: #cc0000;
+            }
+            .button-white{
+            background: white;
+            color: #cc0000;
+            font-size: 11px;
+            }
+        </style>
+        <apex:form >
+            <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+                <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                    <!-- <apex:insert name="header">
+<c:myKVHSiteHeader />
+</apex:insert>  -->
+                <header>
+                <div class="width-100 header header-partner-portal">
+                <div class="bg-10 left simple-header" style="height:60px; padding:15px 20px;">
+                <img src="{!URLFOR($Resource.myKVHProductRegistration, 'images/logo_mykvh_white.png')}" class="width-100" style="max-width:130px;"/>
+                </div>
+                <h1 class="pad-15">Portal</h1>
+                </div>
+                </header>
+                                        
+                    <div class="width-80 white-bg pad-20" style="margin:30px auto;">
+                        <apex:outputPanel rendered="{!checkFlag == false}">
+                            <h1>Thanks for registering your product <apex:outputPanel rendered="{!$CurrentPage.parameters.onbehalf == 'true'}" layout="none"> on Behalf of Customer </apex:outputPanel> with KVH!</h1>
+                            <apex:outputPanel rendered="{!$CurrentPage.parameters.onbehalf != 'true'}" layout="none"><p> <br/>You can view this and any other products you may have registered at <a href="{!URLFOR($Page.Product_Registration_ListView)}">My Registered Products</a>. </p></apex:outputPanel>
+                            <p><apex:commandLink action="{!returnHome}" target="_parent" styleclass="button pad-top" value="Back to myKVH Home" style="color: white;"/></p>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel rendered="{!checkFlag == true}">
+                            <h1>
+                                Thank you! The registration has been successfully submitted to your customer.
+                            </h1>
+                            <div style="margin-top: 22px;">
+                                <p>
+                                    <a href="{!$Page.Activation_Product_Registration}?onbehalf=true&newProduct={!objActivationOrder.Id}" target="_parent" class="button button-white pad-bottom">
+                                        REGISTER ANOTHER PRODUCT FOR THE SAME CUSTOMER
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href="{!$Page.Activation_Product_Registration}?onbehalf=true" target="_parent" class="button button-white pad-bottom">
+                                        REGISTER ANOTHER PRODUCT
+                                    </a>
+                                </p>
+                                <p>
+                                    <apex:commandLink action="{!returnHome}" target="_parent" styleclass="button button-white pad-bottom" value="RETURN TO HOME"/>
+                                </p>
+                                
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+            </body>
+        </apex:form>
+    </html>
+</apex:page>

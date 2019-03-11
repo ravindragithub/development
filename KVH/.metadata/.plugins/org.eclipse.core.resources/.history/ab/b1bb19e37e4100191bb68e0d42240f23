@@ -1,0 +1,20 @@
+<aura:component >
+    
+    <aura:attribute name="accountObj" type="Object"/>
+    <aura:attribute name="arrowIcon" type="String" default="utility:chevrondown"/>
+    <aura:handler event="c:mykvh_MyRegisteredProductCollapsAllEvent" action="{!c.handleCollapseAllEvent}"  />
+    
+    <aura:if isTrue="{!v.accountObj.fleetAccountlist.length > 1}">
+        <div class="slds-grid slds-wrap slds-m-top_x-small">
+             <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12 accountheader slds-truncate" title="Account Name 1" >
+                 <lightning:buttonIcon iconName="{!v.arrowIcon}"  size="medium" variant="bare-inverse" onclick="{!c.toggelDetails}" />
+                 <span class="productNameText">{!v.accountObj.accountName}</span>
+             </div>                     
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.arrowIcon == 'utility:chevrondown'}">
+        <aura:iteration items="{!v.accountObj.fleetAccountlist}" var="fleetObj">
+            <c:mykvh_MyRegisteredProductsFleetCmp fleetObj="{!fleetObj}" />
+        </aura:iteration>   
+    </aura:if> 
+</aura:component>

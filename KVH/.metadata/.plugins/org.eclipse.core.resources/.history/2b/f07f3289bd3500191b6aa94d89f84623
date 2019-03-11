@@ -1,0 +1,277 @@
+<apex:component allowDML="true" controller="Act_Dealer_component_controller">
+    
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Dealer detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <style>
+        .ui-menu-item th{
+        background-color: #30445b; 
+        color           : white;
+        padding-left    : 10px;
+        padding-right   : 10px;
+        
+        height			: 30px;
+        text-align		: left;
+        }
+        .ui-menu-item td{
+        background-color: white; 
+        color			: black;
+        padding-left	: 10px;
+        padding-right	: 10px;
+        
+        }
+        .ui-menu-item  tr:hover td{
+        background-color: #e3f3ff; 
+        color			: black;
+        padding-left	: 10px;
+        padding-right	: 10px;
+        }
+        .ui-menu-item{
+        background-color: #f3f3f3;
+        width			: 100%;
+        }
+    </style>  
+    
+    <script>
+    var projectsTemp = [];
+    function temprun(projectsTemp){
+        
+            j$("[id$=dealerCompanyName]").autocomplete({
+                minLength: 6,
+                source: projectsTemp,
+                focus: function( event, ui ) {
+                    if(ui != undefined && ui.item != undefined  && ui != 'undefined' && ui.item != 'undefined' ){
+                        j$("[id$=dealerCompanyName]").val( ui.item.value );
+                        j$("[id$=ppnumber]").val( ui.item.Phone );
+                        j$("[id$=DealerDistributorCompany]").val( ui.item.Id );
+                    }
+                    return false;
+                }//you can write for select too
+                /*select:*/
+            });
+            
+            //overriding jquery-ui.autocomplete .js functions
+              j$.ui.autocomplete.prototype._renderMenu = function(ul, items) {
+                var self = this;
+                //table definitions
+                ul.append("<table class='ui-menu-item'><thead><tr><th>NAME</th><th>CITY</th><th>STATE</th><th>COUNTRY</th></tr></thead><tbody></tbody></table>");
+                j$.each( items, function( index, item ) {
+                    self._renderItemData(ul, ul.find("table tbody"), item );
+                });
+            };
+            j$.ui.autocomplete.prototype._renderItemData = function(ul,table, item) {
+                return this._renderItem( table, item ).data( "ui-autocomplete-item", item );
+            };
+            j$.ui.autocomplete.prototype._renderItem = function(table, item) {
+                return j$( "<tr class='ui-menu-item' role='presentation'></tr>" )
+                //.data( "item.autocomplete", item )
+                .append( "<td >"+item.value+"</td>"+"<td>"+item.BillingCity+"</td>"+"<td>"+item.BillingState+"</td>"+"<td>"+item.BillingCountry+"</td>" )
+                .appendTo( table );
+            };
+    }
+    
+    
+    function tempfun() {
+        var tempvalidate = j$("[id$=dealerCompanyName]").val();
+        //console.log(tempvalidate.length);
+        if(tempvalidate != '' && tempvalidate.length >= 5){
+            //console.log(tempvalidate.length);
+            projectsTemp = [];
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.Act_Dealer_component_controller.getAccountData}', tempvalidate ,
+                function(result, event){
+                    projectsTemp = [];
+                    if (event.status) {
+                        for(var i=0; i<result.length; i++) {
+                            var tempMap = {};
+                            tempMap.value = result[i].Name != undefined ?  result[i].Name : '';
+                            tempMap.BillingCity = result[i].BillingCity != undefined ?  result[i].BillingCity : '';
+                            tempMap.BillingState = result[i].BillingState != undefined ?  result[i].BillingState : '';
+                            tempMap.BillingCountry = result[i].BillingCountry != undefined ?  result[i].BillingCountry : '';
+                            tempMap.Phone = result[i].Phone != undefined ?  result[i].Phone : '';
+                            tempMap.Id = result[i].Id != undefined ?  result[i].Id : '';
+                            projectsTemp.push(tempMap); 
+                        } 
+                    }
+                    //console.log(projectsTemp);
+                    temprun(projectsTemp);
+                }, 
+                {escape: true}
+            );
+        }
+    }
+        
+        <!-- Method Called from Dealer component to disable/enable fields - Start -->
+            function calldisabledealer(param){
+                var currentcomp = j$("[id$="+param+"]");
+                j$(currentcomp).find("[id$=globalErrorBOX]").hide();
+                
+                if(j$(currentcomp).find("[id$='dealerchk']").is(':checked') || {!isMainContact} == true){
+                    j$(currentcomp).find("input[type='radio'][name$='PPT']").attr("disabled","disabled");
+                    j$(currentcomp).find("input[type='radio'][name$='SPT']").attr("disabled","disabled");
+                    j$(currentcomp).find('.diabledealerClass').attr('disabled','disabled');
+                    j$(currentcomp).find('.diabledealerClass').removeClass('requiredRedMarkFld').removeClass('error').removeClass('selecterror');
+                    j$(currentcomp).find('.req').addClass('nreq').removeClass('req'); 
+                    j$(currentcomp).find('label.error').remove();
+                    if({!isMainContact} != true)
+                    j$(currentcomp).find("[id$='email']").val('');
+                    else
+                    j$(currentcomp).find('.diabledealerClass:not([id$="PPT"],[id$="SPT"])').css('background-color','#f1f1f1');
+                }
+                else{
+                    j$(currentcomp).find('.diabledealerClass').removeAttr('disabled');
+                    j$(currentcomp).find('.nreq').addClass('req').removeClass('nreq'); 
+                    j$(currentcomp).find("input[type='radio'][name$='PPT']").removeAttr('disabled');
+                    j$(currentcomp).find("input[type='radio'][name$='SPT']").removeAttr('disabled');
+                    j$(currentcomp).find('.diabledealerClass').each(function(){
+                        if(j$(this).parent().find('.req').length == 1){
+                            j$(this).addClass('requiredRedMarkFld');
+                        }
+                    });
+                }
+            }
+        <!-- Method Called from Dealer component to disable/enable fields - End -->
+            
+            function checkboxcheck(param){
+                var currentcomp = j$("[id$="+param+"]");
+                if(!(j$(currentcomp).find("[id$='dealerchk']").is(':checked'))){
+                    validateError(param,param1); 
+                }else{
+                    showLoadingDiv();
+                    callDealerSave('Billing_Information');
+                }
+            }
+        
+        j$(function() {
+            var currentcomp = j$("[id$='{!parentContainer}']");
+            j$(currentcomp).find("input[type='radio'][name$='PPT']").next("label")[0].remove();
+            j$(currentcomp).find("input[type='radio'][name$='PPT']")[0].remove();
+            calldisabledealer('{!parentContainer}');
+            if('{!Dealer.Id}' !=null && '{!Dealer.Id}' != ''){
+                j$("[id$='dealerchk']").attr('disabled','disabled');
+            }
+        });
+        </script>
+    <apex:inputHidden value="{!Dealer.Dealer_Distributor_Company__c}" id="DealerDistributorCompany"/>
+    <!--  Dealer/Distributor Information Please provide information about the system Dealer/Distributor. -->
+    <h2 class="mainTitle">Dealer/Distributor Information</h2>
+    <p>Please provide information about the Dealer/Distributor of the installation system.</p>
+    
+    <!--** div contain error msg contents -Start **-->
+    <div class="kvh-show-errormsg-here">
+    </div>
+    <!--** div contain error msg contents -End **-->  
+    <apex:outputPanel rendered="{!ActOrd.Activation_Type__c != 'Activation on behalf of Customer'}">
+    <div class="box-content"> 
+        <label><apex:inputcheckbox id="dealerchk" value="{!ActOrd.Don_t_have_Dealer__c}" onchange="calldisabledealer('{!parentContainer}');" tabIndex="1" html-data-role="none"/>
+            I don't have a Dealer/Distributor for this system</label>
+    </div>
+    </apex:outputPanel>    
+    <div class="validator">
+        <div>
+            <div class="left two-col"  style="margin-bottom: 0px !important;">
+                <div class="box-content">
+                    <p><label>Dealer/Distributor Company Name: <span class="req"></span><!--<span class="notes">(if applicable)</span> --></label>
+                        <apex:inputField value="{!Dealer.Company__c}" onkeyup="tempfun();"  id="dealerCompanyName" styleClass="diabledealerClass" html-tabIndex="2" html-data-role="none"/></p>
+                </div>
+            </div>
+            <div class="right two-col"  style="margin-bottom: 0px !important;">
+                <div class="box-content">
+                    <div class="phone-types">
+                        <label >Company Phone Number:<span class="req"></span></label>
+                        <apex:selectRadio value="{!Dealer.Phone_Type__c}" Id="PPT" styleClass="diabledealerClass" tabIndex="3" html-data-role="none">
+                            <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                        </apex:selectRadio>
+                        <apex:inputField value="{!Dealer.Dealer_Phone__c}" styleClass="diabledealerClass" id="ppnumber" html-tabIndex="4" html-data-role="none"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button-bar clear"></div>
+        <div class="clear" style="margin-top: 10px;">
+            <h3 style="margin-right: 5px;">Dealer/Distributor Main Contact</h3>
+        </div>  
+        <div class="left two-col">
+            <div class="box-content">
+                <p>
+                    <span class="left" style="width:20%;">
+                        <label>Salutation:</label>
+                        <apex:inputField id="salutation" value="{!Dealer.Contact_Salutation__c }" styleClass="diabledealerClass" html-tabIndex="5" html-data-role="none"/>
+                    </span>
+                    <span class="right" style="width:75%;">
+                        <label>First/Given Name:<span class="req"></span></label>
+                        <apex:inputField value="{!Dealer.Contact_First_Name__c}" styleClass="diabledealerClass"  id="firstname" html-tabIndex="6" html-data-role="none"/>
+                    </span>
+                </p>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Contact Email:<span class="req"></span></label>
+                    <apex:inputField value="{!Dealer.Contact_Email__c}" styleClass="email diabledealerClass" id="email" html-tabIndex="8" html-data-role="none"/>
+                </p>
+                <p class="Country"><label>Country: </label><span class="req"></span>
+                    <apex:actionRegion >
+                        <apex:selectList id="country" tabindex="11" value="{!Dealer.Country__c}" multiselect="false"  size="1" styleClass="diabledealerClass" html-data-role="none">
+                            <apex:actionSupport action="{!componentCountryChangeHandlerBilling}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();"/>
+                            <apex:selectOptions value="{!CountriesListBillInfo}" html-data-role="none"/>
+                        </apex:selectList>
+                    </apex:actionRegion>
+                </p>
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                <p>
+                    <label>Last/Family Name/Surname:<span class="req"></span></label>
+                    <apex:inputField value="{!Dealer.Contact_Last_Name__c}"  styleClass="diabledealerClass" id="lastname" html-tabIndex="7" html-data-role="none"/>
+                </p>
+                <div class="phone-types" >
+                    <label >Contact Phone Number:</label>
+                    <apex:selectRadio layout="lineDirection" value="{!Dealer.Primary_Phone_Type__c}" Id="SPT" styleClass="diabledealerClass" tabIndex="9" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField id="spnumber" value="{!Dealer.Contact_Phone__c}" styleClass="diabledealerClass" html-tabIndex="10" html-data-role="none"/>
+                    <div class="clear" style="padding-bottom:20px;"></div>
+                </div>
+                <p class="state"><label>State/Province/Territory: </label>
+                    <apex:selectList id="State_Province__c" tabindex="12" value="{!Dealer.State__c}" multiselect="false" size="1" styleClass="{!IF(StatesListBillInfo.size>1,'requiredRedMarkFld diabledealerClass','diabledealerClass')}" html-data-role="none">
+                        <apex:actionSupport action="{!componentStateChangeHandlerBilling}" event="onchange" reRender="State_Province__c">
+                            <apex:param value="{!Dealer.State__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesListBillInfo}" html-data-role="none"/>
+                    </apex:selectList>
+                </p>
+            </div>
+        </div>
+        
+        <div class="button-bar clear">
+            <apex:commandLink styleClass="button left" value="< Back" action="{!gototab}" onclick="showLoadingDiv();" immediate="true">
+                <apex:param value="Antenna_System_Support_Contact" assignTo="{!selectedTab}" />
+            </apex:commandLink>
+            <apex:commandLink styleClass="button right" value="Continue to System >" onclick="validateError('{!parentContainer}',true); return false;">
+            </apex:commandLink>
+        </div>
+    </div> 
+    
+    <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateError('{!parentContainer}',false); return false;"/> 
+    <!-- ** remodal popup Start ** -->
+    
+    <div data-role="popup" id="Insttype" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+        </div>
+        <div role="main" class="ui-content center">
+            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+            <div class="center">
+                <apex:commandLink styleClass="button remodal-cancel" value="Yes" action="{!SaveSaveAndExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();" /> 
+                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+            </div>
+        </div>
+    </div>
+    
+    <apex:actionFunction name="callDealerSave" action="{!Save}" rerender="dealercomponent" oncomplete="hideLoadingDiv();">
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+</apex:component>

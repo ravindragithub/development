@@ -1,0 +1,26 @@
+<aura:component description="CustomProductSearchLayout.
+                            Used to display product search page.
+                            Standard page layouts cannot used because of different layout properties."
+                implements="forceCommunity:layout">
+
+    <aura:attribute name="header" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c1" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c2" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="sFooter" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="miniheight" type="string" access="global"/>
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+
+    <div class="slds">
+        <div class="slds-grid slds-wrap  customProdKVH">
+            <div style="width:100%">{!v.header}</div>
+        </div>
+        <div class="slds-grid slds-wrap" style="{!'background-color:#f5f5f5; min-height:'+v.miniheight}">
+            <div class="slds-size--1-of-1 slds-medium-size--2-of-8" style="{!'min-height:'+v.miniheight}">{!v.s1c1}</div>
+            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--6-of-8" style="{!'padding: 0 0 0 30px; background-color:#ffffff; min-height:'+v.miniheight}">{!v.s1c2}</div>
+        </div>
+
+        <div class="slds-grid slds-wrap ">
+            <div class="">{!v.sFooter}</div>
+        </div>
+    </div>
+</aura:component>

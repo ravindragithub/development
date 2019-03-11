@@ -1,0 +1,432 @@
+<apex:page controller="myKVH_add_new_User_ctrlEXT" standardStylesheets="false"  sidebar="false"  cache="false" tabStyle="myKVH_Users__tab">
+
+<head>
+	<link href="{!URLFOR($Resource.jquery_tablesorter, 'themes/blue/style.css')}" rel="stylesheet"/>
+
+	<!-- Load jQuery, use minimized lib-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<!-- Handle jQuery conflicts (e.g. "$") -->
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+	</script>
+	<!-- Load jQuery plug-ins, use minimized libs -->
+	<script src="{!URLFOR($Resource.jquery_tablesorter, 'jquery.tablesorter.min.js')}" type="text/javascript"></script>
+	<!-- Library for Modal windows.... -->
+	<apex:stylesheet value="{!URLFOR($Resource.myKVH_Users2)}" />
+</head>
+
+<style>
+	/*Need to access Static resources in style block....*/
+	table.myKVHtablesorter thead tr .header {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}bg.gif);
+	}
+	table.myKVHtablesorter thead tr .headerSortUp {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}asc.gif);
+	}
+	table.myKVHtablesorter thead tr .headerSortDown {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}desc.gif);
+	}
+</style>
+
+<!-- Generally speaking, use apex:outputPanels to control rendering/re-rendering,
+	 use Div tags to control CSS styling                                           -->
+	<apex:Form id="theForm" html-name="theFormName"> 
+		<apex:inputHidden id="hiddenAcctId" value="{!fleetId}" />
+		<apex:inputHidden id="hiddenAcctName" value="{!fleetName}" />
+		<apex:inputHidden id="selectedContact" value="{!contactId}" />
+<!-- 		{!state} -->
+		<apex:pageMessages />
+			<!-- Search Users and Contact for Email address -->
+			<apex:outputPanel id="state1Block" rendered="{!IF(state = 1, 'true', 'false')}">
+				<div class="box-content">
+					<div >
+						<h1>Create myKVH User ID</h1>
+						<ul>
+							<li>myKVH requires an active, unique, individual email address for each user.</li>
+							<li>All activity in myKVH is logged by username/email address </li>
+							<li>Please avoid making users based on lists or group emails.</li>
+						</ul>
+					</div>
+					
+					<p><label>Email:<span class="req">*</span></label>
+						<apex:inputText value="{!myKVHContact.Email__c}" id="emailInput" /></p>
+					<apex:outputPanel rendered="{!searchCompleted}">
+						<p><label>Number of Contacts Found: </label>
+							<apex:outputText value="{!foundContacts.size}" id="found_contacts"/></p>
+						<p><label >Number of Users Found: </label>
+							<apex:outputText value="{!foundUsers.size}" id="found_users"/></p>
+					</apex:outputPanel>
+					
+					<apex:outputPanel layout="block" styleClass="center">
+						<apex:commandButton action="{!resetPage}" value="Start Again" rendered="{!searchCompleted}" immediate="true" />
+						<apex:commandButton action="{!searchUsers}" id="search" value="Search" status="load-state-2" rerender="theForm" rendered="{! !searchCompleted}"/>
+						<apex:commandButton action="{!next}" id="search2" value="Next" rerender="theForm"  rendered="{!IF(searchCompleted = true && hasErrors = false, 'true', 'false')}"/>
+					</apex:outputPanel>
+					<div class="required"><span class="req" style="font-size: 1.1em; font-weight: bold;">*</span> indicates required field</div>
+				</div>
+			</apex:outputPanel>
+			
+		<apex:actionStatus id="load-state-2"  onstop="state2();"/> <!-- Once we render the table, invoke the tablesorter javascript -->
+		<apex:actionFunction name="selectCont" action="{!contactSelected}" reRender="next2Button"/>
+		
+		<!-- Contacts but not Users, found. maybe more than one -->
+		<apex:outputPanel layout="block" id="state2Block" rendered="{!IF(state = 2, 'true', 'false')}">
+			<div class="box-content" width="480px" align="center">
+			<h1>Found {!foundContacts.size} Contact{!IF(foundContacts.size > 1, 's', '')}</h1>
+			<apex:outputPanel layout="block">
+					<apex:outputText value="Please select a single Contact to add as a new myKVH User."/>
+			</apex:outputPanel>
+			</div>
+			<div align="center" draggable="false">
+			<apex:dataTable value="{!foundContacts}" var="CD" rules="all" cellpadding="2%" id="table" styleClass="myKVHtablesorter">
+				<!-- Columns start here... -->
+				<apex:column >
+<!-- 					<apex:facet name="header">Contact Name:&nbsp;</apex:facet> -->
+					<input type="radio" name="cRadio" id="cRadio" value="{!CD.id}" onchange="setSelectedContact('{!CD.id}'); setFleetRelation('{!CD.accountid}')" />
+<!-- 					<span> {!CD.Name} </span> -->
+				</apex:column>
+				<apex:column > <!-- style="text-align:right" headerClass="clsRight" --> 
+					<apex:facet name="header">First<br/>Name&nbsp;</apex:facet>
+					<apex:outputText id="firstName" value="{!CD.FirstName}"/>&nbsp;<br/>
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Last<br/>Name&nbsp;</apex:facet>
+					<apex:outputText id="lastName" value="{!CD.LastName}"/>&nbsp;<br/>
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Email:&nbsp;</apex:facet>
+					<apex:outputText id="tableEmail" value="{!CD.Email}"/>&nbsp;
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Phone:&nbsp;</apex:facet>
+					<apex:outputText id="tablePhone" value="{!CD.Phone}"/>&nbsp;
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Fleet or Vessel:&nbsp;</apex:facet>
+					<apex:outputText id="tableAcctName" value="{!CD.Account.Name}"/>&nbsp;
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Mobile:&nbsp;</apex:facet>
+					<apex:outputText id="tableMobile" value="{!CD.MobilePhone}"/>&nbsp;
+				</apex:column>
+				
+			</apex:dataTable>
+			
+			</div>
+<!-- 		Show a read only hierarchy.... -->
+			<div class="box-content" id="reviewHierarchy" rendered="{!IF(myKVHHierarchy.size > 1, 'true', 'false')}"> 
+			<h1>Review Fleet Hierarchy</h1>
+				<apex:outputPanel layout="block">
+					<apex:outputText value="This will be the new User's location in the Fleet Hierarchy which controls what Vessels they can see in myKVH Fleet!"/><br/>
+					<apex:outputText value="If visibility into a different Fleet is desired, please contact myKVH Support."/>
+				</apex:outputPanel>
+				<hr/>
+				<div class="treeNode" style="white-space: nowrap;">
+					<apex:repeat value="{!myKVHHierarchy}" var="pos" >
+						<apex:repeat value="{!pos.levelFlag}" var="flag" first="0">
+							<apex:image url="/img/tree/empty.gif" height="16" width="20" rendered="{!IF(flag,false,true)}"/>
+							<apex:image url="/s.gif" alt="" width="3" height="16" rendered="{!IF(flag,true,false)}"/>
+							<apex:image url="/img/tree/chain.gif" height="16" width="20" rendered="{!IF(flag,true,false)}"/>
+						</apex:repeat>
+					
+						<span height="16" v="top">
+							<apex:outputText rendered="{!IF(pos.nodeType=='start',true,false)}">
+								<apex:image id="tree_start" url="/s.gif" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+							</apex:outputText>
+							<apex:outputText rendered="{!IF(OR(pos.nodeType=='parent',pos.nodeType=='parent_end'),true,false)}">
+								<apex:image id="Tree_parent" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='parent',true,false)}" height="16" width="20" title="Click minus.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+								<apex:image id="Tree_parent_end" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='parent_end',true,false)}" height="16" width="20"/>				
+							</apex:outputText>
+							<apex:outputText rendered="{!IF(OR(pos.nodeType=='child',pos.nodeType=='child_end'),true,false)}">
+								<apex:image id="Tree_child" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='child',true,false)}" height="16" width="20" title="Click node.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+								<apex:image id="Tree_child_current" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='child_end',true,false)}" height="16" width="20" title="Click nodeEnd.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+							</apex:outputText>
+							<apex:outputText rendered="{!IF(pos.nodeType=='end',true,false)}">
+								<apex:image id="Tree_end" url="/img/tree/nodeEnd.gif" height="16" width="20"/>&nbsp;
+							</apex:outputText>
+							<!-- Change Below -->
+							<!-- Changed for Revision 1 and 2 "Assets" -->
+							<!-- Display the sequence number first (if there is one!) -->
+	<!-- 						<input type="radio" name="selectRadio" id="radio" onchange="callCheckBox(this,'{!pos.asset.id}','{!pos.nodeType}','{!pos.asset.Name}'); return false;" value="{!pos.asset.id}"/>  -->
+							<input type="radio" name="hRadio" disabled="true" id="{!pos.account.id}" value="{!pos.account.id}"><span> {!pos.account.Name} </span></input>
+							<!-- Stop -->
+						</span>
+						<div> </div>
+						<apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),false,true)}">
+							<div id='{!pos.nodeId}'></div>
+						</apex:outputText>
+						<apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),true,false)}">
+							<div id='{!pos.nodeId}'><apex:image url="/s.gif" alt="" width="1" height="1"/></div>
+						</apex:outputText>
+						<apex:repeat value="{!pos.closeFlag}" var="close"></apex:repeat>	
+					</apex:repeat>
+					
+				</div>
+
+				<apex:outputPanel layout="block" styleClass="center" >
+					<apex:commandButton action="{!prev}" value="Previous" rerender="theForm" styleClass="left"/>
+					<apex:commandButton id="next2Button" action="{!createUserFromContact}" value="Create User" disabled="{!next2Disabled}" styleClass="right"/>
+				</apex:outputPanel>
+			</div>
+		</apex:outputPanel>
+		
+<!-- 		<apex:actionFunction name="validate" action="{!validateInputs}" reRender="createUser, success"/> -->
+		
+		<apex:actionStatus id="load-state-1"  onstop="state1();"/>
+		<!-- Collect Contact Details if no Contacts found.... -->
+		<apex:outputPanel id="state3Block" rendered="{!IF(state = 3, 'true', 'false')}"  >
+				<div class="box-content" width="480px">
+					<div class="center">
+						<h1>Edit User</h1>
+					</div>
+					<p><label>Email:<span class="req">*</span></label>
+						<apex:outputField value="{!myKVHContact.Email__c}"/></p>
+					<p><label>First Name:<span class="req">*</span></label>
+						<apex:inputField id="firstName" value="{!myKVHContact.First_Name__c}" onkeyup="validateNames();"/></p>
+					<p><label>Last Name:<span class="req">*</span></label>
+						<apex:inputField id="lastName" value="{!myKVHContact.Last_Name__c}" onkeyup="validateNames();"/></p>
+					<p><label>Mobile:&nbsp;</label>
+							<apex:inputField value="{!myKVHContact.Mobile__c}"/></p>
+					<p><label>Phone:&nbsp;</label>
+						<apex:inputField value="{!myKVHContact.Phone__c}"/></p>
+					<p><label>Network Notifications Type:&nbsp;</label>
+						<apex:inputField value="{!myKVHContact.Network_Outage_Type__c}"/></p>
+					
+					<p><label>Country:<span class="req">*</span></label>
+	                        <apex:selectList value="{!myKVHContact.Country__c}" multiselect="false" id="country" size="1"  > 
+	                            <apex:actionSupport event="onchange" action="{!componentCountryChangeHandler}" rerender="State_Province__c" />
+	                            <apex:selectOptions value="{!CountriesList}"/>
+	                        </apex:selectList>
+	                </p>
+					
+					<p>
+	                    <label>State/Province/Territory:&nbsp;</label>
+	                    <apex:selectList value="{!myKVHContact.State_Province__c}" multiselect="false" id="State_Province__c" size="1"   >
+	                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="State_Province__c">
+	                            <apex:param value="{!myKVHContact.State_Province__c}" assignTo="{!dummy}"/> 
+	                        </apex:actionSupport>
+	                        <apex:selectOptions value="{!StatesList}"/>
+	                    </apex:selectList>  
+	                </p>
+					
+<!-- 					<p><label>Receive Network Service Notifications:&nbsp;</label> -->
+<!-- 						<apex:inputField value="{!myKVHContact.Receive_Network_Service_Notifications__c}"/></p> -->
+					<p><label>Job Function:&nbsp;</label>
+						<apex:inputField value="{!myKVHContact.Job_Function__c}"/></p>
+					<apex:outputPanel layout="block" id="state3buttons" styleClass="center">
+						<apex:commandButton action="{!prev}" value="Previous" status="load-state-1" rerender="theForm" immediate="true" styleClass="left"/>
+						<apex:commandButton action="{!next}" id="names" value="Next" status="load-state-4" rerender="theForm" styleClass="right"/>
+					</apex:outputPanel>
+					<br/><br/><br/><div class="required"><span class="req" style="font-size: 1.1em; font-weight: bold;">*</span> indicates required field</div>
+				</div>
+		</apex:outputPanel>
+		<apex:actionStatus id="load-state-4"  onstop="state4();"/>
+		
+		<!-- Select Fleet hierarchy (if there is more than one visible account... -->
+		<apex:outputPanel layout="block" id="state4Block" rendered="{!IF(state = 4, 'true', 'false')}">
+		<div class="box-content" >
+			<h1>Select Fleet Hierarchy</h1>
+			<div>
+				<apex:outputText value="Select the new User's location in the Fleet Hierarchy. This controls what Vessels they can see in myKVH Fleet! Choose Wisely!"/>
+			</div>
+			<hr/>
+			<div class="treeNode" style="white-space: nowrap;">
+				<apex:repeat value="{!myKVHHierarchy}" var="pos" >
+					<apex:repeat value="{!pos.levelFlag}" var="flag" first="0">
+						<apex:image url="/img/tree/empty.gif" height="16" width="20" rendered="{!IF(flag,false,true)}"/>
+						<apex:image url="/s.gif" alt="" width="3" height="16" rendered="{!IF(flag,true,false)}"/>
+						<apex:image url="/img/tree/chain.gif" height="16" width="20" rendered="{!IF(flag,true,false)}"/>
+					</apex:repeat>
+				
+					<span height="16" v="top">
+						<apex:outputText rendered="{!IF(pos.nodeType=='start',true,false)}">
+							<apex:image id="tree_start" url="/s.gif" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+						</apex:outputText>
+						<apex:outputText rendered="{!IF(OR(pos.nodeType=='parent',pos.nodeType=='parent_end'),true,false)}">
+							<apex:image id="Tree_parent" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='parent',true,false)}" height="16" width="20" title="Click minus.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+							<apex:image id="Tree_parent_end" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='parent_end',true,false)}" height="16" width="20"/>				
+						</apex:outputText>
+						<apex:outputText rendered="{!IF(OR(pos.nodeType=='child',pos.nodeType=='child_end'),true,false)}">
+							<apex:image id="Tree_child" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='child',true,false)}" height="16" width="20" title="Click node.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+							<apex:image id="Tree_child_current" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='child_end',true,false)}" height="16" width="20" title="Click nodeEnd.gif to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+						</apex:outputText>
+						<apex:outputText rendered="{!IF(pos.nodeType=='end',true,false)}">
+							<apex:image id="Tree_end" url="/img/tree/nodeEnd.gif" height="16" width="20"/>&nbsp;
+						</apex:outputText>
+						<!-- Change Below -->
+						<!-- Changed for Revision 1 and 2 "Assets" -->
+						<!-- Display the sequence number first (if there is one!) -->
+<!-- 						<input type="radio" name="selectRadio" id="radio" onchange="callCheckBox(this,'{!pos.asset.id}','{!pos.nodeType}','{!pos.asset.Name}'); return false;" value="{!pos.asset.id}"/>  -->
+						<input type="radio" name="radio" id="radio" value="{!pos.account.id}" onchange="setFleetName('{!pos.account.Name}'); setFleet('{!pos.account.id}');"><span> {!pos.account.Name} </span>
+							
+						</input>
+
+						<!-- Stop -->
+					</span>
+<!-- 					<div> </div> -->
+					<apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),false,true)}">
+						<div id='{!pos.nodeId}'></div>
+					</apex:outputText>
+					<apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),true,false)}">
+						<div id='{!pos.nodeId}'><apex:image url="/s.gif" alt="" width="1" height="1"/></div>
+					</apex:outputText>
+					<apex:repeat value="{!pos.closeFlag}" var="close"></apex:repeat>	
+				</apex:repeat>
+				
+			</div>
+			<apex:outputPanel layout="block" styleClass="center" id="buttonCreate">
+					<apex:commandButton action="{!prev}" value="Previous" rerender="theForm" styleClass="left"/>
+					<apex:commandButton action="{!createContactUser}" status="load-state-2" value="Create New User" id="createUser" styleClass="right"/> 
+			</apex:outputPanel>
+		</div>
+		</apex:outputPanel>
+		
+		<apex:outputPanel layout="block" id="state5Block" title="Successfully added new User" rendered="{!IF(state = 5, 'true', 'false')}">
+			<div class="box-content">
+				<h1>Congratulations!<br/>You have successfully created the new myKVH User listed below.</h1><br/><br/>
+				<ul>
+					<li>The new User will recieve an Email with login instructions and a temporary password within an hour</li>
+					<li>It may take up to an hour for the new User to appear on the myKVH User Management Page</li>
+				</ul>
+				<br/>
+				<div align="center" draggable="false">
+				<apex:dataTable value="{!myKVHContact}" var="ContUser" rules="all" cellpadding="2%" id="table2" styleClass="myKVHtablesorter">
+					<!-- Columns start here... -->
+					<apex:column > <!-- style="text-align:right" headerClass="clsRight" --> 
+						<apex:facet name="header">First<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="firstName" value="{!ContUser.First_Name__c}"/>&nbsp;<br/>
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Last<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="lastName" value="{!ContUser.Last_Name__c}"/>&nbsp;<br/>
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Email:&nbsp;</apex:facet>
+						<apex:outputText id="tableEmail" value="{!ContUser.Email__c}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Fleet or Vessel:&nbsp;</apex:facet>
+						<apex:outputText id="tableAcctName" value="{!fleetName}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Phone:&nbsp;</apex:facet>
+						<apex:outputText id="tablePhone" value="{!ContUser.Phone__c}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Mobile:&nbsp;</apex:facet>
+						<apex:outputText id="tableMobile" value="{!ContUser.Mobile__c}"/>&nbsp;
+					</apex:column>
+					<apex:facet name="footer">
+						<apex:outputPanel >
+							<apex:commandButton value="Manage Users" action="/apex/Manage_myKVH_Users" immediate="true" styleClass="right"/>
+						</apex:outputPanel>
+					</apex:facet>
+				</apex:dataTable>
+				</div>
+			</div>
+		</apex:outputPanel>
+	</apex:Form>
+
+	<script>
+	j$(document).ready(function() {
+		validateEmail('');
+		var x = j$("input[id$='emailInput']");
+		//alert(x.size()); 
+		j$("input[id$='emailInput']").keyup(function(){
+            //alert('keyup event fired!');
+            validateEmail(j$("input[id$='emailInput']").val());
+        });
+	});
+	
+	/* Scripts to run on state change events */
+	function state1(){
+		var x = j$("input[id$='emailInput']");
+		//alert(x.size());
+		j$("input[id$='emailInput']").keyup(function(){
+            //alert('keyup event fired!');
+            validateEmail(j$("input[id$='emailInput']").val());
+        });
+	}
+	/* loads tablesorter when it is rendered (State 2 or State 3) */
+	function state2(){
+		j$("[id$='table']").tablesorter({
+			headers: {
+				0: {
+					sorter: false
+				}
+			}
+		});
+		j$("[id$='table2']").tablesorter();
+		validateNames();
+	}
+	
+	function state4(){
+		validateFleet();
+	}
+	
+	function setFleet(acct) {			//Sets Fleet based on Contact.AccountId
+		//alert(acct);
+		j$("input[id$='hiddenAcctId']").val(acct);
+		validateFleet();				//Need to handle this....
+	}
+	function setFleetName(acctName) {
+		var sName = acctName.split(' (Sees ALL Vessels');
+		//alert(sName);
+		j$("input[id$='hiddenAcctName']").val(sName[0]);
+	}
+	function setSelectedContact(cont) {		//sets up existing Contact for conversion to User
+		//alert(cont);
+		j$("input[id$='selectedContact']").val(cont);
+		selectCont();
+	}
+	function setFleetRelation(acctId) {		//set the radio button to indicate the contact Fleet relationship
+		//alert(acctId);
+		var x = document.getElementById(acctId);
+		//alert(x.value);
+		x.checked = true;
+		//validateFleet();
+	}
+
+	/*validators*/
+	function validateEmail(email) {
+		var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		//alert('validateEmail function invoked! ' + email);
+		if (re.test(email)){
+			j$("input[id$='search']").prop('disabled', false);
+			j$("input[id$='search2']").prop('disabled', false);
+			//alert('Enabled');
+		} else {
+			j$("input[id$='search']").prop('disabled', true);
+			j$("input[id$='search2']").prop('disabled', true);
+			//alert('Disabled');
+		}
+	}
+	
+	function validateNames(){
+		//alert('validating names');
+		var first = j$("input[id$='firstName']").val();
+		var last = j$("input[id$='lastName']").val();
+		
+		if( first == '' || last == '' ){
+			//alert('validation failed');
+			j$("input[id$='names']").prop('disabled', true);
+		} else {
+			//alert('validation OK!');
+			j$("input[id$='names']").prop('disabled', false);
+		}
+	}
+	
+	function validateFleet(){
+		//alert('Validating Fleet');
+		//alert(j$("input[id$='hiddenAcctId']").val());
+		var fleet = j$("input[id$='hiddenAcctId']").val();
+		if(fleet == ''){
+			//alert('Fleet Validation Failed');
+			j$("input[id$='createUser']").prop('disabled', true);
+		} else {
+			j$("input[id$='createUser']").prop('disabled', false);
+		}
+	}
+	</script>
+
+</apex:page>

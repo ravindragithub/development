@@ -1,0 +1,116 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+                access="global"
+                controller="ToolKitsClass"
+                description="Sales ToolKit Page.
+                             This component is used for displaying the Sales ToolKits">
+    
+    <aura:attribute name="salesKitList" type="Quick_Link__c[]"/>
+    
+    <aura:attribute name="products"
+                    type="object[]"
+                    description="Used to store the product list for search results"/>
+    
+    <aura:attribute name="documents"
+                    type="object[]"
+                    description="Used to store the document list for search results"/>
+    
+    
+    <aura:attribute name="toolkitname" type="String"/>
+    <aura:attribute name="toolkit" type="Boolean" default="false"/>
+    
+    <aura:attribute name="iconname"
+                    type="String" default="chevron-down" />
+    
+    <aura:attribute name="hidesection"
+                    type="String" default="slds-is-expanded" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:handler event="c:PortalViewChangeEvent"
+                  action="{!c.handlePortalViewChange}"
+                  description="Event handler to get the selected portal option.
+                               On handling it will update the user and refresh page"/>
+    
+    <aura:handler name="SalesKitQuickLink"
+                  event="c:QuickLinkEvent"
+                  action="{!c.handleSalesKitQuickLink}"
+                  description="Event handled for Sales Kit quick link options.
+                               Fired from SalesKit component"/>
+    <div>
+        <lightning:spinner variant="brand" alternativeText="Loading..." size="large" title="Loading..." aura:id="mySpinner" class="bluespin slds-hide"/>
+    </div>
+    
+    <div class="slds-m-horizontal--x-large" style="background:#ffffff; padding:20px;">
+        <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small slds-p-horizontal--small">
+            <div class="slds-m-bottom--large slds-p-top--small">
+                <nav role="navigation" aria-label="Breadcrumbs">
+                    <ol class="slds-breadcrumb slds-list--horizontal">
+                        <li class="slds-breadcrumb__item slds-text-title--caps">
+                            <a href="{!$Label.c.OrgURL }">
+                                HOME
+                            </a>
+                        </li>
+                        <li class="slds-breadcrumb__item slds-text-title--caps">
+                            <a href="./productresources" style="font-family:sans-serif">
+                                PARTNER RESOURCES
+                            </a>
+                        </li>
+                        <aura:if isTrue="{!v.toolkit}">
+                            <li class="slds-breadcrumb__item slds-text-title--caps">
+                                <a href="./toolkitlanding" style="font-family:sans-serif">
+                                    SALES TOOLKITS
+                                </a>
+                            </li>
+                            <li class="slds-breadcrumb__item slds-text-title--caps">
+                                <a href="" style="color:#999;font-family:sans-serif">
+                                    {!v.toolkitname}
+                                </a>
+                            </li>
+                        </aura:if>
+                        <aura:if isTrue="{!!v.toolkit}">
+                            <li class="slds-breadcrumb__item slds-text-title--caps">
+                                <a href=""
+                                   style="color:#999;font-family:sans-serif">
+                                    SALES TOOLKITS
+                                </a>
+                            </li>
+                        </aura:if>
+                    </ol>
+                </nav>
+            </div>
+            
+        </div>
+        <aura:if isTrue="{!!v.toolkit}">
+            <div class="slds-grid slds-wrap slds-grid--pull-padded slds-m-horizontal--x-large ">
+                <aura:iteration var="saleskit" items="{!v.salesKitList}">
+                    <c:SalesKit saleskit="{!saleskit}"></c:SalesKit>
+                </aura:iteration>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!!empty(v.products)}">
+            <div>
+                <h3 class="slds-section-title--divider heading"
+                    style="text-transform: initial;color: #fff;letter-spacing:0;"
+                    onclick="{!c.showhidesection}" >
+                    Products
+                    <i class="{!'fa fa-' + v.iconname + ' buttonicon'}" aria-hidden="true"></i>
+                </h3>
+            </div>
+            
+            
+            <div class="{!v.hidesection}">
+                <aura:iteration items="{!v.products}" var="prod" indexVar="index">
+                    <c:ProductType prodLineSeries="{!prod}"></c:ProductType>
+                </aura:iteration>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!!empty(v.documents)}">
+            <div class ="slds-m-top--large">
+                <aura:iteration items="{!v.documents}" var="docum" indexVar="index">
+                    <c:DocumentType documentType="{!docum}" hidesection="slds-is-expanded" iconname="chevron-down"/>
+                </aura:iteration>
+            </div>
+        </aura:if>
+    </div>
+    <c:salesAidsPopup retURL="./toolkitlanding" />
+</aura:component>

@@ -1,0 +1,61 @@
+<apex:page id="changePassword" showHeader="false" standardStylesheets="false" controller="myKVH_changePassword" title="{!$Label.site.change_password}">
+
+    <!--<apex:stylesheet value="{!URLFOR($Resource.grid_margin)}"/>-->
+    <apex:stylesheet value="{!URLFOR($Resource.customcss)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MASTERAppsStyles)}"/>
+
+        <div style="max-width:880px; margin:0 auto;background:#fff;padding:10px 20px;font-size:90%;">
+            
+            <ul class="breadcrumb">
+                <li><a href="{!$Site.BaseUrl}/s/">Home</a></li>
+                <li>Change Password</li>
+            </ul>
+            
+                <h1>Change Password</h1>
+              
+                    <apex:pageMessages id="error"/>
+                        <p>Passwords must:</p>
+                        <ul class="slds-list_dotted">
+                            <li>Be at least 8 characters long</li>
+                            <li>Be a mix of alpha and numeric characters</li>
+                            <li>Have at least 1 uppercase character</li>
+                            <li>Have at least 1 numerical character</li>
+                        </ul>
+                        <ul class="slds-is-nested">
+                            <li>Please note that passwords are case-sensitive, and that old passwords cannot be reused.</li>
+                        </ul>
+                
+                    <apex:form >
+                         <div class="box-50">
+                             <label>Current Password:</label>
+                             <apex:inputSecret id="oldpsw" rendered="{! !$Site.IsPasswordExpired}"
+                                               value="{!oldPassword}" html-placeholder=""
+                                               styleClass="slds-input"
+                                               style="border-left:4px solid #cc0000 !important;"/> 
+                         </div>
+                        
+                         
+                         <div class="box-50">
+                             <label>New Password:</label>
+                             <apex:inputSecret id="psw" value="{!newPassword}"  html-placeholder=""
+                                                  styleClass="slds-input"
+                                                  style="border-left:4px solid #cc0000 !important;"/> 
+                         </div>
+                         
+                         <div class="box-50">
+                             <label>Confirm New Password:</label>
+                             <apex:inputSecret id="vpsw" value="{!verifyNewPassword}"  html-placeholder=""
+                                                      styleClass="slds-input"
+                                                  style="border-left:4px solid #cc0000 !important;"/>  
+                         </div>
+                         
+                         <div style="text-align:center; margin-top:30px;">
+                            <a href="{!$Site.BaseUrl}/s/" style="font-size:12px;"  class="pad-right">Cancel</a>                        
+                            <a href="javascript:void(0);" class="button button-blue" onclick="changepassword();">Change Password</a>                       
+                        </div>
+                        
+                        <apex:actionFunction name="changepassword" action="{!changePassword}" reRender="error"  />
+                     </apex:form>
+                 
+        </div>
+</apex:page>

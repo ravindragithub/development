@@ -1,0 +1,55 @@
+<aura:component controller="HTS_ltgsvc_termStatus">
+  <aura:attribute name="search" type="String" default="Unknown"/>
+  <aura:attribute name="prodCode" type="String" default="Unknown"/>
+  <aura:attribute name="showComponent" type="Boolean" />
+
+  <aura:attribute name="inSalesforce" type="String" default="Unknown"/>
+  <aura:attribute name="inNetwork" type="String" default="Unknown"/>
+  <aura:attribute name="isActive" type="String" default="Unknown"/>
+  <aura:attribute name="configTemplate" type="String" default="Unknown"/>
+  <aura:attribute name="subsList" type="HTSOSS_hts_subscribers[]" description="This is a list of active subscriptions returned from OSS" />
+
+  <!--PUBLISHER -->
+  <aura:registerEvent name="searchVTID" type="c:searchVTID_evt"/>
+  <aura:registerEvent name="searchVTID_done" type="c:foundVTID_evt"/>
+
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:handler name="searchVTID_done" event="c:foundVTID_evt" action="{!c.handleFoundVTID}" />
+
+  <!-- Need to inhibit display if not HTS also need an else ouptut -->
+  <aura:if isTrue="{!v.showComponent}">
+    <article class="slds-tile">
+      <h3 class="slds-truncate" title="Summary Status"><a href="javascript:void(0);">Summary Status</a></h3>
+      {!showComponent}
+      <div class="slds-tile__detail slds-text-body_small">
+        <ul class="slds-list_horizontal slds-has-dividers_right">
+          <li class="slds-item">Terminal in Salesforce</li>
+          <li class="slds-item">{!v.inSalesforce}</li>
+        </ul>
+        <ul class="slds-list_horizontal slds-has-dividers_right">
+          <li class="slds-item">Terminal in Network</li>
+          <li class="slds-item">{!v.inNetwork}</li>
+        </ul>
+        <ul class="slds-list_horizontal slds-has-dividers_right">
+          <li class="slds-item">Terminal is Active</li>
+          <li class="slds-item">{!v.isActive}</li>
+        </ul>
+        <ul class="slds-list_horizontal slds-has-dividers_right">
+          <li class="slds-item">Configuration Template</li>
+          <li class="slds-item">{!v.configTemplate}</li>
+        </ul>
+        <!-- use an iteration to deal with subscriptions -->
+        <aura:iteration items="{!v.subsList}" var="subs">
+          <ul class="slds-list_horizontal slds-has-dividers_right">
+            <li class="slds-item">{!subs.subscriber_id}</li>
+            <li class="slds-item">{!subs.subscriber_plan_id}</li>
+          </ul>
+        </aura:iteration>
+      </div>
+    </article>
+    <aura:set attribute="else">
+      This is not an HTS Terminal...
+    </aura:set>
+  </aura:if>
+</aura:component>

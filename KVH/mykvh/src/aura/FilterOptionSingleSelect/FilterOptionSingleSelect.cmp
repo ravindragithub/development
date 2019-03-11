@@ -1,0 +1,38 @@
+<!--
+ - Created by Jai Chaturvedi on 4/04/2017.
+ -->
+
+<aura:component description="FilterOptionSingleSelect"
+                controller="FilterServices"
+                access="global">
+
+    <!--<ltng:require styles="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/themes/default/style.min.css"
+                  scripts="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js,
+                  https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/jstree.min.js"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>-->
+
+    <!--<ltng:require styles="/resource/jstree/style.css"
+                  scripts="/resource/jstree/jquery-2.2.4.min.js, /resource/jstree/jstree.js"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>-->
+
+    <ltng:require styles="{!$Resource.jstreeWhereToBuy + '/style.css'}"
+                  scripts="{!join(',',
+                          $Resource.jstreeWhereToBuy + '/jquery-2.2.4.min.js',
+                          $Resource.jstreeWhereToBuy + '/jstree.js')}"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>
+    
+    
+
+	<aura:attribute name="defaultproductId" type="string" />
+    <aura:attribute name="ready" type="Boolean" default="false"/>
+    <aura:attribute name="parentSection" type="String" />
+    <aura:attribute name="methodName" type="String" />
+    <aura:attribute name="filterCollection" type="Product_Catalogue__c[]"/>
+
+    <aura:registerEvent name="filterOptionEvent"
+                        type="c:FilterOptionEvent"
+                        description="Used to send the selected option to the parent component."/>
+
+    <div aura:id="jstreeWhereToBuy" style="font-family:sans-serif;border-color: #ddd;border-radius:0;max-height:250px"></div>
+
+</aura:component>

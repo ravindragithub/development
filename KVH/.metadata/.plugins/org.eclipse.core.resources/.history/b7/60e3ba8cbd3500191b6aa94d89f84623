@@ -1,0 +1,101 @@
+<apex:page tabStyle="Account" standardController="Account" extensions="IITCustomerStatements">
+    <script type="text/javascript">
+    function generateRealTimeStatementJS() {
+        var accountId = '{!$CurrentPage.parameters.id}';
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.IITCustomerStatements.generateRealTimeStatement}',
+            accountId, 
+            function(result, event){
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                    document.getElementById('remoteAcctId').innerHTML = result.message;
+                        
+                    if(result.message == 'success') {
+                        var snapshotName = result.snapshotName;
+                        window.open('https://www.appextremes.com/apps/Conga/Composer.aspx?SessionId={!$Api.Session_ID}&ServerUrl={!$User.Partner_Server_URL__c}&QueryId=a3J13000000TsDa?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000000TsDf?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000000TsDk?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or76?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or7B?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or7G?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + '&Id={!$CurrentPage.parameters.id}&TemplateGroup=CustomerStatement&DefaultPDF=1','_blank','toolbar=yes, scrollbars=yes, resizable=yes, top=50, left=300, width=700, height=525');                               
+                    } else {
+                        document.getElementById('remoteAcctId').innerHTML = result.message;
+                    }
+                    
+                } else if (event.type === 'exception') {
+                    document.getElementById('remoteAcctId').innerHTML = event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('remoteAcctId').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    function generateHistoricStatementJS() {
+        var accountId = '{!$CurrentPage.parameters.id}';
+        var snapshotName = document.getElementById('snapshotNametxt').value;
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.IITCustomerStatements.generateHistoricStatement}',
+            accountId,
+            snapshotName, 
+            function(result, event){
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                    document.getElementById('remoteAcctId').innerHTML = result.message;
+                        
+                    if(result.message == 'success') {
+                        window.open('https://www.appextremes.com/apps/Conga/Composer.aspx?SessionId={!$Api.Session_ID}&ServerUrl={!$Api.Partner_Server_URL_210}&QueryId=a3J13000000TsDa?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000000TsDf?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000000TsDk?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or76?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or7B?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000002or7G?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + '&Id={!$CurrentPage.parameters.id}&TemplateGroup=CustomerStatement&DefaultPDF=1','_blank','toolbar=yes, scrollbars=yes, resizable=yes, top=50, left=300, width=700, height=525'); 
+                        //window.open('https://www.appextremes.com/apps/Conga/Composer.aspx?SessionId={!$Api.Session_ID}&ServerUrl={!$Api.Partner_Server_URL_210}&QueryId=a3J13000000TsDa,a3J13000000TsDa?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + ',a3J13000000TsDk?pv0={!$CurrentPage.parameters.id}~pv1=' + snapshotName + '&Id={!$CurrentPage.parameters.id}&TemplateGroup=CustomerStatement&DefaultPDF=1','_blank','toolbar=yes, scrollbars=yes, resizable=yes, top=50, left=300, width=700, height=525');                               
+                    } else {
+                        document.getElementById('remoteAcctId').innerHTML = result.message;
+                    }
+                    
+                } else if (event.type === 'exception') {
+                    document.getElementById('remoteAcctId').innerHTML = event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('remoteAcctId').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    </script>
+        
+    <apex:sectionHeader title="{!Account.Name}"/>   
+    <apex:form >
+    <apex:tabPanel title="Account Statements - Realtime/Historic">
+        <apex:tab title="firstTab" label="Account Statements - Realtime/Historic">
+             <apex:pageBlock id="block" title="Account Statements - Realtime/Historic">
+                <apex:pageBlockSection id="blockSection" columns="2">
+                    <apex:pageBlockSectionItem id="firstItem">
+                        <span id="remoteAcctId"/>
+                    </apex:pageBlockSectionItem>       
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection columns="2" title="Real Time Statement">
+                    <apex:outputText ></apex:outputText>
+                    <apex:commandButton onclick="generateRealTimeStatementJS()" value="Real Time Account Statement" reRender="responseErrors"/>
+                </apex:pageBlockSection>
+                    
+                <apex:pageBlockSection columns="2" title="Historic Statement">
+                    Name : <input id="snapshotNametxt" type="text"/>
+                    <apex:commandButton onclick="generateHistoricStatementJS()" value="Historic Account Statement" reRender="responseErrors"/>
+                </apex:pageBlockSection>    
+            </apex:pageBlock>
+        </apex:tab>
+        <apex:tab title="Second" label="A/R Aging">
+            <apex:pageBlock id="block2" title="A/R Aging">
+                <apex:pageBlockSection columns="2" title="A/R Aging">
+                    <apex:pageBlockTable value="{!listofInnerclass}" var="innerClass">
+                        <apex:column headerValue="Days Outstanding" style="text-align:right;">
+                            <apex:outputText value="{!innerClass.sRange}" ></apex:outputText>    
+                        </apex:column>
+                        <apex:column headerValue="Amount" style="text-align:right;">
+                            <apex:outputText value="{0, number,###,###,##0.00}"><apex:param value="{!innerClass.dValue}" /></apex:outputText>
+                            
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection> 
+            </apex:pageBlock>
+        </apex:tab>
+    </apex:tabPanel>
+    </apex:form>
+</apex:page>

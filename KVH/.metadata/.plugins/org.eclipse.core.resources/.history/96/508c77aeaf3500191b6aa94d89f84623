@@ -1,0 +1,139 @@
+<aura:component controller="Update_AssetSubscriptionController" implements="force:appHostable">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:attribute name="assetId" type="string" />
+    <aura:attribute name="caseNum" type="Integer" />
+    <aura:attribute name="caseId" type="string" />
+    <aura:attribute name="mode" type="string" />
+    <aura:attribute name="headerTitle" type="string" />
+    <aura:attribute name="listSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="sendinglistSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="oldListSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="subscriptionIdListMap" type="Map" />
+    <aura:attribute name="subscriptionRecord" type="SBQQ__Subscription__c" />
+    <aura:attribute name="listAssetIdInHierarchy" type="String[]"/>
+    <aura:attribute name="listSubscriptionStatus" type="String[]"/>
+    <aura:registerEvent name="cmpEvnt" type="c:Update_AssetSubscription_Evt"/>
+    
+    <div>
+        <div class="header-subsciption">
+            <h2 title="Subscription">{!v.headerTitle}</h2>
+        </div>
+        <div >
+            <table class="subsClass">
+                <tr class="slds-text-title_caps">
+                    
+                    <th scope="col" class="headerCol" title="Subscription">
+                        <div class="">Subscription</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Asset">
+                        <div class="">Asset</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Product Name">
+                        <div class="">Product Name</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Contract">
+                        <div class="">Contract</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Account">
+                        <div class="">Account</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Account">
+                        <div class="">Traffic Identifier</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="Start Date">
+                        <div class="">Start Date</div>
+                    </th>
+                    <th scope="col" class="headerCol" title="End Date">
+                        <div class="">End Date</div>
+                    </th>  
+                    <aura:if isTrue="{! !empty(v.mode) }">
+                        <th scope="col" class="headerCol">
+                            <div class="">Status</div>
+                        </th>
+                    </aura:if>
+                    <aura:if isTrue="{! !empty(v.mode) }">
+                        <th scope="col" class="headerCol">
+                            <div class="">Replace Asset With</div>
+                        </th>
+                    </aura:if>
+                </tr>
+                <tbody>
+                    <aura:iteration items="{!v.listSubscription}" var="subs" indexVar="index">
+                        <tr class="slds-hint-parent">
+                            
+                            <td data-label="Subscription" scope="col">
+                                <div class="rowDataClass"><a href="{! '/'+subs.Id}" target="_blank" class="underlineAsset" >{!subs.Name}</a></div>
+                            </td>
+                            <td data-label="Asset" scope="col">
+                                <div class="rowDataClass"><a href="{! '/'+subs.Asset__c}" target="_blank" class="underlineAsset" >{!subs.Asset__r.Name}</a></div>
+                            </td>
+                            <td data-label="Product Name" scope="col">
+                                <div class="rowDataClass">{!subs.SBQQ__Product__r.Name}</div>
+                            </td>
+                            <td data-label="Product Name" scope="col">
+                                <div class="rowDataClass">{!subs.SBQQ__Contract__r.ContractNumber}</div>
+                            </td>
+                            <td data-label="Start Date" scope="col">
+                                <div class="rowDataClass">{!subs.SBQQ__Account__r.Name}</div>
+                            </td>
+                            <td data-label="Start Date" scope="col">
+                                <div class="rowDataClass">{!subs.Traffic_Identifier__c}</div>
+                            </td>
+                            <td data-label="Start Date" scope="col">
+                                <div class="rowDataClass"><ui:outputDate value="{!subs.SBQQ__SubscriptionStartDate__c }" format="MM/DD/YYYY"/>
+                                </div>
+                            </td>
+                            <td data-label="End Date" scope="col">
+                                <div class="rowDataClass"><ui:outputDate value="{!subs.SBQQ__SubscriptionEndDate__c }" format="MM/DD/YYYY"/>
+                                </div>
+                            </td>
+                            <aura:if isTrue="{! !empty(v.mode) }">
+                                <td data-label="Select Status" role="row">
+                                    <div scope="col" class="selectAsset rowDataClass" >
+                                        <aura:if isTrue="{! !empty(v.listAssetIdInHierarchy)}" >
+                                            <ui:inputSelect aura:id="InputSelectDynamic" change="{!c.subsStatusChange}" 
+                                                            labelClass="{!index}" >                                                
+                                                <ui:inputSelectOption text="None" label="None" />
+                                                <aura:iteration items="{!v.listSubscriptionStatus}" var="subStatus">
+                                                    <aura:if isTrue="{! subs.Status__c == subStatus}" >
+                                                        <ui:inputSelectOption text="{!subStatus}" label="{!subStatus}" value="true" />
+                                                        <aura:set attribute="else">
+                                                            <ui:inputSelectOption text="{!subStatus}" label="{!subStatus}" />
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                </aura:iteration>
+                                            </ui:inputSelect>
+                                            
+                                        </aura:if>
+                                    </div>
+                                </td>
+                            </aura:if>
+                            <aura:if isTrue="{! !empty(v.mode) }">
+                                <td data-label="Select Subscription" role="row">
+                                    <div scope="col" class="selectAsset rowDataClass">
+                                        <aura:if isTrue="{! !empty(v.listAssetIdInHierarchy)}" >
+                                            <ui:inputSelect aura:id="InputStatusDynamic" change="{!c.onAssetNameChange}" 
+                                                            labelClass="{!index}" >                                                
+                                                <ui:inputSelectOption text="None" label="None" />
+                                                <aura:iteration items="{!v.listAssetIdInHierarchy}" var="asstName">
+                                                    <ui:inputSelectOption text="{!asstName.Id}" label="{!asstName.Name}" />
+                                                </aura:iteration>
+                                            </ui:inputSelect>
+                                            
+                                        </aura:if>
+                                    </div>
+                                </td>
+                            </aura:if>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</aura:component>

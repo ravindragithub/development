@@ -1,0 +1,57 @@
+/**
+ * Created by Jai Chaturvedi on 12/03/2017.
+ */
+
+.THIS td{
+    border-bottom-color: #ddd;
+    border-bottom-style: solid;
+        border-bottom-width: thin;
+    text-align: left;
+    padding: 5px;
+}
+
+.THIS th{
+    border-bottom-color: #ddd;
+    border-bottom-style: solid;
+        border-bottom-width: thin;
+    text-align: left;
+    padding: 5px;
+}
+.THIS h2 {
+    font-family: sans-serif;
+}
+.THIS .bannerimg{
+    border-radius: 3px;
+   
+}
+@media only screen and (max-width: 767px) {
+    .THIS .bannerimg{
+        width : 100%;
+      
+    }
+}
+.THIS .dark-buttons {
+    background-color: #999999; 
+    color:#fff; 
+    padding:10px;
+    margin-bottom:15px;
+    min-height:65px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,.2);
+    letter-spacing: .02em;
+}
+
+.THIS .dark-buttons:hover {
+    background: #555555;
+    cursor: pointer;
+}
+
+.THIS .dark-buttons img {
+    width:50px; 
+    height:auto;
+    float:left;
+    padding-right:10px;
+}
+.THIS a:hover{
+    color : #fff;
+    text-decoration : none;
+}

@@ -1,0 +1,14 @@
+<messaging:emailTemplate subject="Your invoice {!relatedTo.Name} for period ending {!relatedTo.invoiceit_s__Target_Date__c}" recipientType="User" relatedToType="invoiceit_s__Invoice__c">
+    <messaging:plainTextEmailBody >
+
+        
+        Please find your invoice attached, the details of which are mentioned below :-
+        
+        Total Invoice value: {!relatedTo.invoiceit_s__Invoice_Currency_Symbol__c} {!relatedTo.invoiceit_s__Total_Invoice_Value__c}
+        Due Date: 
+    Kind Regards,
+    Videotel Accounts Team.
+    +44 20 7299 1800.
+    invoicing@videotel.com
+   </messaging:plainTextEmailBody>
+</messaging:emailTemplate>

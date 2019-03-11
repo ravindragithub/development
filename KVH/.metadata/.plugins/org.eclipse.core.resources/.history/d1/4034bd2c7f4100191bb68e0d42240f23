@@ -1,0 +1,70 @@
+<!-- This page is derived from Index.html of the activation order HTML tree -->
+<apex:page sidebar="false" showHeader="true" standardStyleSheets="false" standardController="Activation_Status__c">
+<!-- <!doctype html> -->
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Online Activation Order - Status Demo page</title>
+
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<c:Activation_Header />
+	
+<div id="sidebar">
+	<c:Activation_Status state="{!Activation_Status__c}"/>
+</div>
+
+<div id="main">
+	<div class="wrapper">
+		<h1>Welcome!</h1>
+		<div id="horizontalTab">
+			<ul>
+				<li><a href="#tab-1">Are you ready to...</a></li>
+			</ul>
+			<div id="tab-1">
+				<apex:form id="theForm">
+					<apex:pageBlock title="Take Control of the Status Component">
+						<apex:pageBlockSection columns="2">
+							<apex:inputField value="{!Activation_Status__c.Active_Page__c}" label="Active Page"/>
+							<br/>
+							<apex:inputField value="{!Activation_Status__c.Account_Setup_page__c}" label="Account Setup Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.Account_Setup_Active_Tab__c}" label="Account Setup Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.Installation_Type_Page__c}" label="Installation Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.Installation_Type_Active_Tab__c}" label="Installation Page Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.System_Page__c}" label="System Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.System_Active_Tab__c}" label="System Page Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.Services_Page__c}" label="Services Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.Services_Active_Tab__c}" label="Services Page Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.IP_MobileCast_Page__c}" label="IP-MobileCast Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.IP_MobileCast_Active_Tab__c}" label="IP-MobileCast Page Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.OneCare_Page__c}" label="OneCare Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.OneCare_Active_Tab__c}" label="OneCare Page Active Tab"/>
+							
+							<apex:inputField value="{!Activation_Status__c.Activate_Page__c}" label="Activate! Page Status"/>
+							<apex:inputField value="{!Activation_Status__c.Activate_Active_Tab__c}" label="Activate! Page Active Tab"/>
+							
+						</apex:pageBlockSection>
+						<apex:pageBlockButtons location="bottom">
+							<apex:commandButton action="{!save}" value="Save"/>
+						</apex:pageBlockButtons>
+					</apex:pageBlock>
+				</apex:form>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+</apex:page>

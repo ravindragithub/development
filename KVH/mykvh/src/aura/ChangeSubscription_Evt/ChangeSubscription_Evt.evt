@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="Event to handle" >
+    <aura:attribute name="className1" type="String"/>
+    <aura:attribute name="className2" type="String"/>
+    <aura:attribute name="listSubscriptionRecord" type="SBQQ__Subscription__c[]" />
+</aura:event>

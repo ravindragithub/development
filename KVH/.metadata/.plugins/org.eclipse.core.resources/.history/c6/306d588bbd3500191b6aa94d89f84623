@@ -1,0 +1,239 @@
+<apex:page sidebar="false" showHeader="false" standardStyleSheets="false" controller="ContactsController">
+<!-- <!doctype html> -->
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Online Activation Order - Contacts Information</title>
+	<!-- Load Style sheets -->
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/responsive-tabs.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+	
+	<!-- Load jQuery, use minimized lib-->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <!-- Handle jQuery conflicts (e.g. "$") -->
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+	</script>
+	<!-- Load jQuery plug-ins, use minimized libs -->
+	<!-- Library for Modal windows.... -->
+	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+	<!-- Library for jQuery Validator... -->
+	<script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.min.js')}" type="text/javascript"></script>
+	<!-- Responsive Tabs JS -->
+	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/js/jquery.responsiveTabs.min.js')}" type="text/javascript"></script>
+</head>
+
+<body>
+    
+<div id="top">
+    <a href="#">Account Settings</a>  |  <a href="index.html">Logout</a>
+</div>
+
+<c:Activation_Header />
+    
+<div id="sidebar">
+	<c:Activation_Status state="{!ActivationStatus}"/>
+</div>
+
+
+<div id="main">
+
+    <div class="wrapper">
+        
+        <div class="required"><span class="req">*</span> indicates required field</div>
+      <h1>System Contacts</h1>
+      
+      <div id="horizontalTab">
+        <ul>
+            <li><a href="#tab-1">1. Authorized Representatives</a></li>
+            <li><a href="#tab-2">2. System Support Contact</a></li>
+            <li><a href="#tab-3">3. Dealer/Distributor Information</a></li>
+            <li><a href="#tab-4">4. Onboard Contact</a></li>
+        </ul>
+
+<!--  TAB 1 - Authorized Reps -------------------------->
+
+        <div id="tab-1">
+            <h1>Authorized Representatives Permissions</h1>
+            <p>Authorized Representatives listed here have permission to act on the subscriber�s or subscribing company�s behalf with respect to the account, with permission to receive account information, and make changes to the account. <a href="#modal"><strong>Learn more about these permissions.</strong></a></p>
+                
+            <!-- popup contents -->    
+            <div class="remodal" data-remodal-id="modal">
+                <h3>Authorized Representatives Permissions</h3>
+                    <p>Authorized Representatives listed here have permission to act on the subscriber�s or subscribing company�s behalf with respect to the account, with permission to receive account information, and make changes to the account. Such activities may include:</p>
+                        <ul>
+                            <li>Request and agree to terms of new, or changes in, subscription rate plans, packages, channels, and/or operations content</li>
+                            <li>Request information regarding billing and usage details</li>
+                            <li>Request data usage monitoring alert</li>
+                            <li>Act on billing matters</li>
+                            <li>Request password for KVH airtime e-bill portal</li>
+                            <li>Request service suspension</li>
+                            <li>Request termination of contract</li>
+                        </ul>
+
+                </div>
+            <!-- /popup contents -->
+            
+            <hr/>
+            
+           
+            
+            <div class="left two-col">
+               <div class="box-content">
+                   <h2>1. Primary Authorized Representative</h2> 
+                   <p class="notes"><input type="checkbox"/>Same as Billing Rep.</p>
+                   <p style="margin-top:20px;"><label>Permission for:</label> <input type="checkbox"/>Fleet-wide &nbsp;&nbsp;&nbsp;<input type="checkbox"/>System only</p>
+                   <p><label>Name:</label> <input type="text"/></p>
+                   <p><label>Email:</label> <input type="text"/></p>
+                   <p><label>Phone Number:</label> <input type="text"/></p>
+                   <p><label>Title:</label> <input type="text"/></p>
+                </div>
+            </div>
+            
+            <div class="right two-col">
+               <div class="box-content">
+                   <h2>2. Secondary Authorized Representative</h2>
+                   <p class="notes"><input type="checkbox"/>Same as Billing Rep.</p>
+                   <p style="margin-top:20px;"><label>Permission for:</label> <input type="checkbox"/>Fleet-wide &nbsp;&nbsp;&nbsp;<input type="checkbox"/>System only</p>
+                   <p><label>Name:</label> <input type="text"/></p>
+                   <p><label>Email:</label> <input type="text"/></p>
+                   <p><label>Phone Number:</label> <input type="text"/></p>
+                   <p><label>Title:</label> <input type="text"/></p>
+                </div>
+            </div>
+            
+            <div class="button-bar clear">
+                <a href="subscriber.html" class="button left">Back to Subscriber Info</a>
+                <a href="#tab-2" class="button right">Next</a>
+            </div>
+        </div>
+        
+<!--  TAB 2 - System Support Contacts -------------------------->
+
+        <div id="tab-2">
+            <h1>System Support Contact</h1>
+            <p> The System Support Contact is responsible for the system.</p>
+            
+            <div class="two-col">
+               <div class="box-content">
+                   <p><label>Name:</label> <input type="text"/></p>
+                   <p><label>Email:</label> <input type="text"/></p>
+                   <p><label>Phone Number:</label> <input type="text"/></p>
+                   <p><label>Title:</label><br/>
+                        <input type="checkbox"/> <label class="not-bold">Owner</label><br/>
+                        <input type="checkbox"/> <label class="not-bold">Fleet Manager</label><br/>
+                        <input type="checkbox"/> <label class="not-bold">IT Manager</label><br/>
+                        <input type="checkbox"/> <label class="not-bold">Captain</label> <br/>
+                        <input type="checkbox"/> <label class="not-bold">Other:</label> <input name="" type="text" id="" style="width:60%;"/></p>
+                </div>
+            </div>
+            
+            <div class="button-bar">
+                <a href="#tab-1" class="button left">Back</a>
+                <a href="#tab-3" class="button right">Next</a>
+            </div>
+        </div>
+        
+<!--  TAB 3 - Dealer Distributor Info -------------------------->
+        
+        <div id="tab-3">
+            <h1>Dealer/Distributor Information</h1>
+            
+            <div class="two-col">
+               <div class="box-content">
+                   <p><label>Dealer/Distributor Name:</label> <input type="text"/></p>
+                   <p><label>Contact Person:</label> <input type="text"/></p>
+                   <p><label>Contact Email:</label> <input type="text"/></p>
+                   <p><label>Phone Number:</label> <input type="text"/></p>
+                </div>
+            </div>
+            
+            <div class="button-bar">
+                <a href="#tab-2" class="button left">Back</a>
+                <a href="#tab-4" class="button right">Next</a>
+            </div>
+        </div>
+        
+<!-- TAB 4 - Onboard Contact -------------------------->
+
+        <div id="tab-4">
+            <h1>Onboard Contact</h1>
+            <p>The Onboard Contact is a person, position, or department (Captain, Vessel Superintendent, Crew Manager, etc.) that can be contacted in the event that KVH needs to reach the vessel for a technical, service, or administrative issue.</p>
+            
+            <div class="two-col">
+               <div class="box-content">
+                   <p><label>Name:<span class="req">*</span></label> <input type="text"/></p>
+                   <p><label>Email:<span class="req">*</span></label> <input type="text"/></p>
+                   <p><label>Phone Number:<span class="req">*</span></label> <input type="text"/></p>
+                   <p><label>Job Function:<span class="req">*</span></label><br/>
+                       <input type="checkbox"/> <label class="not-bold">Captain</label><br/>
+                       <input type="checkbox"/> <label class="not-bold">Crew Manager</label><br/>
+                       <input type="checkbox"/> <label class="not-bold">IT Manager</label><br/>
+                       <input type="checkbox"/> <label class="not-bold">Operations Manager</label> <br/>
+                       <input type="checkbox"/> <label class="not-bold">Other:</label> <input name="" type="text" id="" style="width:60%;"/>
+                   </p>
+                </div>
+            </div>
+        
+        	<div class="button-bar">
+                <a href="#tab-3" class="button left">Back</a>
+                <a href="vessel.html" class="button right">Save &amp; Continue to Vessel Info</a>
+                <a href="#modal" class="exit right">Save &amp; Finish Later</a>
+                <div class="remodal" data-remodal-id="modal">
+                	<p>When you're ready to come back and finish your activation, just log in with the email and temporary password that is in the email we sent you. Check your spam filter if you don't have an email from KVH Activation Group.</p>
+                    <a href="index.html" class="button">Bye!</a>
+                </div>
+            </div>
+            
+            
+        
+        </div>
+        
+       </div>
+  
+  </div>
+        
+        
+        
+    </div>
+
+
+    <script type="text/javascript">
+        j$(document).ready(function () {
+        
+        	//setup responsive tabs...
+            j$('#horizontalTab').responsiveTabs({
+				rotate: false,
+				startCollapsed: 'false',
+				active: 0,
+				setHash: true
+            });
+			
+			//setup tooltip behaviour 
+			j$('.hasTooltip').hover(function() {
+				var offset = j$(this).offset();
+				j$(this).next('span').fadeIn(200).addClass('showTooltip');
+				j$(this).next('span').css('left', offset.left + 'px');
+			}, function() {
+				j$(this).next('span').fadeOut(200);
+			});
+			
+        });
+	</script>
+    
+    <script>
+    window.remodalGlobals = {
+        namespace: "modal",
+        defaults: {
+            hashTracking: true
+        }
+    };
+	</script>
+
+</body>
+</html>
+
+</apex:page>

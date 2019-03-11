@@ -1,0 +1,25 @@
+<apex:page controller="myKVH_Role_Clone_Engine" action="{!onLoad}">
+    <apex:form id="form">
+    <apex:pageMessages rendered="{!showMessages}"/>
+        <apex:pageBlock >
+            <apex:selectList id="selListRoleDropdown" value="{!SelectedRoleID}" multiselect="false" size="1" >
+                <apex:selectOptions value="{!SelectFromRoles}"/>
+            </apex:selectList>&nbsp;&nbsp;
+            <apex:commandButton id="btn_NextSteptoClone" value="Next Step to Clone This Role" action="{!CloneRole}"/>
+        </apex:pageBlock>
+        <apex:outputPanel id="origRole" rendered="{! !showMessages}">
+            <apex:pageBlock >
+                <H1><apex:outputLabel id="lbl_OrigRoleName" value="{!originalRole.Name}" /></H1>
+                &nbsp; Will be Cloned. Please type a Name that does not already exist for the new myKVH role...<br/>
+                <apex:inputText id="newName" value="{!clonedRoleName}" size="80" /><br/>
+                <apex:message for="newName"/><br/>
+                <apex:commandButton id="btn_CloneNow" value="Clone Now (click only once)" action="{!validateUniqueName}" rerender="form"/>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:outputPanel id="cloneIsCompleted" rendered="{!showCloneCompleted}">
+            myKVH Role "<B>{!clonedRoleName}</B>" &nbsp; was created with all the child Permission Sets and Field Permissions as your original role.
+            <br /><br />
+            <apex:outputLink id="lnk_ToClonedRole" value="{!newRoleURL}">View your new cloned myKVH Role</apex:outputLink>&nbsp;&nbsp;&nbsp;<B>Be sure to enter a new description for it!</B>
+        </apex:outputPanel>                    
+    </apex:form>
+</apex:page>

@@ -1,0 +1,100 @@
+.THIS, .THIS h1, .THIS h2 {
+    font-family: arial, sans-serif;
+}
+
+.THIS {
+    margin:0;
+    padding:0;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    padding-bottom:10px;
+    font-weight: lighter;
+    font-family: sans-serif;
+}
+
+.THIS .info-box {
+    background: #fff;
+}
+
+.THIS table{
+    border-collapse: collapse;
+    font-size: 100%;
+    font: arial;
+    vertical-align: baseline;
+}
+.THIS .col {
+    margin: 0;
+}
+.THIS .dashboard {
+    width: 100%;
+    margin-bottom: 50px;
+}
+.THIS tbody {
+    display: table-row-group;
+}
+.THIS tr{
+    display: table-row;
+}
+.THIS th {
+    font-weight: 600;
+    padding: 5px 10px;
+    font-size: 85%;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    display: table-cell;
+}
+.THIS tr {
+    display: table-row;
+}
+.THIS td{
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    font-size: 100%;
+    font-weight: 200;
+}
+.THIS .doc-type {
+    color: #999;
+    font-weight: 550;
+    line-height: 1.5em;
+    text-transform: uppercase;
+    font-size: 85%;
+}
+.THIS a {
+    color: #1f83ad;
+    line-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-decoration: underline;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.THIS li.slds-breadcrumb__item a {
+    text-decoration:none;
+    margin:0 10px;
+}
+
+.THIS li.slds-breadcrumb__item a:before {
+    padding-left:10px;
+}
+
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #444;
+    font-size: 85%;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    float:right;
+}

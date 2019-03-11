@@ -1,0 +1,4 @@
+<design:component>
+	<design:attribute name="privacypolicy" label="privacy policy" description="url for privacy policy" />
+    <design:attribute name="SiteTerms" label="Site Terms" description="url for Site Terms" />
+</design:component>

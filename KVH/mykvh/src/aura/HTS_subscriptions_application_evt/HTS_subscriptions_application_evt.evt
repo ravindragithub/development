@@ -1,0 +1,8 @@
+<aura:event type="APPLICATION" description="Event template" >
+  <!-- From the top component -->
+  <aura:attribute name="identifier" type="String" default=""/>
+  <aura:attribute name="subscriptionList" type="HTS_ltgsvc_subscriptions" />
+  <aura:attribute name="statusMessage" type="String" />
+  <aura:attribute name="shapingPolicy" type="String" />
+  <aura:attribute name="region" type="String" />
+</aura:event>

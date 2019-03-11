@@ -1,0 +1,46 @@
+<!--
+ - Created by Jai Chaturvedi on 12/03/2017.
+ -->
+
+<aura:component implements="forceCommunity:layout" access="global"
+                description="CustomHomeLayout">
+
+    <aura:attribute name="header" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="mainservices" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c1" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c2" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c3" type="Aura.Component[]" required="false" access="global"/>
+
+    <aura:attribute name="s1" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s2" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s3" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="sFooter" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="miniheight" type="string" access="global"/>
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    
+    <aura:handler event="c:portalHideHomePageSpinner" action="{!c.toggleSpinner}"/>
+   
+
+    <div class="slds" style="{!'background:#f3f3f3;min-height:'+v.miniheight}">
+        <div class="slds-grid ">
+            <div class=" slds-size--1-of-1">{!v.header}</div>
+        </div>
+        <div class="slds-grid ">
+            <div class="  slds-size--1-of-1">{!v.mainservices}</div>
+        </div>
+        <div class="slds-grid slds-wrap  ">
+            <div class="slds-m-top_medium slds-size--1-of-1 slds-medium-size--1-of-3">{!v.s1c1}</div>
+            <div class="slds-m-top_medium slds-size--1-of-1 slds-medium-size--1-of-3">{!v.s1c2}</div>
+            <div class="slds-m-top_medium slds-size--1-of-1 slds-medium-size--1-of-3">{!v.s1c3}</div>
+        </div>
+        <div class="slds-grid slds-wrap  ">
+            
+            <div class="slds-m-top_medium slds-m-bottom--medium  slds-size--1-of-1 slds-medium-size--1-of-2">{!v.s1}</div>
+            <div class="slds-m-top_medium slds-m-bottom--medium  slds-size--1-of-1 slds-medium-size--1-of-2">{!v.s2}</div>
+        </div>
+        <div class="slds-grid slds-wrap ">
+            <div class="slds-col--padded">{!v.sFooter}</div>
+        </div>
+    </div>
+	<lightning:spinner aura:id="custommySpinner" variant="brand" size="medium"/>
+</aura:component>

@@ -1,0 +1,124 @@
+<apex:page controller="IPMCAssetFlowController" action="{!autoRun}">
+<!-- Begin Default Content REMOVE THIS -->
+    <apex:variable var="Asset" value="{!ServerToActivate}" />
+    <apex:variable var="System" value="{!SystemId}" />
+    <apex:variable var="Hierarchy" value="{!Hierarchy}" />
+	<apex:form id="form">
+    <div class="page-content" >
+	<apex:stylesheet value="{!URLFOR($Resource.portal_styles2)}" />
+    <p><h1>Welcome to the IPMC Services Automation Demonstration Page</h1></p><br></br>
+
+        <apex:pageBlock id="fromAsset"> 
+        	<h1>Asset Flow Details</h1><br></br>
+            The system level Asset is: <apex:outputLink value="/{!System.Id}" id="systemPage">{!System.Name},</apex:outputLink> 
+            Which is described as {!System.Item_Description__c} <br></br>
+            {!IF(SRVRCount==0, "This system is not compatible for IPMC Service!", "The default IPMC Asset to be activated is: ")}
+            <apex:outputLink value="/{!Asset.Id}" id="fromPage" rendered="{!IF(SRVRCount!=0, true, false)}">{!Asset.Name},</apex:outputLink> 
+            <apex:outputText value=" Which is described as {0}" rendered="{!IF(SRVRCount!=0, true, false)}">
+            	<apex:param value="{!Asset.Item_Description__c}"/>
+            </apex:outputText>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="SystemAnalysis">
+        	<h1>System Analysis</h1><br></br>
+            The IPMC related Antennas in the System Hierarchy include {!InstalledAntennaTypes} <br></br>
+            The IPMC related Servers in the System Hierarchy include {!InstalledServerTypes} <br></br>
+            Server count: {!SRVRCount}<br></br>
+            Antenna count: {!ANTCount}<br></br>
+			<apex:image value="/img/msg_icons/error32.png" rendered="{!RequiresReview}"/> 
+			<apex:image value="/img/msg_icons/confirm32.png" rendered="{!NOT(RequiresReview)}"/>
+			{!IF(RequiresReview,"Asset Hierarchy Requires Review!!", "Asset Hierarchy OK")}
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="CBXDetails">
+            <!-- Going to need a button that populates a table of CBX details (maybe only one!)  -->
+            <apex:commandButton action="{!getCBXDetails}" value="Get CBX Details" id="CBXDetailsButton" 
+                                disabled="{!IF(SRVRCount==0,true,false)}" reRender="CBXDetails" rendered="{! !showSRVRList}"/><br></br>
+            <apex:dataTable value="{!SRVRList}" var="CBX" id="theTable" rowClasses="odd,even" styleClass="tableClass"
+                            rendered="{!showSRVRList}" cellspacing="10%">
+                <apex:facet name="caption"><h1>CommBox Details</h1></apex:facet>
+                <apex:column >
+                    <apex:facet name="header">Serial Number</apex:facet>
+                    <apex:outputText value="{!CBX.Parent_Asset__r.Name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Description</apex:facet>
+                    <apex:outputText value="{!CBX.Parent_Asset__r.Item_Description__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Type</apex:facet>
+                    <apex:outputText value="{!CBX.Product2.Airtime_Group__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">S/W Serial Number</apex:facet>
+                    <apex:outputText value="{!CBX.Name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">KenCast License</apex:facet>
+                    <apex:outputText value="{!CBX.IPMC_KenCast_SiteID__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Issued</apex:facet>
+                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                        <apex:param value="{!CBX.IPMC_License_Issued__c}" /> 
+                    </apex:outputText>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Issued By</apex:facet>
+                    <apex:outputText value="{!CBX.IPMC_License_Issued_by__c}"/>
+                </apex:column>
+                <apex:column >
+                	<apex:facet name="header">Action</apex:facet>
+                	<apex:commandLink action="{!ActivateAndMap}" value="{!IF(CBX.IPMC_KenCast_SiteID__c=='','Activate Service','Deactivate or Change Service')}">
+                		<apex:param name="SelectedSRVR" value="{!CBX.Id}" assignTo="{!SelectedSRVR}"/>
+                	</apex:commandLink>
+
+                </apex:column>
+            </apex:dataTable>
+        </apex:pageBlock>
+		<apex:pageBlock id="hiddenBlock" rendered="false"></apex:pageBlock>
+		<apex:pageBlock id="AccountDetails">
+        	<h1>Account Details</h1><br></br>
+        	The {!Asset.Item_Description__c} is installed on {!Asset.Account.Name}, a {!Asset.Account.RecordType.Name} Platform<br></br>
+        	The Platforms Parent Account is {!Asset.Account.Parent.Name}<br></br>
+        	Account type: {!Asset.Account.Parent.RecordType.Name}<br></br>
+        	Custom Call Account ID: {!Asset.Account.Parent.Custom_Call_Acct_ID__c}<br></br>
+        	<apex:image value="/img/msg_icons/error32.png" rendered="{!AcctRequiresReview}"/> 
+			<apex:image value="/img/msg_icons/confirm32.png" rendered="{!NOT(AcctRequiresReview)}"/>
+			{!IF(AcctRequiresReview,"Account Structure Requires Review!!", "Account Structure OK")}
+        	<!-- Going to need a button that populates a table of CBX details (maybe only one!)  -->
+<!--             <apex:commandButton action="{!getAcctDetails}" value="Get Account Details" id="AcctDetailsButton" reRender="AccountDetails"/> -->
+        </apex:pageBlock>
+        
+		<apex:pageBlock id="EligibleProducts">
+            <apex:dataTable value="{!ValidChoices}" var="SVCs" id="ServiceTable" rowClasses="odd,even" styleClass="tableClass" cellspacing="10%">
+                <apex:facet name="caption"><h1>Eligible Products</h1></apex:facet>
+                <apex:column >
+                    <apex:facet name="header">Selected</apex:facet>
+                    <apex:inputCheckbox value="{!SVCs.Selected}" disabled="true">
+
+                    </apex:inputCheckbox>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Bundle Name</apex:facet>
+                    <apex:outputLink value="/{!SVCs.IPMCPkg.Id}">{!SVCs.IPMCPkg.Name},</apex:outputLink> 
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">System Compatible</apex:facet>
+                    <apex:outputText value="{!SVCs.SystemCompatible}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Antenna Status</apex:facet>
+                    <apex:outputText value="{!SVCs.AntennaStatus}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Server Status</apex:facet>
+                    <apex:outputText value="{!SVCs.ServerStatus}"/>
+                </apex:column>
+            </apex:dataTable>
+		</apex:pageBlock>
+		
+	</div>
+	</apex:form>
+<!-- End Default Content REMOVE THIS -->
+</apex:page>

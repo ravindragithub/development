@@ -1,0 +1,960 @@
+<apex:page >  
+<!--apex:page docType="html-5.0" standardStylesheets="false" sidebar="false" showHeader="true" standardController="Opportunity" extensions="CreateOppProductsControllerNew">
+    <apex:sectionHeader subtitle="Add Product to Opportunity" />
+
+    <html ng-app="addProductApp" lang="en">
+    <head>
+        <a style="cursor: pointer; cursor: hand;" onclick="pageRedirect();">« Back to List : Opportunity</a>
+        <br></br>
+        <br></br>
+        <meta charset="utf-8" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet" />
+        <apex:stylesheet value="{!URLFOR($Resource.AJS,'ajs/css/ngDialog-theme-default.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.AJS,'ajs/css/ngDialog.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/jquery.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/angular.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/angular-dragdrop.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/ui-bootstrap-tpls.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.AJS, 'ajs/js/ngDialog.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.BlockUI, 'blockui/angular-block-ui.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.BlockUI,'blockui/angular-block-ui.min.css')}" />
+
+        <style>
+            .pull-right {
+                float: none !important
+            }
+            .navbar-nav {
+                margin: 0 !important
+            }
+            .btn-droppable {
+                width: 180px;
+                height: 30px;
+                padding-left: 4px;
+            }
+            .btn-info{
+                
+            }
+            .btn-draggable {
+                width: 130px;
+                padding-bottom: 2px;
+                position:inherit;
+               
+            }
+            #main {
+                width: 600px;
+                min-height: 200px;
+                position: relative;
+            }
+            #items {
+                width: 146px;
+                min-height: 340px;
+                border: 4px solid #EEEEEE;
+            }
+            #dropbox {
+                left: 2%;
+                min-width: 70%;
+                min-height: 350px;
+                border: 4px solid #EEEEEE;
+            }
+            .inputTdSize {
+                width: 80px;
+            }
+            .modal {
+                display: block;
+            }
+            /* Custom dialog/modal headers */
+            
+            .dialog-header-error {
+                background-color: #d2322d;
+            }
+            .dialog-header-wait {
+                background-color: #428bca;
+            }
+            .dialog-header-notify {
+                background-color: #eeeeee;
+            }
+            .dialog-header-confirm {
+                background-color: #333333;
+            }
+            .dialog-header-error span,
+            .dialog-header-error h4,
+            .dialog-header-wait span,
+            .dialog-header-wait h4,
+            .dialog-header-confirm span,
+            .dialog-header-confirm h4 {
+                color: #ffffff;
+            }
+            /* Ease Display */
+            
+            .pad {
+                padding: 25px;
+            }
+        </style>
+    </head>
+
+    <script type="text/javascript">
+       
+        var addProductToOpportunity = angular.module('addProductApp', ['ngDragDrop', 'ui.bootstrap', 'ngDialog', 'blockUI']);
+        addProductToOpportunity.config(['ngDialogProvider', function(ngDialogProvider) {
+            ngDialogProvider.setDefaults({
+                className: 'ngdialog-theme-default',
+                plain: false,
+                showClose: false,
+                closeByDocument: true,
+                closeByEscape: true,
+                appendTo: false
+            });
+        }]);
+        var sortingOrder = 'name';
+        var contrl = addProductToOpportunity.controller('controllerAddProduct', function($scope, $filter, $modal, ngDialog, blockUI, $timeout, $rootScope) {
+            $scope.oneAtATime = true;
+            $scope.productRatePlansChargetoSelect = [];
+            $scope.productRatePlans = [];
+            $scope.productsIds = [];
+            $scope.productCharge = [];
+            $scope.oppProductCharge = {!listOfOpportunityCharge};
+            $scope.slistOfOppChargeFieldLabels = {!slistOfOppFieldsetValuesOnLoad};
+            $scope.orig = angular.copy($scope.products);
+            $scope.isDisplayCharge = {!isDisplayCharge};
+            $scope.sChargeValue = [];
+            $scope.sChargeIdsRemoved = [];
+            $scope.oppProductChargeTiers = [];
+            $scope.oppRatePlanProductChargeTiersClass = [];
+            $scope.oppClassCharges = [];
+            $scope.listOfSelectedRateplanAndProdutIds = [];
+            var sOppid = "{!$CurrentPage.parameters.id}";
+            $scope.slistOfOppChargeFieldLabelsToDisplay = [];
+            $scope.listOfQuantityandUnitPrice = [];
+            $scope.opportunityClass = {!sOpportunity};
+            $scope.sortingOrder = sortingOrder;
+            $scope.reverse = false;
+            $scope.filteredItems = [];
+            $scope.groupedItems = [];
+            $scope.itemsPerPage = 15;
+            $scope.pagedItems = [];
+            $scope.currentPage = 0;
+            $scope.items = {!slistOfproduct};
+
+            angular.element(document).ready(function() {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CreateOppProductsControllerNew.getListofOpportnutiyProductClass}', sOppid,
+                    function(result, event) {
+                        if (event.status) {
+                            $scope.$apply(function() {
+                                angular.forEach(result, function(value, key) {
+                                    $scope.oppRatePlanProductChargeTiersClass.push(value);
+                                    $scope.listOfQuantityandUnitPrice = $scope.oppRatePlanProductChargeTiersClass;
+                                });
+                            });
+                        } else {
+                            alert(event.message);
+                        }
+                    });
+                    
+                    $('.btn-info').click(function() {
+                        var draggableId = $(this).attr("id");
+                        $scope.getProductRatePlan(draggableId);
+                        $scope.productsIds.push(draggableId);
+                        blockUI.start();
+                    });
+            });
+
+            $scope.openConfirmngDialogCharge = function(ratePlanId) {
+                blockUI.stop();
+                var isPopup = false;
+                if (!$scope.isDisplayCharge) {
+                    ngDialog.closeAll();
+                    $scope.addCharge(ratePlanId, isPopup);
+                } else {
+                    var dialog = ngDialog.openConfirm({
+                        template: 'modalDialogForChargeId',
+                        scope: $scope,
+                        className: 'ngdialog-theme-default',
+                        closeByEscape: true
+                    });
+                    angular.forEach($scope.productRatePlansChargetoSelect, function(value, key) {
+                        if (value.invoiceit_s__Product_Rate_Plan__c == ratePlanId) {
+                            $scope.sChargeValue.push(value);
+                        }
+                    });
+
+
+                    $scope.ok = function() {
+                        isPopup = true;
+                        ngDialog.closeAll();
+                        $scope.addCharge(ratePlanId, isPopup);
+                    };
+                }
+            };
+
+            $scope.addCharge = function(ratePlanId, isPopup) {
+                if (!isPopup) {
+                    angular.forEach($scope.productRatePlansChargetoSelect, function(value, key) {
+                        if (value.invoiceit_s__Product_Rate_Plan__c == ratePlanId) {
+                            $scope.sChargeValue.push(value);
+                        }
+                    });
+
+                }
+                var slistOfProductIds = [];
+                var slistOfProductRatePlanIds = [];
+                var slistOfProductChargeIds = [];
+
+                angular.forEach($scope.productsIds, function(value, key) {
+                    slistOfProductIds.push({
+                        Id: value
+                    });
+                });
+
+                slistOfProductRatePlanIds.push({
+                    Id: ratePlanId
+                });
+
+                if (isPopup) {
+                    angular.forEach($scope.sChargeValue, function(value, key) {
+                        if (value.isSelected) {
+                            slistOfProductChargeIds.push({
+                                Id: value.Id
+                            });
+                        }
+                    });
+                } else {
+                    angular.forEach($scope.sChargeValue, function(value, key) {
+                        slistOfProductChargeIds.push({
+                            Id: value.Id
+                        });
+                    });
+                }
+
+                $scope.listOfSelectedRateplanAndProdutIds.push({
+                    ProductId: slistOfProductIds,
+                    RatePlanIds: slistOfProductRatePlanIds,
+                    ChargeIds: slistOfProductChargeIds
+                });
+
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CreateOppProductsControllerNew.getOpportunityClassPopulated}', JSON.stringify($scope.listOfSelectedRateplanAndProdutIds), sOppid,
+                    function(result, event) {
+                        $scope.$apply(function() {
+                            $scope.populateValues(result, event);
+                        });
+                    });
+            };
+
+            $scope.populateValues = function(result, event) {
+                if (event.status) {
+                    $scope.oppRatePlanProductChargeTiersClass.push(result);
+                    blockUI.stop();
+                    while ($scope.productRatePlans.length > 0) {
+                        $scope.productRatePlans.pop();
+                    }
+
+                    while ($scope.sChargeValue.length > 0) {
+                        $scope.sChargeValue.pop();
+                    }
+
+                    while ($scope.productsIds.length > 0) {
+                        $scope.productsIds.pop();
+                    }
+
+                    while ($scope.productRatePlansChargetoSelect.length > 0) {
+                        $scope.productRatePlansChargetoSelect.pop();
+                    }
+
+                    while ($scope.listOfSelectedRateplanAndProdutIds.length > 0) {
+                        $scope.listOfSelectedRateplanAndProdutIds.pop();
+                    }
+
+                } else {
+                    alert(event.message);
+                }
+            };
+            
+            $rootScope.$on('ngDialog.closed', function(e, $dialog) {
+                blockUI.stop();
+                while ($scope.productRatePlans.length > 0) {
+                    $scope.productRatePlans.pop();
+                }
+
+                while ($scope.sChargeValue.length > 0) {
+                    $scope.sChargeValue.pop();
+                }
+
+                while ($scope.productsIds.length > 0) {
+                    $scope.productsIds.pop();
+                }
+
+                while ($scope.productRatePlansChargetoSelect.length > 0) {
+                    $scope.productRatePlansChargetoSelect.pop();
+                }
+
+                while ($scope.listOfSelectedRateplanAndProdutIds.length > 0) {
+                    $scope.listOfSelectedRateplanAndProdutIds.pop();
+                }
+            });
+
+            $scope.openConfirmngDialog = function() {
+                blockUI.stop();
+                var dialogMain = ngDialog.openConfirm({
+                    template: 'modalDialogId',
+                    className: 'ngdialog-theme-default',
+                    scope: $scope,
+                    closeByEscape: true
+                });
+
+                $scope.cancel = function() {
+                    ngDialog.closeAll();
+                    while ($scope.productRatePlans.length > 0) {
+                        $scope.productRatePlans.pop();
+                    }
+
+                    while ($scope.sChargeValue.length > 0) {
+                        $scope.sChargeValue.pop();
+                    }
+
+                    while ($scope.productsIds.length > 0) {
+                        $scope.productsIds.pop();
+                    }
+
+                    while ($scope.productRatePlansChargetoSelect.length > 0) {
+                        $scope.productRatePlansChargetoSelect.pop();
+                    }
+
+                    while ($scope.listOfSelectedRateplanAndProdutIds.length > 0) {
+                        $scope.listOfSelectedRateplanAndProdutIds.pop();
+                    }
+                };
+            };
+
+            $scope.openCancel = function(size) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'myModalContentForCancel',
+                    controller: ModalInstanceCtrlForCancel,
+                    size: size
+                });
+            };
+
+            var ModalInstanceCtrlForCancel = function($scope, $modalInstance) {
+                $scope.ok = function() {
+                    window.location.href = "/" + sOppid;
+                };
+
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+            };
+            
+            $scope.selectAll = false;
+            $scope.checkAll = function() {
+                $scope.selectAll = $(".isSelected").is(":checked");
+                angular.forEach($scope.sChargeValue, function(value, key) {
+                    value.isSelected = $scope.selectAll;
+                });
+                $scope.selectAll = false;
+            };
+
+            $('#dropbox').droppable({
+                drop: function(event, ui) {
+                    var draggableId = ui.draggable.attr("id");
+                    var droppableId = $(this).attr("id");
+                    $scope.getProductRatePlan(draggableId);
+                    $scope.productsIds.push(draggableId);
+                    blockUI.start();
+                }
+            });
+            
+           $scope.getProductRatePlan = function(prodIds) {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CreateOppProductsControllerNew.getListofProductRatePlanNCahrge}', prodIds, sOppid,
+                    function(result, event) {
+                        if (event.status) {
+                            if (result.length > 0) {
+                                $scope.$apply(function() {
+                                    angular.forEach(result, function(value, key) {
+                                        $scope.productRatePlans.push(value);
+                                    });
+                                    $scope.getProductRatePlanCharge();
+                                });
+                            } else {
+                                $scope.openConfirmngDialogRatePlanEmpty();
+                                blockUI.stop();
+                            }
+                        } else {
+                            alert(event.message);
+                        }
+                    });
+            }
+
+            $scope.getProductRatePlanCharge = function() {
+                var listOfSelectedRateplanAndCharge = [];
+                angular.forEach($scope.productRatePlans, function(value, key) {
+                    angular.forEach(value, function(value1, key1) {
+                        if (key1 == 'invoiceit_s__ProductRatePlanCharge__r') {
+                            angular.forEach(value1, function(value2, key2) {
+                                listOfSelectedRateplanAndCharge.push(value2);
+                                angular.forEach(value2, function(value3, key3) {
+
+                                });
+                            });
+                        }
+                    });
+                });
+                $scope.getProductRatePlanAndCharge(listOfSelectedRateplanAndCharge);
+            }
+
+            $scope.getProductRatePlanAndCharge = function(listOfRateplanAndCharge) {
+                var productRatePlanId = '';
+                var isPopup = false;
+                if (listOfRateplanAndCharge.length > 0) {
+                    angular.forEach(listOfRateplanAndCharge, function(value, key) {
+                        value["isSelected"] = false;
+                        $scope.productRatePlansChargetoSelect.push(value);
+                    });
+
+                    angular.forEach($scope.productRatePlans, function(value, key) {
+                        value["isSelected"] = false;
+                        productRatePlanId = value.Id;
+                    });
+
+
+                    if ($scope.productRatePlans.length == 1 && !$scope.isDisplayCharge) {
+                        $scope.addCharge(productRatePlanId, isPopup);
+                    } else if ($scope.productRatePlans.length > 1) {
+                        $scope.openConfirmngDialog();
+                    } else if ($scope.isDisplayCharge && $scope.productRatePlans.length == 1) {
+                        $scope.openConfirmngDialogCharge(productRatePlanId);
+                    }
+
+                } else {
+                    var myBlockUI = blockUI.start('{!$Label.invoiceit_s__Product_Rateplan_Currency}');
+                    $timeout(function() {
+                        myBlockUI.stop();
+                    }, 2000);
+                }
+            }
+
+            $scope.saveProductsCharges = function() {
+                blockUI.start("Saving Record(s)");
+                var oppClasstoInsert = [];
+                oppClasstoInsert.push($scope.opportunityClass);
+                console.log($scope.opportunityClass.opportunity.invoiceit_crmx__Shipping_Contact__c);
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CreateOppProductsControllerNew.saveProductCharge}', JSON.stringify($scope.oppRatePlanProductChargeTiersClass), sOppid, $scope.sChargeIdsRemoved.toString(), JSON.stringify(oppClasstoInsert),
+                    function(result, event) {
+                        $scope.getSaveStatus(result, event);
+                    });
+            }
+
+            $scope.getSaveStatus = function(result, event) {
+                if (event.status) {
+                    blockUI.start("Record Saved");
+                    try { sforce.one.back(true); sforce.one.navigateToSObject("/" + sOppid); } catch(e) { window.location.href = "/" + sOppid; }
+                    //sforce.one.navigateToURL("/" + sOppid);
+                } else {
+                    alert(event.message);
+                }
+            }
+
+            $scope.viewChargeTiers = function(idOppCharge, idProductCharge) {
+
+                if (!angular.isUndefined(idOppCharge)) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CreateOppProductsControllerNew.getListofOppProductRatePlanChargeTier}', idOppCharge.toString(),
+                        function(result, event) {
+                            if (result.length > 0) {
+                                if (event.status) {
+                                    angular.forEach(result, function(value, key) {
+                                        $scope.oppProductChargeTiers.push(value);
+                                        $scope.openConfirmngDialogChargeTier();
+                                    });
+                                } else {
+                                    alert(event.message);
+                                }
+                            } else {
+                                $scope.openConfirmngDialogChargeTierEmpty();
+                            }
+                        });
+                }
+
+                if (!angular.isUndefined(idProductCharge) && (idOppCharge == '' || idOppCharge == null)) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CreateOppProductsControllerNew.getListofProductRatePlanChargeTier}', idProductCharge.toString(),
+                        function(result, event) {
+                            if (result.length > 0) {
+                                if (event.status) {
+                                    angular.forEach(result, function(value, key) {
+                                        $scope.oppProductChargeTiers.push(value);
+                                        $scope.openConfirmngDialogChargeTier();
+                                    });
+                                } else {
+                                    alert(event.message);
+                                }
+                            } else {
+                                $scope.openConfirmngDialogChargeTierEmpty();
+                            }
+
+                        });
+                }
+            }
+
+            $scope.openConfirmngDialogChargeTier = function() {
+                ngDialog.openConfirm({
+                    template: 'modalDialogForChargeTierId',
+                    scope: $scope,
+                    className: 'ngdialog-theme-default'
+                });
+
+                $scope.ok = function() {
+                    ngDialog.closeAll();
+                    while ($scope.oppProductChargeTiers.length > 0) {
+                        $scope.oppProductChargeTiers.pop();
+                    }
+                };
+            };
+
+            $scope.openConfirmngDialogChargeTierEmpty = function() {
+                ngDialog.openConfirm({
+                    template: 'modalDialogForChargeTierEmpty',
+                    scope: $scope,
+                    className: 'ngdialog-theme-default'
+                });
+
+                $scope.ok = function() {
+                    ngDialog.closeAll();
+                    while ($scope.oppProductChargeTiers.length > 0) {
+                        $scope.oppProductChargeTiers.pop();
+                    }
+                };
+            };
+
+            $scope.openConfirmngDialogRatePlanEmpty = function() {
+                ngDialog.openConfirm({
+                    template: 'modalDialogForRatePlanEmpty',
+                    scope: $scope,
+                    className: 'ngdialog-theme-default'
+                });
+
+                $scope.ok = function() {
+                    ngDialog.closeAll();
+                    while ($scope.oppProductChargeTiers.length > 0) {
+                        $scope.oppProductChargeTiers.pop();
+                    }
+                };
+            };
+
+            $scope.removeCharge = function(index, sProductId) {
+                if (!angular.isUndefined(sProductId)) {
+                    $scope.sChargeIdsRemoved.push(sProductId);
+                }
+
+                angular.forEach($scope.oppRatePlanProductChargeTiersClass, function(value, key) {
+                    if (key == index) {
+                        $scope.oppRatePlanProductChargeTiersClass.splice(index, 1);
+                    }
+                });
+            }
+
+            $scope.getSubTotal = function() {
+                var subtotalTotal = 0;
+                var grandTotal = 0;
+                angular.forEach($scope.oppRatePlanProductChargeTiersClass, function(value, key) {
+                    angular.forEach(value.opportunityProducts, function(value1, key1) {
+                        angular.forEach(value1.OpportunityRatePlans, function(value2, key2) {
+                            angular.forEach(value2.opportunityRatePlanCharges, function(value3, key3) {
+                                angular.forEach(value3.opportunityRatePlanCharge, function(value4, key4) {
+                                    if (key4 == 'invoiceit_crmx__Unit_Price__c' || key4 == 'invoiceit_crmx__Quantity__c') {
+                                         subtotalTotal = (value3.opportunityRatePlanCharge['invoiceit_crmx__Quantity__c'] * value3.opportunityRatePlanCharge['invoiceit_crmx__Unit_Price__c']);
+                                    }
+                                });
+                                grandTotal += subtotalTotal;
+                                subtotalTotal = 0;
+                            });
+                        });
+                    });
+                });
+
+                return grandTotal;
+            }
+
+            $scope.tierValuePopOver = function(typeValue) {
+                if (typeValue == 'Usage') {
+                    $("[rel='popover']").popover({
+                        trigger: 'hover',
+                        placement: 'top',
+                        title: 'Refer View Tiers Button to add Value',
+                        html: true,
+                        content: '<div id="popOverBox">Refer View Tiers Button to add Value</div>'
+                    });
+                }
+            }
+
+            $scope.filterIt = function() {
+                return $filter('filter')($scope.items, $scope.search);
+            };
+
+            var searchMatch = function(haystack, needle) {
+                if (!needle) {
+                    return true;
+                }
+                return haystack.toLowerCase().indexOf(needle.toLowerCase()) !== -1;
+            };
+
+            $scope.search = function() {
+                $scope.filteredItems = $filter('filter')($scope.items, function(item) {
+                    for (var attr in item) {
+                        if (searchMatch(item[attr], $scope.query))
+                            return true;
+                    }
+                    return false;
+                });
+
+                if ($scope.sortingOrder !== '') {
+                    $scope.filteredItems = $filter('orderBy')($scope.filteredItems, $scope.sortingOrder, $scope.reverse);
+                }
+                $scope.currentPage = 0;
+                $scope.groupToPages();
+            };
+
+            $scope.groupToPages = function() {
+                $scope.pagedItems = [];
+                for (var i = 0; i < $scope.filteredItems.length; i++) {
+                    if (i % $scope.itemsPerPage === 0) {
+                        $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [$scope.filteredItems[i]];
+                    } else {
+                        $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)].push($scope.filteredItems[i]);
+                    }
+                }
+            };
+
+            $scope.range = function(start, end) {
+                var ret = [];
+                if (!end) {
+                    end = start;
+                    start = 0;
+                }
+                for (var i = start; i < end; i++) {
+                    ret.push(i);
+                }
+                return ret;
+            };
+
+            $scope.prevPage = function() {
+                if ($scope.currentPage > 0) {
+                    $scope.currentPage--;
+                }
+            };
+
+            $scope.nextPage = function() {
+                if ($scope.currentPage < $scope.pagedItems.length - 1) {
+                    $scope.currentPage++;
+                }
+            };
+
+            $scope.setPage = function() {
+                $scope.currentPage = this.n;
+            };
+
+            $scope.search();
+            $scope.sort_by = function(newSortingOrder) {
+                if ($scope.sortingOrder == newSortingOrder)
+                    $scope.reverse = !$scope.reverse;
+                $scope.sortingOrder = newSortingOrder;
+
+                $('th i').each(function() {
+                    $(this).removeClass().addClass('icon-sort');
+                });
+                if ($scope.reverse)
+                    $('th.' + new_sorting_order + ' i').removeClass().addClass('icon-chevron-up');
+                else
+                    $('th.' + new_sorting_order + ' i').removeClass().addClass('icon-chevron-down');
+            };
+
+        });
+        contrl.$inject = ['$scope', '$filter'];
+    </script>
+
+    <body>
+        <div ng-controller="controllerAddProduct">
+                <div class="bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette">
+                    <div  ng-repeat="(oppClassKey,oppClassValue) in opportunityClass.opportunity" ng-if="$index == 0">
+                        <table  border="0" cellpadding="0" cellspacing="0" class="list">
+                            <tr>
+                                 <button ng-click="saveProductsCharges()" style="width:80px;height:50px;margin-left:40%;position:absolute;">Save</button>
+                                 <button value="{!$Label.invoiceit_s__ButtonCancel}"  ng-click="openCancel()" style="width:80px;height:50px;margin-left:48%;position:absolute;">Cancel</button>
+                           <br></br>
+                           <br></br>
+                           <br></br>
+                            </tr>
+                            <!--<tr class="headerRow">
+                                <th class="headerRow">Account Name</th>
+                                <th class="headerRow">Primary(Shipping) Contact</th>
+                                <th class="headerRow">Billing Contact</th>
+                                <th class="headerRow">Terms (Months)</th>
+                                <th class="headerRow">Currency</th>
+                            </tr>
+
+                            <tr>
+                                <input id="hiddenElementId" type="hidden" />
+                                <td><span ng-repeat="(accountkey,accountNameValue) in opportunityClass.opportunity.Account" ng-if="accountkey == 'Name'" id="OpportunityAccountName">{{accountNameValue}}</span>
+                                </td>
+                                <input type="hidden" id="OpportunityAccountName_Id" ng-model="opportunityClass.opportunity.AccountId" value="{{opportunityClass.opportunity.AccountId}}" />
+
+                                <td>
+                                    <input ng-repeat="(ShippingNamekey,ShippingNameValue) in opportunityClass.opportunity.invoiceit_crmx__Shipping_Contact__r" ng-if="ShippingNamekey == 'Name'" id="OpportunityShippingName" value="{{ShippingNameValue}}">
+                                    <c:autocompleteforopppage objectname="Contact" accountid="OpportunityAccountName" autocomplete_textbox="OpportunityShippingName" />
+                                    </input>
+                                </td>
+                                <input style="visibility:hidden;" id="OpportunityShippingName_Id" ng-model="opportunityClass.opportunity.invoiceit_crmx__Shipping_Contact__c" value="{{opportunityClass.opportunity.invoiceit_crmx__Shipping_Contact__c}}" />
+
+                                <td>
+                                    <input ng-repeat="(BillingNamekey,BillingNameValue) in opportunityClass.opportunity.invoiceit_crmx__Billing_Contact__r" ng-if="BillingNamekey == 'Name'" id="OpportunityBillingName" ng-model="BillingNameValue" value="{{BillingNameValue}}">
+                                    <c:autocompleteforopppage objectname="Contact" accountid="OpportunityAccountName" autocomplete_textbox="OpportunityBillingName" />
+                                    </input>
+                                </td>
+                                <input style="visibility:hidden;" id="OpportunityBillingName_Id" ng-model="opportunityClass.opportunity.invoiceit_crmx__Billing_Contact__c" value="{{opportunityClass.opportunity.invoiceit_crmx__Billing_Contact__c}}" />
+
+                                <td>
+                                    <input id="OpportunityTermId" ng-model="opportunityClass.opportunity.invoiceit_crmx__Number_Of_Terms__c" value="{{opportunityClass.opportunity.invoiceit_crmx__Number_Of_Terms__c}}"></input>
+                                </td>
+
+                                <td>
+                                    <input ng-repeat="(CurrencyNamekey,CurrencyNameValue) in opportunityClass.opportunity.invoiceit_crmx__CurrencyL__r" ng-if="CurrencyNamekey == 'Name'" id="OpportunitycurrencyName" ng-model="CurrencyNameValue" value="{{CurrencyNameValue}}">
+                                    <c:autocompleteforopppage objectname="invoiceit_s__Currency__c" autocomplete_textbox="OpportunitycurrencyName" />
+                                    </input>
+                                </td>
+                                <input style="visibility:hidden;" id="OpportunitycurrencyName_Id" ng-model="opportunityClass.opportunity.invoiceit_crmx__CurrencyL__c" value="{{opportunityClass.opportunity.invoiceit_crmx__CurrencyL__c}}" />
+                            </tr>-->
+                        <!-- /table>
+                    </div>
+                </div>
+         
+           <div id="main">
+                <table>
+                    <tr>
+                        <td>
+                            <table>
+                                <tbody>
+                                <tr>
+                                   <td>
+                                   <div id="items">
+                                     <br></br>
+                                     <div class="input-append">
+                                         <input type="text" style="width:120px;margin-left:4%;" ng-model="query" ng-change="search()" placeholder="Search Product" />
+                                     </div><br></br>
+                                         <div>
+                                            <ul style="margin-left:1%;">
+                                                <li class="btn btn-draggable" ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse" data-drop="true" ng-model='items' jqyoui-droppable="{index: {{$index}}, applyFilter: 'filterIt'}">
+                                                    <div class="btn-info" data-drag="true" data-jqyoui-options="{revert:'valid'}" ng-model="items" jqyoui-draggable="{index: {{$index}},applyFilter: 'filterIt',placeholder :'keep'}" ng-hide="!item.name" id="{{item.id}}">
+                                                                 Name :{{item.name}}
+                                                        <br></br>Product Code :{{item.invoiceit_s__Product_Code__c}}
+                                                        <br></br>Description :{{item.invoiceit_s__Description__c}}
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                     </div>
+                                   </td>
+                                  </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            
+                            <div id="dropbox" class="ng-cloak">
+                                <div ng-repeat="(parentKey,oppClass) in oppRatePlanProductChargeTiersClass">
+                                    <div ng-repeat="(prodKey,oppProduct) in oppClass.opportunityProducts">
+                                        <div ng-repeat="oppRatePlan in oppProduct.OpportunityRatePlans">
+                                            <table class="table table-hover" >
+                                                <tr class="headerRow" ng-if="chargeKey1 == 0 && parentKey == 0" ng-repeat="(chargeKey1,oppRatePlanCharges1) in oppRatePlan.opportunityRatePlanCharges">
+                                                    <th ng-if="parentKey == 0" />
+                                                    <th ng-if="parentKey == 0">Product Name</th>
+                                                    <th ng-if="parentKey == 0">Product Code</th>
+                                                    <th style="text-align: center;" ng-if="parentKey == 0" ng-show="key == 'Name' || key == 'invoiceit_crmx__Cost_Price__c' || key == 'invoiceit_crmx__Price_Type__c' || key == 'invoiceit_crmx__Quantity__c' || key == 'invoiceit_crmx__Unit_Of_Measurement__c' || key == 'invoiceit_crmx__Unit_Price__c'" ng-repeat="(key,value) in oppRatePlanCharges1.opportunityRatePlanCharge">
+                                                        {{slistOfOppChargeFieldLabels[key]}}
+                                                    </th>
+                                                 </tr>
+
+                                                <tr ng-repeat="(chargeKey,oppRatePlanCharges) in oppRatePlan.opportunityRatePlanCharges">
+                                                    <td><a href='#' ng-click="removeCharge(parentKey,oppProduct.Opportunityproduct.Id)"><i ng-if="chargeKey == 0" class="fa fa-trash"></i></a>
+                                                    </td>
+                                                    <td>
+                                                        <input ng-model="oppProduct.Opportunityproduct.Name" class="inputTdSize" type="text" ng-if="chargeKey == 0" value="{{oppProduct.Opportunityproduct.Name}}"> </input>
+                                                    </td>
+                                                    <td>
+                                                        <input ng-model="oppProduct.Opportunityproduct.invoiceit_crmx__Product_Code__c" class="inputTdSize" type="text" ng-if="chargeKey == 0" value="{{oppProduct.Opportunityproduct.invoiceit_crmx__Product_Code__c}}"> </input>
+                                                    </td>
+                                                    <td ng-show="key == 'Name' || key == 'invoiceit_crmx__Cost_Price__c' || key == 'invoiceit_crmx__Price_Type__c' || key == 'invoiceit_crmx__Quantity__c' || key == 'invoiceit_crmx__Unit_Of_Measurement__c' || key == 'invoiceit_crmx__Unit_Price__c'" ng-repeat="(key,value) in oppRatePlanCharges.opportunityRatePlanCharge">
+                                                        <!--<input ng-model="oppRatePlanCharges.opportunityRatePlanCharge[key]" ng-disabled="key == 'invoiceit_crmx__CurrencyL__c' || key == 'invoiceit_crmx__Unit_Of_Measurement__c' || key == 'invoiceit_crmx__Price_Type__c' || key == 'invoiceit_crmx__Status__c' || key == 'invoiceit_crmx__Cost_Price__c'" class="inputTdSize" type="text" value="{{value}}" />-->
+                                                        <!-- input ng-hide="key == 'invoiceit_crmx__CurrencyL__c' || key == 'invoiceit_crmx__Unit_Of_Measurement__c' || key == 'invoiceit_crmx__Price_Type__c' || key == 'invoiceit_crmx__Status__c' || key == 'invoiceit_crmx__Cost_Price__c'" ng-model="oppRatePlanCharges.opportunityRatePlanCharge[key]" class="inputTdSize" type="text" value="{{value}}" />
+                                                        <label style="display: block;text-align: center;line-height: 150%;font-size: .85em;" ng-show="key == 'invoiceit_crmx__CurrencyL__c' || key == 'invoiceit_crmx__Unit_Of_Measurement__c' || key == 'invoiceit_crmx__Price_Type__c' || key == 'invoiceit_crmx__Status__c' || key == 'invoiceit_crmx__Cost_Price__c'" ng-model="oppRatePlanCharges.opportunityRatePlanCharge[key]" class="inputTdSize">{{value}}</label>
+                                                        
+                                                        <br></br><button ng-if="key == 'invoiceit_crmx__Unit_Price__c'" ng-click="viewChargeTiers(oppRatePlanCharges.opportunityRatePlanCharge.Id,oppRatePlanCharges.opportunityRatePlanCharge.invoiceit_crmx__Product_Rate_Plan_Charge__c)" ng-show="(oppRatePlanCharges.opportunityRatePlanCharge.invoiceit_crmx__Price_Format__c == 'Tiered Pricing' || oppRatePlanCharges.opportunityRatePlanCharge.invoiceit_crmx__Price_Format__c == 'Volume Pricing') && oppRatePlanCharges.opportunityRatePlanCharge.invoiceit_crmx__Is_Product_Editable__c != true" class="btn btn-primary">View Tiers</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <script type="text/ng-template" id="myModalContentForCancel">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{!$Label.invoiceit_s__CancellingthiswoulddiscardthechangesPleaseconfirm}</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+
+                <script type="text/ng-template" id="modalDialogId">
+                    <div class="ngdialog-message">
+                        <h5>Select Rate Plan</h5>
+                        <br>
+                        <br>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Rate Plan Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="ratePlan in productRatePlans">
+                                <tr>
+                                    <td>
+                                        <input value="Select" class="btn btn-primary" type="button" ng-click="openConfirmngDialogCharge(ratePlan.Id)" ng-model="ratePlan.isSelected">
+                                    </td>
+                                    <td>
+                                        {{ratePlan.Name}}
+                                    </td>
+                                    <td>
+                                        {{ratePlan.invoiceit_s__Description__c}}
+                                    </td>
+                                </tr>
+                        </table>
+                    </div>
+                    <div class="ngdialog-buttons">
+                        <button style="margin-left:40%" class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+
+                <script type="text/ng-template" id="modalDialogForChargeId">
+                    <div class="ngdialog-message">
+                        <h5>Select Charge for Rate Plan</h5>
+                        <br>
+                        <br>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input ng-model="selectAll" class="isSelected" ng-click="checkAll()" type="checkbox">
+                                    </th>
+
+                                    <th>Charge Name</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="ratePlanCharge in sChargeValue">
+                                <tr>
+                                    <td>
+                                        <input class="isDisabledCharge" type="checkbox" ng-model="ratePlanCharge.isSelected">
+                                    </td>
+                                    <td>
+                                        {{ratePlanCharge.Name}}
+                                    </td>
+                                </tr>
+                                <tbody>
+                        </table>
+                    </div>
+                    <div class="ngdialog-buttons">
+                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="ok()">OK</button>
+                    </div>
+                </script>
+
+                <script type="text/ng-template" id="modalDialogForChargeTierEmpty">
+                    <div class="ngdialog-message">
+                        <h5>No Tiers to Display</h5>
+                    </div>
+                    <div class="ngdialog-buttons">
+                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="ok()">OK</button>
+                    </div>
+                </script>
+
+                <script type="text/ng-template" id="modalDialogForRatePlanEmpty">
+                    <div class="ngdialog-message">
+                        <h5>No Rate Plan to Display</h5>
+                    </div>
+                    <div class="ngdialog-buttons">
+                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="ok()">OK</button>
+                    </div>
+                </script>
+
+                <script type="text/ng-template" id="modalDialogForChargeTierId">
+                    <div class="ngdialog-message">
+                        <h5>Rate Plan Charge Tiers</h5>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Start Unit</th>
+                                    <th>End Unit</th>
+                                    <th>Unit Price</th>
+                                    <th>Unit Cost Price</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="ratePlanChargeTier in oppProductChargeTiers">
+                                <tr>
+                                    <td>
+                                        {{ratePlanChargeTier.invoiceit_crmx__Start_Unit__c}}{{ratePlanChargeTier.invoiceit_s__Start_Unit__c}}
+                                    </td>
+                                    <td>
+                                        {{ratePlanChargeTier.invoiceit_crmx__End_Unit__c}}{{ratePlanChargeTier.invoiceit_s__End_Unit__c}}
+                                    </td>
+                                    <td>
+                                        {{ratePlanChargeTier.invoiceit_crmx__Unit_Price__c}}{{ratePlanChargeTier.invoiceit_s__Unit_Price__c}}
+                                    </td>
+                                    <td>
+                                        {{ratePlanChargeTier.invoiceit_crmx__Unit_Cost_Price__c}}{{ratePlanChargeTier.invoiceit_s__Unit_Cost_Price__c}}
+                                    </td>
+                                </tr>
+                                <tbody>
+                        </table>
+                    </div>
+                    <div class="ngdialog-buttons">
+                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="ok()">OK</button>
+                    </div>
+                </script>
+                <br></br>   
+                <div id="totalBox" style="width:175px;margin-left:130%;position:relative;">
+                    <table class="table  table-hover">
+                        <tbody>
+                            <tr>
+                                <td>Subtotal : </td>
+                                <td style="overflow:auto;">{{getSubTotal() | number:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total : </td>
+                                <td style="overflow:auto;">{{getSubTotal() | number:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            window.onload = setFocus
+            function setFocus() {
+                document.getElementById("hiddenElementId").focus();
+            }
+                
+            function pageRedirect() {
+                 window.location.href = "/006";
+            }
+        </script>
+    </body>
+ </html>-->
+</apex:page>

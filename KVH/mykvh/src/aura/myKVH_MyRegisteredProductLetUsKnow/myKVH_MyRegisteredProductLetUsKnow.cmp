@@ -1,0 +1,87 @@
+<aura:component Controller="myKVH_MyRegisteredProductsController">
+ 	<ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+   
+	<aura:attribute name="UserObj" type="Object"/>
+    <aura:attribute name="subject" type="String"/>
+    <aura:attribute name="toName" type="String"/>
+    <aura:attribute name="caseRecordTypeName" type="String"/>
+    <aura:attribute name="body" type="String"/>  
+    <aura:attribute name="documentIds" type="List" default="[]"/>  
+    <aura:attribute name="attachmentlist" type="List" />  
+    
+    
+   
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="accept" type="List" default="{!$Label.c.admTol_Acceptable_File_Types}"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib2"/>
+    
+    <div>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <p class="subheading">To: <b>{!v.toName}</b></p>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <p class="subheading">From: <b>{!v.UserObj.Name}</b></p>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12">
+                <!--<ui:inputText label="Subject" class="field" value="{!v.subject}" required="true"/>-->
+                <lightning:input  aura:id="Subjectinput"  type="text" name="Subject" label="Subject" value="{!v.subject}"  required="true"
+                                 messageWhenValueMissing="Subject is required"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <ui:inputTextArea  label="Body"  value="{!v.body}" rows="10" required="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">               
+                <lightning:fileUpload  name="fileUploader"
+                               label= "Attachments"
+                               multiple="true"
+                               accept="{!v.accept}"
+                               recordId="{!v.UserObj.Id}"
+                               onuploadfinished="{! c.handleUploadFinished }"/>
+                <aura:if isTrue="{!empty(v.attachmentlist)}">
+                    <h3 class="noAttach">No Attachments</h3>
+                    <aura:set attribute="else">
+                        <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal" style="border:1px solid #d4d4d4;margin-top:5px;">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th class="slds-cell-shrink" scope="col">
+                                        <div class="slds-truncate" title="Name">Name
+                                        </div>
+                                    </th>                                   
+                                    <aura:if isTrue="{!!v.readonly}">
+                                        <th class="slds-cell-shrink" scope="col">
+                                            <div class="slds-truncate" title="Remove">Remove
+                                            </div>
+                                        </th>   
+                                    </aura:if>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.attachmentlist}" var="attach">
+                                    <tr class="slds-hint-parent">
+                                        <td class="slds-cell-shrink" data-label="Name">
+                                            <div class="slds-truncate" title="Name">{!attach.name}</div>
+                                        </td>                                      
+                                        <td class="slds-cell-shrink" data-label="Remove" >
+                                            <span class="slds-truncate" title="Remove" onclick="{!c.onFileDelete}" id="{!attach.documentId}">
+                                                <lightning:buttonIcon iconName="utility:delete" variant="bare" alternativeText="Remove"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </aura:set>
+                </aura:if>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <lightning:button class="remvoebuttonradius" variant="brand" label="Submit" title="Submit" onclick="{!c.handleSubmit}" />
+                <lightning:button class="remvoebuttonradius"  label="Cancel" title="cancel" onclick="{!c.handleCancel}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    
+</aura:component>

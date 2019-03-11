@@ -1,0 +1,18 @@
+<apex:page standardController="Asset" sidebar="false" showHeader="false" title="" >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+
+    <script>
+        $Lightning.use("c:LTEAct_app", function() {
+            $Lightning.createComponent(
+                "c:myKVH_SupportCenter",
+                {},
+                "lightning",
+                function(cmp) {
+                    console.log("Component created!");
+                });
+            });
+    </script>
+    <body >
+    <div id="lightning"></div>
+    </body>
+</apex:page>

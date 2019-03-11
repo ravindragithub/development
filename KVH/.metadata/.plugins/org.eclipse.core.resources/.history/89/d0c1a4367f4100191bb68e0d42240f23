@@ -1,0 +1,108 @@
+<apex:page id="pg" tabStyle="KVH_Portal_Admin__tab" controller="SpolightImageConfigurationCtrl" showHeader="true" sidebar="true" title="Spotlight Images" >
+ 
+  
+  <style>
+      
+      .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+       
+    }
+    
+    .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+    }
+   
+  </style>
+        <apex:define name="body">  
+         <apex:sectionHeader title="Partner Portal Administration" subtitle="Spotlight Images"/>
+        
+           <apex:actionStatus id="status">
+               <apex:facet name="start">
+                   <div >
+                        <div class="overlay"></div>
+                        <div class="status">                               
+                            <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                            <span id="load-statustext">Please wait...</span>
+                        </div>
+                   </div>
+               </apex:facet>
+           </apex:actionStatus>
+           
+           
+   
+<apex:form id="frm" >
+  
+  <apex:actionFunction name="saveRecords" status="actionstatus" action="{!saveRecords}"  />
+
+ 
+  <apex:pageBlock id="pgb"  >
+      <apex:outputPanel id="messagepannel">
+          <apex:pageMessages ></apex:pageMessages>
+      </apex:outputPanel>
+      <div id="results"></div>
+      <apex:pageBlockButtons location="bottom">
+          <input type="button" id="upload-button"  style="float: right;" value="Save" onclick="saveRecords();"/>             
+          &nbsp;
+          <input type="button" id="upload-button"  style="float: right;margin-right:10px" onclick="backbuttonclick('{!$CurrentPage.parameters.retURL}')" value="Back"/>             
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection title="Spotlight" columns="1">
+           <apex:variable value="{!0}" var="count"/>
+          <apex:pageBlockTable value="{!imagelst}" var="sp">
+              <apex:column headerValue="Action">
+                   <apex:commandLink rendered="{!sp.spotlight.id != null}" value="Delete" immediate="true" action="{!deleteSpotlight}" status="status" >
+                      <apex:param value="{!count}" assignTo="{!rownumber}" name="rownumber"/>
+                  </apex:commandLink>
+              </apex:column>  
+              <apex:column headerValue="Sort Order" width="20">
+                  <apex:inputField style="width:50px;" value="{!sp.spotlight.Sort_Order__c}"/>
+              </apex:column>
+              <apex:column headerValue="Name">
+                  <apex:inputField value="{!sp.spotlight.name}"/>
+              </apex:column>
+              <apex:column headerValue="Decription">
+                  <apex:inputField value="{!sp.spotlight.Description__c}"/>
+              </apex:column>          
+              <apex:column headerValue="URL">
+                  <apex:inputField value="{!sp.spotlight.Url__c}"/>
+              </apex:column>
+              <apex:column headerValue="Upload new Image">
+                  <apex:inputFile value="{!sp.file}" fileName="{!sp.filename}"></apex:inputFile>
+                  <apex:variable value="{!count+1}" var="count"/>
+              </apex:column>
+              <apex:column headerValue="Old Image" style="background:#000">
+                  <apex:image width="100" rendered="{!sp.spotlight.attachments.size > 0}" value="/servlet/servlet.FileDownload?file={!sp.spotlight.attachments[0].Id}"/>
+              </apex:column>
+              
+          </apex:pageBlockTable>
+      </apex:pageBlockSection>
+   </apex:pageBlock>
+</apex:form> 
+</apex:define> 
+  
+  <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+  <script>
+        function backbuttonclick(returl){
+            location.href = returl;
+        }
+  </script>
+ 
+</apex:page>

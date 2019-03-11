@@ -1,0 +1,9 @@
+<!--
+ - Created by Jai Chaturvedi on 6/04/2017.
+ -->
+
+<aura:event type="COMPONENT"
+            description="FilterOptionEvent.">
+    <aura:attribute name="sectionName" type="String"/>
+    <aura:attribute name="selectedOption" type="String[]"/>
+</aura:event>

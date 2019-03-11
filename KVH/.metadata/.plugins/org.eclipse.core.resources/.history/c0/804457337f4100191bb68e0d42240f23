@@ -1,0 +1,414 @@
+<apex:page sidebar="false" showChat="false" showHeader="false" standardStylesheets="false" cache="false" >
+    <head>	
+		<title>Mobile Satellite, Guidance, and Stabilization Systems from KVH Industries</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="Manufacturer of mobile satellite communications, guidance, and stabilization equipment and solutions for consumer, commercial and military applications." />
+		<link href="http://www.kvh.com/_CSS/GlobalStyle.css" rel="stylesheet" type="text/css" />
+		<script language="JavaScript" src="http://www.kvh.com/_JS/GlobalJavascript.js" type="text/javascript"></script>
+	</head>
+    <body class="j_on">
+		<form id="mainform" action="/" method="post" name="mainform">
+			<div>
+			<!-- <input type="hidden" value="" id="__EVENTTARGET" name="__EVENTTARGET">
+			<input type="hidden" value="" id="__EVENTARGUMENT" name="__EVENTARGUMENT">
+			<input type="hidden" value="/wEPDwUJNzUyNjI2MzE4D2QWBAIBD2QWAmYPZBYCZg9kFgQCAw8WAh4EVGV4dAUjPG1ldGEgbmFtZT0ia2V5d29yZHMiIGNvbnRlbnQ9IiIgLz5kAgUPFgIfAAW+ATxtZXRhIG5hbWU9ImRlc2NyaXB0aW9uIiBjb250ZW50PSJNYW51ZmFjdHVyZXIgb2YgbW9iaWxlIHNhdGVsbGl0ZSBjb21tdW5pY2F0aW9ucywgZ3VpZGFuY2UsIGFuZCBzdGFiaWxpemF0aW9uIGVxdWlwbWVudCBhbmQgc29sdXRpb25zIGZvciBjb25zdW1lciwgY29tbWVyY2lhbCBhbmQgbWlsaXRhcnkgYXBwbGljYXRpb25zLiIgLz5kAgMQZGQWBgIDD2QWAmYPZBYCZg9kFg4CAQ9kFgICAQ8WAh8ABQVIZWxsb2QCAw8PZBYCHglvbktleURvd24FK0tleURvd25IYW5kbGVyKCdwaGhlYWRlcl8wX2ltZ0J0blNlYXJjaEdvJylkAgkPDxYEHgtOYXZpZ2F0ZVVybAUNL1N1cHBvcnQuYXNweB8ABQdTdXBwb3J0ZGQCCw8PFgQfAgUQL1ByZXNzLVJvb20uYXNweB8ABQpQcmVzcyBSb29tZGQCDQ8PFgQfAAUJSW52ZXN0b3JzHwIFNWh0dHA6Ly9pci5rdmguY29tL3Bob2VuaXguemh0bWw/Yz03MDEzMSZwPWlyb2wtaXJob21lZGQCDw8PFgQfAgUOL0Fib3V0LVVzLmFzcHgfAAUIQWJvdXQgVXNkZAIRDw8WBB8CBRAvV2hlcmVUb0J1eS5hc3B4HwAFDFdoZXJlIFRvIEJ1eWRkAgcPZBYCZg9kFgJmD2QWAgIBD2QWBGYPZBYCZg9kFgICAw8WAh4HVmlzaWJsZWcWBAIBDxYEHgNzcmMFOC9+L21lZGlhL0ltYWdlcy9LVkgvSG9tZXBhZ2UvU3BvdGxpZ2h0L0hvbWVfU25pZmZlci5hc2h4HgNhbHRkZAIDDw8WAh8ABWI8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+dmFyIGZsYXNoID0gJ34vbWVkaWEvRmlsZXMvS1ZIL0hvbWVwYWdlL2hvbWVwYWdlNTEyLmFzaHgnOzwvc2NyaXB0PmRkAgEPZBYCZg9kFgICBQ8WAh8ABQhSU1MgRmVlZGQCCQ9kFgJmD2QWAmYPZBYUAgEPDxYCHwAFB1NpdGVtYXBkZAIDDw8WAh8ABQpTaXRlIFRlcm1zZGQCBQ8WAh4EaHJlZgUXL0Fib3V0LVVzL0ZlZWRiYWNrLmFzcHgWAgIBDw8WAh8ABQhGZWVkYmFja2RkAgcPDxYCHwAFB1ByaXZhY3lkZAIJDw8WAh8ABQdQYXRlbnRzZGQCDQ8WAh4LXyFJdGVtQ291bnQCAxYGZg9kFgQCAQ8PFgYfAgUYL0NvbW1lcmNpYWwtYW5kLU9FTS5hc3B4HwAFEENvbW1lcmNpYWwgJiBPRU0eB1Rvb2xUaXAFEENvbW1lcmNpYWwgJiBPRU1kZAIDDxYCHwcCBBYIAgEPZBYCAgEPDxYGHwIFKS9Db21tZXJjaWFsLWFuZC1PRU0vTWFyaXRpbWUtU3lzdGVtcy5hc3B4HwAFEE1hcml0aW1lIFN5c3RlbXMfCAUQTWFyaXRpbWUgU3lzdGVtc2RkAgIPZBYCAgEPDxYGHwIFQS9Db21tZXJjaWFsLWFuZC1PRU0vR3lyb3MtYW5kLUluZXJ0aWFsLVN5c3RlbXMtYW5kLUNvbXBhc3Nlcy5hc3B4HwAFOUd5cm9zY29wZXMsIEluZXJ0aWFsIE5hdmlnYXRpb24gU3lzdGVtcyAmIENvbXBhc3MgU2Vuc29ycx8IBTlHeXJvc2NvcGVzLCBJbmVydGlhbCBOYXZpZ2F0aW9uIFN5c3RlbXMgJiBDb21wYXNzIFNlbnNvcnNkZAIDD2QWAgIBDw8WBh8CBSUvQ29tbWVyY2lhbC1hbmQtT0VNL0xhbmQtU3lzdGVtcy5hc3B4HwAFDExhbmQgU3lzdGVtcx8IBQxMYW5kIFN5c3RlbXNkZAIED2QWAgIBDw8WBh8CBSwvQ29tbWVyY2lhbC1hbmQtT0VNL0F2aWF0aW9uL1RlbGV2aXNpb24uYXNweB8ABQhBdmlhdGlvbh8IBQhBdmlhdGlvbmRkAgEPZBYEAgEPDxYGHwIFHS9NaWxpdGFyeS1hbmQtR292ZXJubWVudC5hc3B4HwAFFU1pbGl0YXJ5ICYgR292ZXJubWVudB8IBRVNaWxpdGFyeSAmIEdvdmVybm1lbnRkZAIDDxYCHwcCAxYGAgEPZBYCAgEPDxYGHwIFRi9NaWxpdGFyeS1hbmQtR292ZXJubWVudC9HeXJvcy1hbmQtSW5lcnRpYWwtU3lzdGVtcy1hbmQtQ29tcGFzc2VzLmFzcHgfAAVARmliZXIgT3B0aWMgR3lyb3MsIEluZXJ0aWFsIE5hdmlnYXRpb24gU3lzdGVtcyAmIENvbXBhc3MgU2Vuc29ycx8IBUBGaWJlciBPcHRpYyBHeXJvcywgSW5lcnRpYWwgTmF2aWdhdGlvbiBTeXN0ZW1zICYgQ29tcGFzcyBTZW5zb3JzZGQCAg9kFgICAQ8PFgYfAgUqL01pbGl0YXJ5LWFuZC1Hb3Zlcm5tZW50L0xhbmQtU3lzdGVtcy5hc3B4HwAFDExhbmQgU3lzdGVtcx8IBQxMYW5kIFN5c3RlbXNkZAIDD2QWAgIBDw8WBh8CBS4vTWlsaXRhcnktYW5kLUdvdmVybm1lbnQvTWFyaXRpbWUtU3lzdGVtcy5hc3B4HwAFEE1hcml0aW1lIFN5c3RlbXMfCAUQTWFyaXRpbWUgU3lzdGVtc2RkAgIPZBYEAgEPDxYGHwIFDS9MZWlzdXJlLmFzcHgfAAUHTGVpc3VyZR8IBQdMZWlzdXJlZGQCAw8WAh8HAgMWBgIBD2QWAgIBDw8WBh8CBRwvTGVpc3VyZS9NYXJpbmUtU3lzdGVtcy5hc3B4HwAFDk1hcmluZSBTeXN0ZW1zHwgFDk1hcmluZSBTeXN0ZW1zZGQCAg9kFgICAQ8PFgYfAgUjL0xlaXN1cmUvUlYtU3lzdGVtcy9UZWxldmlzaW9uLmFzcHgfAAUKUlYgU3lzdGVtcx8IBQpSViBTeXN0ZW1zZGQCAw9kFgICAQ8PFgYfAgUlL0xlaXN1cmUvQXV0by1TeXN0ZW1zL1RlbGV2aXNpb24uYXNweB8ABQxBdXRvIFN5c3RlbXMfCAUMQXV0byBTeXN0ZW1zZGQCGw8PFgIfAAUpIEtWSCBJbmR1c3RyaWVzLCBJbmMuIEFsbCBSaWdodHMgUmVzZXJ2ZWRkZAIdDxYCHwAFCVtYXSBDbG9zZWQCHw8WAh8ABTdPb3BzISBZb3UgbXVzdCBiZSBsb2dnZWQgaW4gdG8gYWNjZXNzIHRoaXMgaW5mb3JtYXRpb24uZAIjDxYCHwAFiANQbGVhc2UgPGEgaHJlZj0nL0xvZ2luLmFzcHg/c2hvd09ubHk9bG9naW4mcmV0dXJuVVJMPSUyZic+bG9nIGluPC9hPiBvciA8YSBocmVmPScvQWNjb3VudC5hc3B4P3Nob3dPbmx5PXJlZ2lzdGVyJnJldHVyblVSTD0lMmYnPmNyZWF0ZSBhbiBhY2NvdW50PC9hPiB0byByZWNlaXZlIGFjY2VzcyB0byBjb21wbGV0ZSBpbmZvcm1hdGlvbiBhYm91dCBLVkjigJlzIGF3YXJkLXdpbm5pbmcgcHJvZHVjdHMgYW5kIHNlcnZpY2VzLCBpbmNsdWRpbmcgcXVpY2sgYW5kIGVhc3kgZG93bmxvYWRzIG9mIEtWSCBzdXBwb3J0IGRvY3VtZW50YXRpb24uIEl0J3MgZnJlZSBhbmQgZWFzeSBhbmQgZ2l2ZXMgeW91IGFjY2VzcyB0byB0aGUgbGF0ZXN0IGluZm8gb24gYWxsIG9mIEtWSCdzIHByb2R1Y3RzLmQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgEFGXBoaGVhZGVyXzAkaW1nQnRuU2VhcmNoR29JTaWOp16NyoBuBZ2uiffOOfHN7g==" id="__VIEWSTATE" name="__VIEWSTATE">
+			 -->
+			 </div>
+					
+			
+			<script type="text/javascript" src="http://www.kvh.com/WebResource.axd?d=VJsExHHfEet9Fuz7Wciah7gfSobJaZhLdmELSVx9mXYaxIsIir1eP2aWijYhxteCEv-JljS0ytUDh1o1eBSUwj4adbU1&amp;t=634605330834856163"></script>
+			
+			
+			<script type="text/javascript" src="http://www.kvh.com/ScriptResource.axd?d=DmZQRcTsdJiTQPqx4vDbraNWDIEQNlWSognv0yMGgIos92nbT3o_TS4bI9OSWVoQ3qgBxrM1vOHe7oyWiSQNPQ7d_Z0bulkH5H8Z4LKPtc_J147ox4vFe_sekQoZrr3G9NhXEfSqCF_fP9NGn3yQ0UG1r7g1&amp;t=ffffffffb7a06e42"></script>
+			<script type="text/javascript" src="http://www.kvh.com/ScriptResource.axd?d=vblhpAUj32stp4R4TScSAqlnVZofrb9xAvX-1DWl9I2aPtiu7UYTMc80xi1_qfQK4B8qlCbTNWUznUQkcOEdfZCA3zfDogvhQ60OrvUYtYqAEXKZ1Eu7zMar3aTH3jtTa8detusOW5Zufc1rg5FksKSsdi1ox1yixJVPxVYTV3wAG8We0&amp;t=ffffffffb7a06e42"></script>
+			<div>
+			<!--
+				<input type="hidden" value="/wEWAwK2+NL9CAKmwrXcCQKYpqf0DL0AILnIxXHoCEd0jKvQQE5xqm1Y" id="__EVENTVALIDATION" name="__EVENTVALIDATION">
+				-->
+			</div>
+					    <!-- START: /layouts/KVH/Masterpages/BaseLayout.aspx -->
+					   
+			
+			<!-- START: /layouts/KVH/Controls/_Global/Header.ascx -->
+			<div class="header">
+			    <div class="wrapper">
+			        <div class="header_padding">
+			            <a href="http://www.kvh.com/">
+			               <img width="134" height="80" class="logo" title="KVH" alt="KVH" src="http://www.kvh.com/Images/CommonImages/KVH-logo.gif"/></a> 
+			            <div class="header_search">
+			                <!-- 
+			                <input type="text" onkeydown="KeyDownHandler('phheader_0_imgBtnSearchGo')" class="input_search" id="phheader_0_txtSearch" value="Search this site" name="phheader_0$txtSearch">
+			                <input type="image" style="border-width:0px;" src="http://www.kvh.com/Images/Buttons/bt_go.jpg" class="go_button" title="Go" id="phheader_0_imgBtnSearchGo" name="phheader_0$imgBtnSearchGo">
+			                 -->
+			            </div>
+			            <div class="header_nav">
+			                <a href="http://www.kvh.com/" id="phheader_0_hlHome">Home</a>
+			                <span class="header_nav_divide">|</span>
+			                <a href="http://www.kvh.com/Support.aspx" id="phheader_0_hlSupport">Support</a>
+			                <span class="header_nav_divide">|</span>
+			                <a href="http://www.kvh.com/Press-Room.aspx" id="phheader_0_hlPressRoom">Press Room</a>
+			                <span class="header_nav_divide">|</span>
+			                <a href="http://ir.kvh.com/phoenix.zhtml?c=70131&amp;p=irol-irhome" id="phheader_0_hlInvestors">Investors</a>
+			                <span class="header_nav_divide">|</span>
+			                <a href="http://www.kvh.com/About-Us.aspx" id="phheader_0_hlAboutUs">About Us</a>
+			                <span class="header_nav_divide">|</span>
+			                <a href="http://www.kvh.com/WhereToBuy.aspx" id="phheader_0_hlWhereToBuy">Where To Buy</a>
+			                <span class="header_nav_divide">|</span>
+			                
+			                <a href="http://www.kvh.com/Account.aspx" id="phheader_0_hlRegister">Register / Log In</a>
+			                <div class="clear">
+			                </div>
+			            </div>
+			            <div class="clear">
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			<span id="phheader_0_lblCurrentUser"></span>
+			<!-- END: /layouts/KVH/Controls/_Global/Header.ascx -->
+			
+			<!-- START: /layouts/KVH/Controls/Homepage/HomepageNav.ascx -->	
+			
+			<!--start /xsl/KVH/Homepage/HomepageNav.xslt--><div class="wrapper"><div class="home_nav"><div class="home_nav_padding"><ul class="home_nav_market"><li><span class="home_nav_first"><a class="has_children" href="http://www.kvh.com/Leisure.aspx">Leisure</a></span><span title="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Leisure.ashx" class="nav_image"></span><ul class="home_nav_second" style="display: none;"><li><a class="has_children" href="http://www.kvh.com/Leisure/Marine-Systems.aspx">Marine Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure Marine.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Leisure/Marine-Systems/Television.aspx">Television</a></li><li><a class="" href="http://www.kvh.com/Leisure/Marine-Systems/Phone-and-Internet.aspx">Satellite Phone &amp; Internet</a></li><li><a class="" href="http://www.kvh.com/Leisure/Marine-Systems/Compasses.aspx">Marine Navigation</a></li></ul></li><li><a class="has_children" href="http://www.kvh.com/Leisure/RV-Systems.aspx">RV Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure RV.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Leisure/RV-Systems/Television.aspx">Mobile Satellite TV</a></li></ul></li><li class="last"><a class="has_children" href="http://www.kvh.com/Leisure/Auto-Systems.aspx">Auto Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure Auto.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Leisure/Auto-Systems/Television.aspx">Mobile Satellite TV</a></li></ul></li></ul></li></ul><div class="home_nav_spacer"></div><ul class="home_nav_market"><li><span class="home_nav_first"><a class="has_children" href="http://www.kvh.com/Military-and-Government.aspx">Military &amp; Government</a></span><span title="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Military.ashx" class="nav_image"></span><ul class="home_nav_second" style="display: none;"><li><a class="has_children" href="http://www.kvh.com/Military-and-Government/Gyros-and-Inertial-Systems-and-Compasses.aspx">Fiber Optic Gyros, Inertial Navigation Systems &amp; Compass Sensors</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Gyros.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Military-and-Government/Gyros-and-Inertial-Systems-and-Compasses/Gyros-and-IMUs-and-INS.aspx">Gyros, IMUs &amp; INS's</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Gyros-and-Inertial-Systems-and-Compasses/Compass-Sensors.aspx">Compass Sensors</a></li></ul></li><li><a class="has_children" href="http://www.kvh.com/Military-and-Government/Land-Systems.aspx">Land Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Land.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Military-and-Government/Land-Systems/Tactical-Navigation.aspx">Tactical Navigation</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Land-Systems/SATCOM-on-the-Move.aspx">SATCOM on the Move</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Land-Systems/Mobile-Satellite-TV.aspx">Mobile Satellite TV</a></li></ul></li><li class="last"><a class="has_children" href="http://www.kvh.com/Military-and-Government/Maritime-Systems.aspx">Maritime Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Maritime.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Military-and-Government/Maritime-Systems/Communications.aspx">Maritime Satellite Communications</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Maritime-Systems/Network-Management.aspx">Maritime Network Management</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Maritime-Systems/Navigation.aspx">Maritime Navigation</a></li><li><a class="" href="http://www.kvh.com/Military-and-Government/Maritime-Systems/Television.aspx">Maritime Satellite TV</a></li></ul></li></ul></li></ul><div class="home_nav_spacer"></div><ul class="home_nav_market"><li><span class="home_nav_first"><a class="has_children" href="http://www.kvh.com/Commercial-and-OEM.aspx">Commercial &amp; OEM</a></span><span title="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Commercial.ashx" class="nav_image"></span><ul class="home_nav_second" style="display: none;"><li><a class="has_children" href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems.aspx">Maritime Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Maritime.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems/Communications.aspx">Maritime Satellite Communications</a></li><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems/Network-Management.aspx">Maritime Network Management</a></li><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems/Television.aspx">Maritime Satellite TV</a></li><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems/Compasses.aspx">Maritime Compasses</a></li></ul></li><li><a class="has_children" href="http://www.kvh.com/Commercial-and-OEM/Gyros-and-Inertial-Systems-and-Compasses.aspx">Gyroscopes, Inertial Navigation Systems &amp; Compass Sensors</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Gyros.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Gyros-and-Inertial-Systems-and-Compasses/Gyros-and-IMUs-and-INS.aspx">Gyros, IMUs &amp; INS's</a></li><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Gyros-and-Inertial-Systems-and-Compasses/Compass-Sensors.aspx">Compass Sensors</a></li></ul></li><li><a class="has_children" href="http://www.kvh.com/Commercial-and-OEM/Land-Systems.aspx">Land Systems</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Land.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Land-Systems/Television.aspx">Mobile Satellite TV</a></li><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Land-Systems/Communications.aspx">Satellite Communications</a></li></ul></li><li class="last"><a class="has_children" href="http://www.kvh.com/Commercial-and-OEM/Aviation.aspx">Aviation</a><span title="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Aviation.ashx" class="nav_image"></span><ul class="home_nav_third" style="display: none;"><li><a class="" href="http://www.kvh.com/Commercial-and-OEM/Aviation/Television.aspx">Satellite Television</a></li></ul></li></ul></li></ul><div class="clear"></div></div></div></div><!--end /xsl/KVH/Homepage/HomepageNav.xslt-->
+			
+			<!-- END: /layouts/KVH/Controls/Homepage/HomepageNav.ascx -->	 
+						<div class="content">
+							<div class="wrapper">
+			                    
+			
+			<!-- START: /layouts/KVH/Controls/Design/OneColumn.ascx -->
+			
+			<!-- START: /layouts/KVH/Controls/Homepage/HomepageFlash.ascx -->
+			<div class="home_content">
+				<div class="home_splash_img">
+				<img src="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Leisure.ashx" alt="Leisure" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure Marine.ashx" alt="Marine Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure RV.ashx" alt="RV Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Leisure/Leisure Auto.ashx" alt="Auto Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Military.ashx" alt="Military &amp;amp; Government" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Gyros.ashx" alt="Fiber Optic Gyros, Inertial Navigation Systems &amp;amp; Compass Sensors" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Land.ashx" alt="Land Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Mil Gov/Mil Gov Maritime.ashx" alt="Maritime Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Markets/Homepage Images/Home_Commercial.ashx" alt="Commercial &amp;amp; OEM" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Maritime.ashx" alt="Maritime Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Gyros.ashx" alt="Gyroscopes, Inertial Navigation Systems &amp;amp; Compass Sensors" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Land.ashx" alt="Land Systems" class="pre_img" style="display: none;"/><img src="http://www.kvh.com/media/Images/KVH/Homepage/Navigation Backgrounds/Commercial/Comm Aviation.ashx" alt="Aviation" class="pre_img" style="display: none;"/></div>
+				
+				
+					<div class="header_flash">
+						<object width="960" height="540" type="application/x-shockwave-flash" data="http://www.kvh.com/media/Files/KVH/Homepage/homepage512.ashx" id="header_flash" style="visibility: visible;"><param name="wmode" value="opaque"/></object>
+					</div>
+						<div style="display: none;" class="header_no_flash_img">
+							<img width="960" height="540" id="phmain_0_phonecolumn_0_imgNoFlash" src="http://www.kvh.com/media/Images/KVH/Homepage/Spotlight/Home_Sniffer.ashx"/>
+						</div>
+						
+					<div>
+					<table width="349" border="0" cellspacing="0" cellpadding="1">
+									<tr>
+										<td>
+											<apex:insert name="body" />
+										</td>
+									</tr>
+
+						</table> 
+					</div>
+							<!-- 
+					<span id="phmain_0_phonecolumn_0_lblFlashVar"><script type="text/javascript">var flash = 'http://www.kvh.com/media/Files/KVH/Homepage/homepage512.ashx';</script></span>
+					<script type="text/javascript">
+			
+			            if (!FlashDetect.installed) {
+			                $('.header_no_flash_img').show();
+			                $('.header_flash').hide();
+			            }
+			            else {
+			                var flashvars = {};
+			                var params = { wmode: "opaque" };
+			                var attributes = {};
+			                swfobject.embedSWF(flash, "header_flash", "960", "540", "10", "expressinstall.swf", flashvars, params, attributes);
+			            }
+			        </script>-->
+				
+			</div>
+			<!-- END: /layouts/KVH/Controls/Homepage/HomepageFlash.ascx -->
+			
+			<!-- START: /layouts/KVH/Controls/Homepage/HomepageBuckets.ascx -->
+			
+			<script type="text/javascript">
+			    $(function() {
+			
+			        $.get('/utilities/CCBNevents.aspx', function(data) {
+			            $("#eventList").empty();
+			            $("#eventList").append(data);
+			        });
+			    });
+			</script>
+			
+			<div class="home_buckets buckets">
+				<table width="100%" cellspacing="0" cellpadding="0" border="0">
+					<tbody><tr>
+						<td>
+							<div class="bucket">
+								<div class="bucket_padding">
+									<h3>
+										Spotlight
+									</h3>
+									<div class="spotlight_slides">
+										<div style="position: relative;" class="spotlight_list">
+											<!--start /xsl/KVH/Homepage/SpotlightHome.xslt--><div style="position: absolute; top: 0px; left: 0px; display: none; z-index: 4; opacity: 0; width: 240px; height: 129px;" class="spotlight_item">
+					<p style="PADDING-TOP: 6px">
+			      <strong>Introducing the Series 1750 IMU: Superior Precision and Maximum Flexibility in a Small Inertial System</strong> </p>
+			    <p>
+			      <img hspace="5" align="left" src="http://www.kvh.com/media/Images/KVH/Homepage/Spotlight/hm_1750IMU.ashx?w=65&amp;h=65&amp;as=1" style="WIDTH: 65px; HEIGHT: 65px" alt=""/>The world’s smallest precision FOG integrated with very low noise MEMS accelerometers. <br/><img width="5" height="8" src="http://www.kvh.com/media/Images/KVH/Global/bt_red_arrow.ashx?w=5&amp;h=8&amp;as=1" style="PADDING-RIGHT: 5px" alt=""/> <a href="http://www.kvh.com/1750IMU">Learn more</a></p></div><div style="position: absolute; top: 0px; left: 0px; display: none; z-index: 4; opacity: 0; width: 240px; height: 129px;" class="spotlight_item">
+					<p style="PADDING-TOP: 6px">
+			      <strong>Breakthrough ThinFiber Technology Results in World's Smallest Precision Fiber Optic Gyro</strong> </p>
+			    <p>
+			      <img hspace="5" align="left" src="http://www.kvh.com/media/Images/KVH/Homepage/Spotlight/hm_dsp1750.ashx?w=65&amp;h=65&amp;as=1" style="WIDTH: 65px; HEIGHT: 65px" alt=""/>Introducing the DSP-1750 FOG with revolutionary performance levels for a unit its size. <br/><img width="5" height="8" src="http://www.kvh.com/media/Images/KVH/Global/bt_red_arrow.ashx?w=5&amp;h=8&amp;as=1" style="PADDING-RIGHT: 5px" alt=""/> <a href="http://www.kvh.com/dsp1750">Learn more</a></p></div><div style="position: absolute; top: 0px; left: 0px; display: none; z-index: 4; opacity: 0; width: 240px; height: 129px;" class="spotlight_item">
+					<p style="PADDING-TOP: 6px">
+			      <strong class="Red">Introducing C/Ku Maritime VSAT Network with Global Coverage</strong> </p>
+			    <p>
+			      <img hspace="5" align="left" src="http://www.kvh.com/media/Images/KVH/Homepage/Spotlight/hm_V11.ashx?w=55&amp;h=63&amp;as=1" alt="TracPhone V11" style="WIDTH: 55px; HEIGHT: 63px"/>TracPhone V11 with enhanced <br/>mini-VSAT Broadband service delivers global coverage at a fraction of the cost of competitive services.<br/><img width="5" height="8" src="http://www.kvh.com/media/Images/KVH/Global/bt_red_arrow.ashx?w=5&amp;h=8&amp;as=1" style="PADDING-RIGHT: 5px" alt=""/> <a target="_blank" href="http://progressive.kvh.com/v11">Learn more</a></p></div><div style="position: absolute; top: 0px; left: 0px; display: block; z-index: 5; opacity: 1; width: 240px; height: 129px;" class="spotlight_item">
+					<p style="PADDING-TOP: 6px">
+			      <strong>Sat TV Goes Global with New TracVision HD11</strong> </p>
+			    <p>
+			      <a href="javascript:kvhpopup('/v7nordic',720,570);">
+			      </a>
+			      <img hspace="5" align="left" src="http://www.kvh.com/media/Images/KVH/Homepage/Spotlight/hm_hd11.ashx?w=70&amp;h=53&amp;as=1" alt="The new TracVision HD11!" style="WIDTH: 70px; HEIGHT: 53px"/> KVH brings you the entertainment you want and the sat TV antenna your vessel deserves with the groundbreaking 1-meter TracVision HD11.<br/><img width="5" height="8" src="http://www.kvh.com/media/Images/KVH/Global/bt_red_arrow.ashx?w=5&amp;h=8&amp;as=1" style="PADDING-RIGHT: 5px" alt=""/> <a href="http://www.kvh.com/Pages/Landing-Pages/TracVision-HD11-Introduction.aspx">Learn more</a></p></div><!--end /xsl/KVH/Homepage/SpotlightHome.xslt-->
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="more_link">
+								<div class="image_control">
+									<a href="#" class="spotlight_list_prev">
+										<img width="14" height="14" src="http://www.kvh.com/Images/Buttons/arrow_button_left.gif" alt="‹" title="‹"/></a>
+									<a href="#" class="spotlight_list_next">
+										<img width="14" height="14" src="http://www.kvh.com/Images/Buttons/arrow_button_right.gif" alt="/›" title="›"/></a>
+								</div>
+							</div>
+						</td>
+						<td class="bucket_spacer">
+						</td>
+						<td>
+							<div class="bucket">
+								<div class="bucket_padding">
+									<h3>
+										<span class="news_rss">
+											<a href="http://www.kvh.com/News-Rss.aspx">
+												RSS Feed</a></span>
+										News
+									</h3>
+									<!--Start /xsl/PartnerPortal/News/latestKvhNews.xslt--><div xmlns:res="http://www.sitecore.net/res" class="listing"><div class="listing_item"><div class="listing_title"><a href="http://www.kvh.com/Press-Room/Press-Release-Library/2012/120716-Q2-Earnings-Conference-Call-Announced.aspx">KVH Industries to Host Second Quarter Conference Call on July 27, 2012</a><br/>07.16.12</div><div class="listing_description"></div></div><div class="listing_item"><div class="listing_title"><a href="http://www.kvh.com/Press-Room/Press-Release-Library/2012/120628-NYK-Selects-miniVSAT-Broadband.aspx">NYK Selects KVH mini-VSAT Broadband for Containerships </a><br/>06.28.12</div><div class="listing_description">KVH solution will support initiative to share information between ship and shore for innovative NYK IBIS project</div></div><div class="listing_item"><div class="listing_title"><a href="http://www.kvh.com/Press-Room/Press-Release-Library/2012/120625-Andesat-MVB-Reseller.aspx">KVH Chooses Andesat as mini-VSAT Broadband Reseller in South America</a><br/>06.25.12</div><div class="listing_description">New relationship supports KVH’s efforts to bring mini-VSAT Broadband to fishing and oil and gas vessels throughout the South American region</div></div></div><div xmlns:res="http://www.sitecore.net/res" class="clear"></div><!--END /xsl/PartnerPortal/News/latestKvhNews.xslt-->
+									<!---->
+								</div>
+							<div class="nsdq">
+								
+								<img width="280" height="20" src="http://quotes.corporate-ir.net/media_files/IROL/70/70131/QI/kvhi_qi_2.gif" alt=""/>
+								
+							</div>
+							</div>
+							<div class="more_link">
+								<a href="http://www.kvh.com/Press-Room/Press-Release-Library.aspx">
+									<img width="60" height="24" title="View More" alt="View More" src="http://www.kvh.com/Images/Buttons/MORE.png"/></a></div>
+						</td>
+						<td class="bucket_spacer">
+						</td>
+						<td>
+							<div class="bucket">
+								<div class="bucket_padding">
+									<h3>
+										Events
+									</h3>
+									<div class="listing" id="eventList"><div class="listing_item"><div class="listing_event"><b>AUVSI</b><br/>07 August 2012 -
+			                10 August 2012<br/>Mandalay Bay Resort<br/>Booth 4210<br/>Las Vegas, Nevada<br/></div></div><div class="listing_item"><div class="listing_event"><b>Amsterdam Seaport</b><br/>30 August 2012 -
+			                09 September 2012<br/>Marina Seaport ljmuiden<br/>Booth K127 - T018<br/>Holland, Amsterdam<br/></div></div><div class="listing_item"><div class="listing_event"><b>SMM 2012</b><br/>04 September 2012 -
+			                07 September 2012<br/>Hamburg Messe<br/>Booth B6.405<br/>Hamburg, Germany<br/></div></div>
+			      </div>
+								</div>
+							</div>
+							<div class="more_link">
+								<a href="http://phx.corporate-ir.net/phoenix.zhtml?c=70131&amp;p=irol-calendar">
+									<img width="60" height="24" title="View More" alt="View More" src="http://www.kvh.com/Images/Buttons/MORE.png"/></a></div>
+						</td>
+					</tr>
+				</tbody></table>
+			   
+			</div>
+			<!-- END: /layouts/KVH/Controls/Homepage/HomepageBuckets.ascx -->
+			
+			<!-- END: /layouts/KVH/Controls/Design/OneColumn.ascx --> 
+							</div>
+						</div>
+						
+			<!-- START: /layouts/KVH/Controls/_Global/Footer.ascx -->
+			<div class="footer">
+				<div class="wrapper">
+					<div class="footer_content">
+					
+						<div class="footer_content_copy">
+							<div class="socialNetwork">
+			    	<ul class="snList"> 
+			    	    <li><img style="margin-top:7px" title="follow_us" alt="follow_us" src="http://www.kvh.com/Images/CommonImages/follow_us.png"/></li>
+			    	    <li style="padding-left:4px;"><a target="_blank" href="http://www.linkedin.com/company/kvh-industries-inc."><img title="Linkedin" alt="Linkedin Link" src="http://www.kvh.com/Images/CommonImages/icon_linkedin.png"/></a></li>
+			        	<li style="padding-left:4px;"><a target="_blank" href="http://www.facebook.com/pages/KVH/126372540756768"><img title="Facebook" alt="Facebook Link" src="http://www.kvh.com/Images/CommonImages/icon_facebook.png"/></a></li>
+			            <li style="padding-left:4px;"><a target="_blank" href="http://twitter.com/#!/kvh"><img title="Twitter" alt="Twitter Link" src="http://www.kvh.com/Images/CommonImages/icon_twitter.png"/></a></li>
+			            <li style="padding-left:4px;"><a target="_blank" href="http://www.youtube.com/kvhindustries"><img title="Youtube" alt="Youtube Link" src="http://www.kvh.com/Images/CommonImages/icon_youtube.png"/></a></li>
+			           <li style="padding-left:7px;"><a target="_blank" href="http://www.kvhmobileworld.com"><img title="Blog" alt="Blog Link" src="http://www.kvh.com/Images/CommonImages/icon_blog.png"/></a></li>
+			             <li style="padding-left:4px;"><img style="margin-top:7px" title="Blog" alt="Blog Link" src="http://www.kvh.com/Images/CommonImages/kvh_blog.png"/></li>
+			               
+			        </ul>
+			    </div><!--END_SOCIAL_NETWORK-->
+						
+				
+							
+						<div class="footer_content_nav">
+							<a href="http://www.kvh.com/Utility/Sitemap.aspx">
+								<span id="phfooter_0_lblSitemap">Sitemap</span></a>
+							|
+							<a href="http://www.kvh.com/Utility/Site-Terms.aspx">
+								<span id="phfooter_0_lblSiteTerms">Site Terms</span></a>
+							|
+							<a id="phfooter_0_aFeedback" href="http://www.kvh.com/About-Us/Feedback.aspx">
+								<span id="phfooter_0_lblFeedBack">Feedback</span></a>
+							|
+							<a href="http://www.kvh.com/Utility/Privacy.aspx">
+								<span id="phfooter_0_lblPrivacy">Privacy</span></a>
+								
+								|
+							<a href="http://www.kvh.com/Utility/Patents.aspx">
+								<span id="phfooter_0_lpbPatents">Patents</span></a>
+								
+								
+							<a href="http://www.kvh.com/Partner-Portal.aspx">
+								<img width="121" height="24" title="Partner Portal" alt="Partner Portal" src="http://www.kvh.com/Images/CommonImages/partner_portal.png"/>
+							</a>
+						</div>	</div>
+						<div class="clear">
+						</div>
+					</div>
+					<div class="footer_sitemap">
+						
+						<a href="http://www.kvh.com/iso"><img width="104" height="50" class="float_right" title="KVHI" alt="KVHI" src="http://www.kvh.com/Images/CommonImages/KVHI-logo.png"/></a>
+						
+						
+								<ul class="footer_sitemap_item">
+									<li>
+										<a href="http://www.kvh.com/Commercial-and-OEM.aspx" title="Commercial &amp; OEM" id="phfooter_0_rptFooter_ctl00_hlMarket">Commercial &amp; OEM</a>
+										
+												<ul>
+											
+												<li>
+													<a href="http://www.kvh.com/Commercial-and-OEM/Maritime-Systems.aspx" title="Maritime Systems" id="phfooter_0_rptFooter_ctl00_rptMarketSectors_ctl01_hlMarketSector">Maritime Systems</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Commercial-and-OEM/Gyros-and-Inertial-Systems-and-Compasses.aspx" title="Gyroscopes, Inertial Navigation Systems &amp; Compass Sensors" id="phfooter_0_rptFooter_ctl00_rptMarketSectors_ctl02_hlMarketSector">Gyroscopes, Inertial Navigation Systems &amp; Compass Sensors</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Commercial-and-OEM/Land-Systems.aspx" title="Land Systems" id="phfooter_0_rptFooter_ctl00_rptMarketSectors_ctl03_hlMarketSector">Land Systems</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Commercial-and-OEM/Aviation/Television.aspx" title="Aviation" id="phfooter_0_rptFooter_ctl00_rptMarketSectors_ctl04_hlMarketSector">Aviation</a></li>
+											
+												</ul>
+											
+									</li>
+								</ul>
+							
+								<ul class="footer_sitemap_item">
+									<li>
+										<a href="http://www.kvh.com/Military-and-Government.aspx" title="Military &amp; Government" id="phfooter_0_rptFooter_ctl01_hlMarket">Military &amp; Government</a>
+										
+												<ul>
+											
+												<li>
+													<a href="http://www.kvh.com/Military-and-Government/Gyros-and-Inertial-Systems-and-Compasses.aspx" title="Fiber Optic Gyros, Inertial Navigation Systems &amp; Compass Sensors" id="phfooter_0_rptFooter_ctl01_rptMarketSectors_ctl01_hlMarketSector">Fiber Optic Gyros, Inertial Navigation Systems &amp; Compass Sensors</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Military-and-Government/Land-Systems.aspx" title="Land Systems" id="phfooter_0_rptFooter_ctl01_rptMarketSectors_ctl02_hlMarketSector">Land Systems</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Military-and-Government/Maritime-Systems.aspx" title="Maritime Systems" id="phfooter_0_rptFooter_ctl01_rptMarketSectors_ctl03_hlMarketSector">Maritime Systems</a></li>
+											
+												</ul>
+											
+									</li>
+								</ul>
+							
+								<ul class="footer_sitemap_item">
+									<li>
+										<a href="http://www.kvh.com/Leisure.aspx" title="Leisure" id="phfooter_0_rptFooter_ctl02_hlMarket">Leisure</a>
+										
+												<ul>
+											
+												<li>
+													<a href="http://www.kvh.com/Leisure/Marine-Systems.aspx" title="Marine Systems" id="phfooter_0_rptFooter_ctl02_rptMarketSectors_ctl01_hlMarketSector">Marine Systems</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Leisure/RV-Systems/Television.aspx" title="RV Systems" id="phfooter_0_rptFooter_ctl02_rptMarketSectors_ctl02_hlMarketSector">RV Systems</a></li>
+											
+												<li>
+													<a href="http://www.kvh.com/Leisure/Auto-Systems/Television.aspx" title="Auto Systems" id="phfooter_0_rptFooter_ctl02_rptMarketSectors_ctl03_hlMarketSector">Auto Systems</a></li>
+											
+												</ul>
+											
+									</li>
+								</ul>
+							
+						
+						    
+						       <ul class="footer_sitemap_item">
+						        <li>
+						            <a id="phfooter_0_hlOnlineCommunity">ONLINE COMMUNITY</a>
+						            <ul>
+						            
+						                  <li><a target="_blank" href="http://www.linkedin.com/company/kvh-industries-inc." id="phfooter_0_hllinkedin">Linkedin</a></li>   
+						                <li><a target="_blank" href="http://www.facebook.com/pages/KVH/126372540756768" id="phfooter_0_hlFacebook">Facebook</a><br/></li>
+						                <li><a target="_blank" href="http://twitter.com/#!/kvh" id="phfooter_0_HyperLink1">Twitter</a><br/></li>
+						                <li><a target="_blank" href="http://www.youtube.com/kvhindustries" id="phfooter_0_HyperLink2">YouTube</a><br/></li>
+						                <li><a target="_blank" href="http://www.kvhmobileworld.com" id="phfooter_0_HyperLink3">KVH Blog</a></li>
+						             
+						           </ul>
+						        </li>  
+						       </ul>	    
+						
+						<div class="clear"> &copy; &nbsp;<script type="text/javascript">			                                     currentyear()</script>2012
+			
+							<span id="phfooter_0_lblFooterRightsReserved"> KVH Industries, Inc. All Rights Reserved</span></div>
+						          
+						</div>
+					</div>
+				</div>
+			
+			<div class="secure_modal">
+				<a class="float_right" onclick="$('.secure_modal').hide();" href="#">
+					[X] Close</a>
+				<h2>
+					Oops! You must be logged in to access this information.</h2>
+				<p>
+					</p>
+				<p>
+					Please <a href="http://www.kvh.com/Login.aspx?showOnly=login&amp;returnURL=%2f">log in</a> or <a href="http://www.kvh.com/Account.aspx?showOnly=register&amp;returnURL=%2f">create an account</a> to receive access to complete information about KVH’s award-winning products and services, including quick and easy downloads of KVH support documentation. It's free and easy and gives you access to the latest info on all of KVH's products.</p>
+				<p>
+					</p>
+				<p>
+					</p>
+			</div>
+			
+			<!-- START: Marketo Munchkin Tracking Code -->
+			
+			<script type="text/javascript" src="http://munchkin.marketo.net/munchkin.js"></script>
+			<script>                                                                                          mktoMunchkin("112-HAC-817");</script>
+			
+			<!-- END: Marketo Munchkin Tracking Code -->
+			
+			
+			<!-- START: Google Analytics -->
+			
+			<script type="text/javascript">
+			    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+			</script>
+			
+			<script type="text/javascript" src="http://www.google-analytics.com/ga.js"></script>
+			
+			<script type="text/javascript">
+			    var pageTracker = _gat._getTracker("UA-3248299-1");
+			    pageTracker._initData();
+			    pageTracker._trackPageview();
+			</script>
+			
+			<!-- END: Google Analytics -->
+			<!-- END: /layouts/KVH/Controls/_Global/Footer.ascx -->					
+			<!-- END: /layouts/KVH/Masterpages/BaseLayout.aspx -->		
+					
+	</form>
+	</body>
+</apex:page>

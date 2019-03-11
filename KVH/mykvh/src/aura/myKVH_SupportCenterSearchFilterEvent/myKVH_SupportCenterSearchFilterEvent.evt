@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT">
+    <aura:attribute name="filterListEvt" type="Object[]"/>
+    <aura:attribute name="isFilterRemoved" type="boolean"/>    
+</aura:event>

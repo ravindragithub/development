@@ -1,0 +1,37 @@
+<aura:component controller="LTEAct_Controller">    
+    <aura:attribute name="simpleLTEActivation" type="Object"/> 
+    <aura:attribute name="platformMap" type="map"/>
+    <aura:attribute name="marketMap" type="map"/>
+    <aura:attribute name="marketList" type="List"/>
+    <aura:attribute name="sectorList" type="List"/>
+    <aura:attribute name="selectedMarket" type="string"/>
+    <aura:attribute name="selectedSector" type="string"/>
+    <aura:attribute name="selectedVesselType" type="string"/>
+    <aura:attribute name="vesselInfoRequired" type="boolean"/>
+    <aura:attribute name="checkFlag" type="string" default="Marine Systems"/>
+    <aura:attribute name="isDependentDisable1" type="boolean" default="false" />
+    <aura:attribute name="options" type="List" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <lightning:select aura:id="LTEField" label="Market" value="{!v.selectedMarket}"
+                      onchange="{!c.handleVesselTypeValue}" required="true">
+        <aura:iteration items="{!v.options}" var="item">
+            <option text="{!item.label}" value="{!item.value}"/>
+        </aura:iteration>
+    </lightning:select>
+    <lightning:select aura:id="LTEField" value="{!v.selectedSector}"
+                      onchange="{!c.onControllerFieldChange}" label="Sector" 
+                      required="true">
+        <option label="" value=""/>
+        <aura:iteration items="{!v.marketList}" var="item">
+            <option value="{!item.label}" selected="{!item.label == v.selectedSector}">{!item.label}</option>
+        </aura:iteration>
+    </lightning:select>
+    <lightning:select aura:id="LTEField" label="Vessel Type" 
+                      onchange="{!c.onDependentFieldChange}" required="true"
+                      disabled="{!v.isDependentDisable1}">        
+        <option label="" value=""/>
+        <aura:iteration items="{!v.sectorList}" var="item">
+            <option value="{!item.label}" >{!item.label}</option>
+        </aura:iteration>
+    </lightning:select>    
+</aura:component>

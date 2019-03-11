@@ -1,0 +1,457 @@
+<apex:page standardController="Prod_Documents__c" extensions="UploadDocumentsController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" title="Add Content File" standardStylesheets="false" sidebar="false" >
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <script type="text/javascript">
+    
+    Visualforce.remoting.timeout = 1200000; // Set timeout at page level - this is for HUGE files on the portal
+    
+    </script>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        
+        
+    </style>
+        <apex:define name="body">  
+            <apex:sectionHeader title="Content Administration" subtitle="Add Content File"/>
+            
+            <div id="load-status" style="display:none;">
+                <div class="overlay"></div>
+                <div class="status">                               
+                    <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                    <span id="load-statustext">File uploading in progress...</span>
+                </div>
+            </div>                
+            
+            <apex:form id="frm" >
+                <apex:pageBlock >
+                <apex:actionFunction name="saveRecords" action="{!saveAllRecords}" oncomplete="gototool();"/>
+                <apex:actionFunction name="saveRecords2" action="{!saveAllRecords}" oncomplete="gotothumb('{!prodDoc.Id}');"/>
+                <apex:actionFunction name="createpd" action="{!createPD}" oncomplete="uploadfiles('{!pdid}');"/>
+                
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div id="results"></div>
+                    <apex:pageBlockSection columns="1" collapsible="false" title="Upload Content File">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="File Name"></apex:outputLabel>
+                            <input type="file" id="file-chooser" onchange="setfiletype();" />  
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" title="Content Product/Market/Sector Relationships" id="fileinformation" columns="1" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Market"></apex:outputLabel>
+                            <apex:inputField id="Market__c" value="{!marketSector.Market__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Sector"></apex:outputLabel>
+                            <apex:inputField id="Sector__c" value="{!marketSector.Sector__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Line"></apex:outputLabel>
+                            <apex:inputField id="Product_Line__c" value="{!marketSector.Product__r.Product_Line1__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Series"></apex:outputLabel>
+                            <apex:inputField id="Product_Series__c" value="{!marketSector.Product__r.Product_Series__c}"/>
+                            </apex:pageBlockSectionItem>
+                                
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value=""></apex:outputLabel>
+                                <input type="button" value="Search Products" onclick="fetchProductclick();" /> 
+                                </apex:pageBlockSectionItem>
+                        
+                    </apex:pageBlockSection>
+                    <apex:actionRegion >
+                        <apex:pageBlockSection columns="1">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Product(s)" ></apex:outputLabel>
+                                
+                                <apex:outputPanel layout="none">
+                                    <apex:outputPanel id="productoptions" layout="none">
+                                        <c:MultiselectPicklist leftlistid="AvailableProducts" rightlistid="SelectedProducts" addEvent="productAdded" removeEvent="productRemoved" width="300px" leftLabel="Available Products" rightLabel="Selected Products" showsortingbuttons="false" leftsideOptions="{!productleftOptions}" rightsideOptions="{!productrightOptions}" size="5"></c:MultiselectPicklist>
+                                    </apex:outputPanel>
+                                    <apex:actionFunction name="fetchProductsaction" action="{!fetchProducts}" oncomplete="hidestatus();" reRender="productoptions,portalviewselectlist">
+                                        <apex:param value="" assignTo="{!market}" name="parm1"/>
+                                        <apex:param value="" assignTo="{!sector}" name="parm2"/>
+                                        <apex:param value="" assignTo="{!productline}" name="parm3"/>
+                                        <apex:param value="" assignTo="{!productseries}" name="parm4"/>
+                                    </apex:actionFunction>
+                                    <apex:actionFunction name="fetchProductPortalviewsFun" action="{!fetchPortalViews}" oncomplete="hidestatus();"  reRender="portalviewselectlist"/>
+                                    
+                                </apex:outputPanel>        
+                                
+                            </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="1">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Portal View" />
+                                <apex:outputPanel >
+                                    <apex:outputPanel id="portalviewselectlist" >
+                                        <c:MultiselectPicklist leftlistid="AvailablePortals" rightlistid="SelectedPortals" width="300px" leftLabel="Available Portals" rightLabel="Selected Portals" showsortingbuttons="false" leftsideOptions="{!leftOptions}" rightsideOptions="{!rightOptions}" size="5"></c:MultiselectPicklist>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="productportalviews" style="display:none;" ></apex:outputPanel>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
+                    </apex:actionRegion>
+                    <apex:pageBlockSection collapsible="false" title="Content Types">
+                        <apex:actionRegion >
+                        <apex:pageBlockSectionItem >
+                 <apex:pageBlockTable title="Content Types and Sub Types" value="{!wrappers}" var="wrapper" id="wtable">
+                     <apex:column headerValue="Content Type">
+                         <apex:inputField value="{!wrapper.ct.Content_Main_Type__c}"/>
+                     </apex:column>
+                     <apex:column headerValue="Sub Type">
+                         <apex:inputField value="{!wrapper.ct.Content_Sub_Type__c}"/>
+                     </apex:column>
+                     <apex:column headerValue="Tool Kits">
+                         <apex:inputField value="{!wrapper.ct.Sales_Tool_Kit_s__c}"/>
+                     </apex:column>
+                     <apex:column headerValue=" ">
+                         <apex:commandButton value="Delete" action="{!delWrapper}" style="padding: 1px;" rerender="wtable">
+                             <apex:param name="toDelIdent" value="{!wrapper.ident}" assignTo="{!toDelIdent}"/> 
+                         </apex:commandButton>
+                     </apex:column>
+                 </apex:pageBlockTable>
+                            </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                 <apex:commandButton value="Add Row" action="{!addRow}" style="padding: 1px;margin-top: 10px;" rerender="wtable">
+                     <apex:param name="addCount" value="1" assignTo="{!addCount}"/>
+                 </apex:commandButton>	
+                            </apex:pageBlockSectionItem>
+                            </apex:actionRegion>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Content Information">
+                        <apex:inputField style="width: 100%;" id="Title_Display_Name" value="{!prodDoc.Title_Display_Name__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Image_URL__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Sub_Title__c}"/>
+                        <br/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Alternate_Text__c}"/>
+                        <br/>
+                        <apex:inputField id="isPrivate" value="{!prodDoc.File_Access__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Marketo_URL__c}"/>
+                        <apex:inputField style="width: 100%;" id="size" value="{!prodDoc.Size_Description__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Site_Core_URL__c}"/>
+                        <apex:inputField id="FileType" value="{!prodDoc.File_Extension__c}"/>
+                        <apex:inputField value="{!prodDoc.Language__c}"/>
+                        <apex:inputField value="{!prodDoc.Hide_for_Partner_Type__c}"/>
+                        <apex:inputField style="width: 100%; height: 100px;" value="{!prodDoc.Insertion_Code__c}"/>
+                        <apex:inputField value="{!prodDoc.Revision__c}"/>
+                        <apex:inputField value="{!prodDoc.Active__c}"/>
+                        <apex:inputField value="{!prodDoc.Partner_Portal__c}"/>
+                        <apex:inputField value="{!prodDoc.KVH_com__c}"/>
+                        <apex:inputField value="{!prodDoc.Gated_Document__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Additional Pages">
+                        <apex:inputField value="{!prodDoc.Display_HTML_Page__c}"/>
+                        <apex:inputField value="{!prodDoc.Display_Terms_and_Conditions_Page__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Html_Field__c}"/>
+                        <apex:inputField value="{!prodDoc.Terms_and_Conditions_1__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Sales Aid Fields">
+                        <apex:inputField value="{!prodDoc.Sales_Aid__c}"/>
+                        <br/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.File_Description__c}"/>
+                    </apex:pageBlockSection> 
+                    <apex:pageBlockButtons location="bottom">
+                        <input type="button" id="upload-button"  style="float: right;" onclick="createdoc(false); return false;" value="Add Content"/>             
+                        <input type="button" id="upload-button"  style="float: right;margin-right:10px" onclick="createdoc(true); return false;" value="Add Content and Attach Thumbnail"/>
+                        <input type="button" id="back-button"  style="float: right;margin-right:10px" onclick="backbuttonclick()" value="Back"/>             
+                    </apex:pageBlockButtons>
+                    <apex:actionRegion >
+                        <apex:inputHidden value="{!prodDocLib.Name}" id="Prod_Doc_Lib_Name"/>
+                        <apex:inputHidden value="{!prodDoc.Name}" id="Prod_Doc_Name"/>
+                        <apex:inputHidden value="{!prodDoc.Hosting_URL__c}" id="hostingurl" />
+                        <apex:actionFunction name="updateDoc" action="{!updateDoc}" oncomplete="saveRecords();"/>
+                        <apex:actionFunction name="updateDoc2" action="{!updateDoc}" oncomplete="saveRecords2();"/>
+                    </apex:actionRegion>
+                    
+                </apex:pageBlock>
+            </apex:form> 
+        </apex:define> 
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    <script>
+        
+    setTimeout("scroll(0, 0)", 300);
+    setTimeout("scroll(0, 0)", 500);
+    setTimeout("scroll(0, 0)", 800);
+    </script>
+    
+    <script>
+
+    var filetype;
+	var travel;
+    var selectfiletype;
+    
+    function showstatusmessage(msg){
+        $("#load-statustext").text(msg);
+        $("#load-status").show();
+    }
+    
+    function productAdded(){
+        
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function productRemoved(){
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function fetchProductclick(){
+        console.log('123');
+        $("#load-statustext").text("Fetching products...");
+        $("#load-status").show();
+        var market = $('[id*="Market__c"]').val();
+        var Sector = $('[id*="Sector__c"]').val();
+        var Product_Line = $('[id*="Product_Line__c"]').val();
+        var Product_Series = $('[id*="Product_Series__c"]').val();
+        console.log(market + ' # ' + Sector + ' # ' + Product_Line + ' # ' + Product_Series);
+        fetchProductsaction(market,Sector,Product_Line,Product_Series);
+    }
+    
+    function hidestatus(){
+        $("#load-status").hide();
+        $("#load-statustext").text("");
+    }
+    
+    function createdoc(tool){
+        travel = tool;
+        if(!formvalidation()){
+            $("#load-statustext").text("Adding Content...");
+            $("#load-status").show();
+        createpd();
+        }
+    }
+    
+    function uploadfiles(docId){
+        var pdid = docId;
+        console.log(pdid);
+            $("#load-statustext").text("File uploading in progress...");
+            $("#load-status").show();
+            console.log('1');
+            var isPrivate = $('[id*="isPrivate"]').val();
+            if(isPrivate == 'Public'){
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.UploadDocumentsController.fetchCredentials}',
+                    function(result, event){
+                        if (event.status) {
+                            AWS.config.region = 'us-east-1'; // 1. Enter your region
+                            console.log('2' + pdid);
+                            uploadFile(result.Algorithm__c,result.Key__c,result.Bucket__c, pdid);
+                        } else if (event.type === 'exception') {
+                            console.log("Error ==>" + event.message + ' ' + event.where);
+                        } else {
+                            console.log("Message ==>" + event.message);
+                        }
+                    }, 
+                    {escape: true}
+                );
+            } else {
+                var fileChooser = document.getElementById('file-chooser');
+                var file = fileChooser.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('3.2');
+                    var file1 = reader.result.split(',')[1];
+                    Visualforce.remoting.Manager.invokeAction(
+                	'{!$RemoteAction.UploadDocumentsController.createContent}',
+                    file.name, file1, file.type, null, pdid,
+                    function(result, event){
+                        if (event.status) {
+                            console.log('2' + pdid);
+                            if(travel){
+                                saveRecords2();
+                            } else{
+                                saveRecords();
+                            }
+                        } else if (event.type === 'exception') {
+                            console.log("Error ==>" + event.message + ' ' + event.where);
+                        } else {
+                            console.log("Message ==>" + event.message);
+                        }
+                    }, 
+                    {escape: true}
+                );
+                    
+                }
+                reader.readAsDataURL(file, 'UTF-8');
+                
+            }
+        }  
+    
+    function uploadFile(key,secret,bucketName, docId){
+        var creds = new AWS.Credentials(key,secret);
+        AWS.config.credentials = creds;
+        console.log('3');
+        var bucket = new AWS.S3({
+            params: {
+                Bucket: bucketName
+            }
+        });
+        
+        var fileChooser = document.getElementById('file-chooser');            
+        var results = document.getElementById('results');
+        
+        var file = fileChooser.files[0];
+        
+        if (file) {
+            console.log('6');
+            results.innerHTML = '';
+            var objKey = docId+'.'+selectfiletype;
+            console.log(objKey);
+            var params = {
+                Key: objKey,
+                ContentType: file.type,
+                Body: file,
+                ACL: 'public-read'
+            };
+            
+            bucket.putObject(params, function(err, data) {
+                // add the following debug line                
+                if (err) {
+                    results.innerHTML = 'ERROR: ' + err;
+                }else{                                     
+                    var downloadparams = {Bucket: bucketName, Key: objKey,Expires : 315360000};
+                    
+                    var url = 'https://kpp-public.s3.amazonaws.com/'+objKey;
+                    console.log(url);
+                    $('[id*="hostingurl"]').val(url);
+                    if(travel){
+                        updateDoc2();
+                    } else{
+                        updateDoc();
+                    }                 
+                }
+            });
+        } else {
+            results.innerHTML = 'Nothing to upload.';
+        }
+        AWS.config.credentials = null;
+    }
+    
+    function showsearchinput(){
+        $('[id*="productname"]').hide();
+        $('[id*="filename"]').show(); 
+        $('[id*="filename"]').val('');
+        $('[id*="closeicon"]').hide();
+        $('[id*="portalviewselectlist"]').show(); 
+        $('[id*="productportalviews"]').hide();  
+        $('[id*="productportalviews"]').html(''); 
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        defaultPortalViews();
+    }
+    
+    function formvalidation(){
+        $(".errorMsg").remove();
+        $(".error").removeClass("error"); 
+        var file = document.getElementById('file-chooser').files[0];
+        var isError = false;
+        if(file == undefined){
+            isError = true;
+            adderrorMessage($('[id$="file-chooser"]'),'File is required.');
+        }
+
+        if($('[id$="FileType"]').val() === undefined || $('[id$="FileType"]').val().trim() == ''){
+            isError = true;
+            adderrorMessage($('[id$="FileType"]'),'File Type is required.');
+        }
+        if($('[id$="isPrivate"]').val() === undefined || $('[id$="isPrivate"]').val().trim() == ''){
+            isError = true;
+            adderrorMessage($('[id$="isPrivate"]'),'Please select File Access.');
+        }
+        
+        if(filetype != $('[id$="FileType"]').val().toLowerCase()){
+            isError = true;
+            adderrorMessage($('[id$="FileType"]'),'File Type must same as the select file.');
+        }
+        if($('[id$="SelectedProducts"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedProducts"]'),'Please select at least one product.');
+            }
+        if($('[id$="SelectedProducts"]').find("option").length > 0 && $('[id$="SelectedPortals"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedPortals"]'),'Portal view is required for product.');
+        }
+        return isError;
+    }
+    function adderrorMessage(elm,msg){
+        $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+        $(elm).addClass("error");
+        var offset = $(elm).offset();
+        offset.left -= 20;
+        offset.top -= 20;
+        $('html, body').animate({
+            scrollTop: offset.top,
+            scrollLeft: offset.left
+        });
+    }     
+    
+    function setfiletype(){
+        var fileChooser = document.getElementById('file-chooser');   
+        var file = fileChooser.files[0];
+        var filename = file.name;
+        var fileSize = Math.round((file.size / 1024)) + ' KB'
+        selectfiletype = file.name.split('.').pop().toLowerCase();
+		filetype = selectfiletype;
+        $('[id$="FileType"]').val(selectfiletype);
+        $('[id$="Title_Display_Name"]').val(file.name);
+        $('[id$="Prod_Doc_Name"]').val(file.name);
+        $('[id$="size"]').val(fileSize);
+    }
+    
+    function backbuttonclick(){ 
+        window.history.back();
+    }
+    
+    function gotothumb(docId){
+        $("#load-statustext").text("Success!!");
+        $("#load-status").show();
+        window.setTimeout(function(){ 
+            location.href = '/apex/ThumbnailforPortal?retURL=update&Id=' + docId; }, 1000);
+    }
+    
+    function gototool(){
+        $("#load-statustext").text("Success!!");
+        $("#load-status").show();
+        window.setTimeout(function(){ 
+            location.href = '/apex/adminlandingpage'; }, 1000);
+    }
+    
+    </script>
+</apex:page>

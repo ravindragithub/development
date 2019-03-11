@@ -1,0 +1,4 @@
+<apex:page standardController="case"> 
+<wave:dashboard dashboardId="0FK13000000Gmln" height="1000px" showTitle="false" 
+filter="{'ServiceCase': {'Account.Master_Customer_Name__c': ['{!case.Master_Customer_from_Vessel__c}']}}" />
+</apex:page>

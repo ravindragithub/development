@@ -1,0 +1,71 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>Login or Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+   <apex:stylesheet value="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.util_styles)}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.SLDS102, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <style>
+        .messageText{
+        color: #cc0000;
+        }
+    </style>
+</head>
+
+<body>
+  <!-- REQUIRED SLDS WRAPPER -->
+
+  <div class="slds">
+    <!-- MASTHEAD -->
+      <!-- header -->
+      <c:SelfRegHeader />
+      <!-- /header -->
+
+    <!-- / MASTHEAD -->
+
+    <!-- PRIMARY CONTENT WRAPPER -->
+    <div class="box-hd"  id="util-main">
+       
+    <div class="slds-grid slds-wrap slds-grid--align-spread">
+   
+        <div class="slds-col--padded slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--1-of-2" >
+                <div class="slds-container--small slds-container--center">
+                    <h2>Login</h2>
+                    <br/>
+                    <c:SelfRegLoginComponent id="siteLogin"/>
+                </div>
+        </div>
+
+
+        <div class="slds-col--padded slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--1-of-2">
+
+           <div class="slds-container--small slds-container--center ">
+
+
+                   <p><h1>Register for myKVH</h1></p>
+                   <br/>
+                   <p style="padding-left: 10px;">As a member of myKVH you will be able to :</p>
+                   <ul class="slds-list--dotted">
+                       <li>Activate a new system</li>
+                       <li>Activate a system on behalf of someone else</li>
+                       <li>etc.</li>
+                       
+                   </ul>
+
+                   <a href="/SelfRegRegister" class="button left" style="background-color: #4a81c0; color: #fff;">Register for myKVH</a>
+
+           </div>
+
+        </div>
+    </div>
+    </div>
+    <!-- / PRIMARY CONTENT WRAPPER -->
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+</body>
+</html>
+</apex:page>

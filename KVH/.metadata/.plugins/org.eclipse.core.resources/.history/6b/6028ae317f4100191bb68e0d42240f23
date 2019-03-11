@@ -1,0 +1,216 @@
+<apex:page controller="Manage_myKVH_Users" standardStylesheets="false" action="{!onLoad}" cache="false" sidebar="false" tabStyle="myKVH_Users__tab"> <!-- Set cache="false" to fix firefox reload behavior --> 
+<!-- Style block provides support for centering table headers -->
+<style>
+	#block_container
+	{
+	    text-align:center;
+	}
+	#bloc1
+	{
+	    display:inline;
+	    float:left;
+	}
+	#bloc2
+	{
+	    display:inline;
+	    float:right;
+	}
+	/*Need to access Static resources in style block....*/
+	table.myKVHtablesorter thead tr .header {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}bg.gif);
+	}
+	table.myKVHtablesorter thead tr .headerSortUp {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}asc.gif);
+	}
+	table.myKVHtablesorter thead tr .headerSortDown {
+		background-image: url({!URLFOR($Resource.jquery_tablesorter, 'themes/blue/')}desc.gif);
+	}
+	
+	.refresh{
+		display: inline-block;
+		width:25px;
+		height:23px;
+		text-indent: -3000px;
+		background:url(/img/alohaSkin/sync.png) 5px 7px no-repeat;
+		cursor: pointer;
+	}
+	.refresh:hover{
+		background:url(/img/alohaSkin/sync.png) 5px -15px no-repeat;
+	}
+	.edit-button {
+	    display: inline-block;
+	    width: 26px;
+	    height: 16px;
+	    text-indent: -3000px;
+	    background: url(//d3jq3t74hzt5uu.cloudfront.net/assets/icons/edit-2d6133f4ecd3003cdd425013cc768500.png) 0 -6px no-repeat;
+	    border-radius: 10px;
+	    cursor: pointer;
+	}
+	.edit-button:hover{
+		background: url(//d3jq3t74hzt5uu.cloudfront.net/assets/icons/edit-2d6133f4ecd3003cdd425013cc768500.png) 0 -31px no-repeat;
+	}
+
+</style>
+<head>
+	<link href="{!URLFOR($Resource.jquery_tablesorter, 'themes/blue/style.css')}" rel="stylesheet"/>
+
+	<!-- Load jQuery, use minimized lib-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<!-- Handle jQuery conflicts (e.g. "$") -->
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+	</script>
+	<!-- Load jQuery plug-ins, use minimized libs -->
+	<script src="{!URLFOR($Resource.jquery_tablesorter, 'jquery.tablesorter.min.js')}" type="text/javascript"></script>
+	<!-- Library for Modal windows.... -->
+	<apex:stylesheet value="{!URLFOR($Resource.myKVH_Users2)}" />
+</head>
+
+
+<!-- The VF page starts here! -->
+<div align="center" >
+<!-- 	<apex:outputText value="Count of Roles: {!COUNT_OF_ROLE_EXTENSION} | Count of Managed Users: {!ManagedUsers.size}" /><br/><br/> -->
+</div>
+	<apex:Form id="theForm">
+		<div>
+		<apex:outputPanel id="grid" layout="block"> 
+			<div align="center" draggable="false">
+				<br/><br/>
+				
+				<apex:dataTable value="{!MatrixRows}" var="row"  rules="all" cellpadding="2%" id="table" styleClass="myKVHtablesorter">
+					<!-- Table Header/Caption..... -->
+					<apex:facet name="caption"> <!-- VF tags do not seem to work when embedded in the caption facet.... -->
+						<div id="block_container">
+							<div id="bloc1">
+								<h1>Manage Users</h1>&nbsp;
+								<!-- refresh Icon -->
+								<a class="refresh" href="./Manage_myKVH_Users" title="Refresh"></a>
+							</div>
+							
+							<div id="bloc2">
+							
+							<input type="button" class="right" value="Add New User" onclick="openAddUser()"/>
+							</div>
+						</div>
+					</apex:facet>
+					<br/><br/>
+					<!-- Columns start here... -->
+					<apex:column >
+						<apex:facet name="header">First<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="firstName" value="{!row.PortalUser.FirstName}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Last<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="lastName" value="{!row.PortalUser.LastName}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Username&nbsp;</apex:facet>
+						<apex:outputText id="username" value="{!row.PortalUser.Username}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column style="text-align:center; vertical-align:middle;"  >
+						<apex:facet name="header">Edit&nbsp;</apex:facet>
+						
+					
+						<a class="edit-button" style="margin: auto;" href="./myKVH_edit_user?user={!row.PortalUser.Id}"></a>
+					</apex:column>
+					
+					<apex:column style="text-align:center; vertical-align:middle;" >
+						<apex:facet name="header">Active&nbsp;</apex:facet>
+						<apex:outputText value="{!row.isNotFrozen}" style="display:none;"/> <!-- Required for sorting -->
+						<apex:image url="{!$Resource.check_green_portal}" height="20px" width="20px"  rendered="{!IF(row.isNotFrozen, true, false)}"/>
+					</apex:column>
+					
+					<apex:column style="vertical-align:middle;" >
+						<apex:facet name="header">Fleet or<br/>Vessel</apex:facet>
+						<apex:outputText id="acct" value="{!row.PortalUser.Contact.Account.Name}"/>&nbsp;
+					</apex:column>
+					
+					<apex:column style="text-align:center; vertical-align:middle;" >
+						<apex:facet name="header">
+							<apex:outputPanel html-data-html="true" title="{!CustAdminToolTip}">
+								Admin&nbsp;
+							</apex:outputPanel>
+						</apex:facet>
+						<apex:outputText value="{!row.isCustomerAdmin}" style="display:none;"/> <!-- Required for sorting -->
+						<apex:image url="{!$Resource.check_green_portal}" height="20px" width="20px"  rendered="{!IF(row.isCustomerAdmin, true, false)}"/>
+					</apex:column>
+					
+					<apex:repeat value="{!row.portalUsersRolesExt}" var="column">
+						<apex:column style="text-align:center; vertical-align:middle;">
+							<div>
+								<apex:outputText value="{!column.hasRole}" style="display:none;"/> <!-- Required for sorting -->
+								<apex:image url="{!$Resource.check_green_portal}" height="20px" width="20px" rendered="{!IF(column.hasRole, true, false)}"/>
+							</div>
+						</apex:column>
+					</apex:repeat>
+					
+					<!--Define the headers here and hide the empty cells that are created -->
+					<apex:repeat value="{!ExtendedRolesList}" var="erl" id="MatrixColumns">
+						<apex:column styleClass="empty-column-content" >
+							<apex:facet name="header">
+								<apex:outputPanel title="{!erl.Tool_Tip_Text__c}">
+									<apex:outputText escape="false" value="{!erl.Column_Header__c}" style="float:left;"/>
+								</apex:outputPanel>
+							</apex:facet>
+						</apex:column>
+					</apex:repeat>
+				</apex:dataTable>
+			</div>
+		</apex:outputPanel>
+		</div>
+	</apex:Form>
+	<!-- Script Block to support JQuery tablesorter -->
+	<script>
+		j$(document).ready(function() {
+			j$("[id$='table']").tablesorter({
+				headers: {
+					3: {
+						sorter: false
+					}
+				}
+			});
+		});
+	</script>
+	<script> 
+		function openAddUser() {
+			var myWindow = window.open("./myKVH_add_new_User", "_self", "", "");
+		}
+		function reload() {
+			var myWindow = window.open("./Manage_myKVH_Users", "_self", "", "");
+		}
+	    function AlertifChagesDone(){
+	       if(document.getElementById('hdnState').value == 'save'){
+	           var r=confirm("Are you sure you want to submit the changes in bold?");
+	           document.getElementById('hdnState').value == 'ready';
+	           return r;
+	       }else if(document.getElementById('hdnState').value == 'cancel'){
+	       	var r=confirm("Are you sure you want to cancel?");
+	       	document.getElementById('hdnState').value == 'ready';
+	       	return r;
+	       } else {
+	       	document.getElementById('hdnState').value == 'ready';
+	       	return false;
+	       }
+	    }
+	    function selectBold(currentEle, headerID, isSelect){
+	        if(currentEle.checked){                 
+	            if(isSelect){
+	                document.getElementById(headerID).style.fontWeight = 'normal';
+	                document.getElementById(headerID).style.fontStyle = 'normal';
+	            }else{
+	                document.getElementById(headerID).style.fontWeight = 'bold'; 
+	                document.getElementById(headerID).style.fontStyle='italic';                    
+	            }
+	        }else if(isSelect == false){
+	            document.getElementById(headerID).style.fontWeight = 'normal';
+	            document.getElementById(headerID).style.fontStyle = 'normal';                 
+	        }else{
+	            document.getElementById(headerID).style.fontWeight = 'bold'; 
+	            document.getElementById(headerID).style.fontStyle='italic';                
+	        }
+	    }
+	</script>
+</apex:page>

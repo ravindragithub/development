@@ -1,0 +1,67 @@
+<apex:component controller="Act_CustomRateplanTable_Comp_Ctrl" allowDML="true" id="rateplantable" >
+    <apex:attribute name="activationServices" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationServiceComp}"/>
+    <apex:attribute name="SelectedCustomRatePlanAccount" description="This is the Custom Rate Plan Account Id"
+                    type="String" required="required" assignTo="{!strSelectedCustomRatePlanAccount}"/>
+    <apex:attribute name="SelectedProductName" description="This is the selected product Id"
+                    type="String" assignTo="{!strSelectedProductName}" />
+    <style>
+        .collapse-panels2 td{
+        padding-left: 15px;
+        border-bottom: 1px solid #ddd;
+        line-height: normal;
+        }
+        .collapse-panels2 th{
+        padding-left: 15px !important;
+        }
+    </style>
+    <script>
+    j$(function() {
+        j$('input[type=radio].radiovldCust').each(function(){
+            if(j$(this).val() == "true"){
+                j$(this).prop('checked', true);
+            }
+        });
+        
+        j$('input[type=radio].radiovldCust').change(function(){
+            //console.log('ProductNameId' + j$(this).attr('productId'));
+            if (j$(this).is(':checked') && j$(this).val() == 'false') {
+                showLoadingDiv();
+                updateServiceMethodrateCust(j$(this).attr('productId'));
+            }
+        });
+        
+    });
+    </script>
+    
+    <apex:actionFunction name="updateServiceMethodrateCust" action="{!updateActivationServiceValueRate}"  oncomplete="btnSelectednavigateNext('Airtime_Plans');" reRender="wrapper"> <!-- hideLoadingDiv();oncomplete="btnSelectednavigateNext('Airtime_Plans');" -->
+        <apex:param name="param1" assignTo="{!strSelectedProductName}" value="" />
+    </apex:actionFunction>
+    
+    <apex:repeat value="{!lstwrapDynamicRatePlanTableMaster}" var="objlstwrapDynamicRatePlanTableMasters">
+        <table class="collapse-panels1" id="EnterTable">
+            <thead> 
+                <tr>
+                    <td colspan="4" class="plan-name text-left selectedheadername"><h3>{!objlstwrapDynamicRatePlanTableMasters.strFeatureName}</h3></td>
+                </tr>
+                <tr>
+                    <td class="row-hdr"></td>
+                    <td class="row-hdr">Plan</td>
+                    <td class="row-hdr text-center">$/Month</td>
+                </tr>
+            </thead> 
+            <tbody>
+                <apex:repeat value="{!objlstwrapDynamicRatePlanTableMasters.lstwrapDynamicRatePlanTable}" var="objwrapDynamicRatePlanTableMasterColumnval">
+                    <tr>
+                        <td class="width-5" >
+                            <input type="radio" productId="{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductId}" name="allFeature" class="radiovldCust" data-role="none" value="{!objwrapDynamicRatePlanTableMasterColumnval.boolIsSelectedProduct}"/>
+                        </td>
+                        <td class="width-60 text-left"><h4>{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductName}</h4></td>
+                        <!--<td class="text-left">{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductDescription}</td>-->
+                        <td class="width-15" >{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductPrice}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:repeat>
+</apex:component>

@@ -1,0 +1,52 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'KVH Authorized Dealer/Distributor', 'value': 'KVH Authorized Dealer/Distributor'},
+                                                        {'label': 'At Factory(by vessel/vehicle manufacturer)', 'value': 'At Factory'},
+                                                        {'label': 'Self', 'value': 'Self'},
+                                                        {'label': 'Prior Owner', 'value': 'Prior Owner'}
+                                                        ]"/>
+    <aura:attribute name="value" type="String" default="option1"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    
+    <lightning:card title="Installer Information">
+        <div class="slds-p-horizontal--small">            
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">  
+                    <lightning:input type="radio" aura:id="r0" label="KVH Authorized Dealer/Distributor" name="others" onchange="{!c.handleChange}"/>
+                    <span aura:id="kvh" class="toggle">
+                        <lightning:input aura:id="LTEField" name="Name" label="Company Name"
+                                         value="{!v.simpleLTEActivation.Installer_Contact_Name__c}" />                  
+                        <c:Country_Picklist_cmp countryList="{!v.countryList}" stateMap="{!v.stateMap}" isRequired="false" selectedCountry="{!v.selectedCountry}" selectedState="{!v.selectedState}"/>
+                    </span>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">  
+                    <lightning:input type="radio" aura:id="r1" label="At Factory(by vessel/vehicle manufacturer)" name="others" onchange="{!c.handleChange}"/>
+                    <span aura:id="atfactory" class="toggle">
+                        <lightning:input aura:id="LTEField" label="Manufacturer" 
+                                         value="{!v.simpleLTEActivation.Installer_Manufacture__c}"/>   
+                    </span>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input type="radio" aura:id="r2" label="Self" name="others" onchange="{!c.handleChange}"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input type="radio" aura:id="r3" label="Prior Owner" name="others" onchange="{!c.handleChange}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+</aura:component>

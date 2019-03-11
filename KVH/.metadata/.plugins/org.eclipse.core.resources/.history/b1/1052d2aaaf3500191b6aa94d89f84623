@@ -1,0 +1,77 @@
+.THIS .lte-header {
+    background-color:#17447c; 
+    height:60px;
+} 
+
+.THIS .lte-icon {
+    float:left; 
+    background-color:rgba(0,0,0,.20); 
+    text-align:center; 
+    padding:20px 30px; 
+    height:60px;
+}
+
+.THIS .lte-icon img {
+    width:20px; 
+    height:auto;
+}
+
+.THIS .lte-title {
+    margin: 15px 0 0 20px; 
+    float:left; 
+    color:#fff;
+}
+
+.THIS .lte-title h1 {
+    font-size: 1.7em;
+}
+
+.THIS .kvh-logo {
+    height:60px; 
+    background-color:rgba(0,0,0,.20); 
+    text-align:center; 
+    float:right; 
+    padding:15px 20px 0 20px;
+}
+
+.THIS .kvh-logo img {
+    width:90px;
+    height:auto;
+}
+
+
+@media (max-width: 450px) {
+    
+    .THIS .lte-header {
+        height:auto;
+        padding:10px;
+    }
+    
+    .THIS .lte-icon {
+        display:none;
+    }	
+    
+    .THIS .lte-title {
+        float:none;
+        text-align:center;
+        margin:0;
+    }
+    
+    .THIS .lte-title h1 {
+        margin:0;
+        font-size:1.2em;
+    }
+    
+    .THIS .kvh-logo {
+        background-color:transparent;
+        float:none;
+        padding:0;
+        margin:0;
+        height:auto;
+    }
+    .THIS .kvh-logo img {
+        width:60px;
+        padding:0 0 10px 0;
+        margin:0;
+    }
+}

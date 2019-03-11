@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This tab is included with the User Contact Sync application by Applied Concepts Institute.  This tab should be made available to System Administrators to configure the settings for the application.</description>
+    <icon>User_Contact_Sync_Images/UCS_Icon_24_x_24_png.png</icon>
+    <label>User Contact Sync Settings</label>
+    <mobileReady>false</mobileReady>
+    <motif>Custom107: TV Widescreen</motif>
+    <page>editSettings</page>
+</CustomTab>

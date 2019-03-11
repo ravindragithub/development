@@ -1,0 +1,12 @@
+<apex:page standardController="SBQQ__Subscription__c" extensions="Service_LTE_activation_transform" showHeader="false" sidebar="false">
+    <apex:form >
+        <apex:pageBlock id="box">
+            <apex:outputLabel >Please only click the button once. Once you click the button please refresh the subscription page. If the field "Traffic Identifier" is not filled in, please contact sf_support with the subscription record to find out why the provisioning did not work.  </apex:outputLabel> 
+            
+            
+            <apex:commandButton value="Provision" rerender="box" action="{!doSomething}"/>
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+</apex:page>

@@ -1,0 +1,61 @@
+<apex:component controller="Act_Static_IP_Component_Controller" allowDML="true" id="static_IP_Comp_Id">
+    
+    <apex:attribute name="StaticIPActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}" />
+    
+    <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+        <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+            Global Static IP Service    
+            <apex:outputPanel id="commboxMainIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!StaticIPActivationService.Global_Static_IP_Selected__c == false}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" rendered="{!!StaticIPActivationService.Global_Static_IP_Selected__c}" reRender="commboxId,commboxMainIdButton">
+                            <apex:param value="true" assignTo="{!StaticIPActivationService.Global_Static_IP_Selected__c}" /> 
+                            Add
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!StaticIPActivationService.Global_Static_IP_Selected__c == true}">
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link" rendered="{!StaticIPActivationService.Global_Static_IP_Selected__c}"  reRender="commboxId,commboxMainIdButton">
+                            <apex:param value="false" assignTo="{!StaticIPActivationService.Global_Static_IP_Selected__c}" />
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <p class="collapse-p">With a Global Static IP address assigned to a computer system or router onboard your vessel, parties on shore will be able to access that computer or router directly over the Internet.</p>
+        </h2>
+        <div aria-hidden="true">
+            <div class="panel-contents">
+                <h2>Add Global Static IP addressing to your mini-VSAT Broadband account</h2>
+                
+                <div class="two-col left" style="margin-top: 20px;">
+                    <p>The service operates by assigning unique private IP addressing to a computer or router on the vessel, that is then mapped to a globally unique public IP address at the Internet egress point you choose. Note: mini-VSAT Broadband Static IP addresses will only operate when using the mini-VSAT Broadband service. mini‑VSAT Broadband Global Static IP addresses will not function over Iridium or other carrier types (GSM, WiFi, etc.). <br/>
+                        <a href="#staticIP" data-rel="popup" data-position-to="window" data-transition="fade" aria-haspopup="true" aria-owns="staticIP" aria-expanded="false" class="ui-link">Learn more about Global Static IPs.</a></p>                
+                </div>
+                
+                <div style="display: none;" id="staticIP-placeholder"><!-- placeholder for staticIP --></div>
+                
+                <div class="two-col right">
+                    <c:Activation_RatePlanTable className="collapse-panels1" currentTab="Ip_Serivces_plans" selectedProductBundle="Optional Plans & Services" selectedRatePlan="{!strFeatureIds}" planType=""  activationServices="{!StaticIPActivationService}" planTypepopupId=""/>
+                </div>
+                    <div class="clear"></div>
+                
+                <hr/>
+                <c:Activation_Service_Information activationServices="{!StaticIPActivationService}"/> 
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- /popup contents --> 
+    <div data-role="popup" id="staticIP" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">More About Global Static IP</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <p>The KVH mini-VSAT Broadband network secures each customer's global public Internet addresses by blocking any undefined inbound applications, ports, or source addresses. This block allows the KVH mini-VSAT Broadband network to provide our customers with the best and most supportable network access and removes the security threat and excessive traffic use seen on the public Internet today resulting from unwanted network traffic, scans and attacks.</p>
+            <p>The KVH network can allow inbound applications or ports, (i.e. Microsoft Remote Desktop, VNC, SSH, http/https, IPsec and many more) Into your global public Internet address from anywhere on the Internet or it can allow access only from specific public Internet addresses that you provide.</p>
+            <p>Note that all applications from the vessel to the Internet will operate normally according to the terms of your service plan.</p>
+        </div>
+    </div>
+    <!-- /popup contents --> 
+</apex:component>

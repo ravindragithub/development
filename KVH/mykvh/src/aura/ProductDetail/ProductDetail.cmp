@@ -1,0 +1,75 @@
+<aura:component description="ProductDetail">
+    
+    <aura:attribute name="product"
+                    type="ProductSearchClass.ProductResult"
+                    description="Used to store the Product details"/>
+
+    <aura:attribute name="document"
+                    type="ProductSearchClass.DocumentType[]"
+                    description="Used to store the document results"/>
+
+    <aura:attribute name="productImages" type="String[]"
+                    description="Used to store the product images URL"/>
+    
+    <aura:attribute name="banners" type="Map"
+                    description="Used to store the web banners for a selected Product"/>
+    <aura:attribute name="bannerKeys" type="List"/>
+    
+    <aura:attribute name="videos" type="Map"
+                    description="Used to store the videos for a selected Product"/>
+    <aura:attribute name="videoKeys" type="List"/>
+
+    <div class="slds-m-vertical--medium" style="color: #000;">
+        <p class="slds-p-horizontal--medium"><h1>Product Details&nbsp;&nbsp;<i class="fa fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;{!v.product.productItem.Catalog_Display_Name__c}</h1></p>
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-horizontal--medium slds-size--1-of-4" align="center">
+            <aura:if isTrue="{!v.product.logoId != 'NoImage'}">
+                <img src="{!v.product.logoId}"
+                     style="height:170px;"/>
+
+               <!-- <aura:set attribute="else">
+                    <img src="{!$Resource.NoImage}"
+                         style="height:170px;">
+                    </img>
+                </aura:set>-->
+            </aura:if>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--3-of-4 section group pad-top">
+            <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-m-bottom--medium">
+                                        <aura:if isTrue="{!v.product.productItem.Product_Market_Sector__r.Product__r.Catalog_Long_Description__c != null}">
+                            <p><h3>Web Copy for Use on Partner Websites</h3></p>
+                        </aura:if>
+                    <div style="text-align: justify; color: #555;" class="slds-m-right--small slds-m-top--medium">
+                        <aura:unescapedHtml value="{!v.product.productItem.Product_Market_Sector__r.Product__r.Catalog_Long_Description__c}"/>
+                    </div>
+                </div>
+
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-m-bottom--medium">
+                    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                        
+                    </div>
+                       
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+            <div class="slds-size--1-of-4 slds-p-horizontal--small section group pad-top">
+            	
+            </div>
+            <div class="slds-p-horizontal--small slds-size--3-of-4 section group pad-top">
+                
+            </div>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-horizontal--large slds-size--1-of-1">
+            <aura:iteration items="{!v.document}" var="docum" indexVar="index">
+                <c:DocumentType documentType="{!docum}" />
+            </aura:iteration>
+        </div>
+    </div>
+
+</aura:component>

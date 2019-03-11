@@ -1,0 +1,28 @@
+<aura:component description="PartnersAndMap"
+                implements="forceCommunity:availableForAllPageTypes">
+
+    <div class="slds-grid slds-wrap  slds-grid_pull-padded-medium slds-p-vertical_medium">
+        <div class="slds-p-horizontal_large">
+            <div class="slds-text-heading_large"
+                 style="font-size: 1.7em;font-family: sans-serif; color: black">
+                Find a KVH Partner Near You
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-grid_pull-padded-medium slds-p-top_small"
+         style="height: 100%">
+        <div class="slds-p-horizontal_small" style="height: 100%">
+            <c:WhereToBuy />
+        </div>
+
+        <div class="slds-p-horizontal_small" style="height: 100%">
+            <c:WhereToBuyPartners />
+        </div>
+
+        <div class="slds-p-horizontal_small" style="height: 100%">
+            <c:AccountMap />
+        </div>
+    </div>
+
+</aura:component>

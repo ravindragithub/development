@@ -1,0 +1,62 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="PortalNewsComponentCtrl" >
+   <aura:attribute name="newsHeader" type="String" access="global"/>       
+   <aura:attribute name="serviceName" type="String" access="global"/>  
+   <aura:attribute name="showpopup" type="String" default="slds-hide"/>
+   <aura:attribute name="availableCheck" type="String" access="global" default="slds-hide"/>
+    
+   <aura:attribute name="allnewslist" type="PortalNewsComponentCtrl.NewsWrapper[]" />
+   <aura:attribute name="toptwonewslist" type="PortalNewsComponentCtrl.NewsWrapper[]" />
+    
+  <!-- <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+   <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>-->
+   <aura:handler event="c:PlaceAvailableServicesEvent" action="{!c.handlePlaceAvailableServiceEvent}"/>
+   
+   
+
+   
+   <div style="padding:20px;padding-top:0px;" class="{! 'slds-grid slds-wrap  ' + v.availableCheck}">
+         <div  class="info-box">
+             <h2 class="slds-p-around_medium" style="background: #e3e3e3;color: #666;font-size: 18px;padding: 10px 15px;">{!v.newsHeader}</h2>
+            
+             <div class="filter-box" style="background: #fff;min-height: 320px;max-height:320px;overflow-y: auto;">
+                <!-- <ui:spinner aura:id="spinner"/>-->
+                 <aura:iteration items="{!v.toptwonewslist}" var="news">
+                     <div class="slds-p-around_medium slds-p-bottom_none event" >
+                         <a href="javascript:void(0);" data-downloadurl="{!news.ExternalURL}" data-ReleaseID="{!news.ReleaseID}" onclick="{!c.openNews}" style="font-size:14px;">{!news.Title}</a>
+                         <p>{!news.newsdate}</p>                    
+                     </div>
+                 </aura:iteration>
+                 <aura:if isTrue="{!v.allnewslist.length > 0}">
+                     	<a href="javascript:void(0);" class="button more slds-m-around_medium" onclick="{!c.openpopup}">More</a>
+                 </aura:if>
+             </div>
+         </div>
+     </div>
+    
+    <div class="{!v.showpopup}" style="height: 640px;border-radius:0;">
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">   
+    
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                <a class="button closeicon"  onclick="{!c.closepopup}">&times;</a>
+                {!v.serviceName}
+             </h2>
+              
+          </header>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <aura:iteration items="{!v.allnewslist}" var="news">
+                 <div class="slds-p-around_medium slds-p-bottom_none event">
+                     <a href="javascript:void(0);" data-downloadurl="{!news.ExternalURL}" data-ReleaseID="{!news.ReleaseID}" onclick="{!c.openNews}" style="font-size:14px;">{!news.Title}</a>
+                     <p>{!news.newsdate}</p>                    
+                 </div>
+              </aura:iteration>
+          </div>
+          <footer class="slds-modal__footer">
+            <a class="button"  onclick="{!c.closepopup}">CLOSE</a>       
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+</aura:component>

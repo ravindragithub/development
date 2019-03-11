@@ -1,0 +1,115 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" Controller="myKVH_MyRegisteredProductsController">
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="UserObj" type="Object"/>
+    <aura:attribute name="hasKVHRole" type="Boolean" default="false"/>
+    <aura:attribute name="accountlist" type="Object"/>   
+    <aura:attribute name="finalHeight" type="String"/>
+    <aura:attribute name="tooglebuttonlabel" type="String" default="Collapse All Sections"/>
+    <aura:attribute name="arrowIcon" type="String" default="utility:chevrondown"/>
+    <aura:attribute name="productRegInProgress" type="Boolean" default="false"/>
+    <aura:attribute name="documentIds" type="List" default="[]"/>  
+    
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    
+    <aura:handler name="change" value="{!v.arrowIcon}" action="{!c.arrowIconChange}"/>
+    <aura:registerEvent name="mykvh_MyRegisteredProductCollapsAllEvent" type="c:mykvh_MyRegisteredProductCollapsAllEvent"/>
+
+    
+     <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>      
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+   
+	<div class="slds-grid slds-wrap">
+      <div class="slds-show_large slds-col slds-size_1-of-1 slds-medium-size_1-of-12 slds-large-size_1-of-12"></div>
+      <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_10-of-12 slds-p-around_medium whitebackground" style="{!'min-height:'+v.finalHeight}">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12" >
+                <div class="pageheading slds-float_left">My Registered Products(s)</div>
+                <div class="slds-float_right">            
+                    <lightning:button label="Back to Home" class="go-btn button" variant="brand" onclick="{!c.onBackHome}" />
+                 </div>
+            </div>
+        </div>
+          
+        
+         <div class="slds-grid slds-wrap">
+             <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_3-of-12 slds-m-top_medium" >
+                 <div class="bluebutton">
+                     <img src="{!$Resource.IconManageProd}" />
+                      mini-VSAT Manager
+                     <button class="slds-button slds-button_neutral quickgobtn quickgoLightBlue" onclick="{!c.handleVSATManager}">GO</button>
+                 </div>
+             </div>
+             
+             <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_3-of-12 slds-m-top_medium" >
+                 <aura:if isTrue="{!v.hasKVHRole}"> 
+                     <div class="bluebutton leftbuttonmargin">
+                         <img src="{!$Resource.IconManageProd}" />
+                         LTE Manager                     
+                         <button class="slds-button slds-button_neutral quickgobtn quickgoLightBlue" onclick="{!c.handleLTEManager}">GO</button>
+                     </div>
+                 </aura:if>
+             </div>
+            
+             <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_6-of-12 slds-m-top_medium helptext" >
+                 <p class="slds-p-left_x-small" style="font-size: 11px;" onclick="{!c.openhlepPopup}">If something is missing, is incorrect, or needs updating, <a>please let us know.</a></p>
+             </div>
+         </div>
+          <aura:if isTrue="{!v.productRegInProgress}">
+              <div class="slds-grid slds-wrap slds-m-top_x-small">
+                 <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12" >
+                     <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                      <span class="slds-assistive-text">Info</span>
+                        <lightning:icon iconName="utility:info" alternativeText="Info" size="small"/>                      
+                      	<p style="padding-top: 10px;">New Product Registration Pending Review. For questions or issues, please contact <a href="javascript:void(0);" onclick="{!c.openAirtimeServicesCasePopup}">Airtime Services Support.</a></p>                     
+                    </div>
+                 </div>                     
+            </div>
+          </aura:if>
+          <aura:if isTrue="{!v.accountlist.length == 0}">
+              <div class="slds-grid slds-wrap slds-m-top_x-small">
+                 <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12" >
+                     <!--<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                      <span class="slds-assistive-text">warning</span>
+                        <lightning:icon iconName="utility:warning" alternativeText="warning" />                      
+                      	<p style="padding-top: 10px;">There is no product registered for you.</p>                      
+                    </div>-->
+                     
+                     <div class="callout">
+                      	<h3>There are no registered products found for your account.</h3>
+                         <p><em>Please note, if you have recently submitted a product registration, the warranty verification process can take up to 48 hours to complete. KVH will send you an acknowledgement when it has been completed.</em></p>
+                     </div>
+                 </div>                     
+            </div>
+          </aura:if>
+          <aura:if isTrue="{!v.accountlist.length > 0}">
+              <div class="slds-m-top_x-small" >
+                  <aura:if isTrue="{!v.tooglebuttonlabel == 'Collapse All Sections'}">
+                      <p style="font-weight: bold;"><a href="javascript:void(0);" onclick="{!c.toggleAll}">Collapse All Sections</a> / Open All Sections</p>
+                      <aura:set attribute="else">
+                          <p style="font-weight: bold;">Collapse All Sections / <a href="javascript:void(0);" onclick="{!c.toggleAll}">Open All Sections</a></p>
+                      </aura:set>
+                  </aura:if>
+                  
+              </div>          	
+          </aura:if>
+        
+         <aura:iteration items="{!v.accountlist}" var="accountObj">             
+              <c:mykvh_MyRegisteredProductsAccountCmp accountObj="{!accountObj}" />
+          </aura:iteration>
+          
+      </div>
+      <div class="slds-show_large slds-col slds-size_1-of-1 slds-medium-size_1-of-12 slds-large-size_1-of-12"></div>
+    </div>
+</aura:component>

@@ -1,0 +1,44 @@
+.THIS .header-title{
+    padding: .5rem .5rem;
+    background: #d4d4d4;
+    color: #3F51B5;
+    font-weight: bold;
+    font-size: 14px;
+}
+.THIS .slds-accordion__summary-action{
+    background-color: transparent;
+}
+.THIS .slds-accordion__section {
+    padding: .75rem 0;
+}
+.THIS .slds-accordion__summary-action:hover {
+    background-color: transparent;
+}
+.THIS .slds-accordion__summary{
+    background: #dbdbdb;
+    padding: .5rem;
+    margin: 0;
+}
+.THIS .slds-accordion__content{
+    background: #f6f6f6;
+}
+.THIS .slds-list__item{
+    cursor: pointer;
+}
+.THIS .go-btn {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #bcbaba;
+    line-height: normal;
+    text-transform: uppercase;
+    margin: 8px;
+    padding: 0.5rem;
+}
+.THIS .go-btn:hover {
+    background-color: rgb(19, 95, 144)!important;
+    color:white!important;
+}
+
+.THIS .slds-hint-child{
+    cursor: pointer;
+}

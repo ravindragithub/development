@@ -1,0 +1,15 @@
+<aura:documentation>
+	<aura:description>Documentation
+  States:
+  <ul>
+    <li>INIT      - Component is ready to search</li>
+    <li>SEARCHING - Component is waiting for results from server</li>
+    <li>FOUND     - Server returned single found Asset</li>
+    <li>NOT_FOUND - Server did not find Asset matching search string</li>
+    <li>DUPLICATE - Server found multiple matching Assets</li>
+    <li>ERROR     - Component error</li>
+  </ul></aura:description>
+	<aura:example name="ExampleName" ref="exampleComponentName" label="Label">
+		Example Description
+	</aura:example>
+</aura:documentation>

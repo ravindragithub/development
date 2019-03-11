@@ -1,0 +1,889 @@
+<apex:page controller="ActivationSystemInfo" sidebar="false" showHeader="false" standardStyleSheets="false">
+    <apex:pageMessages ></apex:pageMessages>
+    <html>
+        <head>
+            <meta charset="UTF-8"/> 
+            <title>Online Activation Order - Account Setup</title>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+            </script>
+            <script src="https://use.fontawesome.com/0633ed32ab.js">
+            </script>
+            <link href="https://use.fontawesome.com/0633ed32ab.css" media="all" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+            <script src="{!URLFOR($Resource.Activation_System, 'serial_numbers/jquery.collapsible.js')}" type="text/javascript">
+            </script>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+            
+            <!-- Load jQuery, use minimized lib-->
+            
+            <!-- Handle jQuery conflicts (e.g. "$") -->
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            </script>
+            <!-- Load jQuery plug-ins, use minimized libs -->
+            <!-- Library for Modal windows.... -->
+            <script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+            <!-- Library for jQuery Validator... -->
+                <script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+            <!--Action Status Resources-->
+            <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+            <script>
+            var validator;
+            j$( document ).ready(function() {
+                
+                chkcheckbox();
+                validator = j$("[id$='theForm']").validate({ignore: ":disabled"});
+                
+                if(j$('[id$=systemDetailIndentify]').length>0){
+                    j$('[id$=systemDetailIndentify]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$('[id$=confirmNumber]').length>0){
+                    j$('[id$=confirmNumber]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            minlength: 4,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$("input[type=radio][name$='HardwareSelect']").length>0){
+                    j$("input[type=radio][name$='HardwareSelect']").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$('input[id$=serialNumber]').length>0){
+                    j$('[id$=serialNumber]').rules("add",{
+                        required: false,
+                        minlength: 4,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                //fixing IE radio inline issues 
+                j$('fieldset table tr td, p').find("input[type='radio']").each(function (i){
+                    if(j$(this).next("label")){
+                        j$(this).css("display", "inline").next('label').css("display", "inline");
+                    }
+                });
+                
+                j$('div.phone-types').find("label, fieldset").each(function (i){
+                    j$(this).css("display", "inline");
+                });
+                //fixing IE radio inline issues 
+            });
+            
+            function validateNumber(event) {
+                var key = window.event ? event.keyCode : event.which;
+                
+                if (event.keyCode === 8 || event.keyCode === 46
+                    || event.keyCode === 37 || event.keyCode === 39) {
+                    return true;
+                }
+                else if ( key < 48 || key > 57 ) {
+                    return false;
+                }
+                    else return true;
+            };
+            
+            function currenttabtoshowerror(){
+                var errordiv= "<div class='error-box' id='globalErrorBOX' style='display:none !important'>"; 
+                errordiv += "<ul class='bullets1'></ul> </div>";
+                return errordiv;
+            }
+            
+            function validateRoot(param,param1){
+                var Isvalid ;
+                var currentcomp  = document.getElementById(param);
+                if(!j$("[id$='donotknowserial']").is(':checked')){
+                    j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                    if(j$(currentcomp).find("[id$=confirmNumber]").length ==1){
+                        if(Isvalid == undefined)
+                            Isvalid = j$(currentcomp).find("[id$=confirmNumber]").valid();
+                        else
+                            Isvalid = j$(currentcomp).find("[id$=confirmNumber]").valid() && Isvalid;
+                    }
+                    
+                    if(Isvalid){
+                        if(j$(currentcomp).find("[id$=serialNumber]").valid()){
+                            showLoadingDiv();
+                            searchroootasset(param1);
+                            
+                        }
+                    }else{
+                        var errordiv = currenttabtoshowerror1();
+                        j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                        var html = "<li>Enter a serial number from one of your below decks units</li>";
+                        j$(currentcomp).find('.error-box1').find('.bullets').html(html);
+                        j$(currentcomp).find('.error-box1').show();
+                        
+                    }
+                }else{
+                    j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                    if(param1){
+                        showLoadingDiv();
+                        btnSelectednavigateNext('System_Selection');}
+                    else
+                        buttonfunctionCorporate(this);
+                }
+                
+            }
+            
+            function fun(){
+                showLoadingDiv();
+                AssetNotFound();
+            }
+            
+            function validateAsset(assetValue,param1,NameException){
+                var str = "click here";
+                var result = str.link("");
+                if(assetValue == false && (!j$("[id$='donotknowserial']").is(':checked') || NameException)){
+                    var html = "";
+                    var errordiv = currenttabtoshowerror();
+                    html += "<li>We didn't find your system in our records. <br/> Please try again or <a href='#' onclick='fun()'>"+str+"</a> to enter the info you do have. </li>";
+                    j$("#errorMsg").html(errordiv);
+                    j$("#errorMsg").find('.error-box').find('.bullets1').html(html);
+                    j$("#errorMsg").find('.error-box').show();
+                    hideLoadingDiv();
+                }else{ 
+                    j$("#errorMsg").find('.error-box').hide();
+                    //updateActivationHardware();
+                    if(param1){
+                        if(j$("[id$='donotknowserial']").is(':checked'))
+                            goToNextTab('System_Selection');
+                        else 
+                            goToNextTab('System_Details');}
+                    else
+                        buttonfunctionCorporate(this);
+                    
+                }
+            }
+            
+            function selectedProduct(staticResourceName, ProductIMGURL, ProductName, currentEmntId){
+                j$('li.relative').removeClass("selected");
+                j$('li.relative').find('input[name="Selected"]').attr("name",'Select').val('Select');
+                j$("#"+currentEmntId).addClass("selected");
+                j$("#"+currentEmntId).find('input').val('Selected');
+                updateActivationHardwarePath(staticResourceName,ProductIMGURL,ProductName);
+            }
+            
+            function chkcheckbox(){
+                if(j$("[id$='donotknowserial']").is(':checked')){
+                    j$('.chkcheckbox').addClass('kvh-disabledcss').attr('disabled','disabled');
+                }
+                else{
+                    j$('.chkcheckbox').removeClass('kvh-disabledcss').removeAttr('disabled');
+                }
+            }
+            </script>
+            <style>
+                .rich-tabpanel-content{
+                box-shadow: none;
+                }
+                .rich-tab-bottom-line {
+                border-bottom: 1px solid #c7c7c7;
+                }
+                #main {
+                background: white;
+                padding-left: 20%;
+                }
+                #main {
+                float: left;
+                width: 100%;
+                }
+                .loadingStatus {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                list-style: none;
+                z-index: 9999;
+                }
+                
+                .loadingStatus .img {
+                width: 32px;
+                margin: 0 auto;
+                }
+                
+                .error-box
+                { color:#cc0000;margin-bottom:20px; }
+                
+                .error-box h1
+                { background:#cc0000; color:#fff !important; font-size:1em !important; padding:5px; margin-bottom:10px; font-weight:bold; }
+                
+                .error-box li
+                { margin-left:0px; font-weight: bold; } 
+                
+                .loadingBox {
+                display: none;
+                background: #000000;
+                opacity: 0.45;
+                filter: alpha(opacity=45);
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: 9999;
+                }
+                
+                .requiredRedMarkFld{
+                border-left:4px solid #cc0000 !important;
+                padding-left: 4px !important;
+                }
+                .kvh-disabledcss{
+                background-color: #f1f1f1 !important;
+                }
+                .error{
+                border-top: 1px solid #cc0000 !important;
+                border-bottom: 1px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                
+                label.error{
+                border-top: 0px solid #cc0000 !important;
+                border-bottom: 0px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                
+                ul.bullets {
+                margin: 5px 0 0 20px;
+                }
+                .error-box1{ 
+                border:1px solid #cc0000; 
+                width:47%; 
+                color:#cc0000; 
+                border-radius:3px; 
+                margin-bottom:20px; 
+                }
+                
+                .error-box1 h1{ 
+                background:#cc0000; 
+                color:#fff !important; 
+                font-size:1em !important; 
+                padding:5px; 
+                margin-bottom:10px; 
+                font-weight:bold; 
+                }
+                
+                /*.SNC {
+                display:none;
+                }*/
+                .h2Class {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: black;
+                }
+                .remodalAgains{
+                max-width: 700px !important;
+                min-width: 700px !important;
+                min-height: 200px !important;
+                margin: 0px auto !important;
+                border-radius: 6px !important;
+                padding: 0px 0px !important;
+                } 
+                .button {
+                color: #fff !important;
+                padding: 7px 27px 8px;
+                margin: 15px 0;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                display: -moz-inline-stack;
+                display: inline-block;
+                zoom: 1;
+                _overflow: hidden;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                background: #6699cc;
+                border: 0;
+                text-shadow: none !important;
+                }
+                .ui-mobile label, .ui-controlgroup-label {
+                display: -webkit-inline-box;
+                margin: 0 0 .4em;
+                }
+                .ui-mobile label, div.ui-controlgroup-label {
+                font-weight: 400;
+                font-size: 14px;
+                }
+                .rig h3 {
+                font-size: 100%;
+                }
+                
+
+                .controls {
+                padding:20px 0;
+                text-align:right;
+                }
+                
+                /* what heading looks like when panel is closed */
+                .collapsible {
+                margin: 0;
+                padding:10px;
+                border-top:#ddd 2px solid; 
+                background: #fff;
+                text-decoration:none;
+                color: #000;
+                cursor:pointer;
+                overflow: hidden;
+                min-height:80px;
+                }
+                
+                /* what heading looks like when panel is open */
+                .collapse-open {
+                
+                }
+                
+                .collapse-open span {
+                display:block;
+                float:right;
+                padding:10px;
+                }
+                
+                .collapse-open span {
+                background: url('/resource/Activation_System/serial_numbers/images/close.png') center center no-repeat;
+                }
+                
+                .collapse-close span {
+                display:block;
+                float:right;
+                background:url('/resource/Activation_System/serial_numbers/images/open.png') center center no-repeat;
+                padding:10px;
+                }
+                
+                div.container {
+                padding:0;
+                margin:0;
+                }
+                
+                div.content {
+                margin: 0;
+                padding:10px;
+                background:#fff;
+                }
+                
+                .white-bg {
+                background-color:#fff;
+                }
+                
+                .img-caption {
+                margin:0 10px 20px 10px;
+                overflow: auto;
+                background:#f3f3f3;
+                width:46%;
+                border:3px solid #f3f3f3;
+                }
+                
+                .img-caption p {
+                padding:10px;
+                font-size:85%;
+                font-style: italic;
+                min-height:80px;
+                }
+                
+                .img-caption img {
+                width:100%;
+                height:auto;align-items: 
+                }
+                
+                .pad-bottom {
+                margin-bottom: 20px;
+                }
+                
+                img.header-img {
+                width:15%; 
+                height:auto; 
+                float:right;
+                margin-right:20px;
+                }
+                
+                /* MEDIA QUERIES ------------------------------- */
+                
+                @media (max-width: 600px) {
+                
+                .img-caption {
+                width:100%;
+                margin:0 0 20px 0;
+                }
+                
+                }
+
+            </style>
+        </head>
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                
+                <!-- ** Form tag Start ** -->
+                <apex:form id="theForm">
+                    <div class="loadingStatus" id="loadingDiv">
+                        <div class="">
+                            <div class="img "><img src="/img/loading.gif"/></div>
+                        </div>
+                    </div>
+                    <div id="loadingBox" class="loadingBox"></div>
+                    
+                    
+                    <!-- ** Top header Start **-->
+                    
+                    <c:Activation_Header />
+                    <!-- ** Top header End **-->
+                    
+                    <!-- ** Sidebar Start **-->
+                    <div id="sidebar">
+                        <c:Activation_Status state="{!ActivationStatus}" pageOrderID="{!ActivationOrderId}"/> 
+                    </div>
+                    <!-- ** Sidebar End **-->
+                    
+                    <div id="main">
+                        <apex:actionFunction name="searchroootasset" action="{!SearchAsset}" oncomplete="validateAsset({!existsAsset},{!param},{!NameException});" reRender="wrapper">
+                            <apex:param name="param1" assignTo="{!param}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="btnSelectednavigateNext" action="{!goToTab}" oncomplete="hideLoadingDiv();" reRender="wrapper">
+                            <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="updateActivationHardware" action="{!updateActivationhardware}" oncomplete="hideLoadingDiv();chkcheckbox();" reRender="wrapper">
+                        </apex:actionFunction>
+                        <apex:actionFunction name="AssetNotFound" action="{!AssetNotFound}" oncomplete="btnSelectednavigateNext('System_Selection');" reRender="wrapper">
+                        </apex:actionFunction>
+                        <apex:actionFunction name="goToNextTab" action="{!goToNextTab}" oncomplete="hideLoadingDiv();chkcheckbox();" reRender="wrapper">
+                            <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="updateActivationHardwarePath" action="{!updateActivationhardware}" oncomplete="hideLoadingDiv();" reRender="wrapper">
+                            <apex:param name="param2" assignTo="{!objActivationHardware.Static_Resource_Archive__c}" value="" />
+                            <apex:param name="param3" assignTo="{!objActivationHardware.Image_path_name__c}" value="" />
+                            <apex:param name="param4" assignTo="{!objActivationHardware.System_Name__c}" value="" />
+                        </apex:actionFunction>
+                        <apex:outputPanel layout="block" id="wrapper" styleClass="wrapper">
+                            
+                            <div style="float:left;">  <h1 class="title">System</h1></div>
+                            <div class="required"><span class="requiredRedMarkFld"></span> = Required field</div> 
+                            <!-- ** TabPanel Start **-->
+                            <apex:tabPanel switchType="client" value="{!selectedTab}" id="theTabPanel" > 
+                                <!-- ** Installation Type Tab Start  ** -->
+                                <apex:tab label="System Hardware" name="System_Type" id="System_Type" disabled="{!IF((mapdisableActivationHardwareTabs['System_Type'] > ActivationStatus.System_Type_Last_Active_Tab_Index__c),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('System_Type');">
+                                    <div>
+                                        <div style="float:left;"><h2 class="title">System Hardware</h2></div>
+                                        <div style="padding-bottom:50px"></div>
+                                        <a href="#serial" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="serial" aria-expanded="false" class="ui-link"><strong>Need help finding your serial number?</strong></a>
+                                    </div>
+                                    <div style="padding-bottom:15px"></div>
+                                    <div class="kvh-show-errormsg-here"  id="errorMsg" style="width:80%;">
+                                    </div>
+                                    <div class="left two-col" style="width:38%;">
+                                        <p class="SNC">
+                                            <b>Below-decks Unit Serial Number:</b>
+                                            <apex:inputText id="confirmNumber" value="{!objActivationHardware.Below_Decks_Serial_Number__c}" styleClass="{!IF(objActivationHardware.Do_Not_Know_Serial_Number__c, 'chkcheckbox','chkcheckbox requiredRedMarkFld')}" tabIndex="1" maxlength="100" size="100" html-data-role="none" /> 
+                                        </p>
+                                        <p class="SNI">
+                                            <b>Antenna Unit Serial Number:</b> <!-- (minimum 4 characters) -->
+                                            <apex:inputText id="serialNumber" value="{!objActivationHardware.Antenna_Serial_Number__c}" styleClass="chkcheckbox" tabIndex="2" maxlength="100" size="100" html-data-role="none" />
+                                        </p>  
+                                        <apex:outputPanel rendered="{!!AND(objActivationOrder.Activation_Type__c == 'Activation on behalf of Customer', objActivationOrder.CreatedById == $User.Id)}">
+                                            <p>
+                                                <apex:inputcheckbox value="{!objActivationHardware.Do_Not_Know_Serial_Number__c}" id="donotknowserial" onchange="showLoadingDiv();updateActivationHardware(); return false;" tabIndex="3" html-data-role="none"/>
+                                                I don't know my serial numbers.
+                                            </p>
+                                        </apex:outputPanel>
+                                    </div>
+                                    
+                                    
+                                    <div class="clear" style="padding-bottom:10px;"></div>
+                                    
+                                    
+                                    <div class="button-bar clear">
+                                        <apex:commandLink styleClass="button left" id="VesselDetailMaritimeBackBtn" value="< Back to Installation" onclick="showLoadingDiv();" action="{!goToTab}">
+                                            <!-- Use the Name attribute of the previous tab -->
+                                            <apex:param value="Dealer_Distributor_Info" assignTo="{!selectedTab}" /> 
+                                        </apex:commandLink>
+                                        <apex:commandLink styleClass="button right" id="VesselDetailMaritimeNextBtn" value="Next >" onclick="validateRoot('{!$Component.System_Type}',true);return false;">
+                                        </apex:commandLink>
+                                    </div>
+                                    <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateRoot('{!$Component.System_Type}',false);return false;" /> 
+                                </apex:tab> 
+                                <apex:tab label="System Selection" name="System_Selection" id="System_Selection" disabled="{!IF((mapdisableActivationHardwareTabs['System_Selection'] > ActivationStatus.System_Type_Last_Active_Tab_Index__c),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('System_Selection');" rendered="{!objActivationHardware.Do_Not_Know_Serial_Number__c}" >
+                                    <div class="r-tabs">
+                                        <!-- TAB 1 - System Hardware ---------------------->
+                                        <h2 class="title">System Selection</h2>
+                                        <p>Please select a system for the activation.</p> <!--<a href="#modal_products"><strong>Need help determining which product you have?</strong></a></p> -->
+                                        <!-- popup contents -->    
+                                        
+                                        <!-- /popup contents -->
+                                        
+                                        <ul class="rig columns">
+                                            <apex:repeat value="{!lstActivationSystemHardwares}" var="objActivationSystemHardware">
+                                                <li id="{!objActivationSystemHardware.Image_Name__c}" class="{!IF(objActivationHardware.Image_path_name__c == objActivationSystemHardware.Image_URL__c,'relative selected', 'relative')}" onclick="selectedProduct('{!objActivationSystemHardware.Static_Resource_Archive__c}', '{!objActivationSystemHardware.Image_URL__c}', '{!objActivationSystemHardware.Name}', '{!objActivationSystemHardware.Image_Name__c}');">
+                                                    <h3 style="height: 75px;">{!objActivationSystemHardware.First_Name__c}<br/><apex:outputPanel layout="none" rendered="{!IF(objActivationSystemHardware.Last_Name__c != null && CONTAINS(UPPER(objActivationSystemHardware.Last_Name__c), 'IRIDIUM'), true, false)}" > {!objActivationSystemHardware.Last_Name__c}</apex:outputPanel>
+                                                        <apex:outputPanel layout="none" rendered="{!IF(objActivationSystemHardware.Last_Name__c != null && CONTAINS(UPPER(objActivationSystemHardware.Last_Name__c), 'IRIDIUM'), false, true)}" > <small>{!objActivationSystemHardware.Last_Name__c}</small> </apex:outputPanel></h3>
+                                                    <p>
+                                                        <img src="{!URLFOR($Resource[objActivationSystemHardware.Static_Resource_Archive__c], objActivationSystemHardware.Image_URL__c)}" alt=""/> 
+                                                        <input name="{!IF(objActivationHardware.Image_path_name__c == objActivationSystemHardware.Image_URL__c,'Selected', 'Select')}" type="button" id="{!objActivationSystemHardware.Image_Name__c}" value="{!IF(objActivationHardware.Image_path_name__c == objActivationSystemHardware.Image_URL__c,'Selected', 'Select')}" data-role="none"/>
+                                                    </p>
+                                                </li>
+                                            </apex:repeat>
+                                        </ul>
+                                        
+                                    </div>
+                                    <div class="clear" style="padding-bottom:10px;"></div>
+                                    <div class="button-bar clear">
+                                        <apex:commandLink styleClass="button left" id="SystemSelectionback" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                            <!-- Use the Name attribute of the previous tab -->
+                                            <apex:param value="System_Type" assignTo="{!selectedTab}" /> 
+                                        </apex:commandLink>
+                                        <apex:commandLink styleClass="button right" style="pointer-events:{!IF(objActivationHardware.Image_path_name__c == null,'none;','auto;')}" id="SystemSelectionnext" value="Next >" onclick="showLoadingDiv();" action="{!goToTab}" >
+                                            <apex:param value="System_Details" assignTo="{!selectedTab}" /> 
+                                        </apex:commandLink>
+                                    </div>
+                                    <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick=" buttonfunctionCorporate(this); return false;" /> 
+                                </apex:tab>
+                                <apex:tab label="System Details" name="System_Details" id="System_Details" disabled="{!IF(OR(mapdisableActivationHardwareTabs['System_Details'] > ActivationStatus.System_Type_Last_Active_Tab_Index__c, AND(!objActivationHardware.Do_Not_Know_Serial_Number__c,objActivationHardware.Below_Decks_Serial_Number__c == null), AND(objActivationHardware.Image_path_name__c == null, objActivationHardware.Do_Not_Know_Serial_Number__c)) ,true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('System_Details');">
+                                    <div>
+                                        <div style="float:left;"><h2 class="title">System Details</h2></div>
+                                        <div style="padding-bottom:50px"></div>
+                                        <h2 class="h2Class">
+                                            <apex:outputPanel rendered="{!!objActivationHardware.Do_Not_Know_Serial_Number__c}"><span style="font-size:16px;font-weight:normal;">System Found: </span><strong>{!objActivationHardware.System_Name__c}</strong></apex:outputPanel>
+                                            <apex:outputPanel rendered="{!objActivationHardware.Do_Not_Know_Serial_Number__c}"><span style="font-size:16px;font-weight:normal;">System Selected: </span><strong>{!objActivationHardware.System_Name__c}</strong></apex:outputPanel>
+                                        </h2>
+                                        <div style="padding-bottom:10px"></div>
+                                    </div>
+                                    <div>
+                                        <!--** div contain error msg contents -Start **-->
+                                        <div class="kvh-show-errormsg-here">
+                                        </div>
+                                        <!--** div contain error msg contents -End **-->
+                                        <div>
+                                            <div class="left two-col" style="display:inline-block;">
+                                                
+                                                <apex:image value="{!IF(CONTAINS(objActivationHardware.System_Name__c, 'V11'),$Resource.AntennadomeV11IP,IF(CONTAINS(objActivationHardware.System_Name__c, 'V3'),$Resource.AntennadomeV3IP,IF(CONTAINS(objActivationHardware.System_Name__c, 'V7IP'),$Resource.AntennadomeV7IP,$Resource.AntennadomeV7)))}" style="height: auto;width: 100%;"/>
+                                            </div>
+                                            <div class="box right two-col" style="display:inline-block;">
+                                                <div class="box-hd">
+                                                    <apex:outputPanel rendered="{!!objActivationHardware.Do_Not_Know_Serial_Number__c}">
+                                                        <h3 class="h2Class">System Hardware entered:</h3>
+                                                        <p>Below-decks Unit Serial Number: <span class="inline-note"><strong>{!objActivationHardware.Below_Decks_Serial_Number__c}</strong></span></p>
+                                                        <p>Antenna Unit Serial Number: <span class="inline-note"><strong>{!objActivationHardware.Antenna_Serial_Number__c}</strong></span></p><br/>
+                                                        <p><label><b>Please note any additional details about the system for this activation below.</b></label><apex:inputField id="systemDetail" style="max-width: 100%;" value="{!objActivationHardware.System_Detail__c}" /></p>
+                                                        <apex:commandLink styleClass="button" id="productBackBtn1" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                            <apex:param value="System_Type" assignTo="{!selectedTab}" /> 
+                                                            <strong>Incorrect System Found?</strong><br/>
+                                                            <small>Click here to try again.</small>
+                                                        </apex:commandLink>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel rendered="{!objActivationHardware.Do_Not_Know_Serial_Number__c}">
+                                                        <p><span style="font-size:16px;font-weight:normal;"> Please add any details that will help KVH identify the specific system for the activation.</span></p>
+                                                        <p><apex:inputField id="systemDetailIndentify" value="{!objActivationHardware.System_Detail__c}" style="max-width: 100%;" styleClass="requiredRedMarkFld" html-data-role="none"/></p>
+                                                        
+                                                        <p class="note">
+                                                            * Activation may be delayed until the proper system details are confirmed by KVH Airtime services.
+                                                        </p>
+                                                    </apex:outputPanel>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="right two-col" style="padding-left:13px"> 
+                                                <apex:outputPanel >
+                                                    <div ><span class="requiredRedMarkFld"></span><b>Select:</b></div>
+                                                    <apex:selectRadio value="{!objActivationOrder.Hardware_Purchased_or_Leased__c}" layout="pageDirection" html-data-role="none" id="HardwareSelect"  disabled="{!objActivationOrder.Lease_Contract__c != null}" >
+                                                        <apex:selectOption itemValue="Purchased" itemLabel="Purchased Hardware" html-data-role="none" />
+                                                        <apex:selectOption itemValue="Leased" itemLabel="Leased Hardware" html-data-role="none"/>
+                                                    </apex:selectRadio> 
+                                                </apex:outputPanel> </div>
+                                        </div>
+                                    </div>
+                                    <div class="clear" style="padding-bottom:10px;"></div>
+                                    <div class="button-bar clear">
+                                        <apex:commandLink styleClass="button left" id="VesselDetailMaritimeBackBtn1" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                            <!-- Use the Name attribute of the previous tab -->
+                                            <apex:param value="{!IF(objActivationHardware.Do_Not_Know_Serial_Number__c, 'System_Selection','System_Type')}" assignTo="{!selectedTab}" /> 
+                                        </apex:commandLink>
+                                        <apex:commandLink styleClass="button right" id="systemDetailIndentifyNextBtn1" value="Continue to Review >" onclick="validateSystemDetailsNext('{!$Component.System_Details}',true); return false;" >
+                                            <apex:param value="" assignTo="{!selectedTab}" /> 
+                                        </apex:commandLink>
+                                    </div>
+                                    <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateSystemDetailsNext('{!$Component.System_Details}',false); return false;" /> 
+                                </apex:tab> 
+                            </apex:tabPanel> 
+                        </apex:outputPanel>
+                    </div>
+                    
+                    
+                    <div data-role="popup" style="max-width:900px;" id="serial" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                            <h1 class="ui-title" role="heading" aria-level="1">Where to Find KVH Serial Numbers</h1>
+                        </div>
+                        <div tabindex="0" style="overflow: auto;">
+                            <div role="main" class="ui-content text-center">
+                                <div id="wrapper" style="overflow: scroll;max-height: 500px;">
+                                    <h1>Where to Find KVH Serial Numbers</h1>
+                                    <p>
+                                        <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/serial_number_barcode.png')}" class="left" style="width:20%; height:auto; float:left; margin-right:10px;" alt=""/> 
+                                        Serial numbers can be found in multiple places on the packaging and equipment for TracPhone V<small>IP</small> series products. Please find your product below and note the locations you can check to find your serial numbers.
+                                    </p>
+                                    <div class="clear"></div>
+                                    
+                                    <div class="controls">
+                                        <a href="#" id="closeAll" title="Close all">Close All</a> |
+                                        <a href="#" id="openAll" title="Open All">Open All</a>
+                                    </div>
+                                    
+                                    <!-- ICM -->
+                                    <div class="collapsible collapse-close" id="bdu"><h2 class="inline">Belowdecks Unit</h2> <span></span><img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_icm.jpg')}" alt="" class="header-img"/></div>
+                                    <div class="container" style="display: none;">
+                                        <div class="content">
+                                            <div class="img-caption left">
+                                                <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_icm_ship_box.jpg')}" alt=""/>
+                                                <p>
+                                                    <strong>On the Packaging</strong><br/>
+                                                    Look for the serial number label affixed to the top of the box.
+                                                </p>
+                                            </div>
+                                            <div class="img-caption right">
+                                                <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_icm_back.jpg')}" alt=""/>
+                                                <p>
+                                                    <strong>On the Back of the Unit</strong><br/>
+                                                    Look for the serial number label near the AC power connector on the rear panel.
+                                                </p>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- V11-IP -->
+                                    <div class="collapsible collapse-close" id="v11ip"><h2 class="inline">TracPhone V11<small>IP</small></h2> <span></span><img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/dome_v11ip.jpg')}" alt="" class="header-img"/></div>
+                                    <div class="container" style="display: none;">
+                                        <div class="content">
+                                            <div class="content">
+                                                <div class="img-caption left">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v11ip_ext.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Outside the Dome</strong><br/>
+                                                        Look for the serial number label under the lip where the radome attaches to the baseplate.
+                                                    </p>
+                                                </div>
+                                                <div class="img-caption right">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v11ip_int.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Inside the Dome</strong><br/>
+                                                        Look for the serial number label on the frame near the king post at the center of the antenna.
+                                                    </p>
+                                                </div>
+                                                <div class="clear"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- V7-IP -->
+                                    <div class="collapsible collapse-close" id="v7ip"><h2 class="inline">TracPhone V7<small>IP</small></h2> <span></span><img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/dome_v7ip.jpg')}" alt="" class="header-img"/></div>
+                                    <div class="container" style="display: none;">
+                                        <div class="content">
+                                            <div class="content">
+                                                <div class="img-caption left">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v7ip_ext.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Outside the Dome</strong><br/>
+                                                        Look for the serial number label on the bottom of the antenna near the connectors.
+                                                    </p>
+                                                </div>
+                                                <div class="img-caption right">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v7ip_int.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Inside the Dome</strong><br/>
+                                                        Look for the serial number label on the frame next to the BUC.
+                                                    </p>
+                                                </div>
+                                                <div class="clear"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- V3-IP -->
+                                    <div class="collapsible collapse-close" id="v3ip"><h2 class="inline">TracPhone V3<small>IP</small></h2> <span></span><img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/dome_v3ip.jpg')}" alt="" class="header-img"/></div>
+                                    <div class="container" style="display: none;">
+                                        <div class="content">
+                                            <div class="content">
+                                                <div class="img-caption left">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v3ip_ext.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Outside the Dome</strong><br/>
+                                                        Look for the serial number label under the connector cover.
+                                                    </p>
+                                                </div>
+                                                <div class="img-caption right">
+                                                    <img src="{!URLFOR($Resource.Activation_System, 'serial_numbers/images/img_v3ip_int.jpg')}" alt=""/>
+                                                    <p>
+                                                        <strong>Inside the Dome</strong><br/>
+                                                        Look for the serial number label near the azimuth motor on the rotating plate.
+                                                    </p>
+                                                </div>
+                                                <div class="clear"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                          
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ** remodal popup Start ** -->
+                    
+                    <div data-role="popup" id="saveExit" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                            <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                        </div>
+                        <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <apex:commandLink styleClass="button remodal-cancel"   value="Yes" action="{!saveandExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();" /> 
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ** remodal popup End ** -->
+                    
+                    
+                    
+                    
+                </apex:form>
+                <script>
+                var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+                
+                function returntohomepage(){
+                    window.top.location = '/home/home.jsp';
+                }
+                
+                /* To remove duplidate popup window initialized -Start */
+                function removeduplicatepopup(popupID){
+                    while(j$(popupID).length >1){
+                        j$(popupID).last().remove();
+                    }
+                    while(j$('.remodal-wrapper').find(popupID).length >1){
+                        j$('.remodal-wrapper').find(popupID).last().remove();
+                    }
+                }
+                /* To remove duplidate popup window initialized -End */
+                
+                
+                /* Activation Corporate button -Start */
+                function buttonfunctionCorporate(param){
+                    hideLoadingDiv();
+                    j$( "#saveExit" ).popup( "open" );
+                }
+                /* Activation Corporate button -End */
+                
+                
+                
+                
+                <!-- script to show error message area -Start -->
+                    function currenttabtoshowerror1(){
+                        var errordiv= "<div class='error-box1' id='globalErrorBOX' style='display:none !important'>"; 
+                        errordiv += "<h1><img src='/resource/cautionImage' height='20' width='20' />";
+                        errordiv += "Please correct the errors indicated below and try again. </h1> <ul class='bullets'></ul> </div>";
+                        return errordiv;
+                    }
+                <!-- script to show error message area -End -->
+                    <!-- script System Details navigate Next Start -->     
+                        function validateSystemDetailsNext(param,param1){
+                            var Isvalid;
+                            var currentcomp  = document.getElementById(param);
+                            j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                            if(j$(currentcomp).find("[id$=systemDetailIndentify]").length ==1){
+                                if(Isvalid == undefined)
+                                    Isvalid = j$(currentcomp).find("[id$=systemDetailIndentify]").valid() ;
+                                else
+                                    Isvalid = j$(currentcomp).find("[id$=systemDetailIndentify]").valid() && Isvalid ;
+                            }
+                            if(j$(currentcomp).find("input[type=radio][name$='HardwareSelect']").length >1){
+                                if(Isvalid == undefined)
+                                    Isvalid = j$(currentcomp).find("input[type=radio][name$='HardwareSelect']").valid() ;
+                                else
+                                    Isvalid = j$(currentcomp).find("input[type=radio][name$='HardwareSelect']").valid() && Isvalid ;
+                            }
+                            if(Isvalid){
+                                showLoadingDiv();
+                                //updateActivationHardware();
+                                if(param1){
+                                    goToNextTab('');} 
+                                else
+                                    buttonfunctionCorporate(this);
+                            }
+                            else{
+                                var errordiv = currenttabtoshowerror1();
+                                j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                                var html = "";
+                                if(j$(currentcomp).find('[id$=systemDetailIndentify]').hasClass("error") && (j$(currentcomp).find("[id$=systemDetailIndentify]").valid() == false)){
+                                    html += "<li>Please add any details that will help KVH identify the specific system for the activation</li>";
+                                }
+                                if(j$(currentcomp).find("input[type=radio][name$='HardwareSelect']").hasClass("error") && (j$(currentcomp).find("input[type=radio][name$='HardwareSelect']").valid() == false))
+                                    html += "<li>Select Purchased or Leased Hardware</li>"; 
+                                j$(currentcomp).find('.error-box1').find('.bullets').html(html); 
+                                j$(currentcomp).find('.error-box1').show();
+                            }
+                        }
+                <!-- script System Details navigate Next End --> 
+                    
+                    
+                    j$(document).ready(function() {
+                        //collapsible management
+                        j$('.collapsible').collapsible({
+                            defaultOpen: '',
+                            speed: 300
+                        });
+                        
+                        //assign open/close all to functions
+                        function openAll() {
+                            j$('.collapsible').collapsible('openAll');
+                        }
+                        function closeAll() {
+                            j$('.collapsible').collapsible('closeAll');
+                        }
+                        
+                        //listen for close/open all
+                        j$('#closeAll').click(function(event) {
+                            event.preventDefault();
+                            closeAll();
+                            
+                        });
+                        j$('#openAll').click(function(event) {
+                            event.preventDefault();
+                            openAll();
+                        });
+                        
+                    });
+                
+                    </script>
+            </div>
+        </body>
+    </html>
+</apex:page>

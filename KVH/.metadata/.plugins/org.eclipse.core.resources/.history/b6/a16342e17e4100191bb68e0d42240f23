@@ -1,0 +1,8 @@
+<!--
+ - Created by Jitendra on 17/01/2018.
+ -->
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="selectedProducts" type="String"/>
+    <aura:attribute name="selectedContentTypes" type="String"/>
+    <aura:attribute name="searchstring" type="String"/>
+</aura:event>

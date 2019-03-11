@@ -1,0 +1,142 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="MyProfileController">
+	<ltng:require styles="{!$Resource.remodalcss}" />
+    <ltng:require styles="{!$Resource.gridcss}" />
+	<ltng:require styles="{!$Resource.remodal_default_theme}" />
+    <ltng:require styles="{!$Resource.grid_margin}" />
+    
+    <aura:attribute name="userdetail"
+                    type="ProfileWrapper"
+                    description="User Details"/>
+    
+    <aura:attribute name="stateOptions"
+                    type="map"
+                    description="State country map"/>
+    
+    <aura:attribute name="hasstateoptions"
+                    type="boolean"
+                    default="false"
+                    description="if state options then show select list for state otherwise show input box"/> 
+    <aura:attribute name="showpopup"
+                    type="boolean"
+                    default="false"
+                   />
+    
+ 
+    
+    <aura:attribute name="emaileditshowpopup"
+                    type="string"
+                    default="slds-hide"
+                    description="show the email edit warning popup when click on email field"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+   
+    
+    <aura:if isTrue="{!v.showpopup}">
+         <!-- popup code start-->
+        <div class="remodal-overlay remodal-is-opened" style="display:block;z-index:99" ></div>
+        <div class="remodal-wrapper remodal-is-opened" style="display:block;z-index:999" >
+            <div style="background: #fff;overflow-y:scroll;height:95%;padding:30px;" class="remodal remodal-is-initialized remodal-is-opened  text-left" data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc" tabindex="-1">
+                <h1>Welcome to the KVH Partner Portal.</h1>
+                <p class="pad-bottom">Please review the information we have on record for you, make any necessary edits, and agree to the KVH Partner Portal site terms and conditions.</p>
+                <br></br>
+               
+                <div class="section group pad-bottom">
+                    <div class="col span_2_of_12">
+                        <label>Salutation:</label>
+                        <ui:inputSelect aura:id="salutationOpt" multiple="false" value="{!v.userdetail.con.Salutation}" />                
+                    </div>
+                    <div class="col span_4_of_12">
+                        <label>First/Given Name:</label>
+                        <ui:inputText class="requiredinput" aura:id="FirstName" value="{!v.userdetail.con.FirstName}" required="true"/>
+
+                    </div>
+                    <div class="col span_6_of_12">
+                        <label>Last/Family/Surname:</label>
+                        <ui:inputText class="requiredinput" aura:id="LastName" value="{!v.userdetail.con.LastName}" required="true"/>
+                    </div>
+                </div>
+                
+                <div class="section group pad-bottom">
+                    <div class="col span_6_of_12">
+                        <label>Email:</label>
+                        <ui:inputText class="requiredinput" aura:id="emailfield" value="{!v.userdetail.con.Email}" required="true" focus="{!c.showemailchangealert}"/>                        
+                        
+                    </div>
+                    <div class="col span_6_of_12">
+                        <label>Phone Number:</label>
+                        <ui:inputText value="{!v.userdetail.con.Phone}" required="true" />                       
+                    </div>
+                </div>
+                
+                <div class="section group pad-bottom">
+                    <div class="col span_6_of_12">
+                        <label>Address:</label>
+                        <ui:inputText value="{!v.userdetail.con.MailingStreet}" required="true"/>
+                    </div>
+                    <div class="col span_6_of_12">
+                        <label>City:</label>
+                        <ui:inputText class="requiredinput" aura:id="MailingCity"  value="{!v.userdetail.con.MailingCity}" required="true"/>
+                    </div>
+                </div>
+                <div class="section group pad-bottom">
+                    <div class="col span_6_of_12">
+                        <label>Country:</label>
+                        <ui:inputSelect class="requiredinput" aura:id="countryOpt" multiple="false" change="{!c.showstatelist}" value="{!v.userdetail.con.MailingCountry}" />                         
+                    </div>
+                    <div class="col span_6_of_12 pad-bottom">
+                        <label>State/Province/Territory/Region:</label>
+                        <aura:if isTrue="{!v.hasstateoptions}">
+                            <ui:inputSelect aura:id="stateselectlist" multiple="false" value="{!v.userdetail.con.MailingState}" />
+                        </aura:if>
+                        <aura:if isTrue="{!not(v.hasstateoptions)}">
+                            <ui:inputText value="{!v.userdetail.con.MailingState}" required="true"/>
+                        </aura:if>
+                    </div>
+                </div>
+                    
+                <div class="section group">
+                    <div class="col span_6_of_12">
+                        <label>Zip/Postal Code:</label>
+                        <ui:inputText value="{!v.userdetail.con.MailingPostalCode}" required="true"/>                       
+                    </div>                   
+                </div>
+                <hr></hr>
+                <div class="section group tc">   
+                    <div class="col span_12_of_12">
+                        <h1>KVH Partner Portal Terms and Conditions</h1>
+                        <p class="pt-10">I understand that as a KVH partner, I will receive email notifications from KVH concerning updates, upgrades, and news regarding KVH products and services. These emails may include information about product software and hardware upgrades, information on changes in satellite services, technical alerts, notifications of special promotional offers for you and your customers, and more.</p>
+                            <p class="pt-10">By clicking the "AGREE" button below, I confirm I understand and agree to accept the following terms.</p>
+                        	<p style="border: 1px solid #ddd;padding: 15px;" class="pt-10">I have read, understand and accept the KVH <a href="https://www.kvh.com/Legal/Terms-of-Use.aspx" target="blank">Terms of Use</a> (including Specific Terms For KVH Partner Portal Site Users) and the KVH <a href="http://www.kvh.com/Legal/Privacy.aspx" target="blank">Privacy Policy</a>. I understand that KVH is an international company that provides global services and that sharing information cross border is essential so that I receive the same high quality services wherever I am in the world. As a result, subject to applicable law, my personal information and that of anyone who uses the service (whose consent I specifically agree to obtain) may be transferred internationally to jurisdictions that may have different privacy laws. I understand all personal information will continue to be held in accordance with the KVH <a href="http://www.kvh.com/Legal/Privacy.aspx" target="blank">Privacy Policy</a>.</p>
+                        	<div class="text-center"><a href="javascript:void(0);" class="button button-green pad-top text-center" style="width:15%;" onclick="{!c.clickonagree}">Agree</a></div>
+                    </div>                  
+                </div>            
+            </div>
+        </div>
+    </aura:if>
+    <div class="{!v.emaileditshowpopup}">
+        <div class="slds-show" style="height: 640px;">
+          <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">   
+                
+        
+                <h2 id="modal-heading-01" style="color : #cc0000" class="slds-text-heading_medium slds-hyphenate">            
+                    Email Change Alert
+                 </h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <p>Note that changing your email address will affect all KVH systems, including billing systems and mini-VSAT manager. </p>
+                <p>Please allow 24 - 48 hours for a confirmation email to be sent to you.</p>
+              </div>
+              <footer class="slds-modal__footer">
+                <a class="pad-right" onclick="{!c.closepopup}" href="javascript:void(0);" data-aura-rendered-by="324:2;a">Cancel</a>
+                <a class="button" onclick="{!c.setfocustoemail}">Continue</a>       
+              </footer>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </div>
+    
+</aura:component>

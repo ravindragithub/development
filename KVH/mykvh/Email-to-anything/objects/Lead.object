@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Message_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Ortoo Email-to-anything: Message-ID header of email that lead was created from.</description>
+        <externalId>false</externalId>
+        <label>Message Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Search_In__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Search In</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>From</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>To</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Body</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Subject</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>CC</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>BCC</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>0in</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>0px</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>?</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>Body?</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>Body??</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>CCaBCC</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>Sub</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+                <value>
+                    <fullName>Subject__c</fullName>
+                    <default>false</default>
+                    <isActive>false</isActive>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+        <visibleLines>6</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Thread_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>&quot;Ref&quot; &amp; 
+SUBSTITUTE( 
+IF(MID($Organization.Id, 8, 1) = &quot;0&quot;, 
+SUBSTITUTE(TRIM(&quot;{&quot; &amp; SUBSTITUTE(LEFT($Organization.Id, 7), &quot;0&quot;, &quot; &quot;)), &quot; &quot;, &quot;0&quot;) &amp; 
+&quot;.&quot; &amp; 
+SUBSTITUTE(TRIM(SUBSTITUTE(RIGHT($Organization.Id, 7), &quot;0&quot;, &quot; &quot;) + &quot;}&quot;), &quot; &quot;, &quot;0&quot;), 
+&quot;{&quot; &amp; LEFT($Organization.Id, 7) &amp; &quot;.&quot; &amp; RIGHT($Organization.Id, 8) &amp; &quot;}&quot; 
+) 
+&amp; 
+IF(MID(Id, 8, 1) = &quot;0&quot;, 
+SUBSTITUTE(TRIM(&quot;{&quot; &amp; SUBSTITUTE(LEFT(Id, 7), &quot;0&quot;, &quot; &quot;)), &quot; &quot;, &quot;0&quot;) &amp; 
+&quot;.&quot; &amp; 
+SUBSTITUTE(TRIM(SUBSTITUTE(RIGHT(Id, 7), &quot;0&quot;, &quot; &quot;) + &quot;}&quot;), &quot; &quot;, &quot;0&quot;), 
+&quot;{&quot; &amp; LEFT(Id, 7) &amp; &quot;.&quot; &amp; RIGHT(Id, 8) &amp; &quot;}&quot; 
+), 
+&quot;}{&quot;, &quot;:&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Thread Id</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

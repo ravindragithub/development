@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Thread_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>&quot;Ref&quot; &amp; 
+SUBSTITUTE( 
+IF(MID($Organization.Id, 8, 1) = &quot;0&quot;, 
+SUBSTITUTE(TRIM(&quot;{&quot; &amp; SUBSTITUTE(LEFT($Organization.Id, 7), &quot;0&quot;, &quot; &quot;)), &quot; &quot;, &quot;0&quot;) &amp; 
+&quot;.&quot; &amp; 
+SUBSTITUTE(TRIM(SUBSTITUTE(RIGHT($Organization.Id, 7), &quot;0&quot;, &quot; &quot;) + &quot;}&quot;), &quot; &quot;, &quot;0&quot;), 
+&quot;{&quot; &amp; LEFT($Organization.Id, 7) &amp; &quot;.&quot; &amp; RIGHT($Organization.Id, 8) &amp; &quot;}&quot; 
+) 
+&amp; 
+IF(MID(Id, 8, 1) = &quot;0&quot;, 
+SUBSTITUTE(TRIM(&quot;{&quot; &amp; SUBSTITUTE(LEFT(Id, 7), &quot;0&quot;, &quot; &quot;)), &quot; &quot;, &quot;0&quot;) &amp; 
+&quot;.&quot; &amp; 
+SUBSTITUTE(TRIM(SUBSTITUTE(RIGHT(Id, 7), &quot;0&quot;, &quot; &quot;) + &quot;}&quot;), &quot; &quot;, &quot;0&quot;), 
+&quot;{&quot; &amp; LEFT(Id, 7) &amp; &quot;.&quot; &amp; RIGHT(Id, 8) &amp; &quot;}&quot; 
+), 
+&quot;}{&quot;, &quot;:&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Thread_Id</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

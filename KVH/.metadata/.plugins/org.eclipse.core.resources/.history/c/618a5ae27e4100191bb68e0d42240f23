@@ -1,0 +1,137 @@
+.THIS .go-btn {
+    background-color:#fff;
+    color: #333;
+    border:1px solid #ddd;
+    line-height:normal;
+    margin:0;
+    padding:10px 15px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    border-radius:0px;
+    font-size:85%;
+}
+
+.THIS .go-btn:hover {
+    background-color:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS .button {    
+    border-radius:0px;
+    padding:0px 10px;
+    text-transform:uppercase;
+    font-weight:bold;
+    font-size:80%;
+    margin-right: 4px
+}
+.THIS .slds-text-heading_medium{
+    font-weight : bold;
+}
+.THIS .bluebutton{
+    background : #035283;
+    color : #fff;
+    padding: 10px;
+    text-align: left;
+    border-radius: 0px;
+    border : 1px solid #035283;
+    font-size: 14px;
+}
+.THIS .bluebutton img {
+    width:25px;
+    height:auto;
+    margin-right:5px;
+}
+.THIS .leftbuttonmargin{
+    margin-left : 15px;
+}
+.THIS .pageheading{
+   font-size: 20px;
+}
+.THIS .helptext{
+    text-align : right;
+}
+@media only screen and (max-width: 768px) {
+    .THIS .leftbuttonmargin{
+        margin-left : 0px;
+    }
+	.THIS .pageheading{
+       font-size: 17px;
+    }
+    .THIS .helptext{
+        text-align : left;
+    }    
+}
+
+.THIS .accountheader{
+    background: #000;
+    color: #fff;
+    font-size: 20px;
+    padding: 6px;
+}
+.THIS .fleetnameheader{
+    margin-top: 10px;
+    font-size: 16px;
+    border-bottom: .05rem solid #000;
+    padding-bottom: 5px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.THIS .vesselname{
+    background: #1984c7;
+    color: #fff;
+    padding: 10px;
+}
+.THIS .label{
+    float : left;
+    width:30%;
+}
+.THIS .value{
+    float : right;
+    width:70%;
+    font-weight : bold;
+}
+.THIS .productname{
+    background: #ccc;
+    padding: 8px;
+}
+.THIS .productdetail{
+    padding: 8px;
+    font-size: 11px;
+}
+.THIS .product{
+   border: 1px solid #ccc;
+   border-top : 0px;
+   background: #fff;
+}
+.THIS .quickgoLightBlue {
+    background-color: #4f88ac;
+}
+.THIS .quickgobtn {
+    color: #fff;
+    border: none;
+    line-height: normal;
+    padding: 5px 14px!important;
+    font-weight: bold;
+    border-radius: 0;
+    font-size: 80%;
+    float: right;
+    text-transform:uppercase;
+}
+.THIS .whitebackground{
+    background-color : #fff;
+}
+
+.THIS .callout {
+    background-color: rgba(25, 132, 199, .1);
+    padding:15px;
+    margin:40px;
+}
+
+.THIS .slds-button_icon-inverse:focus {
+    border:transparent;
+    box-shadow:none;
+}
+.THIS .slds-button{
+    border-radius : 0px;
+}

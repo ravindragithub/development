@@ -1,0 +1,77 @@
+<!-- <apex:page standardController="Account" extensions="IPMC_Service_Mapping_Controller" action="{!autoRun}"> -->
+<apex:page Controller="IPMC_Service_Mapping_Controller" action="{!autoRun}"> 
+<c:LoadingBox />
+    <apex:form id="theForm">
+    <div class="page-content" >
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles2)}" />
+    Select Billing Account...
+        <apex:pageBlock id="BillingAcct">
+            <p><h1>Billing Account</h1></p>
+                <apex:dataTable value="{!BillingAcct}" var="Acct" id="AcctTable" rowClasses="odd,even" styleClass="tableClass" cellspacing="10%">
+                    <apex:column >
+                        <apex:facet name="header">Account</apex:facet>
+                        <apex:outputText value="{!Acct.Name}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header"> (CCID) </apex:facet>
+                        (<apex:outputText value="{!Acct.Custom_Call_Acct_ID__c}"/>) <!-- Parenthesis just for show....  -->
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">Account Record Type</apex:facet>
+                        <apex:outputText value="{!Acct.RecordType.Name}"/>
+                    </apex:column>
+                </apex:dataTable>
+            Choose a different Billing Account by entering the Custom Call Account Number and clicking Search...<br></br>
+            <apex:inputText value="{!searchCCId}" id="searchCCId"/> 
+            <apex:CommandButton value="Search..." action="{!AcctSearch}" reRender="BillingAcct"/> {!AcctSearchStatus}
+        </apex:pageBlock>
+    Select the Media Server/ICM for Service mapping...<br></br>
+        <apex:pageBlock id="SiteToMap">
+            <p><h1>Site Activation and Deactivation</h1></p>
+            {!ReceiveSite.Item_Description__c}  {!ReceiveSite.Name} |&nbsp;<apex:outputLabel value="{!activateResponse}"/> &nbsp;
+            <apex:CommandButton value="Activate Site"  action="{!siteActivate}" rendered="{! !isActive}" status="loadStatus" reRender="theForm"/>   <!-- not active... -->
+            <apex:CommandButton value="Deactivate Site"  action="{!siteDeactivate}" rendered="{!isActive}" status="loadStatus" reRender="theForm"/> <!-- already active --><br></br>
+            <h2>{!TSActivationResults}</h2> 
+        </apex:pageBlock>
+    Select the Service to enable....
+    (show all eligible services, Prices?)
+    
+    Select the Service to cancel....
+    (show all subscribed services...)
+        <apex:pageBlock id="ServicesToMap">
+            <p><h1>Service Selection</h1></p>
+            <apex:dataTable value="{!ValidChoices}" var="SVCs" id="ServiceTable" rowClasses="odd,even" styleClass="tableClass" cellspacing="10%">
+                <apex:column >
+                    <apex:facet name="header">Selected</apex:facet>
+                    <apex:inputCheckbox value="{!SVCs.Selected}" disabled="{! !SVCs.SystemCompatible}">
+
+                    </apex:inputCheckbox>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Service</apex:facet>
+                    <apex:outputText value="{!SVCs.IPMCPkg.Name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">System Compatible</apex:facet>
+                    <apex:outputText value="{!SVCs.SystemCompatible}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">AntennaStatus</apex:facet>
+                    <apex:outputText value="{!SVCs.AntennaStatus}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">ServerStatus</apex:facet>
+                    <apex:outputText value="{!SVCs.ServerStatus}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Is 60 Day Trial</apex:facet> <!-- Changed to 37 days see case 233663 --><!-- Changed to 60 days see case 406413 -->
+                    <apex:inputCheckbox value="{!SVCs.is31DayTrial}" disabled="{! !SVCs.SystemCompatible}">
+                    </apex:inputCheckbox>
+                </apex:column>
+            </apex:dataTable>
+            <apex:CommandButton value="Create Contract and Services" action="{!MapService}" status="loadStatus" reRender="ServicesToMap" rendered="{!MappingEnabled}"/> <br></br>
+            <h2>{!TSMappingResults}</h2> 
+        </apex:pageBlock>
+    </div>
+    </apex:form>
+</apex:page>

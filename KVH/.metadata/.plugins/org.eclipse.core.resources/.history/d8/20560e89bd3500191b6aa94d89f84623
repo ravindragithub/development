@@ -1,0 +1,114 @@
+<apex:component allowDML="true" controller="ActivationOneCare_Component_Ctrl">
+   <style>
+       .KVH-table {
+       border: solid 1px #DDEEEE;
+       border-collapse: collapse;
+       border-spacing: 0;
+       font: normal 13px Arial, sans-serif;
+       width: 100%;
+       }
+       .KVH-table thead th {
+       background-color: #DDEFEF;
+       border: solid 1px #DDEEEE;
+       color: #336B6B;
+       padding: 10px;
+       text-align: left;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table tbody td {
+       border: solid 1px #DDEEEE;
+       color: #333;
+       padding: 10px;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table-horizontal tbody td {
+       border-left: none;
+       border-right: none;
+       }
+       
+   </style>
+   <script>
+
+   function selectedActivationProductid(selectedEdit, thisparam){
+       j$(thisparam).text('Loading..');
+       populateActProduct(selectedEdit);
+   }
+   
+   function selectedrecordremovehandler(recordId){
+       console.log(recordId);
+       var instmodel = j$('[data-remodal-id=ProdRemove]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+       var setcontent = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' />"
+           setcontent += "Are you sure you want to remove this Product?";
+       j$("#kvh-remodelcontentmessage").html(setcontent);
+       instmodel.open();
+       j$('[data-remodal-id=ProdRemove]').find('.remodal-close').hide();
+   }
+   
+   j$(document).on('click', '#removeProductrecord', function(){
+       var recordId = j$(this).closest(".remodal").find("input[type='hidden']").val();
+       if(recordId != undefined && recordId != null){
+           showLoadingDiv();
+           RemoveProduct(recordId);
+       }
+   });
+
+   </script>
+   
+   <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Product records"
+                   type="string" required="required" assignTo="{!ActOrderId}"/> 
+   <apex:attribute name="currentPage" description="This is the Activation Order current page"
+                   type="string" required="required" assignTo="{!currenttab}"/> 
+   <apex:actionFunction name="populateActProduct" action="{!EditProduct}" reRender="theForm" >
+       <apex:param name="strActivationProductId" value="" assignTo="{!strActivationProduct}"/>
+   </apex:actionFunction> 
+   
+   <apex:actionFunction name="RemoveProduct" action="{!RemoveProduct}" reRender="tableProductlist" oncomplete="hideLoadingDiv();">
+       <apex:param name="strActivationProductId" value="" assignTo="{!strActivationProduct}"/>
+   </apex:actionFunction> 
+   
+   <apex:outputPanel id="tableProductlist" rendered="{!IF(ActivationProductList.size > 0,true,false)}">
+       <table class="KVH-table KVH-table-horizontal">
+           <thead>
+               <tr>
+                   <th width="5%" ></th> 
+                   <th width="30%" align="left">Product</th>
+                   <th width="25%" align="left">Primary Serial Number</th>
+                   <th width="25%" align="left">Secondary Serial Number</th>
+                   <apex:outputPanel rendered="{!currenttab=='Extended_Warranty'}"><th width="20%" align="left">$/Year</th></apex:outputPanel>
+                   <th width="15%" style="text-align: center;">Remove</th>
+               </tr>
+           </thead>
+           <tbody> 
+               
+               <apex:Repeat value="{!ActivationProductList}" var="ActivationProduct" >
+                   <tr> 
+                       <td width="5%" align="left"><a href="javascript:;" onclick="selectedActivationProductid('{!ActivationProduct.id}',this);" >Edit</a></td>
+                       <td width="30%" align="left">
+                           <apex:outputpanel rendered="{!ActivationProduct.System_Name__c != null}">{!ActivationProduct.System_Name__c}</apex:outputpanel>
+                           <apex:outputpanel rendered="{!ActivationProduct.System_Name__c == null}">{!ActivationProduct.Integrated_Product_Type__c}</apex:outputpanel>
+						</td>
+                       <td width="30%" align="left">{!ActivationProduct.Antenna_Serial_Number__c}</td>
+                       <td width="25%" align="left">{!ActivationProduct.Below_Decks_Serial_Number__c}</td>
+                      <apex:outputPanel rendered="{!currenttab=='Extended_Warranty'}"> <td width="25%" align="left"><!--{!ActivationProduct.Year__c}--></td></apex:outputPanel>
+                       <td width="15%" align="center"><a style="cursor: pointer;"  onclick="selectedrecordremovehandler('{!ActivationProduct.Id}');">[X]</a></td>
+                   </tr>
+               </apex:Repeat>
+           </tbody>
+       </table>
+   </apex:outputPanel>
+   
+   <!-- ** remodal popup Start ** -->
+   <div class="remodal remodalAgain" data-remodal-id="ProdRemove" id="ProdRemove" >
+       <div style="display: inherit;padding-right:25px;text-align:justify;">
+           <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+           <span id="kvh-remodelcontentmessage"></span>
+       </div>
+       <div style="text-align:center;padding-bottom:5px;">
+           <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="removeProductrecord">Yes</button>
+       </div>
+       <div style="text-align:center;">
+           <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >Cancel</a>
+       </div>
+   </div>
+   <!-- ** remodal popup End ** -->
+</apex:component>

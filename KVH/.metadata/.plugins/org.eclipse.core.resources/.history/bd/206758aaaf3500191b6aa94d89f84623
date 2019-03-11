@@ -1,0 +1,14 @@
+@media (max-width: 48em) {
+.THIS .slds-max-medium-table_stacked-horizontal tr, 
+    .THIS .slds-max-medium-table--stacked-horizontal tr {
+        border-top:0;
+
+}
+    
+}
+
+.THIS .rate-plan th {
+    background:#f3f3f3;
+    padding:3px;
+    font-size:80%;
+}

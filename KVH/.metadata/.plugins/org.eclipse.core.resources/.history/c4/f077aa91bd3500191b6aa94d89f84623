@@ -1,0 +1,81 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" standardController="Prod_Documents__c" extensions="DownloadDocumentCtrl">
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/> 
+    <script>
+    function closeWindow(){
+        setTimeout(function(){ window.close(); }, 1);
+    }
+    </script>
+    <style>
+        .button2 {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        color: #000000;
+        font-size: 85%;
+        letter-spacing: .05em;
+        border-radius: 0px;
+        }
+        .codeinsert {
+        border:1px solid #ddd;
+        padding:15px;
+        font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+        text-align:left;
+        margin:20px 0;
+        }
+        
+    </style>
+    <apex:form style="padding: 20px 50px; background: #f2f2f2;">
+        <apex:pageBlock rendered="{!OR(embed, html)}">
+            <div class="section group" style="background: #ffffff;">
+                <div class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable">
+                    <apex:pageBlock rendered="{!html}" >
+                        <div style="background: #d9d9d9; border: 1px solid #dddddd; color: #333333; font-weight: bold; padding: 15px;">
+                            <h2 style="margin-bottom:0">{!pd.Title_Display_Name__c}</h2>
+                        </div>
+                        <div style="padding: 20px;">
+                            <br/>
+                            <apex:outputField value="{!pd.Html_Field__c}"/>
+                        </div>
+                    </apex:pageBlock>
+            <apex:pageBlock rendered="{!embed}"> 
+                <div style="padding: 0px 20px;">
+                        <div class="codeinsert" >
+                            <p>
+                                <apex:outputField value="{!pd.Insertion_Code__c}"/>
+                            </p>
+                            <br/>
+                        </div>
+                    </div>
+            </apex:pageBlock> 
+            <div align="center" style="padding: 20px;">
+                <apex:commandLink onclick="closeWindow();" style="color:#1f83ad; margin-right:15px;" value="Cancel"/>
+                <apex:commandButton action="{!cont}" styleClass="button button2" value="Download"/>
+            </div>
+                </div>
+            </div>
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{!TC}" >
+            <div class="section group" style="background: #ffffff;">
+                <div class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable"> 
+                    <div style="background: #d9d9d9; border: 1px solid #dddddd; color: #333333; font-weight: bold; padding: 15px;">
+                            <h2 style="margin-bottom:0">{!pd.Terms_and_Conditions_1__r.Name__c}</h2>
+                    </div>
+                    <div style="padding: 15px;">
+                        <apex:outputField value="{!pd.Terms_and_Conditions_1__r.Body__c}"/>
+                    </div>
+                    <div align="center" style="padding: 0 0 15px 0;">
+                        <apex:commandLink onclick="closeWindow();" style="color:#1f83ad; margin-right:15px;" value="Cancel"/>
+                        <apex:commandButton action="{!accept}" styleClass="button button2" value="Accept"/>
+                    </div>
+                    
+                </div>
+            </div>
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

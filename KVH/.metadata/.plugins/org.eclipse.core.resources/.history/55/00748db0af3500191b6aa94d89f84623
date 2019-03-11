@@ -1,0 +1,176 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="myKVHprofileController">
+    <ltng:require styles="{!join(',', 
+                          $Resource.grid_margin)}"   />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    <aura:attribute name="userdetail"
+                    type="ProfileWrapper"
+                    description="User Details"/>
+    
+    <aura:attribute name="stateOptions"
+                    type="map"
+                    description="State country map"/>
+    
+    <aura:attribute name="hasstateoptions"
+                    type="boolean"
+                    default="false"
+                    description="if state options then show select list for state otherwise show input box"/> 
+    <aura:attribute name="showpopup" type="String" default="slds-hide"/>
+    
+    <div class="white-bg pad-inside" style="max-width:880px; margin:auto;">
+        
+        <ul class="breadcrumb">
+            <li><a href="{!$Label.c.myKVH_community_url}">Home</a></li>
+            <li>My Profile</li>
+        </ul>
+        
+        <h1>Update Your Profile</h1>
+        
+        <p>Please update your contact information below.</p>
+        
+        <!-- form -->
+        <h2 class="pad-top">Contact Information</h2>
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Salutation:</label>
+                <ui:inputSelect aura:id="salutationOpt" multiple="false" value="{!v.userdetail.con.Salutation}" /> 
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>First/Given Name:</label>
+                <ui:inputText value="{!v.userdetail.con.FirstName}" required="true"/>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Last/Family/Surname:</label>
+                <ui:inputText value="{!v.userdetail.con.LastName}" required="true"/>
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Email:</label>
+                <ui:inputText aura:id="emailfield" value="{!v.userdetail.con.Email}" required="true" focus="{!c.showemailchangealert}"/> 
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Phone Number:</label>
+                <ui:inputText value="{!v.userdetail.con.Phone}" required="true" />
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Job Title:</label>
+                <ui:inputText value="{!v.userdetail.con.Title}" required="true"/>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Job Function:</label>
+                <ui:inputSelect aura:id="jobfunctionOpt" multiple="false" value="{!v.userdetail.con.Job_Function__c}" />
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Address:</label>
+                <ui:inputText value="{!v.userdetail.con.MailingStreet}" required="true"/>
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>City:</label>
+                <ui:inputText value="{!v.userdetail.con.MailingCity}" required="true"/>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Country:</label>
+                <ui:inputSelect aura:id="countryOpt" multiple="false" change="{!c.showstatelist}" value="{!v.userdetail.con.MailingCountry}" />
+            </div>
+        </div>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>State/Province/Territory/Region:</label>
+                <aura:if isTrue="{!v.hasstateoptions}">
+                    <ui:inputSelect aura:id="stateselectlist" multiple="false" 
+                                    value="{!v.userdetail.con.MailingState}" />
+                </aura:if>
+                <aura:if isTrue="{!not(v.hasstateoptions)}">
+                    <ui:inputText value="--None--" disabled="true"/>
+                </aura:if>
+                <!--<select>
+                        <option>Select One</option>
+                        <option selected="">Rhode Island</option>
+                     </select>-->
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Zip/Postal Code:</label>
+                <ui:inputText value="{!v.userdetail.con.MailingPostalCode}" required="true"/>
+            </div>
+        </div>
+        <!--
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-p-horizontal_small slds-p-vertical_x-small">
+                <label>Current Portal Access:</label>
+                <ul class="list">
+                    <aura:iteration items="{!v.userdetail.portalViews}" var="pv">
+                        <li>{!pv}</li>
+                    </aura:iteration>                            
+                </ul>
+                <p>For request for access to additional portal(s), please create a <a href="{!$Label.c.myKVH_community_url + 'mykvh-support-landing'}">Support Center</a> case. Please note that portal access is granted by company account.</p>
+            </div>
+        </div>
+        -->
+        <div style="text-align:center;">
+            <a href="javascript:void(0);" onclick="{!c.showeditsection}" class="pad-right">Cancel</a>
+            <a href="javascript:void(0);" class="button button-blue pad-right" onclick="{!c.saveChangesaction}">Save Changes</a>
+            <!--<a href="{!'/' + $Label.c.Community_Prefix + '/s/changepassword'}" class="button">Change your password</a>-->
+        </div>
+        
+        
+        <!-- sidebar -->
+        <div class="col span_3_of_12">
+            <!--
+                <div class="callout">
+                    <h4 class="pad-bottom">Your Company</h4>
+                    <p>
+                        <strong>{!v.userdetail.accountName}</strong><br/>
+                        {!v.userdetail.accAddressStreet}<br/>
+                        {!v.userdetail.accAddressCity}, {!v.userdetail.accAddressState}  {!v.userdetail.accAddressPostalCode}<br/>
+                        {!v.userdetail.accAddressCountry}
+                    </p>
+                    <p>
+                        Phone: {!v.userdetail.accPhone}<br/> E-mail: {!v.userdetail.accEmail}
+                    </p>
+                    
+                    <div class="side-callout">
+                        <p><strong>Updates to this info?</strong></p>
+                        <a href="./">Let us know!</a>
+                    </div>
+                </div>
+-->
+        </div>
+        
+    </div>
+    <div class="slds">
+        <div class="{!v.showpopup}" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">   
+                        <h2 id="modal-heading-01" style="color : #cc0000" class="slds-text-heading_medium slds-hyphenate">            
+                            Email Change Alert
+                        </h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Note that changing your email address will affect all KVH systems, including billing systems and mini-VSAT manager. </p>
+                        <p>Please allow 24 - 48 hours for a confirmation email to be sent to you.</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <a class="pad-right" onclick="{!c.closepopup}" href="javascript:void(0);" data-aura-rendered-by="324:2;a">Cancel</a>
+                        <a class="button" onclick="{!c.setfocustoemail}">Continue</a>       
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </div>
+</aura:component>

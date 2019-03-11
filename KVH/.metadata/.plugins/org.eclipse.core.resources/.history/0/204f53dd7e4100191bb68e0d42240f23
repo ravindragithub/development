@@ -1,0 +1,12 @@
+<aura:component controller="Update_AssetSubscriptionController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="nodes" type="Object" />
+    <aura:attribute name="assetId" type="string" />
+    <aura:attribute name="assetName" type="string" />
+    <aura:attribute name="mode" type="string" />
+    
+    <aura:registerEvent name="appEvent" type="c:AssetMovementModal_evt"/>
+    <aura:iteration items="{!v.nodes}" var="node">
+        <c:AssetTreeNode node="{!node}"/>
+    </aura:iteration>
+</aura:component>

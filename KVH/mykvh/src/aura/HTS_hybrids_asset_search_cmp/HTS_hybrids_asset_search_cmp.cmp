@@ -1,0 +1,55 @@
+<aura:component controller="HTS_ltgsvc_hybrids">
+
+  <aura:attribute name="searchString" type="string" Description="This is the search attribute" />
+  <aura:attribute name="terminal" type="Asset" />
+  <aura:attribute name="termId" type="String" Description="Terminal ID" />
+  <aura:attribute name="disabledBtn" type="Boolean" />
+
+  <!--PUBLISHER -->
+  <aura:registerEvent name="cmpDataUpdated" type="c:HTS_hybrids_component_evt" />
+  <!--EVENT LISTENER -->
+
+  <!-- Markup -->
+  
+  <div class="slds-grid slds-grid_pull-padded-medium">
+
+    <div class="slds-col slds-p-horizontal_medium">
+      <form class="slds-form_stacked">
+        <p class="slds-p-horizontal_medium">
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for="VTID">Virtual Terminal Id</label>
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+              <ui:inputText aura:id="VTID" 
+                            class="slds-input" 
+                            value="{!v.searchString}" 
+                            required="true" 
+                            placeholder="Enter Virtual Terminal Id...">
+                <lightning:icon iconName="utility:search" size="x-small" alternativeText="Search" />
+              </ui:inputText>
+            </div>
+          </div>
+        </p>
+      </form>
+
+      <div class="slds-form-element slds-m-around--small slds-align_absolute-center">
+        <lightning:button variant="brand" 
+                          label="Search" 
+                          iconName="utility:search" 
+                          iconPosition="left" 
+                          onclick="{! c.handleLookup }"/>
+      </div>
+
+    </div>
+
+    <div class="slds-col slds-p-horizontal_medium">
+     <form class="slds-form_stacked">
+      <p class="slds-p-horizontal_medium">
+                <div class="slds-form-element">
+        <c:HTS_assetValidation_cmp aura:id="validation" vtid="{!v.termId}"/>
+        </div>
+      </p>
+      </form>
+    </div>
+
+  </div>
+</aura:component>

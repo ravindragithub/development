@@ -1,0 +1,24 @@
+<apex:page showHeader="false" sidebar="false" standardController="Asset">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+      var assetName = "{!Asset.Name}";
+      console.log(assetName);
+      var assetProd = "{!Asset.Product2.ProductCode}";
+      console.log(assetProd);
+      //Got our TWO attributes!
+      //Need new container app, and JS for component setup...
+      $Lightning.use("c:HTS_termStatus_Container", function() {
+        $Lightning.createComponent(
+            "c:HTS_termStatus_cmp",
+            {"search" : assetName,
+             "prodCode" : assetProd},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+                console.log(cmp);
+            });
+        });
+    </script>
+    <div id="lightning"></div>
+<!-- End Default Content REMOVE THIS -->
+</apex:page>

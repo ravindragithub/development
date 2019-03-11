@@ -1,0 +1,77 @@
+<apex:page controller="PartnerLoginController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>    
+    <body>      
+        <header>
+            <div class="logo">
+                <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+        </header>
+        <apex:form >
+        <div class="content">
+            <h1>Welcome to the KVH Partner Portal</h1>
+            <p>Log in or register now for the latest sales and technical bulletins, sales aids, manuals and more, exclusively for KVH dealers and distributors!</p>
+            
+            <div class="section group">
+                <div class="col span_6_of_12 border pad-inside matchheight" style="height: 534px;">
+                    <h2 class="pad-bottom">Login</h2>
+                    
+                    <div class="alert">
+                        <h4><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <strong>Please Note</strong></h4>
+                        <p>If you already have access to the KVH Partner Portal and have not yet logged into the new portal, <a href="./PartnerReset"><strong>click here to reset your password</strong></a>.</p>
+                    </div>
+                    
+                    <apex:messages style="font-weight: bold; text-color: red;" id="error"/>
+                    <p><label>Email: </label><br/>
+                    <apex:inputText id="username" value="{!uname}"/></p>
+                    <p><label>Password: </label><br/>
+                    <apex:inputSecret id="password" value="{!password}"/></p>
+                    <p class="pad-top">
+                        <apex:commandButton id="login" styleClass="button button-red" value="Login" action="{!login}"/>
+                        <a href="./PartnerReset" class="font-85 pad-left">Forgot Password?</a>
+                    </p>
+                </div>
+                
+                <div class="col span_6_of_12 callout matchheight" style="height: 534px;">
+                    <h2 class="pad-bottom">New User?</h2>
+                    <div class="border white-bg pad-15">
+                        <h3 class="pad-bottom red-text">Portal Access for a <strong>New Contact</strong> <br/>at an <strong>Existing KVH Partner</strong></h3>
+                        <p class="left width-70" style="margin-bottom:0;">Your company is already a KVH Partner and you need access to training, sales documentation, bulletins, and more.</p>
+                        <a href="/PartnerRegTech" class="button button-blue right">Register</a>
+                        <div class="clear"></div>
+                    </div>
+                    
+                    <div class="border white-bg pad-15 pad-top">
+                        <h3 class="pad-bottom red-text">Register for <strong>Portal Access</strong> and/or <br/>Become a <strong>KVH Indirect Partner</strong></h3>
+                        <p class="left width-70" style="margin-bottom:0;">Your company is not a KVH Partner, buys from a distributor, or you're not sure, but you still need access to training, sales documentation, bulletins, and more.</p>
+                        <a href="/PartnerRegIndirect" class="button button-blue right">Register</a>
+                        <div class="clear"></div>
+                    </div>
+                    
+                    <div class="border white-bg pad-15 pad-top pad-bottom">
+                        <h3 class="pad-bottom red-text">Become a <strong>KVH Direct Partner</strong></h3>
+                        <p class="left width-70" style="margin-bottom:0;">Become a KVH Partner to buy directly from KVH, apply for credit terms, be listed on our Where to Buy, as well as get full access to the Partner Portal.</p>
+                        <a href="/PartnerRegistration" class="button button-blue right">Apply</a>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- match height of div's in a row -->
+        <script src="../assets/jquery.matchHeight-min.js"></script>
+        <script type="text/javascript">
+        jQuery(function($){
+            $('.matchheight').matchHeight();
+        });
+        </script>
+        </apex:form>
+    
+</body>
+</apex:page>

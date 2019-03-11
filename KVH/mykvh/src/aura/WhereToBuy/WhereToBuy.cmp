@@ -1,0 +1,379 @@
+<!--
+     - Created by Jai Chaturvedi on 3/08/2017.
+     -->
+
+<aura:component description="WhereToBuy"
+                implements="forceCommunity:availableForAllPageTypes"
+                controller="WhereToBuyController"
+                access="global">
+    
+    <aura:attribute default="Search"
+                    description="Title for search panel"
+                    name="title"
+                    type="String"/>
+    
+    <aura:attribute description="Title for search panel"
+                    name="zipcode"
+                    type="String"
+                    default=""/>
+    
+    <aura:attribute name="countries"
+                    type="List"
+                    description="List of countries"/>
+    
+    <aura:attribute name="market"
+                    type="List"
+                    description="List of market sectors"/>
+    
+    <aura:attribute name="selectedCountry"
+                    type="String"/>
+    
+    <aura:attribute name="selectedState"
+                    type="String"/>
+    
+    <aura:attribute name="selectedDistance"
+                    type="String"
+                    default="25"/>
+    
+    <aura:attribute name="selectedUnit"
+                    type="String"
+                    default="miles"/>
+    
+    <aura:attribute name="selectedMarket"
+                    type="String"
+                    default="None"/>
+    
+    <aura:attribute name="selectedSector"
+                    type="String"
+                    default="None"/>
+    
+    <aura:attribute name="prodId"
+                    type="String"
+                    default="None"/>
+    
+    <aura:attribute name="loadFilter"
+                    type="Boolean"
+                    default="false"/>
+    
+    <aura:attribute name="dpndentCountryPicklist"
+                    type="String"
+                    default="Select State (Required)"/>
+     <aura:attribute name="productId" type="Integer"/>
+     <aura:attribute name="isService" type="boolean"/>
+    
+    <aura:attribute name="filterCollection" type="Product_Catalogue__c[]"/>
+    
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="selectedSearch" type="String" />
+    <aura:attribute name="errorMessage" type="String"/>
+    <aura:attribute name="dependentFlag" type="Boolean" default="false"/>
+    <aura:attribute name="disbaleState" type="Boolean" default="false"/>
+    <aura:attribute name="dependentSector" type="Boolean" default="false"/>
+    <aura:attribute name="disbaleSector" type="Boolean" default="false"/>
+    
+    <aura:attribute name="marketNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="sectorNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="countryNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="stateNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="zipNotEntered" type="Boolean" default="false"/>
+    <aura:attribute name="productNotSelected" type="Boolean" default="false"/>
+   
+    <aura:attribute name="accountSelected" type="Boolean" default="false"/>
+    <aura:attribute name="reqAccountName" type="String" default=""/>
+    <aura:attribute name="reqContactName" type="String" default=""/>
+    <aura:attribute name="reqPhone" type="String" default=""/>
+    <aura:attribute name="reqEmail" type="String" default=""/>
+    <aura:attribute name="reqWebsite" type="String" default=""/>
+    <aura:attribute name="reqStreet" type="String" default=""/>
+    <aura:attribute name="reqCity" type="String" default=""/>
+    <aura:attribute name="reqPostalCode" type="String" default=""/>
+    <aura:attribute name="reqCountry" type="String" default=""/>
+    <aura:attribute name="miniheight" type="string" access="global"/>
+    
+    <aura:attribute name="defaultproductId" type="String" />
+    <aura:attribute name="defaultMarket" type="String" />
+    <aura:attribute name="defaultSector" type="String" />
+    <aura:attribute name="WhereToBuychecked" type="boolean" />
+    <aura:attribute name="WhereToServicechecked" type="boolean" />
+    
+    
+    
+    <aura:handler action="{!c.initialize}"
+                  name="init"
+                  value="{!this}"/>
+    
+    <aura:handler name="filterOptionEvent"
+                  event="c:FilterOptionEvent"
+                  action="{!c.handleFilterEvent}"/>
+    
+    <aura:registerEvent name="sendPartners" type="c:SendPartners"/>
+    <aura:registerEvent name="updateMapPartners" type="c:UpdateWhereToBuyMap"/>
+    <aura:registerEvent name="applyProdFilter" type="c:WhereToBuyProductFilter"/>
+    <aura:registerEvent name="showwheretobuypartnersection" type="c:showwheretobuypartnersection"/>
+    
+    <aura:handler name="change"
+                  value="{!v.zipcode}"
+                  action="{!c.zipcodeChanged}"/>
+    <aura:handler name="change"
+                  value="{!v.selectedSector}"
+                  action="{!c.findPrdctLinePrdctSeries}"/>
+    <aura:handler name="change"
+                  value="{!v.selectedSearch}"
+                  action="{!c.findPrdctLinePrdctSeries}"/>
+    <aura:handler name="change"
+                  value="{!v.selectedCountry}"
+                  action="{!c.findDependentFieldName}"/>
+    <aura:handler name="change"
+                  value="{!v.selectedState}"
+                  action="{!c.stateChanged}"/>
+    <aura:handler name="change"
+                  value="{!v.prodId}"
+                  action="{!c.productChanged}"/>
+    <aura:handler name="change"
+                  value="{!v.selectedMarket}"
+                  action="{!c.marketChanged}"/>
+    
+   <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    
+    
+
+    
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner variant="brand"
+                           size="large"
+                           alternativeText="Searching Partners"/>
+    </aura:if>
+    
+    <div style="{!'min-height : ' + v.miniheight + ';max-height: 1000px;padding-right:20px;'}">
+        
+        <aura:if isTrue="{!v.errorMessage!=null}">
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container ">
+                    <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+                    <div class="slds-modal__header slds-theme_error">
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Error</h2>
+                    </div>
+                    <!--###### MODAL BOX BODY Part Start From Here ######-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <p><b>{!v.errorMessage}
+                            </b>
+                        </p>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button--neutral" onclick="{!c.closeModel}" >Close</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </aura:if>
+        <div class="" style="font-family: sans-serif;border-radius: 0px;">
+            <div class="slds-p-horizontal_none slds-grid slds-p-vertical_none slds-p-bottom_small slds-size_1-of-1">
+                <!-- <div class="slds-p-horizontal_small">
+                        <lightning:input type="radio" label="Where To Buy"
+                                         name="searchoption" value="WhereToBuy"
+                                         checked="true"
+                                         onchange="{!c.setSearch}" />
+                    </div>
+                    <div class="slds-p-horizontal_none">
+                        <lightning:input type="radio" label="Where To Service"
+                                         name="searchoption"
+                                         value="WhereToService"
+                                         onchange="{!c.setSearch}"/>
+                    </div>-->
+                
+                <div class="slds-p-horizontal_none slds-p-vertical_none" style="width:100%">
+                    <div class="slds-p-horizontal_none  slds-p-vertical_none slds-form-element__control" style="width:100%">
+                        <div class="slds-p-horizontal_none slds-p-vertical_none slds-radio_button-group" style="width:100%;border-radius: 0; border-radius: 0;">
+                            <span class="slds-button slds-p-vertical_none slds-radio_button" style="width:50%;border-radius: 0; border-radius: 0;">
+                                <input type="radio" name="searchoption" style="width:100%;border-radius: 0; border-radius: 0;" id="sell" value="WhereToBuy" checked="{!v.WhereToBuychecked}"  onclick="{!c.setSearch}"/>
+                                <label class="slds-radio_button__label" style="padding:8px;text-align:center;width:100%; border-radius: 0; border-radius: 0;" for="sell">
+                                    <span> Where to Buy </span>
+                                </label>
+                            </span>
+                            <span class="slds-button slds-p-vertical_none slds-radio_button" style="width:50%;border-radius: 0; border-radius: 0;">
+                                <input type="radio" name="searchoption"  style="width:100%;border-radius: 0; border-radius: 0;" id="service" value="WhereToService" checked="{!v.WhereToServicechecked}" onclick="{!c.setSearch}"/>
+                                <label class="slds-radio_button__label" style="padding:8px;text-align:center; width:100%" for="service">
+                                    <span>Where to Get Service</span>
+                                </label>
+                            </span>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-p-horizontal_none slds-size_1-of-1 slds-p-top_medium">
+                <div class="slds-p-bottom_none slds-p-vertical_none">
+                    <div class="slds-size_1-of-1 slds-p-vertical_none">                       
+                        <aura:if isTrue="{!v.selectedSearch == 'WhereToService'}">
+                            <p class="WTGSText">Use the directory below to connect with members of our Certified Support Network. If no dealer is listed in your area, 
+                                please contact KVH and our technical support team will be pleased to work with you to answer any questions you may have, 
+                                and to ensure that you are enjoying your KVH product to the fullest.</p>
+                        </aura:if>
+                        <div style="color: #000000;font-weight: bold;">Select Location:</div>
+                    </div>
+                    <!-- <lightning:select name="country" label="Country"
+                                      aura:id="country"
+                                      variant="label-hidden"
+                                      value="{!v.selectedCountry}">
+                        <aura:iteration items="{!v.countries}" var="item" indexVar="index">
+                            <option text="{!item}"
+                                    value="{!item}"
+                                    selected="{!item==v.selectedCountry}"/>
+                        </aura:iteration>
+                    </lightning:select>-->
+                    
+                    <div class="slds-grid slds-wrap  slds-size_1-of-1 slds-p-vertical_none">
+                        <c:DependentPicklist objInfo="Country__c"
+                                             controllingField="Country__c"
+                                             dependentField="State__c"
+                                             selectedControl="{!v.selectedCountry}"
+                                             selectedDependent="{!v.selectedState}"
+                                             dependentFlag="{!v.dependentFlag}"
+                                             isDependentDisable="{!v.disbaleState}"
+                                             controllingFieldDefault="Select Country (Required)"
+                                             dependentFieldDefault="{!v.dpndentCountryPicklist}"
+    										 dependentIdDefault="statePickList"
+                                             controllingIdDefault="countryPickList"
+                                             showOrOption="false"/>
+                    </div>
+                    <aura:if isTrue="{!v.countryNotSelected}">
+                        <div class="error-box">Please select a country first</div> 
+                    </aura:if>
+                    <aura:if isTrue="{!v.stateNotSelected}">
+                        <div class="error-box">Please select a state first</div> 
+                    </aura:if>
+            
+                    <div class="slds-grid slds-wrap slds-p-vertical_none">
+                        <div class="slds-p-horizontal_none slds-size_1-of-1 slds-p-vertical_none">
+                            <div class="slds-p-bottom_none">
+                                <div class="slds-grid slds-wrap  slds-size_1-of-1">
+                                    <div class=" slds-size_1-of-1 slds-p-bottom_none">
+                                        <hr size="1" style="color:black;width:100%;height2px;padding-top:0px;padding-bottom:0px; margin:25px 0 15px 0;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-1 slds-p-vertical_none">
+                        <div style="color: #000000;font-weight: bold;">Select Zip/Postal Code Radius Search:</div>
+                    </div>
+                    
+                    <div class="slds-p-vertical_none">
+                        <lightning:input label="Zip Code" aura:id="zipcode" value="{!v.zipcode}"
+                                         name="zipcode" variant="label-hidden" placeholder="Zip/Postal Code"/>
+                        
+                        <aura:if isTrue="{!v.zipNotEntered}">
+                            <div class="error-box">Please enter a zipcode first</div> 
+                        </aura:if>
+                    </div>
+                    
+                    
+                    <div class="slds-size_1-of-1 slds-p-bottom_none slds-p-vertical_none">
+                        <div class="slds-grid slds-wrap slds-grid slds-grid_vertical-align-center slds-grid_horizontal-align-center">
+                            <div class="slds-size_1-of-5 slds-medium-size_1-of-5 slds-large-size_2-of-6 slds-p-right_none">
+                                <div class="slds-text-body_regular">
+                                    Distance:
+                                </div>
+                            </div>
+                            <div class="slds-size_1-of-5 slds-medium-size_1-of-5 slds-large-size_2-of-6 slds-p-right_small">
+                                <lightning:select name="distance" label="Distance"
+                                                  aura:id="distance"
+                                                  variant="label-hidden"
+                                                  value="{!v.selectedDistance}">
+                                    <option text="10" value="10"/>
+                                    <option text="25" value="25" selected="true"/>
+                                    <option text="50" value="50"/>
+                                    <option text="100" value="100"/>
+                                    <option text="250" value="250"/>
+                                </lightning:select>
+                            </div>
+                            <div class="slds-size_1-of-5 slds-medium-size_1-of-5 slds-large-size_2-of-6">
+                                <lightning:select name="unit" label="Unit"
+                                                  aura:id="unit"
+                                                  variant="label-hidden"
+                                                  value="{!v.selectedUnit}">
+                                    <option text="miles" value="miles" selected="true"/>
+                                    <option text="km" value="km"/>
+                                </lightning:select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+            
+            <div class="slds-grid slds-wrap slds-p-vertical_none">
+                <div class="slds-p-horizontal_none slds-size_1-of-1 slds-p-vertical_none">
+                    <div class="slds-p-bottom_none">
+                        <div class="slds-grid slds-wrap  slds-size_1-of-1">
+                            <div class=" slds-size_1-of-1 slds-p-bottom_none">
+                                <hr size="1" style="color:black;width:100%;height2px;padding-top:0px;padding-bottom:0px;margin:25px 0 15px 0;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-wrap slds-grid_pull-padded slds-p-vertical_none">
+                
+                <div class="slds-p-horizontal_small slds-size_1-of-1 slds-p-vertical_none">
+                    <div style="color: #000000;font-weight: bold;">Select Product Market:</div>
+                </div>
+                
+                <div class="slds-p-horizontal_small slds-size_1-of-1 slds-p-vertical_none">
+                    <c:DependentPicklist aura:id="test"
+                                         objInfo="Product_Market_Sector__c"
+                                         controllingField="Market__c"
+                                         dependentField="Sector__c"
+                                         selectedControl="{!v.selectedMarket}"
+                                         selectedDependent="{!v.selectedSector}"
+                                         dependentFlag="{!v.dependentSector}"
+                                         isDependentDisable="{!v.disbaleSector}"
+                                         controllingFieldDefault="Select Market (Required)"
+                                         dependentFieldDefault="Select Sector (Required)"
+                                         dependentIdDefault="sectorPickList"
+                                         controllingIdDefault="marketPickList"
+                                         showOrOption="false"
+                                         prepopulateflag="1" 
+                                         controllingFieldPreDefault="{!v.defaultMarket}"
+                                         dependentFieldPreDefault="{!v.defaultSector}"/>
+                    <aura:if isTrue="{!v.marketNotSelected}">
+                        <div class="error-box">Please select a market first</div> 
+                    </aura:if>
+                    <aura:if isTrue="{!v.sectorNotSelected}">
+                        <div class="error-box">Please select a sector first</div> 
+                    </aura:if>
+                </div>
+                
+                
+                <div class="slds-p-horizontal_small slds-size_1-of-1 slds-p-vertical_medium" style="border-radius: 0px;border-color: #ddd;">
+                    <aura:if isTrue="{!v.loadFilter}">
+                        <c:FilterBlockSingleSelect methodName="whereToBuyFilter"
+                                                   sectiontitle="Select Product (Required)"
+                                                   filterCollection="{!v.filterCollection}" defaultproductId="{!v.defaultproductId}">
+                        </c:FilterBlockSingleSelect>
+                    
+                        <aura:if isTrue="{!v.productNotSelected}">
+                            <div class="error-box">Please select a product first</div> 
+                        </aura:if>
+                    </aura:if>
+                </div>
+                
+                <div class="slds-p-horizontal_small slds-size_1-of-1 slds-p-vertical_none" style="font-size: 11px;font-weight: bold;color: #fff;">
+                    <lightning:button variant="destructive"
+                                      class="slds-button_destructive"
+                                      label="FIND A KVH PARTNER"
+                                      onclick="{!c.search}"/>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</aura:component>

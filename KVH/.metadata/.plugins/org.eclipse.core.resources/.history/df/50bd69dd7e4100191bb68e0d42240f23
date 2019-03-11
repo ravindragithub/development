@@ -1,0 +1,104 @@
+<aura:component >
+    <aura:attribute name="node" type="Object" />
+    <aura:attribute name="hierarchyAssetsList" type="string[]"/>
+    <aura:attribute name="expanded" type="Boolean" default="true" />
+    <aura:attribute name="mode" type="string" />
+    <aura:attribute name="title" type="string" default="Replace / Remove / Add an Asset"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:AssetMovementModal_evt" action="{!c.closeModal}" />
+    <aura:registerEvent name="cmpEvnt" type="c:Update_AssetSubscription_Evt"/>
+    <!-- Modal Window for Asset Replacement -->
+    <div class="slds">
+        <div aria-hidden="true" role="dialog" class="slds-modal slds-modal--medium slds-fade-in-hide" aura:id="modaldialog">
+            <c:AssetMovementModal_cmp AssetRec="{!v.node}" title="{!v.title}"/>
+        </div>
+        <div class="slds-backdrop slds-backdrop--hide" aura:id="backdrop">
+            
+        </div>
+    </div>
+    <!-- Modal Window code ends -->
+    <div>
+        
+        <aura:if isTrue="{!v.node.Id != null}">
+            <span onclick="{!c.toggle}" >
+                <aura:if isTrue="{!v.node.items.length>0}">
+                    <aura:if isTrue="{!v.expanded}">
+                        <img src="/img/tree/minusStart.gif" 
+                             height="16" onclick="" 
+                             title="Click to expand/collapse nested items." width="20"/>
+                        
+                        <aura:set attribute="else">
+                            <img src="/img/tree/plusStart.gif" 
+                                 height="16" onclick="" 
+                                 title="Click to expand/collapse nested items." width="20"/>
+                        </aura:set>
+                    </aura:if>
+                    <aura:set attribute="else">
+                        <span class="areaBlank" style="padding-right: 1rem;">.</span>
+                    </aura:set>
+                </aura:if> 
+                <!--
+            &nbsp;&nbsp;&nbsp;
+   -->
+                <aura:if isTrue="{! !empty(v.node.mode) }">
+                    <label class="slds-radio">
+                        <ui:inputRadio aura:id="button1" text="{!v.node}" name="clients" click="{!c.handleCheckTask}" />
+                        <span class="slds-radio--faux" style="border: 2px solid darkgray !important;"></span>
+                        <span class="slds-form-element__label"></span>
+                    </label>
+                    &nbsp;&nbsp;&nbsp;
+                </aura:if>
+            </span>
+            <aura:if isTrue="{!v.node.CurrentAsset}">
+                <aura:if isTrue="{! !empty(v.node.Sequence_No__c) }">
+                    <ui:outputText value="{!v.node.Sequence_No__c +', '}" class="uiOutputURL"/>
+                </aura:if>
+                
+                <a href="{! '/'+v.node.Id}" target="_blank" class="underlineAsset uiOutputURL" id="currentAsset">{!v.node.Name}</a>
+                
+                <aura:if isTrue="{! !empty(v.node.Item_Description__c) }">
+                    <ui:outputText value="{!', ' + v.node.Item_Description__c}" class="uiOutputURL"/>
+                </aura:if>
+                <aura:if isTrue="{! !empty(v.node.InstallDate) }">
+                    <ui:outputText value="{!', ' +'Installed '}" class="uiOutputURL"/>
+                    <ui:outputDate value="{!v.node.InstallDate}" class="uiOutputURL" format="MM/DD/YY"/>
+                    <aura:set attribute="else">
+                        <ui:outputText value=", Installation date *UNKNOWN*" class="uiOutputURL yellowBackground"/>
+                    </aura:set>
+                </aura:if>
+                <aura:if isTrue="{! !empty(v.node.Date_Removed__c) }">
+                    <ui:outputText value="{!', ' +'Removed '}" class="uiOutputURL yellowBackground"/>
+                    <ui:outputDate value="{!v.node.Date_Removed__c}" class="uiOutputURL yellowBackground" format="MM/DD/YY" />
+                </aura:if>
+                
+                <aura:set attribute="else">
+                    <aura:if isTrue="{! !empty(v.node.Sequence_No__c) }">
+                        <ui:outputText value="{!v.node.Sequence_No__c +', '}" />
+                    </aura:if>
+                    <a href="{! '/'+v.node.Id}" target="_blank" class="underlineAsset" id="asset">{!v.node.Name}</a>
+                    <aura:if isTrue="{! !empty(v.node.Item_Description__c) }">
+                        <ui:outputText value="{!', ' + v.node.Item_Description__c}" />
+                    </aura:if>s
+                    <aura:if isTrue="{! !empty(v.node.InstallDate) }">
+                        <ui:outputText value="{!', ' +'Installed '}" />
+                        <ui:outputDate value="{!v.node.InstallDate}" format="MM/DD/YY"/>
+                        <aura:set attribute="else">
+                            <ui:outputText value=", Installation date *UNKNOWN*" class="yellowBackground"/>
+                        </aura:set>
+                    </aura:if>
+                    <aura:if isTrue="{! !empty(v.node.Date_Removed__c) }">
+                        <ui:outputText value="{!', ' +'Removed '}" class="yellowBackground"/>
+                        <ui:outputDate value="{!v.node.Date_Removed__c}" format="MM/DD/YY" class="yellowBackground"/>
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+            <aura:if isTrue="{!v.expanded}">
+                <div class="node">
+                    <aura:iteration items="{!v.node.items}" var="node">
+                        <c:AssetTreeNode node="{!node}" />
+                    </aura:iteration>
+                </div>
+            </aura:if>
+        </aura:if>
+    </div>
+</aura:component>

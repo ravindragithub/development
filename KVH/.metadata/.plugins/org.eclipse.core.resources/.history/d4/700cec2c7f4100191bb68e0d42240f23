@@ -1,0 +1,110 @@
+<apex:page sidebar="false" showHeader="false" standardStyleSheets="false" controller="ActivationsController">
+    <!-- <!doctype html> -->
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+            </script>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+            <link rel="stylesheet" href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" />
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/> 
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            </script>
+            <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+            <title>Welcome</title>
+            
+            <style>
+                .loadingStatus {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                list-style: none;
+                z-index: 9999;
+                }
+                
+                .loadingStatus .img {
+                width: 32px;
+                margin: 0 auto;
+                }
+                .loadingBox {
+                display: none;
+                background: #000000;
+                opacity: 0.45;
+                filter: alpha(opacity=45);
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: 9999;
+                }
+                .button {
+                color: #fff !important;
+                padding: 7px 27px 8px;
+                margin: 15px 0;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                display: -moz-inline-stack;
+                display: inline-block;
+                zoom: 1;
+                _overflow: hidden;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                background: #6699cc;
+                border: 0;
+                text-shadow: none !important;
+                }
+            </style>
+        </head>
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                <apex:form id="frm" >
+                    <div class="loadingStatus" id="loadingDiv">
+                        <div class="">
+                            <div class="img "><img src="/img/loading.gif"/></div>
+                        </div>
+                    </div>
+                    <div id="loadingBox" class="loadingBox"></div>
+                    
+                    <apex:actionFunction name="loadselfActivation" action="{!selfActivation}" oncomplete="hideLoadingDiv();" reRender="frm">
+                    </apex:actionFunction>
+                    
+                    <apex:actionFunction name="loaddealerActivation" action="{!dealerActivation}" oncomplete="hideLoadingDiv();" reRender="frm">
+                    </apex:actionFunction>
+                    
+                    <c:Activation_Header />
+                    <!-- /popup Show Buttons contents -->
+                    <div data-role="popup"  data-dismissible="false" id="showchoice" data-history="false" style="min-width:400px !important; max-width:600px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                            <h1 class="ui-title" role="heading" aria-level="1">A New Activation</h1>
+                        </div>
+                        <div role="main" class="ui-content center">
+                            <span></span>
+                            <div class="center">
+                                <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();loadselfActivation();">Activating my own system</a> <br/>
+                                <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();loaddealerActivation();">Activating a system on behalf of a new customer</a>                   
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /popup Show Buttons contents -->
+                </apex:form>
+            </div>
+        </body>
+        <script>
+        j$(function() {
+            j$( "#showchoice" ).popup( "open" );  
+        });
+        </script>
+    </html>
+</apex:page>

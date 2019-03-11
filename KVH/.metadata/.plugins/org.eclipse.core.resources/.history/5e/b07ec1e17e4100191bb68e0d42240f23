@@ -1,0 +1,19 @@
+<aura:component implements="forceCommunity:layout" access="global"
+                description="customallnewportallayout">
+
+    <aura:attribute name="header" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="content" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="background" type="string" required="false" access="global"/>
+    <aura:attribute name="miniheight" type="string" access="global"/>
+	
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+
+    <div class="slds container" style="background:#f3f3f3;">
+            <div class="slds-grid slds-wrap customKVH">
+                <div style="width:100%; background:#f3f3f3;">{!v.header}</div>
+            </div>
+            <div class="slds-grid slds-wrap  slds-p-left--large slds-p-right--large content" style="background:#f3f3f3;" id="body">
+                <div class="slds-p-around_x-large slds-col--padded slds-size--1-of-1" style="{!'background:#f3f3f3;min-height:'+v.miniheight}">{!v.content}</div>
+            </div>
+    </div>
+</aura:component>

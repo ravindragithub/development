@@ -1,0 +1,54 @@
+<!--
+ - Created by Jai Chaturvedi on 12/03/2017.
+ -->
+
+<aura:component description="RegisterServiceComponent" 
+                implements="forceCommunity:availableForAllPageTypes">
+	<aura:attribute name="userrole"
+                    type="String"/>
+    <aura:attribute name="headerValue"
+                    type="String"/>
+    <aura:attribute name="logonames"
+                    type="String"/>
+    <aura:attribute name="images"
+                    type="String[]"/>
+    <aura:attribute name="subHeader"
+                    type="String"/>
+    <aura:attribute name="description"
+                    type="String"/>
+    <aura:attribute name="kvhUserRole"
+                    type="String"/>
+    <aura:attribute name="newsHeader" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>
+    <aura:attribute name="availableCheck" type="String" access="global" default="slds-hide"/>
+    <aura:attribute name="url" type="String" access="global"/>
+    <aura:attribute name="videourl" type="String" access="global"/>
+	
+    <aura:handler event="c:PlaceAvailableServicesEvent" action="{!c.handlePlaceAvailableServiceEvent}"/>
+
+    <div class="{! 'slds-grid slds-wrap slds-grid--pull-padded ' + v.availableCheck}">
+        <div class="" style="width:100%;">
+           <!-- <img src="{! '/' + $Label.c.Community_Prefix + '/resource/icons/' + v.newsHeader}"
+                 onclick="{!c.redirect}"/>-->
+            <div class="app-button">
+                    <div class="heading relative">
+                        <div class="left matchheight" >
+                            <h4>{!v.headerValue}{!v.userrole}</h4>
+                        </div>
+                        <div class="right bg-15 matchheight center pad-top-10">                            
+                            <a href="{!v.url}" target="_blank">GO <span>&gt;</span></a>                        
+                        </div>
+                    </div>
+                    <div style="overflow: auto; padding:10px;">
+                        <div style="width:60%;float:left;font-weight: 700;padding: 5px;">{!v.description}</div>
+                        <div style="width:40%;float:right;text-align:right;">
+                        	 <aura:iteration items="{!v.images}" var="img">
+                                <img style="width:100%;" src="{! '/' + $Label.c.Community_Prefix + '/resource/icons/' + img}" /> 
+                            </aura:iteration>  
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+</aura:component>

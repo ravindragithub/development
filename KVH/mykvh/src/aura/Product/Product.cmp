@@ -1,0 +1,32 @@
+<aura:component description="Product">
+
+    <aura:attribute name="product"
+                    type="ProductSearchClass.ProductResult" />
+
+    <aura:registerEvent name="showproduct" type="c:ShowProductDetail"/>
+
+    <div class="slds-p-around--small slds-size--1-of-4" >
+        <div class="slds-box" style="color: #dddddd;border-radius: 0px;">
+            <div class="slds-grid slds-grid--pull-padded-medium slds-grid--vertical-align-center">
+                <div class="slds-p-left--xx-small slds-size--2-of-5" style="min-height:75px;">
+                    <aura:if isTrue="{!v.product.logoId != 'NoImage'}">
+                        <img src="{!v.product.logoId}"
+                             style="height:75px;"/>
+
+                        <!--<aura:set attribute="else">
+                            <img src="{!$Resource.NoImage}"
+                                 style="height:75px;">
+                            </img>
+                        </aura:set>-->
+
+                    </aura:if>
+
+                </div>
+                <div class="slds-p-horizontal--xx-small slds-size--3-of-5">
+                    <a onclick="{!c.showProductDetail}" title="{!v.product.productItem.Catalog_Display_Name__c}" class="bold-blue">{!v.product.productItem.Catalog_Display_Name__c}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</aura:component>

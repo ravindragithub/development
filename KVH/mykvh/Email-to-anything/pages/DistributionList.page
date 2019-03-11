@@ -1,0 +1,69 @@
+<apex:page standardController="ortoo_e2a__Email_Distribution_List__c" extensions="ortoo_e2a.EmailDistributionListExtension">
+    <!-- Define Tab panel .css styles -->
+    <style>
+        .activeTab {background-color: #00305E; color:white; background-image:none}
+        .inactiveTab { background-color: #BBBBBB; color:black; background-image:none}
+    </style>
+
+    <apex:detail relatedListHover="false" relatedList="false"/>
+    <apex:form >
+        <apex:pageBlock id="add_to_list" rendered="{!AddToListSectionIsRendered}">
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="2" showHeader="false">
+                <apex:pageBlockSectionItem rendered="{!ContactAddIsAllowed}" helpText="Select and add a Contact to the Distribution List">
+                    <apex:outputLabel value="Contact: " for="contact"/>
+                    <apex:outputPanel >
+                        <apex:outputPanel layout="block">
+                            <apex:inputField id="contact" value="{!NewDLContact.ortoo_e2a__Contact__c}"/>
+                        </apex:outputPanel>
+                        <apex:commandButton value="Add Contact" action="{!AddDLContact}" reRender="contact_list,add_to_list,tab_panel" style="margin-top:3px;"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!UserAddIsAllowed}"  helpText="Select and add a User to the Distribution List">
+                    <apex:outputLabel value="User: " for="user"/>
+                    <apex:outputPanel >
+                        <apex:outputPanel layout="block">
+                            <apex:inputField id="user" value="{!NewDLUser.ortoo_e2a__User__c}"/>
+                        </apex:outputPanel>
+                        <apex:commandButton value="Add User" action="{!AddDLUser}" reRender="user_list,add_to_list,tab_panel" style="margin-top:3px;"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:tabPanel switchType="client" selectedTab="contactList" value="{!SelectedTab}" tabClass="activeTab" inactiveTabClass="inactiveTab" id="tab_panel">
+            <apex:tab label="Contacts" name="contactList">
+                <apex:pageBlock title="Contacts" id="contact_list">
+                    <apex:pageBlockTable value="{!RelatedContactsList}" var="CO">
+                        <apex:column headerValue="Action" rendered="{!ContactActionIsRendered}">
+                            <apex:commandLink action="{!DeleteDLContact}" immediate="true" reRender="contact_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                                <b>Del</b>
+                                <apex:param name="dlcontactid" value="{!CO.Id}" assignTo="{!DeleteDLContactID}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <apex:column value="{!CO.Contact__r.LastName}, {!CO.Contact__r.FirstName}" headerValue="Name"/>
+                        <apex:column value="{!CO.ortoo_e2a__Contact__c}"/>
+                        <apex:column value="{!CO.Contact__r.Email}"/>
+                        <apex:column value="{!CO.Contact__r.AccountId}"/>
+                    </apex:pageBlockTable>
+                    <apex:outputLink value="/apex/ortoo_e2a__DistributionListContacts?id={!id}" rendered="{!ContactListHasMore}">Show more »</apex:outputLink>    
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Users" name="userList">
+                <apex:pageBlock title="Users" id="user_list">
+                    <apex:pageBlockTable value="{!RelatedUsersList}" var="US">
+                        <apex:column headerValue="Action" rendered="{!UserActionIsRendered}">
+                            <apex:commandLink action="{!DeleteDLUser}" immediate="true" reRender="user_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                                <b>Del</b>
+                                <apex:param name="dluserid" value="{!US.Id}" assignTo="{!DeleteDLUserID}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <apex:column value="{!US.User__r.LastName}, {!US.User__r.FirstName}" headerValue="Name"/>
+                        <apex:column value="{!US.ortoo_e2a__User__c}"/>
+                        <apex:column value="{!US.User__r.Email}"/>
+                    </apex:pageBlockTable>
+                    <apex:outputLink value="/apex/ortoo_e2a__DistributionListUsers?id={!id}" rendered="{!UserListHasMore}">Show more »</apex:outputLink>     
+                </apex:pageBlock>
+            </apex:tab>
+        </apex:tabPanel>
+    </apex:form>
+</apex:page>

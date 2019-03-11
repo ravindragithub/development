@@ -1,0 +1,84 @@
+<aura:component controller="PRDReg_Controller">
+    <aura:attribute name="simplePRDregistration" type="Object" />  
+    <aura:attribute name="subInfoRequired" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:attribute name="firstnameFlag" type="boolean"/>
+    <aura:attribute name="lastnameFlag" type="boolean"/>
+    <aura:attribute name="emailFlag" type="boolean"/>
+    <aura:attribute name="phoneFlag" type="boolean"/> 
+    <aura:attribute name="countryFlag" type="boolean" />
+    <aura:attribute name="stateFlag" type="boolean" />
+    <aura:attribute name="billingInfoFlag" type="boolean"/>  
+    <aura:attribute name="customerInfoFlag" type="boolean"/> 
+    <aura:attribute name="subsCountry" type="string"/>
+    
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    
+    <lightning:card title="Customer Information">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.subInfoRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input aura:id="LTEField" name="First_Name" label="Main Contact First/Given Name"
+                                     value="{!v.simplePRDregistration.Subscriber_First_Name__c}"
+                                     required="true" onblur="{!c.subscriberValidation}"   
+                                     disabled="{!v.firstnameFlag}"/>
+                    <lightning:input aura:id="LTEField" name="Last_Name" label="Main Contact Last/Family Name/Surname"
+                                     value="{!v.simplePRDregistration.Subscriber_Last_Name__c}"
+                                     required="true" onblur="{!c.subscriberValidation}" 
+                                     disabled="{!v.lastnameFlag}"/>                  
+                    <lightning:input aura:id="LTEField" label="Company Name (if applicable)" 
+                                     value="{!v.simplePRDregistration.Subscriber_Company_Name__c}"/>                    
+                    <lightning:input aura:id="LTEField" type="email" label="Email" required="true" 
+                                     value="{!v.simplePRDregistration.Subscriber_Email__c}" 
+                                     onblur="{!c.subscriberValidation}" 
+                                     disabled="{!v.emailFlag}"/>
+                    <lightning:input aura:id="LTEField" type="tel" label="Mobile Phone Number" required="true"
+                                     value="{!v.simplePRDregistration.Subscriber_Phone__c}" 
+                                     onblur="{!c.subscriberValidation}" 
+                                     disabled="{!v.phoneFlag}"/> 
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">                                      
+                    <lightning:input aura:id="LTEField" label="Address" required="true"
+                                     value="{!v.simplePRDregistration.Subscriber_Address__c}"
+                                     onblur="{!c.subscriberValidation}"/>
+                    <lightning:input aura:id="LTEField" label="City" required="true" 
+                                     value="{!v.simplePRDregistration.Subscriber_City__c}"
+                                     onblur="{!c.subscriberValidation}"/>  
+                    <aura:if isTrue="{!v.countryFlag}">
+                        <lightning:input aura:id="LTEBillingField" label="Country" required="true" 
+                                         value="{!v.simplePRDregistration.Subscriber_Country__c}" 
+                                         disabled="{!v.countryFlag}"/>
+                        <lightning:input aura:id="LTEBillingField" label="State/Province/Territory" required="true" 
+                                         value="{!v.simplePRDregistration.Subscriber_State_Province_Territory__c}"
+                                         disabled="{!v.stateFlag}"/>
+                        <aura:set attribute="else">   
+                            <c:Country_Picklist_cmp countryList="{!v.countryList}" 
+                                                    selectedCountry="{!v.selectedCountry}" 
+                                                    selectedState="{!v.selectedState}" 
+                                                    componentID="suscriber"/>  
+                        </aura:set>
+                    </aura:if>                    
+                    <lightning:input aura:id="LTEField" label="Postal/Zip Code" required="true" 
+                                     value="{!v.simplePRDregistration.Subscriber_Postal_Zip_Code__c}"
+                                     onblur="{!c.subscriberValidation}"/>     
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+</aura:component>

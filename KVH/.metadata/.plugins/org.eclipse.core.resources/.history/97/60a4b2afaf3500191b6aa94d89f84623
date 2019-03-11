@@ -1,0 +1,32 @@
+.THIS .productHeader{
+    background : #eee;
+    
+}
+.THIS .productname{
+    background : #1984C7;
+    color : #fff;
+    padding : 10px;
+}
+.THIS .subheading{
+    margin-left: 5%;
+    padding: 10px;
+}
+.THIS .productNameText{
+    margin-left: 1%;
+    font-size: 16px;
+    font-weight: bold;
+}
+.THIS .label{
+    float : left;
+    width:30%;
+}
+.THIS .value{
+    float : right;
+    width:70%;
+    font-weight : bold;
+}
+@media only screen and (max-width: 600px) {
+   .THIS .subheading{
+        margin-left: 0%;
+    }
+}

@@ -1,0 +1,12 @@
+<aura:component>    
+    <aura:attribute name="filterResult" type="Object[]"/>  
+    <aura:registerEvent name="cmpEvent" type="c:myKVH_SupportCenterSearchFilterEvent" />
+    <aura:if isTrue="{! !empty(v.filterResult)}">
+        <div style="padding: .5rem 0">
+            <aura:iteration items="{!v.filterResult}" var="record" indexVar="indexParent"> 
+                <lightning:pill label="{!record.label}" onremove="{! c.handleRemove }"
+                                name="{!indexParent}"/>
+            </aura:iteration>
+        </div>
+    </aura:if>
+</aura:component>

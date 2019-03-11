@@ -1,0 +1,9 @@
+<aura:event type="COMPONENT" description="Event is fired when lookupVTID returns a map of string,string"  >
+    <aura:attribute name="SatRouterMap" type="Map"
+                  default="{obj_id: 'EMPTY:',
+                            obj_revision: 'EMPTY:',
+                            serialnumber: 'EMPTY',
+                            obj_name: 'EMPTY:',
+                            asset_id: 'EMPTY:'}"/>
+
+</aura:event>

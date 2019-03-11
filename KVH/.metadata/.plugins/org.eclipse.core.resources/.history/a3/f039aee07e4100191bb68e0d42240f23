@@ -1,0 +1,36 @@
+<aura:component >
+    
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="installationRequired" type="boolean"/>
+    
+    <lightning:card title="Installation Type">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Installer Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Attach Installation Checklist">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,52 @@
+<apex:page id="changePassword" showHeader="false" controller="LTE_ChangePassword" title="{!$Label.site.change_password}">
+
+<apex:composition template="{!$Site.Template}">
+    <apex:define name="body">
+        
+        <div class="content-panel">
+            
+            <h1>
+                Set Your Password
+            </h1>
+              
+              
+                    <apex:pageMessages id="error"/>
+                        <p>Passwords must:</p>
+                        <ul class="slds-list_dotted">
+                            <li>Be at least 8 characters long</li>
+                            <li>Be a mix of alpha and numeric characters</li>
+                            <li>Have at least 1 uppercase character</li>
+                            <li>Have at least 1 numerical character</li>
+                        	<li>Please note that passwords are case-sensitive, and that old passwords cannot be reused.</li>
+                        </ul>
+            
+            
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">            
+                    <apex:form id="theForm">
+                        <apex:pageMessages id="error"/>
+                        <p>
+
+                        </p>
+                        
+                        <p>
+                            <apex:outputLabel value="Password"  for="psw"/><br/>
+                            <apex:inputSecret required="true" id="psw" value="{!newPassword}"/>
+                        </p>
+                        
+                        <p>
+                            <apex:outputLabel value="Confirm Password" for="vpsw"/><br/>
+                            <apex:inputSecret required="true" id="vpsw" value="{!verifyNewPassword}"/>
+                        </p>
+                        
+                        <apex:outputText value=""/>
+                        <apex:commandButton id="cpwbtn" action="{!changePassword}" value="Submit"/>
+                    </apex:form> 
+                 </div>
+            </div>
+            
+        </div>
+        
+    </apex:define>
+  </apex:composition>
+</apex:page>

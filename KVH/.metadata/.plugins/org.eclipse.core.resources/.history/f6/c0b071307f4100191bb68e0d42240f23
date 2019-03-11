@@ -1,0 +1,16 @@
+<apex:page sidebar="false">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+      $Lightning.use("c:HTS_Sat_Router_container", function() {
+        $Lightning.createComponent(
+            "c:HTS_Sat_Routers",
+            {},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+                console.log(cmp);
+            });
+        });
+    </script>
+    <div id="lightning"></div>
+</apex:page>

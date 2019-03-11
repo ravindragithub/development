@@ -1,0 +1,78 @@
+<apex:component controller="Activation_Invoice_Payment" allowDML="true">
+    <script>
+        j$( document ).ready(function() {
+             j$("input:radio[name=invoiceRadio]").click(function(){
+                  showLoadingDiv();
+                  var paymentvalue = j$(this).attr("id");
+                  passSelectedPaymentType(paymentvalue);
+             })
+             var seletedVal = '{!selectingRadio}';
+             if(seletedVal!='' && {!summaryInvoice}){
+                  if({!summaryInvoice}){
+                     j$("input:radio[name=invoiceRadio]")[seletedVal].checked = true;
+                  }
+             }
+        });
+    </script>
+    <apex:attribute name="subscriberDetails" description="This is used to pull subscriber details"
+                    type="Activation_Subscriber__c[]" required="required" assignTo="{!aSub}"/>
+    <apex:actionFunction name="passSelectedPaymentType" action="{!selectedInvoicePayment}" reRender="something" oncomplete="hideLoadingDiv();">
+        <apex:param name="PaymentType" value="" assignTo="{!SelectedPaymentType}"/>
+    </apex:actionFunction> 
+    
+    <apex:outputPanel id="pType">
+        <div class="button-bar clear"/>
+        <div style="padding-bottom:10px;"></div>
+        <div><h3 style="display: inline; margin-right: 5px;">Invoice Type</h3><span class="notes">(for fleet accounts only)</span></div>
+        <div style="padding-bottom:10px;"></div>
+        <p style="font-weight: bold;">Sub-Account Invoices ONLY</p>
+        
+        <div style="padding-left: 30px;">
+            <p>
+                <input type="radio" name="invoiceRadio" style="display: inline;" id="first"/>
+                <label for="first">Pay from sub-account invoices
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                        <span class="tooltiptext">
+                            Select to receive separate invoices per sub-account,
+                            and payment is initiated separately for each sub-account;sub-accounts are permitted 
+                            to have different billing addresses and different recipients
+                        </span>
+                    </span>
+                </label>
+            </p>
+        </div>
+        <div style="padding-bottom:10px;"></div>
+        <p style="font-weight: bold;">Corporate Account Summary Invoice AND Sub-Account Invoices</p>
+        
+        <div style="padding-left: 30px;">
+            <p>
+                <input type="radio" style="display: inline;" name="invoiceRadio" id="second"/> 
+                <label for="second">Pay from corporate account summary
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                        <span class="tooltiptext">
+                            Select to receive a corporate summary invoice and individual sub-account invoices 
+                            if payment will be initiated from the corporate account summary invoice;
+                            sub-accounts are permitted to have different billing addresses;all invoices will be 
+                            sent to the SAME invoice recipients
+                        </span>
+                    </span>
+                </label>
+            </p>
+        </div>
+        <div style="padding-left: 30px;">
+            <p>
+                <input type="radio" style="display: inline;" name="invoiceRadio" id="third"/> 
+                <label for="third">Pay from sub-account invoices
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                        <span class="tooltiptext">
+                            Select to receive a corporate summary invoice and individual sub-account invoices 
+                            if payment will be initiated separately for each sub-account;sub-accounts are permitted
+                            to have different billing addresses;sub-account invoices are permitted to be sent to 
+                            different invoice recipients
+                        </span>
+                    </span>
+                </label>
+            </p>
+        </div>
+    </apex:outputPanel>
+</apex:component>

@@ -1,0 +1,89 @@
+<apex:component allowDML="true" controller="Act_Contact_Component_Controller" >
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    
+    <apex:outputPanel id="frm">
+        <div>
+            <h3 class="mainTitle"> Group Invoice Recipient </h3>
+        </div>
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here">
+        </div>
+        <!--** div contain error msg contents -End **--> 
+        
+        <div class="left two-col">
+            <div class="box-content">
+                
+                <p><label>Group Name:</label><span class="req"></span>
+                    <apex:inputField id="grpname" value="{!actCon.Last_Name__c}" html-tabIndex="21" html-data-role="none"/>
+                </p>
+                <div class="phone-types" >
+                    <label>Primary Phone Number:<span class="req"></span></label>
+                    <apex:selectRadio value="{!actCon.Primary_Phone_Type__c}" Id="PPT" tabIndex="23" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField id="ppnumber" value="{!actCon.Primary_Phone__c}" html-tabIndex="24" html-data-role="none"/>
+                </div>
+                 
+                <div class="clear" style="padding-bottom:20px;"></div>
+              <!--  <p><label>Address 1:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Address_1__c}" html-tabIndex="27" id="address1"/></p>
+                <p><label>City:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.City__c}" html-tabIndex="29" id="city"/></p>-->
+                
+                <p class="Country"><label>Country: </label><span class="req"></span>
+                    <apex:actionRegion >
+                        <apex:selectList id="country" tabindex="27" value="{!actCon.Country__c}" multiselect="false"  size="1" html-data-role="none" >
+                            <apex:actionSupport action="{!componentCountryChangeHandler}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();" />
+                            <apex:selectOptions value="{!CountriesList}" html-data-role="none" />
+                        </apex:selectList>
+                    </apex:actionRegion>
+                </p>
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                
+                <p><label>Group Email:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Email__c}" id="email" html-tabIndex="22" html-data-role="none"/>
+                </p>
+                <div class="phone-types" >
+                    <label>Secondary Phone Number:</label>
+                    <apex:selectRadio value="{!actCon.Secondary_Phone_Type__c}" id="SPT" tabIndex="25" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField id="spnumber" value="{!actCon.Secondary_Phone__c}" html-tabIndex="26" html-data-role="none"/>
+                    <div class="clear" style="padding-bottom:20px;"></div>
+                </div>
+              <!--   <p><label>Address 2:</label>
+                    <apex:inputField value="{!actCon.Address_2__c}" html-tabIndex="28" id="address2"/></p>
+                <p><label>Postal/Zip Code:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Postal_Zip_Code__c}" html-tabIndex="30" id="postalcode"/></p> -->
+                
+                
+                <p class="state"><label>State/Province/Territory: </label>
+                    <apex:selectList id="State_Province__c" tabindex="28" value="{!actCon.State__c}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}" html-data-role="none" >
+                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange"  reRender="stateid">
+                            <apex:param value="{!actCon.State__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesList}" html-data-role="none"/>
+                    </apex:selectList>
+                </p>
+            </div>
+        </div>
+        <div class="clear">
+            <apex:commandLink styleClass="button right" value="Save Recipient" onclick="validateError('{!parentContainer}',true); return false;">
+            </apex:commandLink>
+             <apex:commandLink styleClass="button left" value="Cancel" action="{!gotospecifictab}" onclick="showLoadingDiv();" rerender="contactcomponent" oncomplete="hideLoadingDiv();" > <!-- rendered="{!strActivationContact != null}" -->
+                </apex:commandLink>
+        </div>
+    </apex:outputPanel>
+    
+    <apex:actionFunction name="callcontactFromAccountSetupGrp" action="{!SaveFromAccountSetup}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+         <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+     </apex:actionFunction>
+</apex:component>

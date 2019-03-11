@@ -1,0 +1,16 @@
+<aura:component >    
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="systemRequired" type="boolean" />     
+    <aura:attribute name="serviceRequired" type="boolean"/>   
+    <aura:attribute name="purchaseRequired" type="boolean"/>
+    <aura:attribute name="recieverInfoRequired" type="boolean"/>    
+    <aura:attribute name="payInfoRequired" type="boolean"/>
+    <aura:attribute name="cont1Required" type="boolean"/>
+    <aura:attribute name="tvSeries" type="boolean"/>
+    <aura:handler name="change" value="{!v.serviceRequired}" action="{!c.handleCheckFlag}"/>
+    <aura:handler name="change" value="{!v.purchaseRequired}" action="{!c.handleCheckFlag}"/>
+    <aura:handler name="change" value="{!v.recieverInfoRequired}" action="{!c.handleCheckFlag}"/>
+    <aura:handler name="change" value="{!v.payInfoRequired}" action="{!c.handleCheckFlag}"/>
+    <aura:handler name="change" value="{!v.cont1Required}" action="{!c.handleCheckFlag}"/>
+    
+</aura:component>

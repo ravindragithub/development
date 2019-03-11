@@ -1,0 +1,293 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+                access="global"
+                controller="ProductSearchClass"
+                description="ProductSearchResult.
+                This component is used for displaying the product search result and detail sections">
+   
+   
+    
+	<aura:attribute name="errorclass"
+                    type="String"
+                    default="slds-hide"/>
+    <aura:attribute name="fireAllProduct"
+                    type="boolean"
+                    default="true"/>
+    
+    <aura:attribute name="iconname"
+                    type="String" default="chevron-right" />
+    
+    <aura:attribute name="hidesection"
+                    type="String" default="slds-is-collapsed" />
+    
+    <aura:attribute name="docNumber"
+                    type="Integer" />
+     
+    <aura:attribute name="selectedView" type="String"/>
+    
+    <aura:attribute name="refining" type="Boolean" default="false"/>
+
+    <aura:attribute name="products"
+                    type="ProductSearchClass.ProdLineSeries[]"
+                    description="Used to store the product list for search results"/>
+
+    <aura:attribute name="documents"
+                    type="ProductSearchClass.DocumentType[]"
+                    description="Used to store the document list for search results"/>
+    
+    <aura:attribute name="allProducts"
+                    type="ProductSearchClass.ProdLineSeries[]"
+                    description="Used to store the product list for client-side filtering"/>
+
+    <aura:attribute name="allDocuments"
+                    type="ProductSearchClass.DocumentType[]"
+                    description="Used to store the documents for client-side filtering"/>
+
+    <aura:attribute name="quickLink"
+                    type="Boolean"
+                    default="true"
+                    description="Used to handle the Quick Link show and hide mode"/>
+
+    <aura:attribute name="salesKit"
+                    type="Boolean"
+                    default="false"
+                    description="Used to handle the Sales Kit hide and show mode"/>
+
+    <aura:attribute name="selectedQuickLink"
+                    type="String"
+                    description="Used to store the selected Quick Link name."/>
+
+    <aura:attribute name="salesKitList"
+                    type="Object[]"
+                    description="Used to store the sales kit options for Quick links"/>
+
+    <aura:attribute name="product" type="ProductSearchClass.ProductResult"
+                    description="Used to store the details for clicked selected Product"/>
+
+    <aura:attribute name="document" type="ProductSearchClass.DocumentType[]"
+                    description="Used to store the related document results list for the clicked Product"/>
+
+    <aura:attribute name="productImages" type="String[]"
+                    description="Used to store the product images for selected Product"/>
+    
+    <aura:attribute name="banners" type="Map"
+                    description="Used to store the web banners for a selected Product"/>
+    <aura:attribute name="bannerKeys" type="List"/>
+    
+    <aura:attribute name="videos" type="Map"
+                    description="Used to store the videos for a selected Product"/>
+    <aura:attribute name="videoKeys" type="List"/>
+
+    <aura:attribute name="noResultFlag"
+                    type="Boolean"
+                    default="false"
+                    description="Used to manage the misspelled message if no search result is returned from apex"/>
+
+    <aura:attribute name="searchpanel"
+                    type="Boolean"
+                    default="true"
+                    description="Used to manage the search results hide and show"/>
+    
+    <aura:attribute name="showsalesaids"
+                    type="Boolean"
+                    default="false"
+                    description="Used to show and hide the salesaids section"/>
+
+    <aura:handler name="showproduct"
+                  event="c:ShowProductDetail"
+                  action="{!c.handleShowProductDetail}"
+                  description="Event handled to show the selected Product details.
+                  This event is fired from Product component"/>
+    
+    <aura:handler event="c:PortalViewChangeEvent"
+                  action="{!c.handlePortalViewChange}"
+                  description="Event handler to get the selected portal option.
+                               On handling it will fire the apex class to bring the properties for each option"/>
+
+    <aura:handler event="c:ProductSearchEvent"
+                  action="{!c.handleProductSearchEvent}"
+                  description="Event used to fire apex method for searching the products and documents.
+                  This event if fired from ProductSearchComponent component"/>
+
+    <aura:handler name="QuickLink"
+                  event="c:QuickLinkEvent"
+                  action="{!c.handleQuickLink}"
+                  description="Event handled when user clicks the Quick Link option.
+                  Fired from QuickLinkOption component."/>
+
+    <aura:handler name="SalesKitQuickLink"
+                  event="c:QuickLinkEvent"
+                  action="{!c.handleSalesKitQuickLink}"
+                  description="Event handled for Sales Kit quick link options.
+                  Fired from SalesKit component"/>
+
+    <aura:handler event="c:ClearOptionsEvent"
+                  action="{!c.backToQuickLinks}"
+                  description="Event handled for Clear button click.
+                  Resets the options to show Quick Links and hide product and document search results"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  
+    <aura:registerEvent name="SearchSalesAids"
+                        type="c:SearchSalesAidsEvent"
+                        description="Used to send selected content type, product and search string for searching sales aids"/>
+    
+    <aura:registerEvent name="SalesAidsUpdateCartEvent" type="c:SalesAidsUpdateCartEvent" description="update cart in header component" />
+    
+    <aura:registerEvent name="QuickLinkAppEvent" type="c:QuickLinkAppEvent" description="updates jsTree with filters from QuickLink" />
+    
+    <div>
+        <lightning:spinner variant="brand" alternativeText="Loading..." size="large" title="Loading..." aura:id="mySpinner" class="bluespin"/>
+    </div>
+
+    <div class="slds-m-bottom--large slds-p-top--small" style="font-size: 50%;">
+        <nav role="navigation" aria-label="Breadcrumbs">
+            <ol class="slds-breadcrumb slds-list--horizontal">
+                <li class=" slds-text-title--caps">
+                    <a href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}">
+                        HOME
+                    </a>
+                     &nbsp;>&nbsp;
+                </li>
+                <li class="slds-text-title--caps">
+                    <aura:if isTrue="{!v.quickLink}">
+                         <a href="javascript:void(0);" style="color:#999;font-family:sans-serif">
+                            PARTNER RESOURCES
+                        </a>
+                    </aura:if>
+                    <aura:if isTrue="{!!v.quickLink}">
+                         <a href="./productresources" style="font-family:sans-serif">
+                            PARTNER RESOURCES 
+                        </a>
+                        &nbsp;>&nbsp;
+                    </aura:if>
+                   
+                </li>
+                <aura:if isTrue="{!!v.searchpanel}">
+                    <li class="slds-text-title--caps">
+                        <a href="javascript:void(0);"
+                           style="color:#999;font-family:sans-serif">
+                            PRODUCT DETAILS
+                        </a>
+                    </li>
+                </aura:if>
+                <aura:if isTrue="{!!v.quickLink}">
+                  
+                    <li class="slds-text-title--caps">
+                        <a href="javascript:void(0);"
+                           style="color:#999;font-family:sans-serif">
+                                {!v.selectedQuickLink}
+                        </a>
+                    </li>
+                </aura:if>
+            </ol>
+        </nav>
+    </div>
+
+    <aura:if isTrue="{!v.searchpanel}">
+        <div class="">
+             <div class="slds-section slds-is-open">
+                 <h1 class="slds-section__title">
+                     {!v.selectedQuickLink}
+                 </h1>
+            </div>
+
+           
+
+            <aura:if isTrue="{!v.quickLink}">
+                <div class="slds-m-bottom--large">
+                    <div class="slds-text-heading--medium"
+                         style="font-weight:400;font-family: sans-serif">
+                        Partner Resources
+                    </div>
+                </div>
+                 <div class="slds-m-bottom--medium">
+                    <div style="color: #666;font-size:18px;font-family: sans-serif">
+                        Use the filters in the sidebar to find your product(s) and content,
+                        or use the links below:
+                    </div>
+                </div>
+                <div class="slds-p-bottom--medium">
+
+                    <aura:if isTrue="{!!v.salesKit}">
+                        <c:QuickLink ></c:QuickLink>
+                    </aura:if>
+
+                    <!--<div class="slds-p-top&#45;&#45;small"
+                         style="color: #666;font-size:18px;font-family: sans-serif">
+                            {!v.selectedQuickLink}
+                    </div>-->
+
+                    <aura:if isTrue="{!v.salesKit}">
+                        <div class="slds-p-bottom--small">
+                            <lightning:buttonIcon iconName="utility:back"
+                                                  alternativeText="back to quick links"
+                                                  iconClass="dark"
+                                                  onclick="{!c.backToQuickLinks}"/>
+                        </div>
+
+                        <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small">
+                            <aura:iteration var="saleskit" items="{!v.salesKitList}">
+                                <c:SalesKit saleskit="{!saleskit}"></c:SalesKit>
+                            </aura:iteration>
+                        </div>
+                    </aura:if>
+
+                   
+
+                </div>
+            </aura:if>
+
+            <aura:if isTrue="{!!empty(v.products)}">
+                <div>
+                    <h3 class="slds-section-title--divider heading"
+                        style="text-transform: initial;color: #fff;letter-spacing:0;"
+                        onclick="{!c.showhidesection}" >
+                        <i class="{!'buttonicon fa fa-' + v.iconname}" aria-hidden="true"></i>
+                        Products
+                    </h3>
+                </div>
+
+                
+                <div class="{!v.hidesection}">
+                    <aura:iteration items="{!v.products}" var="prod" indexVar="index">
+                        <c:ProductType prodLineSeries="{!prod}"></c:ProductType>
+                    </aura:iteration>
+                </div>
+            </aura:if>
+
+            <aura:if isTrue="{!!empty(v.documents)}">
+            <div class ="slds-m-top--large">
+                <aura:iteration items="{!v.documents}" var="docum" indexVar="index">
+                    <c:DocumentType documentType="{!docum}" docNumber="{!v.docNumber}"/>
+                </aura:iteration>
+            </div>
+            </aura:if>
+
+            <aura:if isTrue="{!v.noResultFlag}">
+                <c:NoSearchResults />
+            </aura:if>
+        </div>
+
+    </aura:if>
+
+    <aura:if isTrue="{!!v.searchpanel}">
+
+        <div aura:id="detailpanel">
+            <div align="right" style="padding: 0 5px;font-size: 85%;">
+            <input type="button" value="BACK" onclick="{!c.backToSearch}" class="backbutton"/>
+			</div>
+            <c:ProductDetail product="{!v.product}"
+                             document="{!v.document}"
+                             banners="{!v.banners}"
+                             bannerKeys="{!v.bannerKeys}"
+                             videos="{!v.videos}"
+                             videoKeys="{!v.videoKeys}"
+                             productImages="{!v.productImages}"/>
+            
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showsalesaids}">
+        <c:salesaids ></c:salesaids>
+    </aura:if>
+    <c:salesAidsPopup retURL="./productresources" />
+</aura:component>

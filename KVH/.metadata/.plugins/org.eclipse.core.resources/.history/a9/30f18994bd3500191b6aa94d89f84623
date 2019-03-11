@@ -1,0 +1,17 @@
+<apex:page controller="myKVH_SupportCenterExportController" readOnly="true" >
+    <html>
+        <head>
+            <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+            <script>
+                $( document ).ready(function() {
+                
+            });
+            
+            $( window ).on( "load", function() {
+                window.top.close();
+            });
+            </script>
+        </head>
+        <apex:iframe src="myKVH_SupportCenterExportExcelVF" />
+    </html>
+</apex:page>

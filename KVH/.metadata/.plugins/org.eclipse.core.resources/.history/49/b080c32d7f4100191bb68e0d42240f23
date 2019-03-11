@@ -1,0 +1,9 @@
+<apex:page standardController="Case" extensions="Case_OrderEntryNotificationCtrl" action="{!sendNotification}">
+  <apex:form >
+      <apex:sectionHeader title="Shipping Info to Order Entering"/>
+      <apex:pageBlock >
+          <apex:pageMessages ></apex:pageMessages>
+          <apex:commandButton value="Back" action="{!back}"/>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

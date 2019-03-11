@@ -1,0 +1,15 @@
+<apex:page cache="false"
+  standardStylesheets="false"
+  showHeader="false"
+  sidebar="false"
+  language="{!$CurrentPage.parameters.l}" 
+  action="{!IF(AND(ISPICKVAL($User.UserType,'Guest'), $Site.LoginEnabled), URLFOR('/PortalLogin'), URLFOR('/PortalHome'))}"
+  >
+  
+ 
+
+<apex:composition template="{!$Site.Template}">
+  <apex:define name="body"></apex:define>
+</apex:composition>
+
+</apex:page>

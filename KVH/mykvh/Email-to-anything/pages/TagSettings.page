@@ -1,0 +1,24 @@
+<apex:page controller="ortoo_e2a.TagSettingExtension" tabStyle="Global_Settings__tab">
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jsColor, '/jscolor.min.js')}" />
+<apex:form id="theForm">
+    <apex:sectionHeader title="e2a Tag Settings"/>
+    <apex:pageBlock id="viewPageBlock" >
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!save}" value="Save"/>
+            <apex:commandButton action="{!saveAndNew}" value="Save & New"/>
+            <apex:commandButton action="{!cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+        <apex:pageMessages />
+        <apex:pageblockSection collapsible="false" columns="1">
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Tag Value" />
+                    <apex:inputText value="{!tagValue}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Tag Colour" />
+                    <apex:inputText value="{!tagColour}" styleClass="jscolor"/>
+                </apex:pageblockSectionItem> 
+            </apex:pageblockSection>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -1,0 +1,84 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>  
+    <aura:attribute name="installerInfoRequired" type="boolean"/> 
+    <aura:attribute name="customerInfoFlag" type="boolean"/>
+    <aura:attribute name="kvhAUthInfoFlag" type="boolean"/>     
+    <aura:attribute name="customerCheckFlag" type="boolean"/>
+    <aura:attribute name="kvhAUthCheckFlag" type="boolean"/>
+    <aura:attribute name="subInfoRequired" type="boolean"/>
+    <aura:attribute name="cont1Required" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    <aura:handler name="change" value="{!v.customerInfoFlag}" action="{!c.handlecustomerInfo}"/>
+    <aura:handler name="change" value="{!v.kvhAUthInfoFlag}" action="{!c.handlekvhAUthInfo}"/>
+    <lightning:card title="Receiver Shipping Location">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.cont1Required}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-12"> 
+                    <span class="slds-form-element__label" >
+                        Same as
+                    </span> &nbsp;
+                </div>                  
+                <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                    <lightning:input label="Customer Information" type="checkbox" aura:id="Customer"
+                                     onchange="{!c.updateInfo}" name="other"
+                                     checked="{!v.customerCheckFlag}"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12">                    
+                    <lightning:input label="KVH Authorized Dealer/Distributor Information" type="checkbox" 
+                                     aura:id="KVHAuthorized" name="other" onchange="{!c.updateInfo}" 
+                                     checked="{!v.kvhAUthCheckFlag}"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 ">
+                    <lightning:input aura:id="LTEFieldCont" label="Addressee" required="true"	
+                                     value="{!v.simpleLTEActivation.Shipping_Addressee__c}" 
+                                     onblur="{!c.contact1Validation}"/>
+                    <lightning:input aura:id="LTEFieldCont" label="Address" required="true"
+                                     value="{!v.simpleLTEActivation.Shipping_Address__c}" 
+                                     onblur="{!c.contact1Validation}"/>   
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel"> 
+                    <lightning:input aura:id="LTEFieldCont" label="City" required="true" 
+                                     value="{!v.simpleLTEActivation.Shipping_City__c}"
+                                     onblur="{!c.contact1Validation}"/>
+                    <lightning:input aura:id="LTEFieldCont" label="Postal/Zip Code" required="true" 
+                                     value="{!v.simpleLTEActivation.Shipping_Postal_Zip_Code__c}"
+                                     onblur="{!c.contact1Validation}"/>              
+                </div>
+                 <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                    <aura:if isTrue="{! or(v.customerCheckFlag,v.kvhAUthCheckFlag)}">
+                        <lightning:input aura:id="LTEFieldCont" label="Country" required="true" 
+                                         value="{!v.simpleLTEActivation.Shipping_Country__c}"
+                                         onblur="{!c.contact1Validation}"/>
+                        <lightning:input aura:id="LTEFieldCont" label="State/Province/Territory" required="true" 
+                                         value="{!v.simpleLTEActivation.Shipping_State_Province_Territory__c}"
+                                         onblur="{!c.contact1Validation}"/>
+                        <aura:set attribute="else">              
+                            <c:Country_Picklist_cmp countryList="{!v.countryList}"
+                                                    selectedCountry="{!v.selectedCountry}" 
+                                                    selectedState="{!v.selectedState}" 
+                                                    componentID="receiverShippingLocation"/>                               
+                        </aura:set>
+                     </aura:if>
+                </div>
+            </div>
+        </div>        
+    </lightning:card>
+</aura:component>

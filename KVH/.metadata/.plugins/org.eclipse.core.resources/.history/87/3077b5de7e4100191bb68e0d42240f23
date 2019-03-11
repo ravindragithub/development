@@ -1,0 +1,55 @@
+<aura:component controller="HTS_ltgsvc_subscriptions">
+  <aura:attribute name="subscription" type="SBQQ__Subscription__c" />
+  <aura:attribute name="diagnostics" type="HTS_ltgsvc_diagnostics" description="Results of the Service-Side validation" />
+  <aura:attribute name="OSSsubscriber" type="HTSOSS_hts_subscribers" description="This is the sbuscriber in OSS that matches the Subscription in Salesforce" />
+  <aura:attribute name="statusMessage" type="string" description="Status message returned from server" default="Initializing..." />
+  <aura:attribute name="enabled" type="Boolean" default="false"/>
+  <!--PUBLISHER -->
+  <aura:registerEvent name="updateComplete" type="c:HTS_subscriptions_component_evt" />
+  <aura:registerEvent name="stateTransition" type="c:HTS_subscriptions_component_evt" />
+  <!--EVENT LISTENER -->
+  <aura:handler name="change" value="{!v.subscription}" action="{!c.handleSubscriptionChange}"/>
+  <aura:handler name="change" value="{!v.diagnostics}" action="{!c.handleDiagnosticsChange}"/>
+  <aura:handler name="stateTransition" event="c:HTS_hybrids_component_evt" action="{!c.handleComponentEvent}" />
+
+  <div class="slds-is-relative">
+
+    <div class="slds-form slds-form_stacked">
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="asset">Traffic Identifier</label>
+        <div class="slds-form-element__control slds-m-left_medium">
+          <b><ui:outputText value="{!v.subscription.Traffic_Identifier__c}" aura:id="vtidString"/></b>
+        </div>
+      </div>
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="service">Shaping Policy for Data Plan</label>
+        <div class="slds-form-element__control slds-m-left_medium">
+          <b><ui:outputText value="{!v.subscription.SBQQ__Product__r.HTS_Subscriber_Plan__r.Name}"/></b>
+        </div>
+      </div>
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="service">Network Shaping Policy</label>
+        <div class="slds-form-element__control slds-m-left_medium">
+          <b><ui:outputText value="{!v.OSSsubscriber.subscriber_plan_id}"/></b>
+        </div>
+      </div>
+    </div>
+    <!-- Conditionally rendered button!  -->
+    <aura:if isTrue="{!v.enabled}">
+      <div class="slds-form-element slds-m-around--small slds-align_absolute-center">
+        <lightning:button variant="brand" label="Go, Baby GO!" iconName="utility:sync" iconPosition="left" onclick="{!c.handleSubChange}"/>
+      </div>
+      <aura:set attribute="else">
+        <div class="slds-form-element slds-m-around--small slds-align_absolute-center">
+          <lightning:button variant="brand" label="Nothing to do!" iconName="utility:clock" iconPosition="left" onclick="{!c.handleNothing}"/>
+        </div>
+      </aura:set>
+    </aura:if>
+    
+    <div aura:id="spinner_div" style="position: static; z-index: 9002;" class="hide">
+      <lightning:spinner variant="brand" size="medium" alternativeText="Calling Server..."/>
+    </div>
+
+  </div>
+
+</aura:component>

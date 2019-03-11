@@ -1,0 +1,30 @@
+<apex:component id="headerComponent">
+    
+    <!-- style for header in MASTERAppsStyles.css static resource -->
+    
+    <div class="lte-header">
+        
+        <div class="kvh-logo">
+            <apex:image url="{!$Resource.KVHLogoWhite}" />
+        </div>
+        
+        <div class="lte-icon">
+            <apex:image url="{!$Resource.MVBManagerDome}" />
+        </div>
+        
+        <div class="lte-title">
+			<h1>LTE Activation</h1>            
+        </div>
+        
+    </div>
+    
+
+    
+        
+        <!--
+		<apex:panelGrid cellpadding="25%" cellspacing="0" width="100%" border="0" columns="1" style="text-align: right;" id="Links">
+            <apex:outputLink value="{!$Label.Base_URL}/secur/logout.jsp" rendered="{!NOT(ISPICKVAL($User.UserType,'Guest'))}" style="color:#ffffff;padding:10%;">{!$Label.site.logout}</apex:outputLink>
+        </apex:panelGrid>
+		-->
+        
+</apex:component>

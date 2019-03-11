@@ -1,0 +1,58 @@
+<aura:component controller="PRDReg_Controller">    
+    <aura:attribute name="simplePRDregistration" type="Object"/> 
+    <aura:attribute name="platformMap" type="map"/>
+    <aura:attribute name="marketMap" type="map"/>
+    <aura:attribute name="marketList" type="List"/>
+    <aura:attribute name="sectorList" type="List"/>
+    <aura:attribute name="selectedMarket" type="string"/>
+    <aura:attribute name="selectedSector" type="string"/>
+    <aura:attribute name="selectedAppType" type="string"/>
+    <aura:attribute name="landSelected" type="boolean" default="False"/>
+    <aura:attribute name="marineSelected" type="boolean" default="False"/>
+    <aura:attribute name="otherSelected" type="boolean" default="False"/>
+    <aura:attribute name="selectedVesselType" type="string"/>
+    <aura:attribute name="vesselInfoRequired" type="boolean"/>
+    <aura:attribute name="isDependentDisable1" type="boolean" default="true" />
+    <aura:attribute name="isDependentDisable2" type="boolean" default="true" />
+    <aura:attribute name="options" type="List" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <lightning:select aura:id="LTEField" label="Platform Type" value="{!v.selectedMarket}"
+                      onchange="{!c.handleVesselTypeValue}" required="true">
+        <option label="" value=""/>
+        <aura:iteration items="{!v.options}" var="item">
+            <option text="{!item.label}" value="{!item.value}"/>
+        </aura:iteration>
+    </lightning:select>
+    <lightning:select aura:id="LTEField" value="{!v.selectedSector}"
+                      onchange="{!c.onControllerFieldChange}" label="Application" 
+                      disabled="{!v.isDependentDisable1}"
+                      required="true">
+        <option label="" value=""/>
+        <aura:iteration items="{!v.marketList}" var="item">
+            <option value="{!item.label}" selected="{!item.label == v.selectedSector}">{!item.label}</option>
+        </aura:iteration>
+    </lightning:select>
+    <lightning:select aura:id="LTEField" label="Application Type" value="{!v.selectedAppType}"
+                      onchange="{!c.onDependentFieldChange}" required="true"
+                      disabled="{!v.isDependentDisable2}">        
+        <option label="" value=""/>
+        <aura:iteration items="{!v.sectorList}" var="item">
+            <option value="{!item.label}" >{!item.label}</option>
+        </aura:iteration>
+    </lightning:select>
+    <aura:if isTrue="{!v.otherSelected}">
+        <lightning:input aura:id="LTEField" label="Other"
+                         value="{!v.simplePRDregistration.Other__c}" 
+                         onblur="{!c.vesselInfoValidation}" required="true"/>    
+    </aura:if>
+    <aura:if isTrue="{!v.landSelected}">
+        <lightning:input aura:id="LTEField" label="RV or Vehicle Make/Model:"
+                         value="{!v.simplePRDregistration.Vessel_Name__c}" 
+                         onblur="{!c.vesselInfoValidation}" required="true"/>     
+    </aura:if>  
+    <aura:if isTrue="{!v.marineSelected}">
+        <lightning:input aura:id="LTEField" label="Vessel Name:"
+                         value="{!v.simplePRDregistration.Vessel_Name__c}" 
+                         onblur="{!c.vesselInfoValidation}" required="true"/>     
+    </aura:if>  
+</aura:component>

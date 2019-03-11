@@ -1,0 +1,153 @@
+<apex:page controller="ortoo_e2a.AddressLookupController" id="thePage" sidebar="false" showHeader="false">
+
+    <script>
+      function notifyParent(toAddresses,ccAddesses,bccAddresses)
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        winMain.emailAddressPassBack(toAddresses,ccAddesses,bccAddresses);
+      }
+        
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+    </script>
+    
+    <apex:form id="theform">
+        <apex:inputHidden value="{!ToAddresses}" id="to_passback"/>
+        <apex:inputHidden value="{!CcAddresses}" id="cc_passback"/>
+        <apex:inputHidden value="{!BccAddresses}" id="bcc_passback"/>
+        <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+            <tr>
+                <td><h2 style="color:white;vertical-align:middle">Email&nbsp;Address&nbsp;Lookup</h2></td>
+                <td width="100%">&nbsp;</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td class="spacercolumn"></td>
+                <td class="labelcolumn"><apex:outputLabel value="Show "/></td>
+                <td>
+                    <apex:selectList value="{!ContactTypeSelection}" size="1">
+                        <apex:selectOptions value="{!ShowSelection}"></apex:selectOptions>
+                        <apex:actionSupport event="onchange" reRender="slabel,contact_select,message1,message2"/>
+                    </apex:selectList>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="labelcolumn"><apex:outputLabel value="Search "/></td>
+                <td><apex:inputText value="{!EmailAddressSearchString}"/></td>
+                <td><apex:inputText style="display:none" /></td>  <!-- This is to deal with the problem of pressing enter -->
+                <td><apex:commandButton id="go_search" value="Go!" reRender="slabel,contact_select,message1,message2"/></td>
+                <td width="100%"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td colspan="4"><apex:outputText id="message1" value="{!SearchStringMessage}" style="color:red;font-weight:bold"/>&nbsp;</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td colspan="4"><apex:outputText id="message2" value="{!NotFoundMessage}" style="color:red;font-weight:bold"/>&nbsp;</td>
+            </tr>
+        </table>
+        <apex:pageBlock onmouseover="setFocusonButton();">
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><apex:outputPanel id="slabel"><apex:outputText >{!SelectListLabel}:</apex:outputText></apex:outputPanel></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:selectList value="{!ContactSelection}" id="contact_select" size="18" style="width:250px" >
+                                        <apex:selectOptions value="{!ContactSelectionList}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </td>
+                            </tr>
+                         </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                </td>
+                                <td><apex:outputText >To Recipients</apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <td width="20px">
+                                    <apex:commandButton value=">>" id="to_select_add" action="{!AddToContact}"/>
+                                    <apex:commandButton value="<<" id="to_select_del" action="{!DelToContact}"/>
+                                </td>
+                                <td>
+                                    <apex:selectList value="{!ToSelection}" id="to_select" size="5" style="width:250px" >
+                                        <apex:selectOptions value="{!ToSelectionList}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td><apex:outputText >CC Recipients</apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <td width="20px">
+                                    <apex:commandButton value=">>" id="cc_select_add" action="{!AddCcContact}"/>
+                                    <apex:commandButton value="<<" id="cc_select_del" action="{!DelCcContact}"/>
+                                </td>
+                                <td>
+                                    <apex:selectList value="{!CcSelection}" id="cc_select" size="5" style="width:250px">
+                                        <apex:selectOptions value="{!CcSelectionList}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td><apex:outputText >BCC Recipients</apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <td width="20px">
+                                    <apex:commandButton value=">>" id="bcc_select_add" action="{!AddBccContact}"/>
+                                    <apex:commandButton value="<<" id="bcc_select_del" action="{!DelBccContact}"/>
+                                </td>
+                                <td>
+                                    <apex:selectList value="{!BccSelection}" id="bcc_select" size="5" style="width:250px">
+                                        <apex:selectOptions value="{!BccSelectionList}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <div style="text-align: right;">
+            <apex:commandButton value="Save" onclick="notifyParent('{!ToAddresses}','{!CcAddresses}','{!BccAddresses}');" id="submit"/>
+            <apex:commandButton value="Cancel" onclick="closeWindow();"/>
+        </div>
+    </apex:form>
+    
+    <script>
+        function setFocusonButton(){
+            var doc = document.getElementById("thePage:theform:submit");             
+            doc.focus();
+        }
+    </script>
+
+</apex:page>

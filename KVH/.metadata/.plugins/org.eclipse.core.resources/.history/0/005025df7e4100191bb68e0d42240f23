@@ -1,0 +1,14 @@
+<aura:event type="APPLICATION" description="This event broadcasts the Application State and set of User Data to all components" >
+  <aura:attribute name="appState" type="String" description="Represents the state of the Application (e.g. RESET)" />
+  <!-- from search component -->
+  <aura:attribute name="searchString" type="String" description="This is the search attribute" />
+  <!-- from insert, success component -->
+  <aura:attribute name="systemSerialNumber" type="String" description="I2CM System Serial Number" />
+  <aura:attribute name="adminIP" type="String" description="I2CM Admin IP" />
+  <aura:attribute name="swSerialNumber" type="String" description="CommBox Software System Serial Number" />
+  <aura:attribute name="MTAMAC" type="String" description="19-0504 Innomedia MTA MAC Address" />
+  <aura:attribute name="satRouter" type="String" description="19-0955 iDirect PCB Serial Number" />
+  <!-- from success, exception component -->
+  <aura:attribute name="statusMessage" type="String" default="Waiting for status update..." />
+  <aura:attribute name="assetList" type="List" />
+</aura:event>

@@ -1,0 +1,12 @@
+/**
+ * Created by Jai Chaturvedi on 25/04/2017.
+ */
+
+.THIS .optionClass{
+    font-size: 12px;
+}
+
+.THIS .selectClass{
+    height: 23px !important ;
+    border-radius: 18px !important ;
+}

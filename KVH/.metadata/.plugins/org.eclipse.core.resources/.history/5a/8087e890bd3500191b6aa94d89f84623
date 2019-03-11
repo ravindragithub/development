@@ -1,0 +1,81 @@
+<apex:page id="loginPage" showHeader="false" title="{!$Label.site.site_login}" controller="SiteLoginPageController"  action="{!isUserLoggedIn}"> <!-- action="{!isUserLoggedIn}" -->
+    
+    <apex:stylesheet value="{!URLFOR($Resource.customer_portal_styles)}" />
+    <style>
+        .box3 {
+        vertical-align: middle;
+        background: #fff;
+        display: table-cell;
+        width: 0%;
+        }
+        .box2 {
+        background: #fff;
+        min-width: 80%;
+        display: table-cell;
+        margin-bottom: 30px;
+        }
+        .box1{
+        border-radius: 25px;
+        border-left: thick solid #e3e3e3;;
+        width: 0px;
+        background: #fff;
+        display: table-cell;
+        margin-bottom: 30px;
+        }
+    </style> 
+    <apex:composition template="{!$Site.Template}">
+        
+        <apex:define name="body">
+            <div style="text-align:center; width:100%; margin:20px auto;">
+                <center>
+                    <apex:panelGrid >
+                        
+                        <apex:outputPanel layout="block">
+                            <apex:panelGrid > 
+                                
+                                <apex:panelGroup >
+                                    <h1 style="font-weight: bold;">Welcome to myKVH</h1>
+                                    <div class="box-row no-space">
+                                        <div class="box2">
+                                            <div class="box-title" style="background-color: #e3e3e3;">
+                                                <h2 class="" style="font-weight: bold;color: #666667 !important;">Login</h2>
+                                            </div>
+                                            <div class="box3">
+                                                <div class="content" style="text-align:center;">
+                                                    <c:SiteLogin id="siteLogin"/> 
+                                                </div>
+                                            </div>
+                                             <!--
+                                            <div class="box1">
+                                            </div>
+                                           
+                                            <div class="box3">
+                                                
+                                                
+                                                <div class="content" style="text-align:center;">
+                                                    <apex:outputLink value="/selfregregister?reg=Self">New to myKVH??</apex:outputLink>
+                                                    
+                                                    <apex:outputLink style="color: #666667;margin:20px 0; border-radius:3px;background-color: #e3e3e3;border:none;padding:0 20px;display: table-cell;" styleClass="btn" value="{!$Page.SelfRegRegister}" rendered="{!$Site.RegistrationEnabled}">Create KVH Customer Account</apex:outputLink> 
+                                                </div> 
+                                            </div>-->
+                                         <!--   <div class="footnote" style="margin:0px !important;">
+                                                <p style="text-align:center;">Supported browsers: Chrome, Internet Explorer 9+, Firefox 22+, Safari 5+</p>
+                                                <p style="text-align:center; font-style:normal;"><a href="https://kvh.my.salesforce.com/idp/login?app=0sp13000000CaVf" style="margin-top:40px;">KVH Employee Login</a></p>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                            </apex:panelGrid>
+                            
+                        </apex:outputPanel>
+                        
+                        <!-- we don't need no powered by.... <c:SitePoweredBy /> -->
+                    </apex:panelGrid>
+                </center>
+            </div>
+        </apex:define>
+        
+    </apex:composition>
+    
+</apex:page>

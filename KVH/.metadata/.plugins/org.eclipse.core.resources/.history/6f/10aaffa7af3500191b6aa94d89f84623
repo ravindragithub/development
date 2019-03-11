@@ -1,0 +1,13 @@
+<aura:documentation>
+	<aura:description>
+        <h4>This component displays a list of Assets in a table</h4>
+        <p>Proceed with caution, this component is used in multiple apps</p>
+    
+    </aura:description>
+	<aura:example name="success" ref="c:HTS_successTerminal_cmp" label="Success Terminals">
+		This example is from a "success" component, and would show a list of successfully created Assets
+	</aura:example>
+	<aura:example name="exception" ref="c:HTS_exceptionTerminal_cmp" label="Exception Terminals">
+		This example is from a "exception" component, and would show a list of potential duplicate Assets
+	</aura:example>
+</aura:documentation>

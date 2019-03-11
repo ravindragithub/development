@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Slayed_File_Count__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Total number of attachments deleted by Signature Slayer.</description>
+        <externalId>false</externalId>
+        <label>Slayed File Count</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Slayed_File_Names__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Names of all attachments deleted by Signature Slayer.</description>
+        <externalId>false</externalId>
+        <label>Slayed File Names</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Slayed_File_Size_Total__c</fullName>
+        <defaultValue>0</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Combined file size of all attachments deleted by Signature Slayer.</description>
+        <externalId>false</externalId>
+        <label>Slayed File Size Total</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <webLinks>
+        <fullName>Slay_Images</fullName>
+        <availability>online</availability>
+        <description>Add images to the Signature Slayer Hit List directly from the case.</description>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Attached Images</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/icatp__RecordHitList?id={!Case.Id}</url>
+    </webLinks>
+</CustomObject>

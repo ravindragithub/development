@@ -1,0 +1,85 @@
+<aura:component controller="HTS_ltgsvc_contract_controls">
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  <aura:attribute name="singleSub" type="SBQQ__Subscription__c" description="A single subscription" />
+  <aura:attribute name="relatedSubs" type="SBQQ__Subscription__c[]" description="A list of subscriptions related to this single parent" />
+  <aura:attribute name="type" type="String" description="The type of subscription, drives Icon Shape" default="custom:custom61" />
+
+  <!-- PUBLISHER -->
+  <aura:registerEvent name="refresh" type="c:HTS_hybrids_component_evt" />
+  <!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="refresh" event="c:HTS_hybrids_component_evt" action="{!c.handleCmpEvent}" />
+    
+  <div class="slds-is-relative">
+
+    <div class="slds-page-header">
+      <div class="slds-media">
+        <div class="slds-media__figure">
+            <span class="slds-icon_container" title="Indicates subscription parent contract">
+              <lightning:icon iconName="{!v.type}" size="x-small" alternativeText="Indicates subscription parent contract"/>
+            </span>
+        </div>
+        <div class="slds-media__body">
+          <p class="slds-text-body_small slds-align-middle">Subscription Number {!v.singleSub.Name}
+            <aura:if isTrue="{!v.singleSub.SBQQ__Product__r.HTS_Subscriber_Plan__c != null &amp;&amp; v.singleSub.SBQQ__TerminatedDate__c ==null}">
+              <button class="slds-button slds-button_neutral" disabled="false" onclick="{!c.invokeStaticIpService}">Add Static IP...</button>
+              <ui:outputText aura:id="staticStatus" value="" />
+            </aura:if>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="slds-form slds-form_compound">
+
+      <div class="slds-form-element__group">
+        <div class="slds-form-element__row">
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="productName">Service Name</label>
+            <ui:outputText aura:id="productName" value="{!v.singleSub.SBQQ__Product__r.Name}" />
+          </div>
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="asset">Asset</label>
+            <ui:outputText aura:id="asset" value="{!v.singleSub.Asset__r.Name}" />
+          </div>
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="tid">Traffic Identifier</label>
+            <ui:outputText aura:id="tid" value="{!v.singleSub.Traffic_Identifier__c}" />
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-form-element__group">
+        <div class="slds-form-element__row">
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="start">Start Date</label>
+            <ui:outputDate aura:id="start" value="{!v.singleSub.SBQQ__StartDate__c}" />
+          </div>
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="end">End Date</label>
+            <ui:outputDate aura:id="end" value="{!v.singleSub.SBQQ__EndDate__c}" />
+          </div>
+          <div class="slds-form-element slds-size_1-of-3">
+            <label class="slds-form-element__label" for="terminated">Terminated Date</label>
+            <ui:outputDate aura:id="terminated" value="{!v.singleSub.SBQQ__TerminatedDate__c}" />
+          </div>
+        </div>
+      </div>
+
+      <!-- related subscriptions -->
+
+      <aura:iteration items="{!v.relatedSubs}" var="sub">
+        <div class="slds-box slds-box_xx-small slds-m-around_xxx-small">
+          <c:HTS_hybrid_control_staticip singleSub="{!sub}" type="custom:custom37" /> 
+        </div>
+      </aura:iteration>
+      
+    </div>
+
+    <div aura:id="spinner_div" style="position: static; z-index: 9002;" >
+      <lightning:spinner variant="brand" size="medium" alternativeText="Calling Server..."/>
+    </div>
+
+  </div>
+
+</aura:component>

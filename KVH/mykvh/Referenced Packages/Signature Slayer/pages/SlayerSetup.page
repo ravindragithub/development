@@ -1,0 +1,277 @@
+<!--
+07/23/15 BS Slay In Future setting (00118017)
+-->
+<apex:page controller="icatp.SlayerSetupController" title="Signature Slayer Setup" sidebar="none" showHeader="true">
+    <apex:slds />
+    <apex:stylesheet value="{!$Resource.icatp__ICBranding}"/>
+    <style>
+        .seeMore div {position:relative;z-index:70; cursor: default;}
+        .seeMore div span {display: none; z-index:90;}
+        
+        .seeMore div:hover span {
+            display: block;position:absolute;
+            top:1em; padding:5px; left:5em; width:30em; border:1px solid #0cf; z-index:100;
+            background-color:#eff; color:black;
+        } 
+        
+        .primaryPalette {background-color:#D36D00 !important;}
+        .brdPalette, .secondaryPalette {border-top-color:#D36D00 !important;}
+        
+        .pbSubheader { 
+            background: #e96e25 !important; /* Fallback to solid color for older browsers */ 
+            background-image: linear-gradient(to top, #b95e15, #f97e35) !important; 
+            border-radius: 4px; 
+            text-shadow: -1px 0 #b95e15, 0 1px #b95e15,1px 0 #b95e15, 0 -1px #b95e15; 
+        } 
+        
+        .pageTitleIcon { 
+           /* background-image: url(/img/icon/wrench32.png) !important; */ /* Change this URL to point to the icon you want to use */ 
+        } 
+        
+        .historySettingIndent {
+            margin-left: 32px;
+        }
+        
+        .disabled {
+            color: #999 !important;
+        }
+        
+        .fauxBtn {
+            text-decoration: none !important;
+            padding: 4px 3px !important;
+        }
+        .fauxBtn:hover {
+            color: black;
+        }
+        .fauxBtn:focus {
+            outline: #4D90FE auto 5px;
+        }
+
+        .slds-icon_container .slds-popover {
+            visibility: hidden;
+            padding: 5px 5px;
+            opacity: 0;
+            transition: 0.3s;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            bottom: 30px;
+            left:9px;
+            width: 250px;
+            font-size: 1rem !important;
+
+        }
+        
+        .slds-icon_container:hover .slds-popover {
+            opacity: 1;
+            visibility:visible;
+        }
+
+        .slds-text-heading_medium{
+            font-weight: bold !important;
+        }
+    </style>
+    
+    <c:Header title="Setup" showButtons="true"/>
+    
+    <apex:pageMessages />
+    
+    <apex:form >
+        <div class="slds-tabs_default__content slds-show">
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-box">
+                    <div class="slds-section slds-is-open">
+                        <div class="slds-text-heading_medium">General Settings</div>
+                        <div class="slds-form-element">
+                           <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                              <label class="slds-checkbox__label">
+                                <apex:inputCheckbox id="filesSupport" styleClass="slds-input" value="{!enableFilesSupport}" onchange="checkDisableSecurityBypass();"/>
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-icon_container slds-icon-utility-info">
+                                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+                                    </svg>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left"><span class="slds-popover__body">When enabled, files will be queried on the Hit List Manager and will be deleted upon creation when matching a file selected in the hit list.</span></span>
+                                </span>
+                                <span class="slds-form-element__label">Enable Files Support</span>
+                              </label>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="slds-form-element slds-m-left_large">
+                           <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                              <label class="slds-checkbox__label">
+                                <apex:inputCheckbox id="securityBypass" styleClass="slds-input" value="{!enableSecurityBypass}"/>
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-icon_container slds-icon-utility-info">
+                                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+                                    </svg>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left"><span class="slds-popover__body">When enabled, record owners can slay all files on records they own, even if they are not the owner of the file.</span></span>
+                                </span>
+                                <span class="slds-form-element__label">Enable Security Bypass for Record Owners</span>
+                              </label>
+                            </span>
+                          </div>
+                        </div>
+
+                        <!--<div class="slds-form-element slds-m-top_medium">
+                           <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                              <label class="slds-checkbox__label">
+                                <apex:inputCheckbox styleClass="slds-input" value="{!slayInFuture}"/>
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-icon_container slds-icon-utility-info">
+                                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+                                    </svg>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left"><span class="slds-popover__body">Select this option if you are using Case Feed.</span></span>
+                                </span>
+                                <span class="slds-form-element__label">Remove Images Asynchronously</span>
+                              </label>
+                            </span>
+                          </div>
+                        </div>-->
+
+                        <div class="slds-form-element">
+                           <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                              <label class="slds-checkbox__label">
+                                <apex:inputCheckbox styleClass="slds-input" value="{!slayHistoric}"/>
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-icon_container slds-icon-utility-info">
+                                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+                                    </svg>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left"><span class="slds-popover__body">If selected, Signature Slayer will find and remove ALL instances of selected images within the org.</span></span>
+                                </span>
+                                <span class="slds-form-element__label">Enable Retroactive Removal</span>
+                              </label>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="slds-form-element" style="display:{!IF(hasChatterExtension,'block','none')}">
+                           <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                              <label class="slds-checkbox__label">
+                                <apex:inputCheckbox styleClass="slds-input" value="{!enableChatterTriggers}"/>
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-icon_container slds-icon-utility-info">
+                                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+                                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+                                    </svg>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left"><span class="slds-popover__body">When a user's email signature is found at the end of an incoming Chatter post or comment it will be stripped from the body. This requires the user to have set their signature under My Email Settings.</span></span>
+                                </span>
+                                <span class="slds-form-element__label">Remove Email Signatures in Chatter</span>
+                              </label>
+                            </span>
+                          </div>
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="slds-section slds-is-open">
+                        <div class="slds-text-heading_medium">Object Settings</div>
+                        Select the objects on which Signature Slayer should delete images. Images attached to the selected objects can be marked for deletion from the Hit List Manager.
+                        
+                        <div class="slds-form-element" style="margin-left:15%;margin-bottom:0.5rem;margin-top:0.5rem">
+                            <label class="slds-checkbox_toggle slds-grid">
+                                <span class="slds-form-element__label slds-m-bottom_none">Show All Objects</span>
+                                <apex:inputCheckbox styleClass="slds-input" value="{!showAll}">
+                                    <apex:actionSupport event="onchange" oncomplete="checkCheckAll();" reRender="obj-tbl"/>
+                                </apex:inputCheckbox>
+                                <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
+                                    <span class="slds-checkbox_faux checkboxSlider" style="border-bottom:none;border-left:none;"><!-- add border-color and background-color here to change toggle switch color --></span>
+                                    <span class="slds-checkbox_on">Enabled</span>
+                                    <span class="slds-checkbox_off">Disabled</span>
+                                </span>
+                            </label>
+                        </div>
+                        
+                        <apex:outputPanel id="obj-tbl">
+                            <div style="margin-left:30px;margin-bottom:30px">
+                                <apex:repeat value="{!objects}" var="obj">
+                                    <div class="slds-form-element" >
+                                        <span class="slds-checkbox">
+                                          <label class="slds-checkbox__label">
+                                            <apex:inputCheckbox styleClass="obj-sel" onchange="checkCheckAll();" value="{!obj.selected}"/>
+                                            <span class="slds-checkbox_faux"></span>
+                                            <span class="slds-form-element__label">{!obj.objectLabel}</span>
+                                          </label>
+                                        </span>
+                                    </div>
+                                </apex:repeat>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                    <div class="slds-section slds-is-open" style="display:{!IF(isChatterEnabled && !hasChatterExtension,'block','none')};margin-top:1rem;margin-bottom:1rem">
+
+                        <div class="slds-text-heading_medium">Chatter Extension Available</div>
+                        A Chatter Extension package is available that allows email signatures to be removed from Chatter posts and comments. Use the links below to install the extension package.
+                        <p><a href="http://ic.force.com/sschatterprod" target="_blank">Production</a> | <a href="http://ic.force.com/sschattersand" target="_blank">Sandbox</a></p>
+                    </div>
+
+                    <div class="slds-button-group" role="group">
+                        <apex:commandButton action="{!saveSettings}" styleClass="slds-button slds-button_brand" value="Save"/>
+                        <apex:commandButton styleClass="slds-button slds-button_neutral" action="{!getManagerLink}" value="Open Hit List Manager"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    
+    <script>
+        function checkAll(sel) {
+            var boxes = document.getElementsByClassName('obj-sel');
+            for (var i = 0;i < boxes.length;i++) {
+                boxes[i].checked = sel;
+            }
+        }
+        
+        function checkCheckAll() {
+            var checkAll = document.getElementById('check-all');
+            var boxes = document.getElementsByClassName('obj-sel');
+            for (var i = 0;i < boxes.length;i++) {
+                if (!boxes[i].checked) {
+                    checkAll.checked = false;
+                    return;
+                }
+            }
+            checkAll.checked = true;
+        }
+        
+        checkCheckAll();
+
+        function checkDisableSecurityBypass() {
+            if(document.querySelectorAll("[id$=filesSupport]")[0].checked == true){
+                document.querySelectorAll("[id$=securityBypass]")[0].disabled = false;
+            } else if(document.querySelectorAll("[id$=filesSupport]")[0].checked == false){
+                document.querySelectorAll("[id$=securityBypass]")[0].disabled = true;
+            }
+        }
+        checkDisableSecurityBypass();
+    </script>
+    
+    <script>
+        //elements by CSS style
+        function getElementsByClassName(className) {
+            var hasClassName = new RegExp("(?:^|\\s)" + className + "(?:$|\\s)");
+            var allElements = document.getElementsByTagName("*");
+            var results = [];
+        
+            var element;
+            for (var i = 0; (element = allElements[i]) != null; i++) {
+                var elementClass = element.className;
+                if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(elementClass))
+                    results.push(element);
+            }
+        
+            return results;
+        }
+    </script>
+</apex:page>

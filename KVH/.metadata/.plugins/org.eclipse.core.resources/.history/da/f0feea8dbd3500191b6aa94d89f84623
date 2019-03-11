@@ -1,0 +1,65 @@
+<apex:page >
+
+<body>
+<style>
+
+th, td {
+    padding: 5px;
+}
+</style>
+<h1>Online Activations Demonstration Page</h1><p/>
+This page will allow you to quickly compare the Visualforce and the HTML version of the same page.
+<p/><p/>
+	<table style="width:100%">
+		<tr>
+			<th>VisualForce</th>
+			<th>HTML</th>
+		</tr>
+		<tr>
+			<td><a href="activations" target="_blank">Activations (aka Index)</a> in Salesforce (Start Here)</td>
+			<td><a href="http://progressive.kvh.com/staging/activations" target="_blank">Activations</a> in progressive.kvh.com/staging</td>
+		</tr>
+		<tr>
+			
+		</tr>
+		<tr>
+			<td><a href="Account_Setup" target="_blank">Account Setup</a> in Salesforce (Direct link will throw exception...)</td>
+			
+		</tr>
+	</table>
+	<hr/>
+	<table width="100%">
+		<tr><h1>Additional Demo Pages</h1></tr>
+		<tr>
+			<td><a href="Activation_Status_demo" target="_blank">Activation Status Component Demo</a> in Salesforce</td>
+			
+		</tr>
+	</table>
+	<br/>
+	<hr/>
+	<table style="width:100%">
+		<tr><h1>Deprecated Pages</h1></tr>
+		<tr>
+			<td><a href="subscriber" target="_blank">Subscriber</a> in Salesforce (Direct link will throw exception...)
+			<br/>(kind of not using this anymore.... other than for Dev/Debugging. Account Setup replaced it!)</td>
+		</tr>
+		<tr>
+			<td><a href="contacts" target="_blank">Contacts</a> in Salesforce (Direct link will throw exception...)</td>
+			
+		</tr>
+		<tr>
+			<td><a href="Platform" target="_blank">Platform</a> in Salesforce</td>
+			
+		</tr>
+		<tr>
+			<td><a href="Products" target="_blank">Products</a> in Salesforce</td>
+			
+		</tr>
+	</table>
+<p/><p/>
+<hr/>
+<h1>Static Resource Instructions:</h1><br/>
+Upload complete ZIP file as a Public Static Resource named "ActivationOrders"
+</body>
+
+</apex:page>

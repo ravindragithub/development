@@ -1,0 +1,83 @@
+<aura:component controller="HTS_ltgsvc_termStatus">
+  <aura:attribute name="identifiers" type="List" />
+  <aura:attribute name="statusItems" type="List" />
+  <aura:attribute name="subsList" type="HTSOSS_hts_subscribers[]" description="This is a list of active subscriptions returned from OSS" />
+
+  <aura:handler name="lookupVTID_done" event="c:foundVTID_evt" action="{!c.handleFoundVTID}" />
+  <aura:handler name="searchingVTID" event="c:searchVTID_evt" action="{!c.handleSearching}" />
+
+  <c:lookupVTID_cmp aura:id="lookup" /> <!-- This component Fires an event after search -->
+
+  <div style="width: 100%; height: 7px; background: #F87431; overflow: hidden;" />
+  <div aura:id="vtid">
+    <div aura:id="vtid_spinner" class="slds-hide">
+      <lightning:spinner variant="brand" size="small" alternativeText="Waiting for response from Salesforce and OSS..."/>
+    </div>
+    <div aura:id="vtid_table">
+      <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+          <tr class="slds-text-title--caps">
+            <th scope="col"><div class="slds-truncate" title="Key">Key</div></th>
+            <th scope="col"><div class="slds-truncate" title="Value">Value</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <aura:iteration items="{!v.identifiers}" var="identifier">
+              <tr>
+                <td>{!identifier.key}</td>
+                <td>{!identifier.value}</td>
+              </tr>
+          </aura:iteration>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="width: 100%; height: 7px; background: #F87431; overflow: hidden;" />
+  <div aura:id="subscriptions">
+    <div aura:id="subs_spinner" class="slds-hide">
+      <lightning:spinner variant="brand" size="small" alternativeText="Waiting for response from OSS..." />
+    </div>
+    <table class="slds-table slds-table--bordered slds-table--striped">
+      <thead>
+        <tr class="slds-text-title--caps">
+          <th scope="col"><div class="slds-truncate">Traffic Identifier</div></th>
+          <th scope="col"><div class="slds-truncate">Shaping Policy</div></th>
+          <th scope="col"><div class="slds-truncate">Status</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <aura:iteration items="{!v.subsList}" var="subs">
+          <tr>
+            <td>{!subs.subscriber_id}</td>
+            <td>{!subs.subscriber_plan_id}</td>
+            <td>{!subs.status}</td>
+          </tr>
+        </aura:iteration>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="width: 100%; height: 7px; background: #F87431; overflow: hidden;" />
+  <div aura:id="oss">
+    <div aura:id="oss_spinner" class="slds-hide">
+      <lightning:spinner variant="brand" size="small" alternativeText="Waiting for response from OSS..."/>
+    </div>
+    <table class="slds-table slds-table--bordered slds-table--striped">
+      <thead>
+        <tr class="slds-text-title--caps">
+          <th scope="col"><div class="slds-truncate">Short Name</div></th>
+          <th scope="col"><div class="slds-truncate">Status</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <aura:iteration items="{!v.statusItems}" var="statusItem">
+          <tr>
+            <td>{!statusItem.ShortName}</td>
+            <td>{!statusItem.value}</td>
+          </tr>
+        </aura:iteration>
+      </tbody>
+    </table>
+  </div>
+</aura:component>

@@ -1,0 +1,2 @@
+<aura:event type="APPLICATION" description="ClearOptionsEvent. Used to clear the checkbox on product search page">
+</aura:event>

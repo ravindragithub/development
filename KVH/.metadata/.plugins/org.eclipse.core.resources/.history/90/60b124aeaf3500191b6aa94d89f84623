@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SpotlightComponentController" >
+	<aura:attribute name="newsHeader" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>
+    <aura:attribute name="availableCheck" type="String" access="global" default="slds-hide"/>
+    <aura:attribute name="imagelst" type="SpotlightComponentController.ImageWrapper[]" access="global"/>
+    
+    
+    <aura:handler event="c:PlaceAvailableServicesEvent" action="{!c.handlePlaceAvailableServiceEvent}"/>
+   
+    <div style="padding:20px;" class="{! 'slds-grid slds-wrap  ' + v.availableCheck}">
+         <div  class="" style="height: 345px;background: #fff;">
+             <h2  style="margin: 0;background: #e3e3e3;color: #666;font-size: 18px;padding: 10px 15px;">{!v.newsHeader}</h2>
+            
+             <div class="slds-p-around_small">
+                  <aura:iteration items="{!v.imagelst}" var="img">
+                   <!--   <a href="{!img.url}" target="_blank" >
+                      	<img class="bannerimg slds-p-around_small" src="{!img.imageURL}"/>
+                      </a>-->
+                      <a href="{!img.url}" target="_blank" >
+                          <div class="dark-buttons">
+                              <img src="{!img.imageURL}"/>
+                              <strong>{!img.name}</strong><br/>
+                                {!img.description}
+                          </div>
+                      </a>
+                 </aura:iteration>  
+             </div>
+         </div>
+     </div>
+</aura:component>

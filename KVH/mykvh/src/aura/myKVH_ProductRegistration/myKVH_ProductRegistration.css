@@ -1,0 +1,102 @@
+.THIS .formContainer{
+    min-height: 400px;
+    background: #fff;
+    padding: 30px;
+}
+.THIS .go-btn {
+    background-color:#fff;
+    color: #333;
+    border:1px solid #ddd;
+    line-height:normal;
+    margin:0;
+    padding:10px 15px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    border-radius:0px;
+    font-size:85%;
+}
+.THIS .go-btn:hover {
+    background-color:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS .clear {
+    clear:both;
+}
+.THIS .req-note {
+    font-size:80%;
+    font-style:italic;
+}
+.THIS .slds-card__header {
+    padding: 0 0 0rem 0.75rem !important;
+    margin-bottom: 0px;
+}
+.THIS .slds-card {
+    border-radius:0;
+    border:none;
+    background-color:transparent;
+}
+.THIS .required {
+    text-align:left;
+}
+.THIS abbr.slds-required {
+    float:right;
+    margin:0;
+}
+.THIS .button-bar {
+    padding:0;
+    margin:0;
+    overflow: auto;
+}
+.THIS .button-bar button{
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
+    border-radius:0px;
+    padding:0px 10px;
+    text-transform:uppercase;
+    font-weight:bold;
+    font-size:85%;
+    display:inline;
+}
+.THIS .reqIcon{
+    width:20px;
+    height:20px;
+    border-radius: 50%;
+    display: inline-block;
+    padding:0 0 0 3px;
+}
+.THIS .reqIcon .slds-icon {
+    margin-top:3px;
+}
+.THIS .reqIcon.slds-icon-action-remove {
+    background-color: #cc0000;
+}
+.THIS .slds-icon-action-approval{
+    background-color: #79b143;    
+}
+.THIS .notStarted{
+    background-color: #bbbbbb;    
+}
+.THIS .prdRegAccordion button{
+    text-transform: uppercase;
+    font-size: 75%;
+    font-weight: bold;
+}
+.THIS .savebtn {
+    background-color:#79b143;
+    padding: 5px 40px;
+    border-radius: 0;
+    border: 0;
+}
+@media (min-width: 500px) {
+    .THIS .savebtn {
+        width:auto;
+    }
+}
+.THIS .slds-spinner {
+    position: fixed;
+}
+.THIS .DuplicateSerialNoModal .modal-body {
+    border-radius: 0;
+}

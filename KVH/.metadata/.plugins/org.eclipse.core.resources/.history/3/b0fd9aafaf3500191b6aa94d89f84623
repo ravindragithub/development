@@ -1,0 +1,48 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                controller="myKVH_forgotPassword" access="global">
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <aura:attribute name="destination" type="String" required="false" default=""/>
+    <aura:attribute name="serialNumber" type="String" required="false" default=""/>   
+    <aura:attribute name="spinner" type="Boolean" default="false"/>     
+    
+   
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <div style="background: #f3f3f3;min-height: 550px;">    
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-medium-size_2-of-12">
+            </div> 
+            
+            <div class="slds-col slds-medium-size_8-of-12" style="background: #fff;padding: 30px;">
+                
+                <h1>Forgot Password</h1>            
+                <p>
+                    Enter the email address you signed up with and we will send you the password reset instructions.
+                </p>
+                <ui:inputText updateOn="keyup" aura:id="username" 
+                              keyup="{!c.onKeyUp}" required="true" 
+                              value="" label="Email"/>
+                <ui:button aura:id="submitButton" label="Submit" press="{!c.handleForgotPass}" 
+                           class="sfdc_button submitbtn"/>
+                <!--
+<div style="padding-top: 2rem;">
+<a href="{!$Site.BaseUrl}/s/mykvh-self-register">New to myKVH?</a>
+</div>
+-->
+            </div>
+            
+            <div class="slds-col slds-medium-size_2-of-12">
+            </div>
+        </div>
+    </div>
+    {!v.body}
+</aura:component>

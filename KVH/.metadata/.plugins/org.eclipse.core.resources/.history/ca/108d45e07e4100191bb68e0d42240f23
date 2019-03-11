@@ -1,0 +1,178 @@
+<!--
+ - Created by Jai Chaturvedi on 7/08/2017.
+ -->
+
+<aura:component description="PartnerAccount">
+    
+    
+    <aura:attribute name="partner" type="DistanceWrapper"/>
+    <aura:attribute name="ProductID" type="String"/>
+     <aura:attribute name="searchOption" type="String"/>
+     <aura:attribute name="stateCountry" type="String"/>
+    <aura:attribute name="quoteURL" type="String"/>
+    
+     
+    
+    <aura:attribute name="shippingStreet" type="String" default=""/>
+    <aura:attribute name="shippingCityStateZip" type="String" default=""/>
+    <aura:attribute name="shippingCountry" type="String" default=""/>
+    <aura:attribute name="contact" type="String" default=""/>
+    <aura:attribute name="shippingStreetSet" type="Boolean" default="false"/>
+    <aura:attribute name="shippingCityStateZipSet" type="Boolean" default="false"/>
+    <aura:attribute name="shippingCountrySet" type="Boolean" default="false"/>
+    <aura:attribute name="contactSet" type="Boolean" default="false"/>
+    <aura:attribute name="partnerLength" type="String"/>
+    <aura:registerEvent name="focusAccount" type="c:FocusAccountOnMap"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-p-horizontal_medium slds-size--1-of-1 slds-p-bottom_small"
+         onclick="{!c.focusAccountOnMap}"
+         style="cursor: pointer;font-family: sans-serif;padding-top:10px;padding-bottom:10px;">
+        
+        <div class="slds-grid slds-grid_pull-padded-small slds-p-bottom_none">
+            <div class="slds-p-left_medium pin slds-p-right_medium">{!v.partner.srnumber}</div>
+            <div class="slds-p-horizontal_none">
+                <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small">
+                    <div class="slds-p-horizontal_small slds-size--1-of-1">
+                       <!-- <div class="slds-text-body_small" style="color:#eeb214;font-weight: bold;font-size: .875em">
+                            {!'CSN ' + v.partner.CSN}
+                        </div>   ###{!v.partner.accountRecordType}-->
+                      
+                    </div>
+                </div>
+                <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small">
+                    <div class="slds-p-horizontal_small slds-size--1-of-1">
+                        <div class="slds-text-heading_small" style="color:#1f83ad;font-weight: bold;font-size: 1.2em">
+                            {!v.partner.account.Name}
+                        </div>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.contactSet}">
+                    <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small">
+                        <div class="slds-p-horizontal_small slds-size--1-of-1">
+                            <div class="slds-text-body_small"> 
+                                {!v.contact}
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+                <div class="slds-p-vertical_none slds-m-horizontal--xx-small">
+                    <div class="slds-p-horizontal_small slds-p-vertical_none">
+                        <p style="padding:0px;line-height: 125%;"> 
+                            <aura:if isTrue="{!v.shippingStreetSet}">
+                                {!v.shippingStreet}
+                            </aura:if>
+                        </p>
+                        <p style="padding:0px;line-height: 125%;"> 
+                            <aura:if isTrue="{!v.shippingCityStateZipSet}">
+                                {!v.shippingCityStateZip}
+                            </aura:if>
+                        </p>
+                        <p style="padding:0px;line-height: 125%;"> 
+                            <aura:if isTrue="{!v.shippingCountrySet}">
+                                {!v.shippingCountry}
+                            </aura:if>
+                        </p>
+                    </div>
+                </div>
+                <div class="slds-grid slds-grid--pull-padded-medium slds-m-horizontal--xx-small">
+                    <div class="slds-p-horizontal_small">
+                        <div class="slds-text-body_small">
+                            {!v.partner.distance}
+                        </div>
+                    </div>
+                    <div class="slds-p-horizontal_small">
+                        <div class="slds-text-body_small">
+                            {!v.partner.duration}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-grid_pull-padded-medium slds-p-left_x-small slds-m-horizontal--xx-small slds-p-top_none slds-p-bottom_small" style="margin-top: 3%;">
+                    <div class="slds-p-horizontal_xx-small">
+                        
+                        <aura:if isTrue="{!and(v.partner.CSN == 'Basic',v.partner.Sales,v.partner.ServicesOnly)}">
+                            <aura:if isTrue="{!and(v.partner.Sales,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_csn1.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales,v.partner.ServicesOnly == false)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_wrench1.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales == false,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_sales.png'}"></img>
+                            </aura:if>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.partner.CSN == 'Advanced'}">
+                            <aura:if isTrue="{!and(v.partner.Sales,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_csn2.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales,v.partner.ServicesOnly == false)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_wrench2.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales == false,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_sales.png'}"></img>
+                            </aura:if>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.partner.CSN == 'Master'}">
+                            <aura:if isTrue="{!and(v.partner.Sales,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_csn3.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales, v.partner.ServicesOnly == false)}">
+                               <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_wrench3.png'}"></img>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.partner.Sales == false,v.partner.ServicesOnly)}">
+                                <img style="height: 12px;" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/icons/icon_sf_sales.png'}"></img>
+                            </aura:if>
+                        </aura:if>
+                        
+                        
+                     <!--   <lightning:icon iconName="utility:favorite"
+                                        size="x-small"
+                                        alternativeText="{!'Certified Network Support: ' + v.partner.CSN}"
+                                        title="{!'Certified Network Support: ' + v.partner.CSN}"/>-->
+                        <!--            <i class="fa fa-certificate fa-lg tooltip"
+                           aria-hidden="true" title="Certified Support Network">
+                        </i>-->
+                    </div>
+                <!--    <aura:if isTrue="{!v.partner.ServicesOnly}">
+                        <div class="slds-p-horizontal_xx-small">
+                            
+                            <lightning:icon iconName="utility:custom_apps"
+                                            size="x-small"
+                                            alternativeText="Provides Service"
+                                            title="Provides Service"/>
+                         
+                            
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.partner.Sales}">
+                        <div class="slds-p-horizontal_xx-small">
+                            
+                            <lightning:icon iconName="utility:company"
+                                            size="x-small"
+                                            alternativeText="Sells Product"
+                                            title="Sells Product"/>
+                          
+                        </div>
+                    </aura:if>-->
+                    <a href="{!v.quoteURL}" target="_blank" style="text-decoration: none;">
+                    <span class="rfq-button">Request Quote</span>
+                	</a>
+                </div>
+            </div>   
+        </div>
+    </div>  
+    <style>
+        .pin {
+        background-image: url("{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix  +'/resource/LocationIcon'}");
+        width:35px;
+        height:40px;
+        padding-top:2px;
+        padding-left: 14px;
+        color:#fff;
+        }
+    </style>  
+    
+</aura:component>

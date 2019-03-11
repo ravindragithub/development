@@ -1,0 +1,15 @@
+<apex:page showHeader="false" standardStylesheets="false" title="{!$Label.site.forgot_password_confirmation}">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.customcss)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MASTERAppsStyles)}"/>
+    <div style="max-width:880px; margin:0 auto;background:#fff;padding:10px 20px;font-size:90%;">
+        <h1>
+            Thank you!
+        </h1>
+        <p><apex:outputText styleClass="title" value="{!$Label.site.temp_password_sent}"/></p>
+        <apex:form >
+            <a href="{!$Site.BaseUrl}/s/" styleclass="button" style="margin-top:20px;">{!$Label.site.go_to_login_page}</a>
+        </apex:form>
+    </div>
+    
+</apex:page>

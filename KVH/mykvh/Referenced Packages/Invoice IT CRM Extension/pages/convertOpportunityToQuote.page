@@ -1,0 +1,57 @@
+<apex:page standardController="Opportunity" extensions="invoiceit_crmx.CreateOpportunityProductsController" action="{!checkChargesExists}">
+      <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, 'js/jquery-1.5.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, 'js/jquery-ui-1.8.14.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.invoiceit_s__jQuery,'css/smoothness/jquery-ui-1.8.14.custom.css')}"/>
+  <script>
+        var isSaving;
+        isSaving = false;
+        $j = jQuery.noConflict();
+       function disableBtn() {
+            isSaving = true;
+            $j('.disablebutton').addClass('btnDisabled');
+            $j('.disablebutton').attr({value:'Processing...',disabled:'disabled'});
+            $j('.disablebuttonSave').addClass('btnDisabled');
+            $j('.disablebuttonSave').attr('value','Processing...');
+            
+        }
+  </script>
+  
+  <apex:outputField value="{!Opportunity.invoiceit_crmx__CurrencyL__c}" rendered="false"/>
+ 
+    <apex:pageMessages id="message"/>
+    <apex:panelGrid rendered="{!isChargesExists}"> 
+    <apex:form id="mainBlock">
+    
+        <apex:pageBlock title="Confirm Opportunity and convert to a Quote" >
+            <apex:pageBlockSection >
+                {!$Label.invoiceit_s__startHere_Note}: This will create a new quote corresponding to the opportunity you have selected. Please confirm.
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!--
+            Modified By     : Asish Kumar Behera
+            Modified Date   : 28-02-2014
+            JIRA Task       : INVOICEIT-320
+            Comments        : previously when user clicks twice on the button it creates two invoices, 
+                              disable the button when user click on button
+           -->
+          <apex:actionStatus id="saveStatus">
+        
+            <apex:facet name="stop">
+               <apex:commandButton action="{!convertOpportunityToQuote_VF}" value="{!$Label.invoiceit_s__ButtonConfirm}" status="saveStatus" onclick="disableBtn();"  styleClass="disablebutton" reRender="message,mainBlock"/>
+            </apex:facet>
+            <apex:facet name="start">
+                <apex:commandButton value="Processing..." disabled="true" status="saveStatus"/>
+            </apex:facet>
+                            
+        </apex:actionStatus>  
+        <!--
+                    Modified By     : Rama Krishna.v
+                    Modified Date   : 4-4-2014
+                    JIRA Task       : INVOICEIT-320
+                    Comments        : added style classes to below buttons.
+                   -->
+         <!-- <apex:commandButton action="{!convertOpportunityToQuote_VF}" value="{!$Label.invoiceit_s__ButtonConfirm}"   onclick="disableBtn();"  styleClass="disablebutton" />-->
+        <apex:commandButton action="{!cancel}" value="{!$Label.invoiceit_s__ButtonCancel}" styleClass="disablebuttonSave"/>            
+    </apex:form>
+    </apex:panelGrid>
+</apex:page>

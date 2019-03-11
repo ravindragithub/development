@@ -1,0 +1,17 @@
+.THIS .slds-page-header{
+  padding-top: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  padding-left: 2px;
+}
+.THIS .slds-box_xx-small{
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.THIS .slds-button{
+  line-height: 1rem;
+  margin-left: 16px;
+}
+.THIS .hide{
+  display: none;
+}

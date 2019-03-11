@@ -1,0 +1,28 @@
+<aura:component >
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="redirectURL" type="String" />
+    <aura:attribute name="modalopen" type="Boolean" default="true"/>
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <aura:if isTrue="{!v.modalopen}">
+        <div>             
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">                    
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color: black;">Redirecting...</h2>
+                    </header>             
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        
+                        <center>
+                            <p> <aura:unescapedHtml value="{!v.message}"></aura:unescapedHtml></p>
+                            <ui:button  label="Continue" press="{!c.navigateToURL}" class="sfdc_button continuebutton"/>
+                            <ui:button label="Cancel" press="{!c.closepopup}" class="sfdc_button cancelbutton"/>
+                        </center>
+                                                
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->        
+        </div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,44 @@
+<apex:page title="Update T&C's" standardController="Terms_and_Conditions__c" extensions="TCController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    
+    <style>
+      .button{
+          background-image : none !important;
+          color : #cc0000 !important;
+        background-color: #fff;
+        padding: 0px 3px;
+        height: 22px;
+        font-size: 11px;
+    	line-height: 22px;
+        border: 1px;
+      }
+      .box{
+          width : 20%;
+      }
+      
+  </style>
+            <apex:sectionHeader subtitle="Update Terms & Conditions" title="Manage Terms & Conditions"/>
+            <apex:form id="frm" styleClass="page-content"> 
+                
+            <apex:pageBlock >
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageBlockTable cellspacing="5" style="background: #fff; border-width: 0 0 0px 0;" cellpadding="6" columns="3" value="{!TCs}" var="tac">
+                    <apex:column value="{!tac.Name}" headerValue="T&C Record"/>
+                    <apex:column value="{!tac.Name__c}"/>
+                    <apex:column value="{!tac.Body__c}" />
+                    <apex:column style="align: center; padding-left: 0px; vertical-align: center;" title=" ">
+                        <apex:commandLink style="text-align: center; padding 2px;" styleClass="button lower-case" action="{!UpdateTC}" value="Edit">
+                            <apex:param assignTo="{!tcid}" value="{!tac.Id}" name="tcidname"/>
+                        </apex:commandLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+                <div style="padding: 0 20px 0 0;">
+                    <input type="button" style="float: right; padding: 3px;" onclick="backbuttonclick('{!$CurrentPage.parameters.retURL}')" value="Back"/> 
+            	</div>
+                </apex:form>    
+    <script>
+    function backbuttonclick(returl){
+        location.href = returl;
+    }
+    </script>
+</apex:page>

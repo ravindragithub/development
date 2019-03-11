@@ -1,0 +1,327 @@
+<apex:page id="AttachmentPage" controller="ortoo_e2a.TemporaryAttachmentController" sidebar="false" showHeader="false" tabStyle="ortoo_e2a__User_Settings__c">
+<apex:includeScript value="/support/console/33.0/integration.js"/> 
+    <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
+<apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+
+    <script type="text/javascript">
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        var files_to_upload = [];  
+        var uploaded_file = 0;
+    </script>
+    
+    <c:RemoteTK />
+    
+    <script>
+      var $jq = jQuery.noConflict();
+      var client = new remotetk.Client();
+      
+      function notifyParent()
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        winMain.attachRefresh();
+      }
+      
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+      var maximum_size_in_bytes = 5*(1024*1024);
+      var selected_file_size = {!localAttachmentSize};
+      var currently_selected_files_size = 0;
+      
+      function sumFileSize()
+      {
+        return currently_selected_files_size + selected_file_size;
+      }
+      function onFileSelected () {
+      currently_selected_files_size = 0;
+    
+         //var files = $(this).get(0).files; // puts all files into an array
+          //alert($(this).size());
+          
+          var files = $jq('#uploadMultiFiles').get(0).files;
+          
+          var errors = '';
+          var uploading_files = '<b>Uploading files:</b>';
+          var is_errors =  false;
+          files_to_upload = [];
+            for (i = 0; i < files.length; i++)
+            {
+                if(files[i].size < maximum_size_in_bytes)
+                {
+                    //selected_file_size += files[i].size;
+                    currently_selected_files_size += files[i].size;
+                    if(sumFileSize() > maximum_size_in_bytes)
+                    {
+                      if(errors == '')
+                      {
+                        errors = '<br/><b>File(s) exceeding limit (5MB per file) :</b><br/>';
+                      }
+                      errors += '<br/>'+ files[i].name + ' ('+(files[i].size/(1024*1024)).toFixed(2)+'MB)';
+                      is_errors =  true;
+                    }
+                    else
+                    {
+                        uploading_files += '<br/>'+ files[i].name + ' ('+(files[i].size/(1024*1024)).toFixed(2)+'MB)';  
+                    }
+                }
+                else
+                {
+                    if(errors == '')
+                    {
+                      errors = '<br/><b>File(s) exceeding limit (5MB per file) :</b><br/>';
+                    }
+                    errors += '<br/>'+ files[i].name + ' ('+(files[i].size/(1024*1024)).toFixed(2)+'MB)';
+                    is_errors =  true;
+                }
+            }
+            if(is_errors )
+            {
+               errors = ((uploading_files == '<b>Uploading files:</b>') ? '' : uploading_files) + errors;
+               showMessage('ERROR', errors);
+            }
+            else
+            {
+                showSizeLimitInfoMessage();
+                $jq('#uploadMultiFilesButton').removeAttr('disabled');                
+            }
+            
+    }
+    
+    function uploadFile(parentId)
+    {
+
+       var total_files_selected = 0;
+       
+        $jq("input[type=file]").each(function(){
+           
+           var files = $jq(this)[0].files;
+            for (var i = 0; i < files.length; i++)
+            {
+                if(files[i].size < maximum_size_in_bytes)
+                {
+                    selected_file_size += files[i].size;
+                    if(selected_file_size < maximum_size_in_bytes)
+                    {
+                    //if(files[i].size < maximum_size_in_bytes)
+                        files_to_upload.push(files[i]);
+                        total_files_selected++;
+                    }
+                }
+            }
+        });
+      
+
+       sforce.connection.sessionId = '{!$Api.Session_ID}';
+        var uploaded_file = 0;
+        if(total_files_selected > 0)
+        {
+            window.openPopupFocus('/widg/uploadwaiting.jsp', 'uploadWaiting', 250, 150, 'width=250,height=150,resizable=no,toolbar=no,status=no,scrollbars=no,menubar=no,directories=no,location=no,dependant=no', true, false);
+        }
+        
+        for(var i = 0, currentFile; currentFile = files_to_upload[i]; i++)
+        {
+            var reader = new FileReader();
+
+            // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+            reader.file = currentFile;
+            
+            reader.readAsArrayBuffer(currentFile);
+
+            reader.onload = function(e)
+            {
+                
+              $jq('#uploadMultiFilesButton').attr('disabled', 'true');
+              var att = new sforce.SObject("Attachment");
+              att.Name = this.file.name;
+              att.ContentType = this.file.type;
+              att.ParentId = parentId;
+
+              var binary = "";
+              var bytes = new Uint8Array(e.target.result);
+              var length = bytes.byteLength;
+
+              for (var i = 0; i < length; i++)
+              {
+                  binary += String.fromCharCode(bytes[i]);
+              }
+
+              att.Body = (new sforce.Base64Binary(binary)).toString();
+              
+              
+
+              sforce.connection.create([att],
+              {
+                  onSuccess : function(result, source)
+                  {
+                      uploaded_file++;
+                      if (result[0].getBoolean("success"))
+                      {
+                          console.log("new attachment created with id " + result[0].id);
+                          refreshPage();
+                          notifyParent();
+                          
+                      }
+                      else
+                      {
+                          console.log("failed to create attachment " + result[0]);
+                      }
+                      
+                      if(uploaded_file == total_files_selected)
+                      {
+                          closeMeterWindow();
+                      }
+                  },
+                  onFailure : function(error, source)
+                  {
+                      uploaded_file++;
+                      if(uploaded_file == total_files_selected)
+                      {
+                          closeMeterWindow();
+                      }
+                      console.log("an error has occurred " + error);
+                  }
+              });
+            };
+            reader.onprogress = function(data) {
+                if (data.lengthComputable) {              
+                     var percentage = Math.round((data.loaded * 100) / data.total,100);
+            
+                      console.log('Loaded : '+percentage+'%'+' of '+this.file.name);       
+                }
+            };
+
+            
+        }
+    }
+    </script>
+
+    
+    <script>  
+    
+    window.onload = onPageLoad;
+    function onPageLoad()
+    {
+        showSizeLimitInfoMessage();
+    }    
+      window.onunload = closeMeterWindow;
+      
+      function closeMeterWindow() {
+        // The var "win" is set in functions.js by openPopupFocus().
+        if(win) {
+          notifyParent();
+          win.close();
+        }
+      }
+    </script>
+
+    
+    
+        
+    <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+        <tr>
+            <td><h1 style="color:white;vertical-align:middle">Attachments</h1></td>
+            <td width="100%">&nbsp;</td>
+        </tr>
+    </table>
+    <apex:form id="attachment_dialog_local">
+        <apex:actionRegion >
+         <apex:actionFunction name="showSizeLimitInfoMessage" action="{!showSizeLimitInfoMessage}" rerender="jserror" />
+         <apex:actionFunction name="showMessage" status="actStatus" action="{!showMessage}" rerender="jserror" oncomplete="$jq('#uploadMultiFilesButton').removeAttr('disabled');" >
+           <apex:param name="errorLevel" assignTo="{!errorLevel}" value="" />
+           <apex:param name="messageName" assignTo="{!errorMessages}" value="" />
+         </apex:actionFunction>
+         <apex:actionFunction name="refreshPage" oncomplete="$jq('#uploadMultiFilesButton').attr('disabled', 'true');showSizeLimitInfoMessage();" rerender="component,attachment_list,attachment_dialog_local">
+         </apex:actionFunction>
+    
+            <table>
+                <tr>
+                    <td class="spacercolumn"></td>
+                    <td class="labelcolumn"><apex:outputLabel value="Location"/></td>
+                    <td><apex:selectList value="{!AttachmentSearchSelection}" size="1">
+                            <apex:selectOptions value="{!AttachmentSearchOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" action="{!SearchSelectionPage}"/>
+                        </apex:selectList></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+            <apex:pageBlock id="pageBlock" >
+                <apex:pageMessages id="jserror" escape="false"/>
+                <table>
+                    <tr>
+                        <td>
+                            <table>
+                            	<tr>
+                                	<td>
+                                		<apex:outputPanel id="component">
+                                		<div style="display:{!componentDisplay_PE_GE};" id="PE_component">
+                                			<c:MultipleFileUploader parentId="{!TempAttachmentParentIdParm}"/>
+                                		</div>
+                                		</apex:outputPanel>
+                                	</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    <input id="uploadMultiFiles" type="file" value="Upload" onchange="onFileSelected();" multiple="true"   title="Upload" style="display:{!componentDisplay};"/>
+                                    <!-- <apex:inputFile id="file_File" value="{!FileBody}" filename="{!FileName}" contentType="{!ContentType}" fileSize="{!FileSize}"/> -->
+                                     
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    <input id="uploadMultiFilesButton" disabled="true" type="button" value="Attach to Email" onclick="$jq('#uploadMultiFilesButton').attr('disabled', 'true');javascript:setLastMousePosition(event);uploadFile('{!TempAttachmentParentIdParm}');"  title="Attach to Email" style="display:{!componentDisplay};"/>
+                                        <!-- <apex:commandButton id="attach_file" value="Attach to email" action="{!AttachUploadedFiles}" disabled="{!AttachToEmailButtonIsDisabled}"
+                                                            onclick="uploadFile('{!TempAttachmentParentIdParm}');javascript:setLastMousePosition(event); window.openPopupFocus('/widg/uploadwaiting.jsp', 'uploadWaiting', 250, 150, 'width=250,height=150,resizable=no,toolbar=no,status=no,scrollbars=no,menubar=no,directories=no,location=no,dependant=no', true, false);"/> -->&nbsp;&nbsp;
+                                    <apex:actionStatus id="actStatus" >
+                                        <apex:facet name="start">
+                                          <img src="/img/loading.gif" />                    
+                                        </apex:facet>
+                                    </apex:actionStatus>
+                                    </td>
+                                </tr>
+                             </table>
+                         </td>
+                         <td width="10px"/>
+                         <td >
+	                       	<apex:commandButton id="attach_done" value="Click to Complete!" onclick="closeWindow();" style="background-image:none;width:200px;height:50px;background-color:darkgrey;font-size:12px;float:right;"/>
+	                     </td>
+                     </tr>
+                 </table>
+            </apex:pageBlock>
+            <apex:pageBlock title="Attachments"  id="attachment_list">
+                <apex:pageBlockTable value="{!EmailAttachmentsList}" var="AT">
+                    <apex:column value="{!AT.Name}">
+                        <apex:facet name="header">
+                            <apex:outputLabel value="File" rendered="{!EmailAttachmentsExist}"/>
+                        </apex:facet>
+                    </apex:column>
+                    <apex:column value="{!AT.Size}">
+                        <apex:facet name="header">
+                            <apex:outputLabel value="Size" rendered="{!EmailAttachmentsExist}"/>
+                        </apex:facet>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:outputText value="no attachments" rendered="{!EmailAttachmentsDoNotExist}"/>
+            </apex:pageBlock>
+        </apex:actionRegion>
+        
+    </apex:form>
+    
+</apex:page>

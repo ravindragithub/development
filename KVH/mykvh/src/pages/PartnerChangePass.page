@@ -1,0 +1,38 @@
+<apex:page controller="ChangePasswordController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+	<meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/> 
+    <body>      
+        <header>
+            <div class="logo">
+                <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+        </header>
+        <div class="content">
+            <h1>Welcome to the KVH Partner Portal</h1>
+            <p>Please create your password:</p>
+            <apex:form >
+            <div class="section group">
+                <div class="col span_6_of_12 pad-inside border">
+                    <h2>Create Your Account Login</h2>
+                    <p><label>Current Password: <span class="notes">(received in the Welcome Email)</span></label><br/>
+                        <apex:inputSecret value="{!oldpassword}" required="true"/></p>
+                    <p><label>New Password: </label><br/>
+                    <apex:inputSecret value="{!newpassword}" required="true"/></p>
+                    <p><label>Re-enter New Password: </label><br/>
+                    <apex:inputSecret value="{!verifyNewPassword}" required="true"/></p>
+                                   
+                    <p class="pad-top">
+                        <apex:commandbutton action="{!changepassword}" styleclass="button button-red" value="Login"/>
+                    </p>
+                    
+                </div>
+            </div>
+            </apex:form>
+        </div>
+    </body>
+</apex:page>

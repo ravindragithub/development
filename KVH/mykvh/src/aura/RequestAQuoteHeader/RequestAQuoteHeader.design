@@ -1,0 +1,3 @@
+<design:component >
+	<design:attribute name="headervalue" label="Header Text" description="Text for Header component"/>
+</design:component>

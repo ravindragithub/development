@@ -1,0 +1,65 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="showAddContact" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    <aura:if isTrue="{!v.showAddContact}">
+        <lightning:card title="Additional Account Contact(s) - optional">
+            <div class="slds-p-horizontal--small">                
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 authRep">
+                        <lightning:input label="Authorized Representative" type="checkbox" checked="{!v.simpleLTEActivation.Contact2_is_Authorized_Rep__c}"/>
+                        <span onclick="{!c.openPicker}">
+                            <lightning:icon iconName="utility:info_alt" title="Authorized Representatives Permissions" size="xx-small"/>
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                        <lightning:input label="Billing Point of Contact" type="checkbox" checked="{!v.simpleLTEActivation.Contact2_is_Billing_Point__c}"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                        <lightning:input label="Invoice Recipient" type="checkbox" checked="{!v.simpleLTEActivation.Contact2_is_Invoice_Recipient__c}"/>
+                    </div>
+                </div>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">                        
+                        <lightning:input aura:id="LTEFieldContFirstName" label="Main Contact First/Given Name"
+                                         value="{!v.simpleLTEActivation.Main_Contact_First_Name_Cont2__c}" 
+                                         onblur="{!c.contact2Validation}"/>
+                        <lightning:input aura:id="LTEFieldContLastName" label="Main Contact Last/Family Name/Surname"
+                                         value="{!v.simpleLTEActivation.Main_Contact_Last_Name_Cont2__c}"
+                                         onblur="{!c.contact2Validation}"/>
+                        <lightning:input aura:id="LTEField" label="Company Name"
+                                         value="{!v.simpleLTEActivation.Contact_2_Company_Name__c}"/>
+                        <lightning:input type="email" aura:id="LTEField" label="Email" 
+                                         value="{!v.simpleLTEActivation.Contact_2_Email__c}"
+                                         onblur="{!c.contact2Validation}"/>                    
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                        <lightning:input aura:id="LTEField" label="Phone" 
+                                         value="{!v.simpleLTEActivation.Contact_2_Phone__c}"
+                                         onblur="{!c.contact2Validation}"/>
+                        <c:Country_Picklist_cmp countryList="{!v.countryList}" stateMap="{!v.stateMap}" 
+                                                selectedCountry="{!v.selectedCountry}" isRequired="false" 
+                                                selectedState="{!v.selectedState}" componentID="contactCountryState"/>                     
+                    </div>
+                </div>
+                <br/>
+            </div>            
+            <div aura:id="helptext2" class="toggle modal">
+                <div class="modal-content">
+                    <div class="modalContent">
+                        <span class="close" onclick="{!c.openPicker}">&times;</span>
+                        <h1>Authorized Representatives Permissions</h1>
+                        <p style="word-break: break-word;">Authorized Representatives listed on this form have full right, power, and authority to act on the Subscriber's behalf with respect to the account, 
+                            including permission to receive, view, and access all account and usage-related information, and
+                            make changes to the account but not appoint additional Authorized Representatives. For details visit www.kvh.com/accountpermissions. </p>
+                    </div>
+                </div>
+            </div>
+        </lightning:card>        
+    </aura:if>            
+</aura:component>

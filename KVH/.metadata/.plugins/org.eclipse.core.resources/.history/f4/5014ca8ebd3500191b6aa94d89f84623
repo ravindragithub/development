@@ -1,0 +1,40 @@
+<apex:page sidebar="false" showChat="false" showHeader="false" standardStylesheets="false" cache="false">
+	<head>
+		<title>Mobile Satellite, Guidance, and Stabilization Systems from KVH Industries</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="Manufacturer of mobile satellite communications, guidance, and stabilization equipment and solutions for consumer, commercial and military applications." />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="CODE_LANGUAGE" content="C#" />
+		<meta name="vs_defaultClientScript" content="JavaScript" />
+		<meta name="google-site-verification" content="5lOIBTupB-yN9dChPO8dHZGYnXem6xKxr-5gvG4bz60" />
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+		<link href="http://www.kvh.com/_CSS/GlobalStyle.css" rel="stylesheet" type="text/css" />
+		<script language="JavaScript" src="http://www.kvh.com/_JS/GlobalJavascript.js" type="text/javascript"></script>
+	</head>
+	<body>
+	<div>
+		<div style="background: url({!URLFOR($Resource.CustomerPortalHeaderRight)}) center top repeat-x;">
+		    <a href="http://www.kvh.com/">
+		        <apex:image value="{!URLFOR($Resource.CustomerPortalHeaderLogo)}" style="border:0px;"/>
+		    </a>
+	   	</div>
+	</div>
+	
+	<div class="content">
+		<div class="wrapper"> 
+		<div style="height: 28px"></div>
+		<center>
+		<table width="349" border="0" cellspacing="0" cellpadding="1">
+			<tr>
+				<td>
+					<apex:insert name="body" />
+				</td>
+			</tr>
+		</table> 
+		</center>
+		</div>
+	</div>
+							
+	</body>
+
+</apex:page>

@@ -1,0 +1,258 @@
+<apex:component allowDML="true" controller="Act_Invoice_component_controller">
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <script> 
+    // document.addEventListener('billpartreload', function(e) {sectionOnererender(e.value);},false); 
+    <!-- Method Called from Billing component to disable/enable fields - Start -->
+         function callDisableJS(param){
+            var currentcomp = j$("[id$="+param+"]");
+            if(j$("[id$='chkbxk']").is(':checked')){
+                j$('.diableClass').attr('disabled','disabled');
+                j$('.diableClass').addClass('diableClassStyle');
+                j$(currentcomp).find('.diableClass').each(function(){
+                    if(j$(this).parent().find('.req').length == 1){
+                        j$(this).removeClass('requiredRedMarkFld');
+                    }
+                });
+                if(j$('.diableClass').hasClass('requiredRedMarkFld')){
+                    j$('.diableClass').addClass('staterequired');
+                    j$('.diableClass').removeClass('requiredRedMarkFld');
+                }
+            }
+            else{
+                j$(currentcomp).find('.diableClass').each(function(){
+                    if(j$(this).parent().find('.req').length == 1){
+                        j$(this).addClass('requiredRedMarkFld');
+                    }
+                }); 
+                j$('.staterequired').addClass('requiredRedMarkFld');
+                j$('.diableClass').removeAttr('disabled').removeClass('diableClassStyle');
+            }
+             hideLoadingDiv();
+             j$('[id$=country]').find('option').each(function(){
+                 if(j$(this).text() == 'Choose One'){
+                     j$(this).text('--Select--');
+                 }
+             });
+             j$('[id$=State_Province__c]').find('option').each(function(){
+                 if(j$(this).text() == 'Choose Country First'){
+                     j$(this).text('--Select Country First--');
+                 }
+                 if(j$(this).text() == 'Choose One'){
+                     j$(this).text('--Select--');
+                 }
+             });
+        }
+    
+     function buttonfunctionvalidatebill(param,param1,param2){
+            var showmodel = false;
+            var msg = '';
+            if({!intCountBillRep} < 1){
+                showmodel = true;
+                msg = 'Select Billing Representative';
+                
+            }else if("{!objActivationSubscriber.Mail_to__c}" == '' || "{!objActivationSubscriber.Mail_to__c}" == null){
+                showmodel = true;
+                msg = 'Review and Select Invoicing Preference';
+             }else if("{!objActivationSubscriber.Corp_Duplicate__c}" == '' || "{!objActivationSubscriber.Corp_Duplicate__c}" == null){
+                showmodel = true;
+                 //msg = 'Select \'Invoice Email\' Attachment Preference';
+                 msg = 'Review and Select Invoicing Preference';
+             }
+            if(showmodel){
+               showgenericpopup(msg);
+            }else{
+               validateError('{!parentContainer}',param1,param2);
+            }
+        }
+    
+    function showgenericpopup(msg){
+        var setcontent = msg; 
+        var instmodel = j$('[data-remodal-id=billinfo]').remodal();
+        j$("#kvh-remodelcontentmessagebillinfo").html(setcontent); 
+        instmodel.open();
+        j$('[data-remodal-id=billinfo]').find('.remodal-close').hide();
+        j$('[data-remodal-id=billinfo]').css('width', '350px').find('div:first').css('width', '100%');
+    }
+    
+    j$( document ).ready(function() {
+        /* j$( "input[id=second]" ).click(function() {
+            console.log(j$(this).is(':checked'));
+            if(j$(this).is(':checked')){
+                //j$("[id$=Billinngblk]").show();
+                //updateSubscriberRecordselect('Billing_Information', true);
+            }else{
+                //j$("[id$=Billinngblk]").hide();
+                // updateSubscriberRecordselect('Billing_Information', false);
+            }
+            
+        });*/
+        disableCalling();
+        
+    });
+    <!-- Method Called from Billing component to disable/enable fields - End -->
+        
+        
+        </script>
+    <apex:actionFunction name="disableCalling" action="{!callDisableFunction}" reRender="Billinngblk" oncomplete="callDisableJS('{!parentContainer}');" status="statusImge"/>
+    
+    <apex:actionFunction name="updateSubscriberRecordselect" action="{!updateSubscriber}" reRender="theForm" >
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" /> 
+        <apex:param name="param2" assignTo="{!boolCorporateSummary}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="callBillingSave" action="{!save}" rerender="billingComponent" >
+         <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+     </apex:actionFunction>
+    
+    
+    <div class="clear"></div>
+    <div class="button-bar" style="padding-bottom:10px;margin-top: -10px;"></div>
+    <h3>Invoicing Preferences</h3>
+    <p >The following selections will apply to all activations and subscription accounts created under this corporate account.<br/>
+    For all customers, KVH will send an invoice for each subscription account to the invoice recipient(s) listed above. </p>
+    <div class="left two-col">
+        <p style="font-weight: bold;font-size: initial">Would you like to also receive a Corporate Summary invoice?</p> 
+     <!--   <div style="padding-left: 5px;">
+            <p style="font-weight: bold">
+                <input type="checkbox" style="display: inline;" name="invoiceRadio" checked="true" disabled="true" id="first">Subscription Account Invoices </input>
+            </p> 
+   		 <div style="padding-left:25px;"><p>Required: KVH will send an invoice for each subscription account to the invoice recipient(s) listed above. </p> </div>
+            <p style="font-weight: bold"> 
+                <input type="checkbox" style="display: inline;" name="invoiceRadio" id="second">Corporate Summary Invoice </input>
+            </p> 
+		<div style="padding-left:25px;"><p>Optional: KVH will also send a <b>summary</b> of all subscription invoices to the invoice recipient(s) listed above. </p> 
+</div> -->
+        <apex:selectRadio value="{!objActivationSubscriber.Mail_to__c}" layout="pageDirection" Id="MailTo" styleClass="kvh-radio-padding" onchange="showLoadingDiv();updateSubscriberRecordselect('Billing_Information');" tabIndex="38" html-data-role="none">
+            <apex:selectOption itemLabel="Yes" itemValue="Both" html-data-role="none"/>
+            <apex:selectOption itemLabel="No" itemValue="Customer" html-data-role="none"/>
+        </apex:selectRadio>
+    </div>
+<div class="right two-col">
+    <p style="font-weight: bold;font-size: initial">How would you like to receive your invoices?</p> 
+    <div style="padding-left: 5px;">
+        <apex:selectRadio value="{!objActivationSubscriber.Corp_Duplicate__c}" layout="pageDirection" Id="Corpduplicate" styleClass="kvh-radio-padding" onchange="showLoadingDiv();updateSubscriberRecordselect('Billing_Information');" tabIndex="39" html-data-role="none">
+            <apex:selectOption itemLabel="A single email which includes all invoices" itemValue="No" html-data-role="none"/>
+            <apex:selectOption itemLabel="Each invoice in a separate email" itemValue="Duplicate" html-data-role="none"/>
+        </apex:selectRadio>
+    </div>
+</div>
+<div class="clear"></div>
+<apex:outputPanel id="Billinngblk" rendered="{!AND(boolBillingSelection, objActivationSubscriber.Mail_to__c != null, objActivationSubscriber.Mail_to__c != '', objActivationSubscriber.Corp_Duplicate__c != null , objActivationSubscriber.Corp_Duplicate__c != '')}">
+    <div class="button-bar" style="padding-bottom:10px;margin-top: -10px;"></div>
+    <div><h3>Billing Address</h3></div>
+    <p>
+        This will be the default billing address for each subscription account created under this corporate account. <br/> <br/>If you have elected to receive a corporate summary invoice, this address will also appear on the invoice.
+    </p>
+    
+    <div class="box-content"> 
+        <div>
+            <apex:inputcheckbox value="{!objActivationSubscriber.Same_as_Company_Address__c}" id="chkbxk" onchange="showLoadingDiv();disableCalling(); return false;" tabIndex="42" html-data-role="none"/>
+          <!--  <apex:inputcheckbox value="{!copySubscriberAddress}" id="chkbxk" onchange="showLoadingDiv();disableCalling(); return false;" /> -->
+            <label>Same as Company Address</label>
+        </div>
+    </div>
+    <!--** div contain error msg contents -Start **-->
+    <div class="kvh-show-errormsg-here">
+    </div>
+    <!--** div contain error msg contents -End **-->
+    <div class="left two-col">
+        <div class="box-content">
+           <!-- <p><label>Preferred Addressee: <span class="notes">(to whom/where to direct invoice correspondence)</span></label>
+                <apex:inputField value="{!objActivationSubscriber.Preferred_Addressee__c}" html-tabIndex="15" id="PreferredAddressee" styleClass="diableClass" />
+               </p> -->
+           
+            <div class="phone-types">
+                <label>Address 1:</label><span class="req"></span> 
+                <apex:inputField id="address1" value="{!objActivationSubscriber.Billing_Rep_Address__c}" html-tabIndex="43" styleClass="diableClass"  html-data-role="none"/>
+            </div>
+            <div class="clear" style="padding-bottom:20px;"></div>
+            <p><label>City:</label><span class="req"></span>
+                <apex:inputField value="{!objActivationSubscriber.Billing_City__c}" html-tabIndex="45" id="city" styleClass="diableClass" html-data-role="none"/></p>
+            <p class="Country"><label>Country: </label><span class="req"></span>
+                <apex:actionRegion >
+                    <apex:selectList id="country" tabindex="47" value="{!objActivationSubscriber.Billing_Country__c}" multiselect="false"  size="1" styleClass="diableClass" html-data-role="none">
+                        <apex:actionSupport action="{!componentCountryChangeHandler}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();"/>
+                        <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                    </apex:selectList>
+                    
+                </apex:actionRegion>
+            </p>
+        </div>
+    </div>
+    <div class="right two-col" style="margin-left:10px;">
+        <div class="box-content"> 
+           <!-- <p style="padding-bottom: 14%;"></p> -->
+            <div class="phone-types" >
+                <label>Address 2:</label>
+                <apex:inputField id="address2" value="{!objActivationSubscriber.Billing_Rep_Address_Line_2__c}" html-tabIndex="44" styleClass="diableClass" html-data-role="none"/>
+                <div class="clear" style="padding-bottom:20px;"></div>
+            </div>
+            <p><label>Postal/Zip Code:</label><span class="req"></span>
+                <apex:inputField value="{!objActivationSubscriber.Billing_Zip_Code__c}" html-tabIndex="46" id="postalcode" styleClass="diableClass" html-data-role="none"/></p> 
+            <p class="state"><label>State/Province/Territory: </label>
+                <apex:selectList id="State_Province__c" tabindex="48" value="{!objActivationSubscriber.Billing_State_Province__c}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld diableClass','diableClass')}" html-data-role="none">
+                    <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="stateid1">
+                        <apex:param value="{!objActivationSubscriber.Billing_State_Province__c}" assignTo="{!dummy}"/> 
+                    </apex:actionSupport>
+                    <apex:selectOptions value="{!StatesList}" html-data-role="none" />
+                </apex:selectList>
+               
+            </p>
+        </div>
+    </div>
+</apex:outputPanel>
+<div class="button-bar clear">
+    <apex:commandLink styleClass="button left" value="< Back" action="{!gototab}" onclick="showLoadingDiv();" immediate="true" tabindex="51">
+        <apex:param value="Authorized_Representatives" assignTo="{!selectedTab}" />
+    </apex:commandLink>
+    <apex:commandLink styleClass="submitbutton button right" onclick="buttonfunctionvalidatebill(this); return false;" value="Next >" tabindex="52">
+    </apex:commandLink> 
+</div>
+<apex:commandLink styleClass="clear right"  value="Save & Exit" onclick="buttonfunctionvalidatebill(this,true,'Activation_Invoice'); return false;"/>
+ <!-- ** remodal popup Start ** -->
+        <div class="remodal" data-remodal-id="billinfo" id="billinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+            <div style="display: inherit; width:80%;" >
+                <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+                <span id="kvh-remodelcontentmessagebillinfo" style="padding-left:20px;"></span>
+            </div>
+            <div style="text-align:center;">
+                <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >OK</a>
+            </div>
+        </div>
+        <!-- ** remodal popup End ** -->
+<!-- <apex:commandLink styleClass="button right" value="Save" action="{!upd}"  onclick="showLoadingDiv(); " immediate="true"  >
+                                        </apex:commandLink> -->
+         <!-- ** remodal popup Start ** -->
+   			 <div data-role="popup" id="ActCorpActInvoice" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <apex:commandLink styleClass="button remodal-cancel" value="Yes" action="{!saveandExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();"/>
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                            </div>
+                 </div>  
+       <!-- ** remodal popup End ** -->
+                            
+      <script type="text/javascript" language="JavaScript">
+       var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+       function removeduplicatepopup(popupID){
+           while(j$(popupID).length >1){
+               j$(popupID).last().remove();
+           }
+           while(j$('.remodal-wrapper').find(popupID).length >1){
+               j$('.remodal-wrapper').find(popupID).last().remove();
+           }
+       }
+       function ExitActInvoice(param){
+          j$( "#ActCorpActInvoice" ).popup( "open" );
+       }
+    </script>
+</apex:component>

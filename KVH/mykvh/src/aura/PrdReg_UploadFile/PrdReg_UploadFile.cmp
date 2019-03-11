@@ -1,0 +1,72 @@
+<aura:component controller="myKVH_ProductRegistrationController">
+    
+    <aura:attribute name="productRegId" type="string"/>
+    <aura:attribute name="accept" type="list" default="['.jpg', '.jpeg','.pdf','.bmp','.gif','.xls','.xlsx','.doc','.docx']"/>
+    <aura:attribute name="disabled" type="boolean"/>
+    <aura:attribute name="attachmentList" type="list"/>
+    <aura:attribute name="checkList" type="list"/>
+    <aura:attribute name="spinner" type="boolean"/>
+    <aura:attribute name="label" type="string"/>
+    <aura:attribute name="suffix" type="string"/>
+    <aura:attribute name="attRequired" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:fileUpload name="fileUploader"
+                          label="{!v.label}"
+                          multiple="false"
+                          accept="{!v.accept}"
+                          disabled="{!v.disabled}"
+                          recordId="{!v.productRegId}"
+                          onuploadfinished="{!c.handleUploadFinished}"/>
+    
+    <aura:if isTrue="{!empty(v.checkList)}">
+        <h3 class="noAttach">No Attachments</h3>
+        <aura:set attribute="else">
+            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal" style="border:1px solid #d4d4d4;">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Name">Name
+                            </div>
+                        </th>
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Size">Size
+                            </div>
+                        </th>                       
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Type">Type
+                            </div>
+                        </th>   
+                        <aura:if isTrue="{!!v.readonly}">
+                            <th class="slds-cell-shrink" scope="col">
+                                <div class="slds-truncate" title="Remove">Remove
+                                </div>
+                            </th>   
+                        </aura:if>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.checkList}" var="attach">
+                        <tr class="slds-hint-parent">
+                            <td class="slds-cell-shrink" data-label="Name">
+                                <div class="slds-truncate" title="Name">{!attach.attachName}</div>
+                            </td>
+                            <td class="slds-cell-shrink" data-label="Size">
+                                <div class="slds-truncate" title="Size">{!attach.attachSize}</div>
+                            </td>
+                            <td class="slds-cell-shrink" data-label="Type">
+                                <div class="slds-truncate" title="Type">{!attach.attachType}</div>
+                            </td>
+                            <td class="slds-cell-shrink" data-label="Remove" style="text-align:right;">
+                                <span class="slds-truncate" title="Remove" onclick="{!c.onFileDelete}" id="{!attach.attachId}">
+                                    <lightning:buttonIcon iconName="utility:delete" variant="bare" alternativeText="Remove"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </aura:set>
+    </aura:if>
+</aura:component>

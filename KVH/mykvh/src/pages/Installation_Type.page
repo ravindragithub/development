@@ -1,0 +1,2109 @@
+<apex:page sidebar="false" showHeader="false" standardStyleSheets="false" controller="InstallationTypeController" id="thePage" action="{!loadActivationPlatform}">
+    <!-- ** This is the main page for Installation Type, Contains all the scripts and CSS used in referencing components --> 
+    
+    <!-- ** HTML tag Start ** -->
+    <html>
+        <!-- ** Head tag Start ** -->
+        <head>
+            <meta charset="UTF-8"/> 
+            <title>Online Activation Wizard - Installation Type</title>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+            </script>
+            <script src="https://use.fontawesome.com/0633ed32ab.js">
+            </script>
+            <link href="https://use.fontawesome.com/0633ed32ab.css" media="all" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+            
+            
+            <!-- Handle jQuery conflicts (e.g. "$") -->
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            </script>
+            <!-- Load jQuery plug-ins, use minimized libs -->
+            <!-- Library for Modal windows.... -->
+            <script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+            <!-- Library for jQuery Validator  -->
+                <script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+            <!--Action Status Resources-->
+            <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+            
+            <!-- jQuery Validator Start -->
+            <script>
+            j$( document ).ready(function() {
+                j$("[id$='theForm']").validate({ignore: ":disabled"});
+                
+                // Installation Type Tab Validation - Start
+                j$("input[name=MarketTypeSelection][type='radio']").rules("add",{
+                    required: true,
+                    messages: {
+                        required: ""
+                    }
+                });
+                
+                j$.validator.addMethod("selectemail", function(value, element){
+                    var pattern = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
+                    return pattern.test(value);
+                }, "Please enter a valid email address.");
+                
+                // Installation Type Tab Validation - End
+                
+                // IMO Number Tab Validation - Start
+                j$.validator.addMethod("selectflagrequired", function(value, element, arg){
+                    if(arg == value){
+                        j$(element).addClass("kvh-selecterror");
+                        return false;
+                    }
+                    else{
+                        j$(element).removeClass("kvh-selecterror");
+                        return true;
+                    } 
+                }, "");
+                
+                j$.validator.addMethod("IMOValidation", function(value, element){
+                    j$(element).removeClass("error");
+                    return validateIMO();
+                }, "");
+                
+                
+                // Vessel Details Tab Validation - Start
+                if(j$('[id$=LeisurevesselBuildIdDetail]').length>0){
+                    j$('[id$=LeisurevesselBuildIdDetail]').rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                } 
+                
+                if(j$('[id$=vesselTypeIdDetail]').length>0){
+                    j$('[id$=vesselTypeIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                if(j$('input[id$=vesselIMOnumberIdDetail]').length>0){
+                    j$('[id$=vesselIMOnumberIdDetail]').rules("add",{
+                        required: true,
+                        number: true,
+                        minlength: 7,
+                        maxlength: 7,
+                        IMOValidation : true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                if(j$('[id$=vesselNameIdDetail]').length>0){
+                    j$('[id$=vesselNameIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                    
+                    
+                    j$('[id$=vesselLengthIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                    if(j$("[name$=LeisurevesselIPMobileCastIdDetail][type='radio']").length>0){
+                        j$("[name$=LeisurevesselIPMobileCastIdDetail][type='radio']").rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    }
+                    
+                    if(j$("input[name=Radio-call-sign-MMSI][type='checkbox']").length>0){
+                        j$("input[name=Radio-call-sign-MMSI][type='checkbox']").rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    }
+                    
+                    j$('[id$=vesselMMSIIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                    
+                    j$('[id$=vesselInfoIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$('[id$=vesselPlatformIdDetail]').length>0){
+                    j$('[id$=vesselPlatformIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        }); 
+                    });
+                } 
+                if(j$('[id$=LandvesselCountryIdDetail]').length>0){
+                    j$('[id$=LandvesselCountryIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            selectflagrequired : "Choose One",
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                if(j$('[id$=vesselflagIdDetail]').length>0){
+                    j$('[id$=vesselflagIdDetail]').each(function(){
+                        j$(this).rules("add",{
+                            selectflagrequired : "Choose One",
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                // Vessel Details Tab Validation - End
+                
+                //ValidationRules Applied FROM Here
+                
+                j$.validator.addMethod("selectrequired", function(value, element, arg){
+                    if(arg == value){
+                        j$(element).addClass("selecterror");
+                        return false;
+                    }
+                    else{
+                        j$(element).removeClass("selecterror");
+                        return true;
+                    } 
+                }, "");
+                
+                j$.validator.addMethod("selectstaterequired", function(value, element, arg){
+                    if(arg == value && j$(element).find('option').length >1 ){
+                        j$(element).addClass("selecterror").addClass("requiredRedMarkFld");
+                        return false;
+                    }
+                    else{
+                        j$(element).removeClass("selecterror");
+                        return true;
+                    } 
+                }, "");
+                
+                generateRequired();
+                
+                j$("[id$='ActivationGroupEmail']").hide();
+                j$("[id$='ActivationIndividualEmail']").hide();
+                if('{!$CurrentPage.parameters.Role}' == 'Group'){
+                    j$("[id$='ActivationGroupEmail']").toggle( "slow" );
+                    // j$(".invoiceshowhide").toggle( "slow" );
+                }
+                else if('{!$CurrentPage.parameters.Role}' == 'Individual' || ('{!$CurrentPage.parameters.conActID}' != '')){
+                    j$("[id$='ActivationIndividualEmail']").toggle( "slow" );
+                    // j$(".invoiceshowhide").toggle( "slow" );
+                }
+                
+                
+                j$('[id$=firstname]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                j$('[id$=lastname]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                }); 
+                j$('[id$=email]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        email: true,
+                        selectemail:true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                }); 
+                
+                j$('[id$=address1]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                j$('[id$=city]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                j$('[id$=country]').each(function(){
+                    j$(this).rules("add", {
+                        selectrequired : "Choose One",
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                j$('[id$=State_Province__c]').each(function(){
+                    j$(this).rules("add", {
+                        selectstaterequired : "Choose One",
+                        messages: {
+                            required: ""
+                        }
+                    });  
+                    if(j$(this).val() == 'Choose Country First'){
+                        j$(this).attr('disabled','disabled');
+                    }
+                });
+                
+                j$('[id$=ppnumber]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                
+                j$('[id$=postalcode]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=jobfunction]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                j$('[id$=dealerCompanyName]').each(function(){
+                    j$(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                
+                if(j$("input[type=radio][name$='Brazilian_Waters_Vessel_c']").length>0){
+                    j$("input[type=radio][name$='Brazilian_Waters_Vessel_c']").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }                
+                j$('[id$=Distance_between_antenna_and_sea_level__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=Geograpical_coordinates_of_port_and_site__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=Minimum_Latitude__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=Maximum_Latitude__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=Minimum_Longitude__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                j$('[id$=Maximum_Longitude__c]').each(function(){
+                    j$(this).rules("add", {
+                        required: j$(this).hasClass("req-field"),
+                        messages: {
+                            required: ""
+                        }
+                    });            
+                });
+                // change
+                j$('[id$=salutation]').each(function(){
+                    j$(this).find('option:first').text('--Select--');
+                });
+                j$('[id$=jobfunction]').each(function(){
+                    j$(this).find('option:first').text('--Select--');
+                });
+                
+                j$('[id$=State_Province__c]').find('option').each(function(){
+                    if(j$(this).text() == 'Choose Country First'){
+                        j$(this).text('--Select Country First--');
+                    }
+                    if(j$(this).text() == 'Choose One'){
+                        j$(this).text('--Select--');
+                    }
+                });
+                j$('[id$=country]').find('option').each(function(){
+                    if(j$(this).text() == 'Choose One'){
+                        j$(this).text('--Select--');
+                    }
+                });
+                
+                j$('[id$=vesselCountryIdDetail]').find('option').each(function(){
+                    if(j$(this).text() == 'Choose One'){
+                        j$(this).text('--Select--');
+                    }
+                });
+                j$('[id$=vesselflagIdDetail]').find('option').each(function(){
+                    if(j$(this).text() == 'Choose One'){
+                        j$(this).text('--Select--');
+                    }
+                });
+                
+                //fixing IE radio inline issues 
+                j$('fieldset table tr td, p').find("input[type='radio']").each(function (i){
+                    if(j$(this).next("label")){
+                        j$(this).css("display", "inline").next('label').css("display", "inline");
+                    }
+                });
+                
+                j$('div.phone-types').find("label, fieldset,span.req").each(function (i){
+                    j$(this).css("display", "inline");
+                });
+                //fixing IE radio inline issues 
+                
+            });
+            <!-- jQuery Validator End -->
+                
+                <!-- function to add CSS to Dependent Picklist Start -->
+                    function dependentPicklist(dependent_field_div_id,dependent_field_class, tabindex){
+                    var MutationObserver = window.WebKitMutationObserver || window.MutationObserver || window.MozMutationObserver;
+                    var observer = new MutationObserver(function(mutations) {
+                        // If the dependent_field_class was removed from the list – re-assign it
+                        if(!j$("#"+dependent_field_div_id+" select").first().hasClass(dependent_field_class)){
+                            j$("#"+dependent_field_div_id+" select").first().attr("tabindex",tabindex);
+                            j$("#"+dependent_field_div_id+" select").first().addClass(dependent_field_class);
+                        }
+                        j$("option").each(function(){
+                            if(j$(this).text() == '--None--'){
+                                j$(this).text('--Select--');
+                            }
+                        });
+                    });
+                    var dependentlst = document.querySelector('#'+dependent_field_div_id);
+                    observer.observe(dependentlst, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true
+                    });               
+                }
+                <!-- function to add CSS to Dependent Picklist End -->
+                    </script>
+            
+            
+            <!-- Custom CSS Start -->
+            <style>
+                .r-tabs .r-tabs-panel {
+                box-shadow: none;
+                border-top: 1px solid #c7c7c7;
+                }
+                .rich-tabpanel-content{
+                box-shadow: none;
+                }
+                .rich-tab-bottom-line {
+                border-bottom: 1px solid #c7c7c7;
+                }
+                #main {
+                background: white;
+                padding-left: 20%;
+                }
+                #main {
+                float: left;
+                width: 100%;
+                }
+                .kvh-left3 {
+                float:left; width:33%;
+                }
+                .kvh-centeralign {
+                text-align:center;
+                }
+                .kvh-selecterror{
+                border : 1px solid #fe6d55;
+                box-shadow : 0 0 5px 0 rgba(255,178,157,0.75);
+                }
+                
+                .kvh-radiobox{
+                background-color: rgba(204, 204, 204, 0.19);
+                padding: 15px;
+                font-size: 17px;
+                }
+                .kvh-customAnchorTag{
+                font-size: 14px;
+                font-weight: bold;
+                text-decoration: underline;
+                }
+                
+                .kvh-reveal-if-active {
+                display:none;
+                }
+                .kvh-VesselRadiogrpDetail{
+                display:table;
+                width:100%;
+                }
+                .phone-types fieldset{
+                display: inline;
+                float: right;
+                margin-right: 2%;
+                }
+                .phone-types table{
+                width:105%;
+                }
+                
+                .loadingStatus {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                list-style: none;
+                z-index: 9999;
+                }
+                
+                .loadingStatus .img {
+                width: 32px;
+                margin: 0 auto;
+                }
+                
+                .loadingBox {
+                display: none;
+                background: #000000;
+                opacity: 0.45;
+                filter: alpha(opacity=45);
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: 9999;
+                }
+                
+                .requiredRedMarkFld{
+                border-left:4px solid #cc0000 !important;
+                padding-left: 4px !important;
+                }
+                
+                .error{
+                border-top: 1px solid #cc0000 !important;
+                border-bottom: 1px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                
+                label.error{
+                border-top: 0px solid #cc0000 !important;
+                border-bottom: 0px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                .error-box{ 
+                border:1px solid #cc0000; 
+                width:47%; 
+                color:#cc0000; 
+                border-radius:3px; 
+                margin-bottom:20px;
+                margin-top: 10px;
+                }
+                
+                .selecterror{
+                border : 1px solid #cc0000;
+                box-shadow : 0 0 5px 0 rgb(204, 0, 0);
+                }
+                
+                .error-box h1{ 
+                background:#cc0000; 
+                color:#fff !important; 
+                font-size:1em !important; 
+                padding:5px; 
+                margin-bottom:10px; 
+                font-weight:bold; 
+                }
+                
+                .error-box li{ 
+                margin-left:20px; 
+                } 
+                
+                #display-error {
+                width: 100%;
+                margin-top: 10px;
+                border: 1px solid #D8D8D8;
+                padding: 5px;
+                border-radius: 5px;
+                font-family: Arial;
+                font-size: 11px;
+                text-transform: uppercase;
+                background-color: red;
+                color: white;
+                text-align: center;
+                }
+                
+                img.err {
+                float: left; 
+                }
+                
+                .bulletErrors {
+                list-style-type: square !important;
+                }
+                
+                .tooltip {
+                display: inline-block;
+                }
+                
+                .fontTip {
+                font-size: 10px;
+                }
+                
+                .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 250px;
+                background-color: white;
+                border: 1px solid black;
+                color: block;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 0;
+                
+                /* Position the tooltip */
+                position: absolute;
+                z-index: 1;
+                }
+                
+                .tooltip:hover .tooltiptext {
+                visibility: visible;
+                }
+                
+                select {
+                width: 100%;
+                padding: 2px 2px 5px;
+                border: 1px solid #c7c7c7;
+                background-color: #fff;
+                }
+                
+                .kvh-hide-field{
+                display:none;
+                }
+                .remodalAgain{
+                max-width: 700px !important;
+                min-width: 700px !important;
+                min-height: 200px !important;
+                margin: 0px auto !important;
+                border-radius: 6px !important;
+                padding: 0px 0px !important;
+                }
+                .button {
+                color: #fff !important;
+                padding: 7px 27px 8px;
+                margin: 15px 0;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                display: -moz-inline-stack;
+                display: inline-block;
+                zoom: 1;
+                _overflow: hidden;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                background: #6699cc;
+                border: 0;
+                text-shadow: none !important;
+                }
+                .ui-mobile label, .ui-controlgroup-label {
+                display: -webkit-inline-box;
+                margin: 0 0 .4em;
+                }
+                .ui-mobile label, div.ui-controlgroup-label {
+                font-weight: 400;
+                font-size: 14px;
+                } 
+                table.collapse-panels {
+                width: 100%;
+                margin: 0 auto 20px 0;
+                border: 1px solid #ddd;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                }
+                table.collapse-panels th {
+                background: #f3f3f3;
+                text-align: left;
+                font-weight: bold !important;
+                color: #444;
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                }
+                ul.terms {
+                list-style-type: disc;
+                }
+                .pad-left {
+                margin-left: 20px;
+                }
+                ol, ul {
+                list-style: none;
+                }
+                
+                ol li, ul.terms li {
+                padding: 0 0 10px 5px;
+                text-align: left;
+                }
+                .validateSkipButton{
+                margin-left: 33%;
+                background-color: #f3f3f3 !important;
+                color: gray !important;
+                border: 1px solid #ddd;
+                }
+                .req-field {
+                border-left: 4px solid #cc0000 !important;
+                }
+                
+            </style>
+            <!-- Custom CSS Start -->
+        </head>
+        <!-- ** Head tag End ** -->
+        
+        <!-- ** Body tag Start ** -->
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                <apex:outputPanel layout="none" id="completererender">
+                    <!-- ** Form tag Start ** -->
+                    <apex:form id="theForm">
+                        <div class="loadingStatus" id="loadingDiv">
+                            <div class="">
+                                <div class="img "><img src="/img/loading.gif"/></div>
+                            </div>
+                        </div>
+                        <div id="loadingBox" class="loadingBox"></div>
+                        
+                        <!-- ** Action Function Start **-->
+                        <apex:actionFunction name="btnSelectednavigateNext" action="{!goToNextTab}" oncomplete="hideLoadingDiv();" reRender="wrapper" >
+                            <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+                            <apex:param name="param2" assignTo="{!selectedMarketType}" value="" />
+                            <apex:param name="param3" assignTo="{!havingIMO}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="confirmsaveandexit" action="{!saveandExit}" oncomplete="returntohomepage();" reRender="wrapper" >
+                        </apex:actionFunction>
+                        <apex:actionFunction name="btnSelectednavigateBack" action="{!goToTab}" oncomplete="hideLoadingDiv();" reRender="wrapper" immediate="true">
+                            <apex:param name="param4" assignTo="{!selectedTab}" value="" />
+                        </apex:actionFunction> 
+                        <apex:actionFunction name="btnSelectedtosave" action="{!updateActivationPlatformMarket}" oncomplete="hideLoadingDiv();" reRender="completererender">
+                            <apex:param name="param5" assignTo="{!selectedMarketType}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="updateimo" action="{!updateActivationPlatformMarket}" oncomplete="hideLoadingDiv();" reRender="completererender">
+                            <apex:param name="param6" assignTo="{!havingIMO}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="BrazilianWatersVessel" action="{!BrazilianWatersVessel}" oncomplete="location.reload();"></apex:actionFunction>
+                        
+                        <!-- ** Action Function End **--> 
+                        
+                        <!-- ** Top header Start **-->
+                        
+                        <c:Activation_Header />
+                        <!-- ** Top header End **-->
+                        
+                        <!-- ** Sidebar Start **-->
+                        <div id="sidebar">
+                            <c:Activation_Status state="{!ActivationStatus}" pageOrderID="{!ActivationOrderId}"/> 
+                        </div>
+                        <!-- ** Sidebar End **-->
+                        
+                        <div id="main">
+                            <apex:outputPanel layout="block" id="wrapper" styleClass="wrapper">
+                                <div style="float:left;">  <h1 class="title">Installation</h1></div>
+                                <div class="required"><span class="requiredRedMarkFld"></span> = Required field</div> 
+                                <!-- ** TabPanel Start **-->
+                                <apex:tabPanel switchType="client" value="{!selectedTab}" id="theTabPanel" > 
+                                    <!-- ** Installation Type Tab Start  ** -->
+                                    <apex:tab label="Installation Type" name="Installation_Type" id="Installation_Type" disabled="{!IF((mapdisableInstallationTypeTabs['Installation_Type'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateBack('Installation_Type');">
+                                        <div>
+                                            <h2 class="mainTitle">Installation Type</h2>
+                                            Please select the type of vessel/vehicle for the activation.
+                                        </div>
+                                        <!--** div contain error msg contents -Start **-->
+                                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                        </div>
+                                        <!--** div contain error msg contents -End **-->
+                                        
+                                        <div class="clear" style="padding-bottom:20px;"></div>
+                                        <!--<p><c:Installation_Type /></p> -->
+                                        <div id="horizontalTab">
+                                            <div class="left two-col" style="width:40%; margin-bottom: 0px !important;">
+                                                <div class="box-content">
+                                                    <div class="box" style="min-height: 169px;" >
+                                                        <div style="background-color:#f4f4f4;padding-top: 10px;margin-bottom: 10px;" >
+                                                            <h2 style="padding-left: 10px;">
+                                                                At Sea
+                                                                <a href="#vessel_type" style="text-decoration: underline;font-size: small;padding-left: 5%;" data-rel="popup" data-position-to="window" data-transition="pop" class="pad-left ui-link" aria-haspopup="true" aria-owns="vessel_type" aria-expanded="false">Vessel Type Examples</a>
+                                                            </h2>
+                                                        </div>
+                                                        <p style="padding-left: 10px;">
+                                                            <input type="radio" style="cursor: pointer;" id="CommercialVessel" name="MarketTypeSelection" data-passkey="Commercial Vessel"  value="Commercial Vessel" data-role="none"/>
+                                                            <label for="CommercialVessel" style="cursor: pointer;">Commercial Vessel</label>
+                                                        </p> 
+                                                        <p style="padding-left: 10px;">
+                                                            <input type="radio" style="cursor: pointer;" id="LeisureVessel" name="MarketTypeSelection" data-passkey="Leisure Vessel" value="Leisure Vessel" data-role="none"/>
+                                                            <label for="LeisureVessel" style="cursor: pointer;">Leisure Vessel</label>
+                                                        </p> 
+                                                        <p style="padding-left: 10px;">
+                                                            <input type="radio" style="cursor: pointer;" id="MilitaryGovernmentVessel" name="MarketTypeSelection" data-passkey="Military/Government Vessel" value="Military/Government Vessel" data-role="none"/>
+                                                            <label for="MilitaryGovernmentVessel" style="cursor: pointer;">Military/Government Vessel</label>
+                                                        </p> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="center" style="width: 5% !important;float: left;padding-top: 2%;">
+                                                <h1>
+                                                    OR
+                                                </h1>
+                                            </div>
+                                            <div class="left two-col" style="width:40%; margin-bottom: 0px !important;">
+                                                <div class="box-content">
+                                                    <div class="box" style="min-height: 169px;" >
+                                                        <div style="background-color:#f4f4f4;padding-top: 10px;margin-bottom: 10px;">
+                                                            <h2 style="padding-left: 10px;">
+                                                                On Land
+                                                                <a href="#vehicle_type" style="text-decoration: underline;font-size: small;padding-left: 5%;" data-rel="popup" data-position-to="window" data-transition="pop" class="pad-left ui-link" aria-haspopup="true" aria-owns="vehicle_type" aria-expanded="false">Vehicle/Platform Type Examples</a>
+                                                            </h2>
+                                                            
+                                                        </div>
+                                                        <p style="padding-left: 10px;">
+                                                            <input type="radio" style="cursor: pointer;" id="CommercialLandVehicles" name="MarketTypeSelection" data-passkey="Commercial Vehicle/Platform"  value="Commercial Vehicle/Platform" data-role="none"/>
+                                                            <label for="CommercialLandVehicles" style="cursor: pointer;">Commercial Vehicle/Platform</label>
+                                                        </p> 
+                                                        <p style="padding-left: 10px;">
+                                                            <input type="radio" style="cursor: pointer;" id="MilitaryGovernmentLandVehicles" name="MarketTypeSelection" data-passkey="Military/Government Vehicle/Platform" value="Military/Government Vehicle/Platform" data-role="none"/>
+                                                            <label for="MilitaryGovernmentLandVehicles" style="cursor: pointer;">Military/Government Vehicle/Platform</label>
+                                                        </p> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="button-bar clear">
+                                            <apex:commandLink styleClass="button left" value="< Back to Account" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                <!-- Use the Name attribute of the previous tab -->
+                                                <apex:param value="{!Prevtab}" assignTo="{!selectedTab}" />
+                                            </apex:commandLink>
+                                            <apex:commandLink styleClass="button right" value="Next >" onclick="checkBtnSelected('{!$Component.Installation_Type}',true); return false;" >
+                                                <!-- Use the Name attribute of the next tab -->
+                                            </apex:commandLink>
+                                        </div>
+                                        <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="checkBtnSelected('{!$Component.Installation_Type}',false); return false;"/> 
+                                    </apex:tab>
+                                    <!-- ** Installation Type Tab End  ** -->
+                                    
+                                    <!-- ** IMO Number Tab Start  ** -->
+                                    <apex:tab label="Vessel IMO Number" name="IMO_Number" id="IMO_Number" rendered="{!IF(NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'LAND')), true, false)}" disabled="{!IF(mapdisableInstallationTypeTabs['IMO_Number'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c,true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateBack('IMO_Number');">
+                                        <div>
+                                            <H2 class="mainTitle">Vessel IMO Number</H2>
+                                            The International Maritime Organization (IMO) number is a unique and permanent 7-digit number assigned to sea-going ships.
+                                            IMO numbers are mandatory for cargo vessels that are at least 300 gross tons and passenger vessels of at least 100 gross tons. 
+                                            In addition, they are now often assigned to vessels outside of the mandatory groups, such as fishing vessels and commercial yachts. 
+                                        </div>
+                                        <!--** div contain error msg contents -Start **-->
+                                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                        </div>
+                                        <!--** div contain error msg contents -End **-->
+                                        
+                                        <div id="horizontalTab" style="padding-top:10px;">
+                                            <div class="left two-col" style="margin-bottom: 0px !important;">
+                                                <div class="box-content">
+                                                    <p>
+                                                        <label style="font-size: initial;" for="IMOnumber">
+                                                            <input type="radio" id="IMOnumber" name="IMOnumber" value="1" data-role="none"/>
+                                                            I have a Vessel IMO number
+                                                        </label>
+                                                    </p>
+                                                    <span>
+                                                        <label style="font-size: initial;" for="noIMOnumber">
+                                                            <input type="radio" id="noIMOnumber" name="IMOnumber" value="1" data-role="none"/>
+                                                            I don't have a Vessel IMO number
+                                                        </label>
+                                                        <div style="padding-left:5%;padding-bottom: 20px;color: #7c7c7c;font-weight: bold;">
+                                                            You may not have an IMO number if your vessel is under a certain weight.
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="button-bar clear">
+                                            <apex:commandLink styleClass="button left" id="InstallationTypeBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                <!-- Use the Name attribute of the previous tab -->
+                                                <apex:param value="Installation_Type" assignTo="{!selectedTab}" /> 
+                                            </apex:commandLink>
+                                            <apex:commandLink styleClass="button right" id="InstallationTypeNextBtn" value="Next >"  onclick="validateradio('{!$Component.IMO_Number}',true); return false;" >
+                                                <!-- Use the Name attribute of the next tab -->
+                                            </apex:commandLink>
+                                        </div>
+                                        <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateradio('{!$Component.IMO_Number}',false); return false;"/> 
+                                    </apex:tab>
+                                    <!-- ** IMO Number Tab End  ** -->
+                                    <apex:inputField id="hiddenMarket" value="{!objActivationPlatform.Market__c}" styleClass="kvh-hide-field" html-data-role="none"/>
+                                    <div id="hiddenMarketSectorDiv">
+                                        <apex:inputField id="hiddenMarketSector" value="{!objActivationPlatform.Market_Sector__c}" styleClass="kvh-hide-field" html-data-role="none"/>
+                                    </div>
+                                    <script>
+                                    dependentPicklist('hiddenMarketSectorDiv','kvh-hide-field', '');
+                                    </script>
+                                    <!-- ** Vessel Details Tab Start  ** -->
+                                    <apex:tab label="{!IF(AND(objActivationPlatform.Market_Sector__c != '' , CONTAINS(UPPER(objActivationPlatform.Market_Sector__c),'LAND')),'Vehicle/Platform Details','Vessel Details')}" rendered="{!OR(AND(objActivationPlatform.Having_IMO__c != null,objActivationPlatform.Having_IMO__c != ''),AND(objActivationPlatform.Market_Sector__c != '' , CONTAINS(UPPER(objActivationPlatform.Market_Sector__c),'LAND')))}" name="Vessel_Details" id="Vessel_Details" disabled="{!IF(mapdisableInstallationTypeTabs['Vessel_Details'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c,true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateBack('Vessel_Details');" >
+                                        
+                                        <!-- **Marine Market Sector Details Show Start  ** -->
+                                        <apex:outputPanel rendered="{!objActivationPlatform.Market_Sector__c == 'Marine'}">
+                                            <div>
+                                                <h2 class="mainTitle">Vessel Details</h2>
+                                            </div>
+                                            <!--** div contain error msg contents -Start **-->
+                                            <div class="kvh-show-errormsg-here">
+                                            </div>
+                                            <!--** div contain error msg contents -End **-->
+                                            <div id="horizontalTab">
+                                                <div class="left two-col" style="margin-bottom: 0px; !important;">
+                                                    <div class="box-content">
+                                                        <p><label>Vessel Name:</label><span class="req"></span>
+                                                            <apex:inputField id="LeisurevesselNameIdDetail" value="{!objActivationPlatform.Name}" html-tabIndex="1" html-data-role="none"/>
+                                                        </p>
+                                                        <p><label>Vessel Type:</label><span class="req"></span>
+                                                            <span id="LeisurevesselTypeIdDetailDiv">
+                                                                <apex:inputField id="LeisurevesselTypeIdDetail" styleClass="requiredRedMarkFld" value="{!objActivationPlatform.Industry_Designation__c}" html-tabIndex="3" html-data-role="none"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('LeisurevesselTypeIdDetailDiv','requiredRedMarkFld', '3');
+                                                            </script>
+                                                        </p>
+                                                        
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'Yes'}">
+                                                            <p>
+                                                                <label>Vessel IMO Number:</label><span class="req"></span>
+                                                                <apex:inputField id="LeisurevesselIMOnumberIdDetail" value="{!objActivationPlatform.Vessel_IMO__c}" html-tabIndex="5" html-maxlength="7" html-size="7" html-data-role="none"/>
+                                                            </p> 
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'No'}"> 
+                                                            <p><label>Boat Builder/Shipyard:</label><span class="req"></span>
+                                                                <apex:inputField id="LeisurevesselBuildIdDetail" value="{!objActivationPlatform.Vehicle_Make_Model__c}" html-tabIndex="5" html-data-role="none"/>
+                                                            </p>
+                                                        </apex:outputPanel>
+                                                        <div>
+                                                            <!-- IP-MobileCast Content: -->
+                                                            <label>Please indicate whether this vessel is a charter boat/yacht.</label><span class="req"></span>
+                                                            <div class="">
+                                                                <div style="padding-left: 10px;">
+                                                                    <apex:selectRadio styleClass="kvh-vesselRadiogrpDetail requiredRedMarkFld" tabindex="9" style="margin-top: 5px;" id="LeisurevesselIPMobileCastIdDetail" layout="pageDirection" value="{!objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c}" html-data-role="none">
+                                                                        <apex:selectoptions value="{!types}" html-data-role="none"></apex:selectoptions>
+                                                                    </apex:selectRadio>
+                                                                </div>
+                                                                <div class="notes" style="margin-top: 5px;">
+                                                                    *KVH’s IP-MobileCast Superyacht Entertainment and Training Content Service is ONLY available to charter boats/yachts.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="right two-col" style="margin-bottom: 0px !important">
+                                                    <div class="box-content">
+                                                        <p><label>Flag:</label><span class="req"></span>
+                                                            <apex:selectList id="LeisurevesselflagIdDetail" value="{!objActivationPlatform.Flag__c}" multiselect="false"  size="1"  tabIndex="2" html-data-role="none"> 
+                                                                <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                                                            </apex:selectList>
+                                                        </p>
+                                                        <p><label>Vessel Detail:</label><span class="req"></span>
+                                                            <span id="LeisurevesselPlatformIdDetailDiv">
+                                                                <apex:inputField id="LeisurevesselPlatformIdDetail" styleClass="requiredRedMarkFld"  value="{!objActivationPlatform.Platform_Detail__c}" html-tabIndex="4" html-data-role="none"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('LeisurevesselPlatformIdDetailDiv','requiredRedMarkFld' ,'4');
+                                                            </script>
+                                                        </p> 
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'Yes'}">
+                                                            <label>Additional Vessel Identifying Information:</label><span class="req"></span>
+                                                            <div class="kvh-vesselRadiogrpDetail">
+                                                                <div>
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="LeisurevesselInfoIdDetailn">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSIn" id="Radio-call-sign-Leisure" tabIndex="8"/> -->
+                                                                            Radio Call Sign:
+                                                                        </label>
+                                                                        
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="LeisurevesselInfoIdDetailn" value="{!objActivationPlatform.Vessel_Radio_Call_Sign__c}" html-tabIndex="6" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clear" style="padding-bottom:10px;"></div>
+                                                                <div>
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="LeisurevesselMMSIIdDetailn">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSIn" id="MMSI-Leisure" tabIndex="8"/> -->
+                                                                            MMSI:
+                                                                            <!-- <a href="#" class="hasTooltip"><img src="{!URLFOR($Resource.Activation_Info)}" width="15" height="15" alt="Learn more"/></a>
+<span>MMSI Help Text Here</span>  -->                                                      
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="LeisurevesselMMSIIdDetailn" value="{!objActivationPlatform.MMSI__c}" html-tabIndex="7" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'No'}"> 
+                                                            <label class="requiredRedMarkFld">Vessel Identifying Information: <span class="notes">Enter at least one Vessel Identifier.</span></label><span class="req"></span>
+                                                            <div class="kvh-VesselRadiogrpDetail ">
+                                                                <div style="padding-left: 10px;">
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="LeisurevesselInfoIdDetail">
+                                                                            <!--  <input type="checkbox" name="Radio-call-sign-MMSI" id="Radio-call-sign" tabIndex="6"/> -->
+                                                                            Radio Call Sign:
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="LeisurevesselInfoIdDetail" value="{!objActivationPlatform.Vessel_Radio_Call_Sign__c}" html-tabIndex="6" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clear" style="padding-bottom:10px;"></div>
+                                                                <div style="padding-left: 10px;">
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="LeisurevesselMMSIIdDetail">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSI" id="MMSI" tabIndex="7"/> -->
+                                                                            MMSI:
+                                                                            <!--<a href="#" class="hasTooltip"><img  src="{!URLFOR($Resource.questionmarkIcon)}" width="15" height="15" alt="Learn more"/></a>
+<span>MMSI Help Text Here</span> -->
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="LeisurevesselMMSIIdDetail" value="{!objActivationPlatform.MMSI__c}" html-tabIndex="7" html-data-role="none" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clear" style="padding-bottom:10px;"></div>
+                                            <c:Act_Platform_Brazilian_Details pageOrderID="{!ActivationOrderId}" pageStatus="{!ActivationStatus}" ActPlatform="{!objActivationPlatform}" ActOrder="{!objActivationOrder}" rendered="{!objActivationPlatform.Market_Sector__c == 'Marine'}"/>  
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="VesselDetailBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                    <!-- Use the Name attribute of the previous tab -->
+                                                    <apex:param value="IMO_Number" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button validateSkipButton" id="SkipVesselDetailNextBtn" value="Skip to Next Page" onclick="showLoadingDiv();btnSelectednavigateBack('Onboard_Contact'); return false;" rendered="{!isSkipValidation}">
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="VesselDetailNextBtn" value="Next >" onclick="validateVesselDetails('{!$Component.Vessel_Details}',true); return false;" >
+                                                </apex:commandLink>
+                                            </div>
+                                            <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateVesselDetails('{!$Component.Vessel_Details}',false); return false;"/> 
+                                            
+                                        </apex:outputPanel>
+                                        <!-- **Marine Market Sector Details Show End  ** -->
+                                        
+                                        <!-- **Maritime Market Sector Details Show Start  ** -->
+                                        <apex:outputPanel rendered="{!IF(CONTAINS(objActivationPlatform.Market_Sector__c,'Maritime'), true, false)}">
+                                            <div>
+                                                <h2 class="mainTitle">Vessel Details</h2>
+                                            </div>
+                                            <!--** div contain error msg contents -Start **-->
+                                            <div class="kvh-show-errormsg-here">
+                                            </div>
+                                            <!--** div contain error msg contents -End **-->
+                                            <div id="horizontalTab">
+                                                <div class="left two-col" style="margin-bottom: 0px !important;">
+                                                    <div class="box-content">
+                                                        <p><label>Vessel Name:</label><span class="req"></span>
+                                                            <apex:inputField id="vesselNameIdDetail" value="{!objActivationPlatform.Name}" html-tabIndex="1" html-data-role="none" />
+                                                        </p>
+                                                        <p><label>Vessel Type:</label><span class="req"></span>
+                                                            <span id="vesselTypeIdDetailDiv">
+                                                                <apex:inputField id="vesselTypeIdDetail" styleClass="requiredRedMarkFld"  value="{!objActivationPlatform.Industry_Designation__c}" html-tabIndex="3" html-data-role="none"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('vesselTypeIdDetailDiv','requiredRedMarkFld', '3');
+                                                            </script>
+                                                        </p>
+                                                        
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'Yes'}">  
+                                                            <p>
+                                                                <label>Vessel IMO Number:</label><span class="req"></span>
+                                                                <apex:inputField id="vesselIMOnumberIdDetail" value="{!objActivationPlatform.Vessel_IMO__c}" html-tabIndex="5" html-maxlength="7" html-size="7" html-data-role="none" />
+                                                            </p> 
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'No'}"> 
+                                                            <label class="requiredRedMarkFld">Vessel Identifying Information: <span class="notes">Enter at least one Vessel Identifier.</span></label><span class="req"></span>
+                                                            <div class="kvh-VesselRadiogrpDetail ">
+                                                                <div style="padding-left: 10px;">
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="vesselInfoIdDetail">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSI" id="Radio-call-sign" tabIndex="6"/> -->
+                                                                            Radio Call Sign:
+                                                                        </label>
+                                                                        
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="vesselInfoIdDetail" value="{!objActivationPlatform.Vessel_Radio_Call_Sign__c}" html-tabIndex="6" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clear" style="padding-bottom:10px;"></div>
+                                                                <div style="padding-left: 10px;">
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="vesselMMSIIdDetail">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSI" id="MMSI" tabIndex="7"/> -->
+                                                                            MMSI:
+                                                                            <!--<a href="#" class="hasTooltip"><img  src="{!URLFOR($Resource.questionmarkIcon)}" width="15" height="15" alt="Learn more"/></a>
+<span>MMSI Help Text Here</span> -->
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="vesselMMSIIdDetail" value="{!objActivationPlatform.MMSI__c}" html-tabIndex="7" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </apex:outputPanel> 
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="right two-col" style="margin-bottom: 0px !important;">
+                                                    <div class="box-content">
+                                                        <p><label>Flag:</label><span class="req"></span>
+                                                            <apex:selectList id="vesselflagIdDetail" value="{!objActivationPlatform.Flag__c}" multiselect="false"  size="1"  tabIndex="2" html-data-role="none"> 
+                                                                <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                                                            </apex:selectList>
+                                                        </p>
+                                                        <p><label>Vessel Detail:</label><span class="req"></span>
+                                                            <span id="vesselPlatformIdDetailDiv">
+                                                                <apex:inputField id="vesselPlatformIdDetail" styleClass="requiredRedMarkFld"  value="{!objActivationPlatform.Platform_Detail__c}" html-data-role="none" html-tabIndex="4"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('vesselPlatformIdDetailDiv','requiredRedMarkFld', '4');
+                                                            </script>
+                                                        </p> 
+                                                        <apex:outputPanel rendered="{!objActivationPlatform.Having_IMO__c == 'Yes'}"> 
+                                                            <label>Additional Vessel Identifying Information:</label><span class="req"></span>
+                                                            <div class="kvh-VesselRadiogrpDetail">
+                                                                <div>
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="vesselInfoIdDetailn">
+                                                                            <!--   <input type="checkbox" name="Radio-call-sign-MMSIn" id="Radio-call-sign" tabIndex="6"/> -->
+                                                                            Radio Call Sign:
+                                                                        </label>
+                                                                        
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="vesselInfoIdDetailn" value="{!objActivationPlatform.Vessel_Radio_Call_Sign__c}" html-tabIndex="6" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clear" style="padding-bottom:10px;"></div>
+                                                                <div>
+                                                                    <div class="left" style="width:25%">
+                                                                        <label for="vesselMMSIIdDetailn">
+                                                                            <!-- <input type="checkbox" name="Radio-call-sign-MMSIn" id="MMSI" tabIndex="7"/> -->
+                                                                            MMSI:
+                                                                            <!--<a href="#" class="hasTooltip"><img  src="{!URLFOR($Resource.questionmarkIcon)}" width="15" height="15" alt="Learn more"/></a>
+<span>MMSI Help Text Here</span> -->
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="left" style="width:75%">
+                                                                        <apex:inputField id="vesselMMSIIdDetailn" value="{!objActivationPlatform.MMSI__c}" html-tabIndex="7" html-data-role="none"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </apex:outputPanel>                                                
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clear" style="padding-bottom:10px;"></div>
+                                            <c:Act_Platform_Brazilian_Details pageOrderID="{!ActivationOrderId}" pageStatus="{!ActivationStatus}" ActPlatform="{!objActivationPlatform}" ActOrder="{!objActivationOrder}" rendered="{!IF(CONTAINS(objActivationPlatform.Market_Sector__c,'Maritime'), true, false)}"/>  
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="VesselDetailMaritimeBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                    <!-- Use the Name attribute of the previous tab -->
+                                                    <apex:param value="IMO_Number" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button validateSkipButton" id="SkipVesselDetailMaritimeNextBtn" value="Skip to Next Page" onclick="showLoadingDiv();btnSelectednavigateBack('Onboard_Contact'); return false;" rendered="{!isSkipValidation}">
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="VesselDetailMaritimeNextBtn" value="Next >" onclick="validateVesselDetails('{!$Component.Vessel_Details}',true); return false;" >
+                                                </apex:commandLink>
+                                            </div>
+                                            <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateVesselDetails('{!$Component.Vessel_Details}',false); return false;"/> 
+                                            
+                                        </apex:outputPanel>
+                                        <!-- **Maritime Market Sector Details Show End  ** -->
+                                        
+                                        <!-- **LAND, SatCom, TV & Network Mgmt Market Sector Details Show Start  ** -->
+                                        <apex:outputPanel rendered="{!CONTAINS(UPPER(objActivationPlatform.Market_Sector__c),'LAND')}">
+                                            <div>
+                                                <h2 class="mainTitle">Vehicle/Platform Details</h2>
+                                            </div>
+                                            <!--** div contain error msg contents -Start **-->
+                                            <div class="kvh-show-errormsg-here">
+                                            </div>
+                                            <!--** div contain error msg contents -End **-->
+                                            <div id="horizontalTab">
+                                                <div class="left two-col" style="margin-bottom: 0px !important;">
+                                                    <div class="box-content">
+                                                        <p><label>Vehicle/Platform Type:</label><span class="req"></span>
+                                                            <span id="LandvesselTypeIdDetailDiv">
+                                                                <apex:inputField id="LandvesselTypeIdDetail" styleClass="requiredRedMarkFld" value="{!objActivationPlatform.Industry_Designation__c}" html-tabIndex="1" html-data-role="none"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('LandvesselTypeIdDetailDiv','requiredRedMarkFld', '1');
+                                                            </script>
+                                                        </p>
+                                                        <p><label>Country of Registration:</label><span class="req"></span>
+                                                            <apex:selectList id="LandvesselCountryIdDetail" value="{!objActivationPlatform.Flag__c}" multiselect="false"  size="1"  tabIndex="3" html-data-role="none"> 
+                                                                <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                                                            </apex:selectList> 
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="right two-col" style="margin-bottom: 0px !important;">
+                                                    <div class="box-content">
+                                                        
+                                                        <p><label>Vehicle/Platform Detail:</label><span class="req"></span>
+                                                            <span id="LandvesselPlatformIdDetailDiv">
+                                                                <apex:inputField id="LandvesselPlatformIdDetail" styleClass="requiredRedMarkFld"  value="{!objActivationPlatform.Platform_Detail__c}" html-tabIndex="2" html-data-role="none"/>
+                                                            </span>
+                                                            <script>
+                                                            dependentPicklist('LandvesselPlatformIdDetailDiv','requiredRedMarkFld', '2');
+                                                            </script>
+                                                        </p>  
+                                                        
+                                                        <p><label>Vehicle Make/Model:</label>
+                                                            <apex:inputField id="LandvesselMakeId" value="{!objActivationPlatform.Vehicle_Make_Model__c}" html-tabIndex="4" html-data-role="none"/>
+                                                        </p>
+                                                        
+                                                        <!-- <p><label>Vehicle Model:</label>
+<apex:inputField id="LandvesselModelId" value="{!objActivationPlatform.Vehicle_Model__c}" html-tabIndex="4"/>
+</p> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clear" style="padding-bottom:10px;"></div>
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="LandInfoBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                    <!-- Use the Name attribute of the previous tab -->
+                                                    <apex:param value="Installation_Type" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="LandInfoNextBtn" value="Next >" onclick="validateVesselDetails('{!$Component.Vessel_Details}',true); return false;" >
+                                                </apex:commandLink>
+                                            </div>
+                                            <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateVesselDetails('{!$Component.Vessel_Details}',false); return false;"/> 
+                                            
+                                        </apex:outputPanel>
+                                        <!-- **LAND, SatCom, TV & Network Mgmt Market Sector Details Show End  ** -->
+                                        
+                                    </apex:tab>
+                                    <!-- ** Vessel Details Tab End  ** -->
+                                    
+                                    <!-- ** Onboard Contact Tab Start  ** -->
+                                    <apex:tab label="Onboard Contact" name="Onboard_Contact" id="Onboard_Contact" rendered="{!NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c),'LAND'))}" disabled="{!IF(mapdisableInstallationTypeTabs['Onboard_Contact'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c,true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateBack('Onboard_Contact');">
+                                        <apex:outputPanel rendered="{!(ActivationStatus.Installation_Type_Active_Tab__c == 'Onboard_Contact')}">
+                                            <div>
+                                                <h2 class="mainTitle">Onboard Contact</h2>
+                                                The Onboard Contact will be the person or department (Captain, Vessel Superintendent, Crew Manager, etc.) that can be contacted in the event that KVH needs to reach the vessel for a technical, service, or administrative issue.
+                                            </div>
+                                            
+                                            <c:Activation_Billing_picklist pageOrderID="{!ActivationOrderId}"   id="onboardpicklist"/>
+                                            <c:Activation_Contact pageOrderID="{!ActivationOrderId}" pageStatus="{!ActivationStatus}" contactRole="Onboard Contact" id="onboardcontactcomponent"/>
+                                        </apex:outputPanel>
+                                    </apex:tab>
+                                    <!-- ** Onboard Contact Tab End  ** -->
+                                    
+                                    <!-- ** Antenna System Support Contact Tab Start  ** -->
+                                    <apex:tab label="Antenna System Support Contact" name="Antenna_System_Support_Contact" id="Antenna_System_Support_Contact" disabled="{!IF(mapdisableInstallationTypeTabs['Antenna_System_Support_Contact'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c,true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateBack('Antenna_System_Support_Contact');">
+                                        <apex:outputPanel rendered="{!(ActivationStatus.Installation_Type_Active_Tab__c == 'Antenna_System_Support_Contact')}" >
+                                            <div>
+                                                <h2 class="mainTitle">Antenna System Support Contact</h2>
+                                                The Antenna System Support Contact will be the individual responsible for the antenna system.
+                                            </div>
+                                            <c:Activation_Billing_picklist pageOrderID="{!ActivationOrderId}" id="antannapicklist"  />
+                                            <c:Activation_Contact pageOrderID="{!ActivationOrderId}"  pageStatus="{!ActivationStatus}" contactRole="System Support Contact" id="antennasystemsupportcontactcomponent"/>
+                                        </apex:outputPanel>
+                                    </apex:tab>
+                                    <!-- ** Antenna System Support Contact Tab End  ** --> 
+                                    <apex:tab label="Dealer/Distributor Information" name="Dealer_Distributor_Info" id="Dealer_Distributor_Info"  
+                                              onTabEnter="showLoadingDiv();btnSelectednavigateBack('Dealer_Distributor_Info');" disabled="{!IF(mapdisableInstallationTypeTabs['Dealer_Distributor_Info'] > ActivationStatus.Installation_Type_Last_Active_Tab_Index__c,true,false)}">
+                                        <c:Activation_Dealer pageOrderID="{!ActivationOrderId}" pageStatus="{!ActivationStatus}"  id="dealercomponent" rendered="{!(ActivationStatus.Installation_Type_Active_Tab__c == 'Dealer_Distributor_Info')}"/>
+                                    </apex:tab>
+                                </apex:tabPanel>
+                                <!-- ** TabPanel End **-->
+                                
+                                <!-- ** Documnet Ready Script Start ** -->
+                                <script type="text/javascript" language="JavaScript">
+                                var validmarketnoIMO = ["Commercial/SATCOM, TV & Network Mgmt", "Mil/Gov", "Leisure"];
+                                
+                                function returntohomepage(){
+                                    window.top.location = '/home/home.jsp';
+                                }
+                                
+                                j$( document ).ready(function() {
+                                    //Validator ERROR CSS
+                                    generateRequired();
+                                    
+                                    //
+                                    if('{!objActivationPlatform.MMSI__c}' != '' && '{!objActivationPlatform.MMSI__c}' != null){
+                                        j$("[id$='MMSI']").attr('checked','checked');
+                                        j$("[id$='MMSI-Leisure']").attr('checked','checked');  
+                                    }
+                                    
+                                    if('{!objActivationPlatform.Having_IMO__c}' == 'Yes'){
+                                        j$("#IMOnumber").attr('checked','checked');
+                                        j$("#noIMOnumber").removeAttr('checked');
+                                        //  j$('#noIMOnumber').attr("disabled",true);
+                                    }else if('{!objActivationPlatform.Having_IMO__c}' == 'No'){
+                                        j$("#noIMOnumber").attr('checked','checked');
+                                        j$("#IMOnumber").removeAttr('checked');
+                                    }
+                                    
+                                    j$("input[type=radio][name=MarketTypeSelection]").each(function(){
+                                        //console.log(j$(this).data('passkey'));
+                                        //console.log('{!selectedMarketType}');
+                                        if(j$(this).data('passkey') !=null && j$(this).data('passkey')!= '' && '{!selectedMarketType}' == j$(this).data('passkey')){
+                                            j$(this).attr('checked','checked').attr('disabled', 'disabled').css('cursor', 'none !important;').next('label').css('cursor', 'none !important;');
+                                        }
+                                    });
+                                    
+                                    j$('input[type=radio][name=MarketTypeSelection]').click(function(){
+                                        j$(this).siblings().removeAttr('disabled');
+                                        if(j$(this).is(':checked')){
+                                            j$(this).attr('disabled', 'disabled').css('cursor', 'none !important;').next('label').css('cursor', 'none !important;');
+                                            showLoadingDiv();
+                                            btnSelectedtosave(j$(this).data('passkey'));
+                                        }
+                                        //console.log(j$(this).data('passkey'));
+                                    });
+                                    
+                                    j$("input[type='radio'][id$='IMOnumber']").click(function(){
+                                        calldisableIMO();
+                                    });
+                                    
+                                    j$('.hasTooltip').hover(function() {
+                                        var offset = j$(this).offset();
+                                        j$(this).next('span').fadeIn(200).addClass('showTooltip');
+                                        //left: 8%;
+                                        //top: 70%;
+                                        //j$(this).next('span').css('left', offset.left + 'px');
+                                        j$(this).next('span').css('left', '8%');
+                                    }, function() {
+                                        j$(this).next('span').fadeOut(200);
+                                    });
+                                    
+                                });
+                                </script>
+                                <!-- ** Documnet Ready Script End** -->
+                            </apex:outputPanel>
+                        </div>
+                    </apex:form>
+                    <!-- ** Form tag End ** -->
+                    
+                    <!-- **  Script Methods And Functions ** -->
+                    <script type="text/javascript" language="JavaScript">
+                    <!-- script Block for Modal Windows Start -->
+                        window.remodalGlobals = {
+                        namespace: "modal",
+                        defaults: {
+                        hashTracking: true
+                        }
+                        };
+                        
+                        var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+                        
+                        /* To remove duplidate popup window initialized -Start */
+                        function removeduplicatepopup(popupID){
+                            while(j$(popupID).length >1){
+                            j$(popupID).last().remove();
+                        }
+                                                      while(j$('.remodal-wrapper').find(popupID).length >1){
+                            j$('.remodal-wrapper').find(popupID).last().remove();
+                        }
+                    }
+                    /* To remove duplidate popup window initialized -End */
+                    
+                    
+                    /* Activation Corporate button -Start */
+                    function buttonfunctionCorporate(param){
+                        j$( "#Insttype" ).popup( "open" );
+                    }
+                    /* Activation Corporate button -End */
+                    
+                    
+                    function submitConfirm(){
+                        j$('[data-remodal-id=submitinfo]').find('.remodal-close').click();
+                        showLoadingDiv();
+                        // orderupdate('Payment_Information');
+                    }
+                    
+                    
+                    
+                    <!-- script to show error message area -Start -->
+                        function currenttabtoshowerror(){
+                            var errordiv= "<div class='error-box' id='globalErrorBOX' style='display:none !important'>"; 
+                            errordiv += "<h1><img src='/resource/cautionImage' height='20' width='20' />";
+                            errordiv += "Please correct the errors indicated below and try again. </h1> <ul class='bullets'></ul> </div>";
+                            return errordiv;
+                        }
+                    <!-- script to show error message area -End -->
+                        
+                        <!-- script Installation Type Select Button Validation Start --> 
+                            function checkBtnSelected(param,param1){
+                                var currentcomp  = document.getElementById(param);
+                                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                                if(!(j$(currentcomp).find("input[name=MarketTypeSelection][type='radio']").valid()) && j$(currentcomp).find("input[name=MarketTypeSelection][type='radio']").hasClass("error")){
+                                    j$("input[name=MarketTypeSelection][type='radio']").parent().find("label[id=MarketTypeSelection-error]").remove();
+                                    var errordiv = currenttabtoshowerror();
+                                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                                    
+                                    var html = "";
+                                    html += "<li>\Select Vessel or Vehicle Type</li>";
+                                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                                    j$(currentcomp).find('.error-box').show();
+                                    var errorDivision = j$(currentcomp).find('.error-box').first();
+                                    var scrollPos = errorDivision.offset().top;
+                                    j$(window).scrollTop(scrollPos);
+                                }else{
+                                    if(param1){
+                                        showLoadingDiv();
+                                        if(j$("[id$='IMO_Number_cell']").length>0 )
+                                            btnSelectednavigateNext('IMO_Number', j$("input[name=MarketTypeSelection][type='radio']:checked").data('passkey'), '');
+                                        else 
+                                            btnSelectednavigateNext('Vessel_Details', j$("input[name=MarketTypeSelection][type='radio']:checked").data('passkey'), '');}
+                                    else
+                                        buttonfunctionCorporate(this);
+                                    
+                                }
+                            }
+                    <!-- script Installation Type Select Button Validation End -->
+                        
+                        <!-- script IMO Number Disable Enable Fields Start -->     
+                            function calldisableIMO(){
+                                j$('.kvh-show-errormsg-here').empty();
+                                if(j$("#IMOnumber").is(':checked')){
+                                    if(validmarketnoIMO.indexOf('{!objActivationPlatform.Market__c}')>=0){
+                                        showLoadingDiv();
+                                        updateimo('Yes');
+                                    }
+                                }
+                                if((j$("#noIMOnumber").is(':checked'))){ 
+                                    if(validmarketnoIMO.indexOf('{!objActivationPlatform.Market__c}')>=0){
+                                        showLoadingDiv();
+                                        updateimo('No');
+                                    }
+                                }
+                            }
+                    <!-- script IMO Number Disable Enable Fields End -->
+                        
+                        <!-- script IMO Number Validation Start -->     
+                            function validateIMO(){
+                                var IsvalidIMO = false;
+                                var imo = j$("[id$='vesselIMOnumberIdDetail']").val();
+                                //console.log(j$("[id$='vesselIMOnumberIdDetail']").val());
+                                var sum = 0;
+                                for (var i = 0, len = imo.length; i < len-1; i++) {
+                                    sum += (imo[i])*(imo.length-i);
+                                }
+                                if(sum % 10 == imo[6]){
+                                    IsvalidIMO = true;
+                                }
+                                // console.log(IsvalidIMO);
+                                return IsvalidIMO;
+                            }
+                    <!--script IMO Number Validation End --> 
+                        
+                        <!-- script IMO Number Tab JQUERY Validation And navigation Start -->     
+                            function validateradio(param,param1){
+                                var currentcomp  = document.getElementById(param);
+                                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                                // console.log(currentcomp);
+                                if((j$("#IMOnumber").is(':checked'))){
+                                    if(param1){
+                                        showLoadingDiv();
+                                        btnSelectednavigateNext('Vessel_Details', '', 'Yes');}
+                                    else
+                                        buttonfunctionCorporate(this);
+                                }else if((j$("#noIMOnumber").is(':checked'))){
+                                    if(param1){
+                                        showLoadingDiv();
+                                        btnSelectednavigateNext('Vessel_Details', '', 'No');}
+                                    else
+                                        buttonfunctionCorporate(this);
+                                } else{
+                                    // console.log('no select');
+                                    var errordiv = currenttabtoshowerror();
+                                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                                    var html = ""; 
+                                    html += "<li>\Select \"I have a Vessel IMO number\"  or  \"I don\'t have a Vessel IMO number\".</li>";
+                                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                                    //  console.log(j$(currentcomp).find('.error-box'));
+                                    j$(currentcomp).find('.error-box').show();
+                                }
+                            }
+                    <!--  script IMO Number Tab JQUERY Validation And navigation End --> 
+                        
+                        <!-- script Vessel Details Tab navigate Next Start -->     
+                            function validateVesselDetails(param,param1){
+                                var Isvalid;
+                                var currentcomp  = document.getElementById(param);
+                                //  console.log(currentcomp);
+                                // console.log(j$("[id$=Vessel_Details_lbl]").text());
+                                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                                j$(currentcomp).find("[id$=vesselInfoIdDetail]").removeClass('error');
+                                j$(currentcomp).find("[id$=vesselMMSIIdDetail]").removeClass('error');
+                                if(j$(currentcomp).find("[id$=vesselNameIdDetail]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=vesselNameIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=vesselNameIdDetail]").valid() && Isvalid;
+                                }
+                                
+                                if(j$(currentcomp).find("[id$=LeisurevesselBuildIdDetail]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=LeisurevesselBuildIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=LeisurevesselBuildIdDetail]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=vesselIMOnumberIdDetail]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=vesselIMOnumberIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=vesselIMOnumberIdDetail]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=vesselflagIdDetail]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=vesselflagIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=vesselflagIdDetail]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=LandvesselCountryIdDetail]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=LandvesselCountryIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=LandvesselCountryIdDetail]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("input[type=radio][name$='Brazilian_Waters_Vessel_c']").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("input[type=radio][name$='Brazilian_Waters_Vessel_c']").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("input[type=radio][name$='Brazilian_Waters_Vessel_c']").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Distance_between_antenna_and_sea_level__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Distance_between_antenna_and_sea_level__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Distance_between_antenna_and_sea_level__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Geograpical_coordinates_of_port_and_site__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Geograpical_coordinates_of_port_and_site__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Geograpical_coordinates_of_port_and_site__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Minimum_Latitude__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Minimum_Latitude__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Minimum_Latitude__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Maximum_Latitude__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Maximum_Latitude__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Maximum_Latitude__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Minimum_Longitude__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Minimum_Longitude__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Minimum_Longitude__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=Maximum_Longitude__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=Maximum_Longitude__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=Maximum_Longitude__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[name$=LeisurevesselIPMobileCastIdDetail]").length >1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[name$=LeisurevesselIPMobileCastIdDetail]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[name$=LeisurevesselIPMobileCastIdDetail]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=vesselLengthIdDetail]").length ==1){
+                                    var tempjob = j$(currentcomp).find("[id$=vesselLengthIdDetail]").valid();
+                                    if(tempjob == false){
+                                        j$(currentcomp).find("[id$=vesselLengthIdDetail]").addClass('kvh-selecterror');
+                                    }else{
+                                        j$(currentcomp).find("[id$=vesselLengthIdDetail]").removeClass('kvh-selecterror');
+                                    }
+                                    if(Isvalid == undefined){
+                                        Isvalid = tempjob;
+                                    }else{
+                                        Isvalid = tempjob && Isvalid;
+                                    }
+                                } 
+                                if(j$(currentcomp).find("[id$=vesselPlatformIdDetail]").length ==1){
+                                    var tempjob = j$(currentcomp).find("[id$=vesselPlatformIdDetail]").valid();
+                                    if(tempjob == false){
+                                        j$(currentcomp).find("[id$=vesselPlatformIdDetail]").addClass('kvh-selecterror');
+                                    }else{
+                                        j$(currentcomp).find("[id$=vesselPlatformIdDetail]").removeClass('kvh-selecterror');
+                                    }
+                                    if(Isvalid == undefined){
+                                        Isvalid = tempjob;
+                                    }else{
+                                        Isvalid = tempjob && Isvalid;
+                                    }
+                                } 
+                                if(j$(currentcomp).find("[id$=vesselTypeIdDetail]").length ==1){
+                                    var tempjob = j$(currentcomp).find("[id$=vesselTypeIdDetail]").valid();
+                                    if(tempjob == false){
+                                        j$(currentcomp).find("[id$=vesselTypeIdDetail]").addClass('kvh-selecterror');
+                                    }else{
+                                        j$(currentcomp).find("[id$=vesselTypeIdDetail]").removeClass('kvh-selecterror');
+                                    }
+                                    if(Isvalid == undefined){
+                                        Isvalid = tempjob;
+                                    }else{
+                                        Isvalid = tempjob && Isvalid;
+                                    }
+                                } 
+                                if(j$(currentcomp).find("[id$=vesselInfoIdDetail]").length ==1){
+                                    if(j$(currentcomp).find("[id$=vesselInfoIdDetail]").val() == "" && j$(currentcomp).find("[id$=vesselMMSIIdDetail]").val() == ""){
+                                        if(Isvalid == undefined)
+                                            Isvalid = j$(currentcomp).find("[id$=vesselInfoIdDetail]").valid();
+                                        else
+                                            Isvalid = j$(currentcomp).find("[id$=vesselInfoIdDetail]").valid() && Isvalid;
+                                        j$(currentcomp).find("[id$=vesselInfoIdDetail]").addClass('error');
+                                        j$(currentcomp).find("[id$=vesselMMSIIdDetail]").addClass('error');
+                                    }
+                                }
+                                
+                                if(Isvalid){
+                                    if(param1){
+                                        showLoadingDiv();
+                                        if(j$("[id$=Vessel_Details_lbl]").text() != 'Vehicle/Platform Details' )
+                                            btnSelectednavigateNext('Onboard_Contact', '', '');
+                                        else 
+                                            btnSelectednavigateNext('Antenna_System_Support_Contact', '', '');}
+                                    else
+                                        buttonfunctionCorporate(this);
+                                }else{
+                                    var errordiv = currenttabtoshowerror();
+                                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                                    var html = "";
+                                    
+                                    if(j$(currentcomp).find('[id$=vesselNameIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselNameIdDetail]").valid() == false)){
+                                        html += "<li>Vessel Name Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=vesselflagIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselflagIdDetail]").valid() == false)){
+                                        html += "<li>Select Flag</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=vesselLengthIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselLengthIdDetail]").valid() == false)){
+                                        html += "<li>Select Vessel Length</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=vesselTypeIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselTypeIdDetail]").valid() == false)){
+                                        if(j$(currentcomp).find('[id$=vesselTypeIdDetail]').attr('id').indexOf('LandvesselTypeIdDetail') > -1)
+                                            html += "<li>Select Vehicle/Platform Type</li>";
+                                        else
+                                            html += "<li>Select Vessel Type</li>";
+                                    }
+                                    
+                                    if(j$(currentcomp).find('[id$=vesselPlatformIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselPlatformIdDetail]").valid() == false)){
+                                        if(j$(currentcomp).find('[id$=vesselPlatformIdDetail]').attr('id').indexOf('LandvesselPlatformIdDetail') > -1)
+                                            html += "<li>Select Vehicle/Platform Detail</li>";
+                                        else
+                                            html += "<li>Select Vessel Detail</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=LandvesselCountryIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=LandvesselCountryIdDetail]").valid() == false)){
+                                        html += "<li>Select Country of Registration</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=vesselIMOnumberIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=vesselIMOnumberIdDetail]").valid() == false)){
+                                        html += "<li>Enter Vessel IMO Number</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=LeisurevesselBuildIdDetail]').hasClass("error") && (j$(currentcomp).find("[id$=LeisurevesselBuildIdDetail]").valid() == false)){
+                                        html += "<li>Boat Builder/Shipyard required</li>";
+                                    }
+                                    if(j$(currentcomp).find("[id$=vesselInfoIdDetail]").val() == "" && j$(currentcomp).find("[id$=vesselMMSIIdDetail]").val() == ""){
+                                        html += "<li>Enter Radio Call Sign or MMSI</li>";
+                                    }
+                                    if(j$(currentcomp).find('[name$=LeisurevesselIPMobileCastIdDetail]').hasClass("error") && (j$(currentcomp).find("[name$=LeisurevesselIPMobileCastIdDetail]").valid() == false)){
+                                        html += "<li>Please indicate whether this vessel is a charter boat/yacht</li>";
+                                    }
+                                    if(j$(currentcomp).find("input[type=radio][name$='Brazilian_Waters_Vessel_c']").hasClass("error") && (j$(currentcomp).find("input[type=radio][name$='Brazilian_Waters_Vessel_c']").valid() == false)){
+                                        html += "<li>Brazilian Waters Vessel Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Distance_between_antenna_and_sea_level__c]').hasClass("error") && (j$(currentcomp).find("[id$=Distance_between_antenna_and_sea_level__c]").valid() == false)){
+                                        html += "<li>Distance between antenna and sea level Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Geograpical_coordinates_of_port_and_site__c]').hasClass("error") && (j$(currentcomp).find("[id$=Geograpical_coordinates_of_port_and_site__c]").valid() == false)){
+                                        html += "<li>Geograpical coordinates of port and site Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Minimum_Latitude__c]').hasClass("error") && (j$(currentcomp).find("[id$=Minimum_Latitude__c]").valid() == false)){
+                                        html += "<li>Minimum Latitude Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Maximum_Latitude__c]').hasClass("error") && (j$(currentcomp).find("[id$=Maximum_Latitude__c]").valid() == false)){
+                                        html += "<li>Maximum Latitude Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Minimum_Longitude__c]').hasClass("error") && (j$(currentcomp).find("[id$=Minimum_Longitude__c]").valid() == false)){
+                                        html += "<li>Minimum Longitude Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=Maximum_Longitude__c]').hasClass("error") && (j$(currentcomp).find("[id$=Maximum_Longitude__c]").valid() == false)){
+                                        html += "<li>Maximum Longitude Required</li>";
+                                    }
+                                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                                    j$(currentcomp).find('.error-box').show();
+                                }
+                                
+                            }
+                    <!-- script Vessel Details Tab navigate Next End --> 
+                        
+                        // Validator script //
+                        function validateError(param,param1){
+                            var Isvalid;
+                            var currentcomp = j$("[id$="+param+"]");
+                            var skipvalidationVar = j$(currentcomp).find("[id$=skipValidation]").is(':checked');
+                            //   console.log('==>' +skipvalidationVar);
+                            if(!skipvalidationVar){
+                                currentcomp = j$("[id$="+param+"]");
+                                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                                if(j$(currentcomp).find("[id$=firstname]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=firstname]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=firstname]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=lastname]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=lastname]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=lastname]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=email]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=email]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=email]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=address1]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=address1]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=address1]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=city]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=city]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=city]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=country]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=country]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=country]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=State_Province__c]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=State_Province__c]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=State_Province__c]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=ppnumber]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=ppnumber]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=ppnumber]").valid() && Isvalid;
+                                }
+                                
+                                if(j$(currentcomp).find("[id$=dealerCompanyName]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=dealerCompanyName]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=dealerCompanyName]").valid() && Isvalid;
+                                }
+                                
+                                if(j$(currentcomp).find("[id$=postalcode]").length ==1){
+                                    if(Isvalid == undefined)
+                                        Isvalid = j$(currentcomp).find("[id$=postalcode]").valid();
+                                    else
+                                        Isvalid = j$(currentcomp).find("[id$=postalcode]").valid() && Isvalid;
+                                }
+                                if(j$(currentcomp).find("[id$=jobfunction]").length ==1){
+                                    var tempjob = j$(currentcomp).find("[id$=jobfunction]").valid();
+                                    if(tempjob == false){
+                                        j$(currentcomp).find("[id$=jobfunction]").addClass('selecterror');
+                                    }else{
+                                        j$(currentcomp).find("[id$=jobfunction]").removeClass('selecterror');
+                                    }
+                                    if(Isvalid == undefined){
+                                        Isvalid = tempjob;
+                                    }else{
+                                        Isvalid = tempjob && Isvalid;
+                                    }
+                                } 
+                                
+                                var ppType = false;
+                                if(j$(currentcomp).find("table[id$=PPT]").find('input[type=radio]:enabled').length > 0){
+                                    j$(currentcomp).find("table[id$=PPT]").find('input[type=radio]:enabled').each(function(){
+                                        if(j$(this).is(':checked')){
+                                            ppType = true;
+                                        }
+                                    });
+                                    
+                                    if(!ppType){
+                                        Isvalid = false;
+                                        j$(currentcomp).find("table[id$=PPT]").addClass('selecterror');
+                                    }
+                                    else{
+                                        j$(currentcomp).find("table[id$=PPT]").removeClass('selecterror');
+                                    }
+                                }
+                                
+                                var spType = false;
+                                if(j$(currentcomp).find("table[id$=SPT]").find('input[type=radio]:enabled').length > 0 ){
+                                    j$(currentcomp).find("table[id$=SPT]").find('input[type=radio]:enabled').each(function(){
+                                        if(j$(this).is(':checked')){
+                                            spType = true;
+                                        }
+                                    });
+                                    if(j$(currentcomp).find("[id$=spnumber]:enabled").val() == ''|| j$(currentcomp).find("[id$=spnumber]:enabled").val() == null){
+                                        spType = true;
+                                    }
+                                    if(!spType){
+                                        Isvalid = false;
+                                        j$(currentcomp).find("table[id$=SPT]").addClass('selecterror');
+                                    }
+                                    else{
+                                        j$(currentcomp).find("table[id$=SPT]").removeClass('selecterror');
+                                    }
+                                }
+                                
+                                if(Isvalid){
+                                    if(param1)
+                                        ifSuccessCallSave(param);
+                                    else
+                                        buttonfunctionCorporate(this);
+                                }else{
+                                    var html = "";
+                                    var errordiv = currenttabtoshowerror();
+                                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                                    if(j$(currentcomp).find('[id$=dealerCompanyName]').hasClass("error") && (j$(currentcomp).find("[id$=dealerCompanyName]").valid() == false)){
+                                        html += "<li>Dealer/Distributor Company Name Required</li>";
+                                    }
+                                    if(param =='dealercomponent'){
+                                        if(j$(currentcomp).find('[id$=ppnumber]').hasClass("error") && (j$(currentcomp).find("[id$=ppnumber]").valid() == false)){
+                                            html += "<li>Company Phone Number Required</li>";
+                                        }
+                                        if(!ppType){
+                                            html += "<li>Select Company Phone Type</li>";
+                                        } 
+                                    }
+                                    if(j$(currentcomp).find('[id$=firstname]').hasClass("error") && (j$(currentcomp).find("[id$=firstname]").valid() == false)){
+                                        html += "<li>First/Given Name Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=lastname]').hasClass("error") && (j$(currentcomp).find("[id$=lastname]").valid() == false)){
+                                        html += "<li>Last/Family Name/Surname Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=email]').hasClass("error") && (j$(currentcomp).find("[id$=email]").valid() == false)){
+                                        html += "<li>Valid Email Required</li>";
+                                    }
+                                    if(param !='dealercomponent'){
+                                        if(j$(currentcomp).find('[id$=ppnumber]').hasClass("error") && (j$(currentcomp).find("[id$=ppnumber]").valid() == false)){
+                                            html += "<li>Primary Phone Number Required</li>";
+                                        }
+                                        if(!ppType){
+                                            html += "<li>Select Primary Phone Type</li>";
+                                        }
+                                    }
+                                    if(!spType){
+                                        if(param =='dealercomponent'){
+                                            html += "<li>Select Contact Phone Type</li>";
+                                        }else{
+                                            html += "<li>Select Secondary Phone Type</li>";
+                                        }
+                                    }
+                                    if(j$(currentcomp).find('[id$=jobfunction]').hasClass("error") && (j$(currentcomp).find("[id$=jobfunction]").valid() == false)){
+                                        html += "<li>Select Role</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=address1]').hasClass("error") && (j$(currentcomp).find("[id$=address1]").valid() == false)){
+                                        html += "<li>Address 1 Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=city]').hasClass("error") && (j$(currentcomp).find("[id$=city]").valid() == false)){
+                                        html += "<li>City Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=postalcode]').hasClass("error") && (j$(currentcomp).find("[id$=postalcode]").valid() == false)){
+                                        html += "<li>Postal/Zip Code Required</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=country]').hasClass("error") && (j$(currentcomp).find("[id$=country]").valid() == false)){
+                                        html += "<li>Select Country</li>";
+                                    }
+                                    if(j$(currentcomp).find('[id$=State_Province__c]').hasClass("error") && (j$(currentcomp).find("[id$=State_Province__c]").valid() == false)){
+                                        html += "<li>Select State/Province/Territory</li>";
+                                    }
+                                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                                    j$(currentcomp).find('.error-box').show();
+                                }
+                            }else{
+                                if(param1)
+                                    ifSuccessCallSave(param);
+                                else
+                                    buttonfunctionCorporate(this);
+                            }
+                        }
+                    
+                    
+                    
+                    function ifSuccessCallSave(param){
+                        var currentcomp = j$("[id$="+param+"]");
+                        j$(currentcomp).find('.selecterror').removeClass('selecterror');
+                        j$(currentcomp).find('.error').removeClass("error");
+                        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                        showLoadingDiv();
+                        //check here current tab and call appropriate method, pass next tab id 
+                        if(param == 'Act_subscriber')
+                            callSubscriberSave('Authorized_Representatives');
+                        if(param == 'contactcomponent')
+                            callcontactFromAccountSetup('Authorized_Representatives');
+                        if(param == 'dealercomponent')
+                            callDealerSave('System_Type');
+                        if(param == 'billingComponent')
+                            callBillingSave('Invoicing_Preferences');
+                        if(param == 'individualcomponent') 
+                            callcontactFromInstallationType('Invoicing_Preferences'); 
+                        if(param == 'ActivationGroupEmail') 
+                            callcontactFromAccountSetupGrp('Invoicing_Preferences');
+                        if(param == 'onboardcontactcomponent') 
+                            callcontactFromInstallationType('Antenna_System_Support_Contact');
+                        if(param == 'antennasystemsupportcontactcomponent') 
+                            callcontactFromInstallationType('Dealer_Distributor_Info');
+                        
+                    }            
+                    <!-- script Onboard Contact navigate Back Start -->     
+                        function validateOnboardContactBack(){
+                            showLoadingDiv();
+                            btnSelectednavigateBack('Vessel_Details'); 
+                        }
+                    <!-- script Onboard Contact navigate Back End -->
+                        
+                        <!-- script Onboard Contact navigate Next Start -->     
+                            function validateOnboardContactNext(){
+                                var isvalid = false;
+                                if(!isvalid){
+                                    showLoadingDiv();
+                                    callcontactFromInstallationType('Antenna_System_Support_Contact');
+                                }
+                            }
+                    
+                    <!-- script Onboard Contact navigate Next End --> 
+                        
+                        <!-- script Antenna System Support Contact navigate Back Start -->     
+                            function validateAntennaSystemSupportContactBack(){
+                                showLoadingDiv();
+                                if(j$("[id$='Onboard_Contact']").length ==1){
+                                    j$("[id$='Vessel_Details_cell']").show();
+                                    btnSelectednavigateBack('Onboard_Contact'); 
+                                }
+                                else{
+                                    btnSelectednavigateBack('Vessel_Details'); 
+                                }
+                                
+                            }
+                    <!-- script Antenna System Support Contact navigate Back End --> 
+                        
+                        <!-- script Antenna System Support Contact navigate Next Start -->     
+                            function validateAntennaSystemSupportContactNext(){
+                                var isvalid = false;
+                                if(!isvalid){
+                                    showLoadingDiv();
+                                    callcontactFromInstallationType('Antenna_System_Support_Contact');
+                                }
+                            }
+                    <!-- script Antenna System Support Contact navigate Next End --> 
+                        
+                        function generateRequired(){ 
+                            j$('span:has(span.req), p:has(span.req), div:has(span.req)').children('input[type=text], select').addClass('requiredRedMarkFld');
+                        }
+                    </script>
+                </apex:outputPanel>
+                
+                <!-- ** remodal popup Start ** -->
+                
+                <div data-role="popup" id="Insttype" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                        <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                    </div>
+                    <div role="main" class="ui-content center">
+                        <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                        <div class="center">
+                            <a Class="button remodal-cancel"  value="Yes" action="" onclick="showLoadingDiv();confirmsaveandexit();">Yes</a> 
+                            <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ** remodal popup Start ** -->
+                <div data-role="popup" style="min-width:900px;" id="vessel_type" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                        <h1 class="ui-title" role="heading" aria-level="1">Vessel Type Examples</h1>
+                    </div>
+                    <div role="main" class="ui-content">
+                        <table class="collapse-panels width-90">
+                            <tbody><tr>
+                                <th class="width-30"><strong>Commercial Vessels:</strong></th>
+                                <th class="width-30"><strong>Leisure Vessels:</strong></th>
+                                <th class="width-30"><strong>Military/Government Vessels:</strong></th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <ul class="terms pad-left">
+                                            <li>Bulk Carriers</li>
+                                            <li>Dry Cargo Vessels</li>
+                                            <li>Fishing Vessels</li>
+                                            <li>Inland Waterways</li>
+                                            <li>Non-ship Structures</li>
+                                            <li>Non-propelled Vessels</li>
+                                            <li>Cruise Ships/Ocean Liners</li>
+                                            <li>Ferries (cargo and passengers)</li>
+                                            <li>Tankers</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="terms pad-left">
+                                            <li>Power Boats</li>
+                                            <li>Yachts</li>
+                                            <li>Cruisers</li>
+                                            <li>Houseboats</li>
+                                            <li>Sportfishing Vessels</li>
+                                            <li>Trawlers</li>
+                                            <li>Charter Vessels</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="terms pad-left">
+                                            <li>Government Vessels</li>
+                                            <li>Homeland Security</li>
+                                            <li>Emergency Management</li>
+                                            <li>Scientific Research</li>
+                                            <li>NGOs</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                    </div>
+                </div>
+                
+                <div data-role="popup" style="min-width:650px;" id="vehicle_type" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                        <h1 class="ui-title" role="heading" aria-level="1">Vehicle Type Examples</h1>
+                    </div>
+                    <div role="main" class="ui-content">
+                        <table class="collapse-panels width-90">
+                            <tbody><tr>
+                                <th class="width-30"><strong>Commercial Land/Vehicles:</strong></th>
+                                <th class="width-30"><strong>Military/Governement Land/Vehicles:</strong></th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <ul class="terms pad-left">
+                                            <li>Mining</li>
+                                            <li>Oil &amp; Gas</li>
+                                            <li>Satellite News Gathering</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="terms pad-left">
+                                            <li>Emergency services</li>
+                                            <li>Homeland Security</li>
+                                            <li>Military</li>
+                                            <li>NGO</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                    </div>
+                </div>
+                <!-- ** remodal popup End ** -->
+                
+            </div>
+            <!-- **  Script Methods And Functions ** -->
+        </body>
+        <!-- ** Body tag End ** -->
+    </html>
+    <!-- ** HTML tag End ** -->
+</apex:page>

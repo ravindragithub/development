@@ -1,0 +1,439 @@
+<apex:component controller="Act_Product_Summary_Component_Ctrl" allowDML="true" id="productsummary" >
+    <script>
+    
+    j$( document ).ready(function() {
+           showLoadingDiv();
+           showQuoteLines();
+    });
+    </script>
+    <style>
+        td.text-left, th.text-left {
+        text-align: left !important;
+        }
+        p {
+        line-height: 1.5em;
+        padding-bottom: 5px !important;
+        }
+
+        .small-button {
+        margin: 0;
+        padding: 5px 15px;
+        font-size: 90%;
+        }
+        .collapse-button {
+        font-size: 80% !important;
+        font-weight: normal !important;
+        color: #444 !important;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-family: DINPro-Regular, Arial !important;
+        margin: 0;
+        padding: 5px 20px;
+        }
+        td.width-50, th.width-50 {
+        width: 50%;
+        }
+        table.collapse-panels td.row-hdr {
+        background: #ddd;
+        text-align: left;
+        padding: 3px 3px 3px 5px;
+        font-size: 80%;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #444;
+        text-shadow: none;
+        }
+        .text-center {
+        text-align: center !important;
+        }
+        table.collapse-panels tr.product td:first-child {
+        text-align: left;
+        }
+        table.collapse-panels tr.product td {
+        background-color: #f3f3f3;
+        border-top: 1px solid #ccc;
+        font-weight: bold;
+        font-size: 110%;
+        }
+        table.collapse-panels tr.bundle td:first-child:before {
+        content: "\25b6";
+        color: #ccc;
+        padding-right: 10px;
+        font-size: 60%;
+        }
+        table.collapse-panels tr.bundle td:first-child {
+        text-align: left;
+        padding-left: 20px;
+        }
+        table.collapse-panels td.plan-name {
+        background: #ecf5fc;
+        }
+        table.collapse-panels td {
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+        }
+        .total {
+        font-weight: bold;
+        font-size: 115%;
+        border-top: 3px solid #ccc;
+        }
+        table.collapse-panels tr.product td:last-child, table.collapse-panels tr.bundle td:last-child, table.collapse-panels tr td.total:last-child {
+        padding-right: 20px;
+        }
+    </style>
+    <apex:actionFunction name="showQuoteLines" action="{!selectedProductBundle}" reRender="waitforquotepriceupdation">
+    </apex:actionFunction>
+    <apex:actionFunction name="editServiceClear" action="{!goToTab}" reRender="wrapper">
+    </apex:actionFunction>
+     <apex:actionFunction name="finalconfirmwindow" action="{!orderValidation}" reRender="wrapper">
+    </apex:actionFunction>
+    <apex:actionFunction name="finalconfirmwindowdealer" action="{!orderValidationDealer}" reRender="wrapper"> <!-- oncomplete="window.location.href = '{!$Site.Prefix + '/home/home.jsp'}'" -->
+    </apex:actionFunction>
+    <h2 class="inline">Review Contract Terms</h2>
+    <apex:commandLink style="margin-bottom: -5px;" styleClass="button pad-left" html-data-role="none" value="Edit" rendered="{!boolIsShowEdit}" onclick="showLoadingDiv();btnSelectednavigateNext('Contract_Details'); return false;" ></apex:commandLink> 
+    <table class="collapse-panels">
+        <tbody>
+            <tr>
+                <td class="plan-name text-left width-50"><h3>Start Date:</h3></td>
+                <td>
+                    <h2>
+                        <apex:outputText value="{0,date,dd'-'MMM'-'yyyy}">
+                            <apex:param value="{!objActivationOrder.Service_Start_Date__c}" /> 
+                        </apex:outputText>
+                    </h2>
+                </td>
+            </tr>
+            <apex:outputPanel layout="none" rendered="{!objActivationOrder.Pre_Activation_Date__c != null}">
+                <tr>
+                    <td class="plan-name text-left width-50"><h3>Pre-activation Date:</h3></td>
+                    <td>
+                        <h2>
+                            <apex:outputText value="{0,date,dd'-'MMM'-'yyyy}">
+                                <apex:param value="{!objActivationOrder.Pre_Activation_Date__c}" /> 
+                            </apex:outputText>
+                        </h2>
+                    </td>
+                </tr>
+            </apex:outputPanel>
+            <tr>
+                <td class="row-hdr width-50">Service</td>
+                <td class="row-hdr width-50 text-center">Term</td>
+            </tr>
+            <tr>
+                <td class="text-left">Airtime Services</td>
+                <td>{!objActivationOrder.Contract_Term__c} months</td>
+            </tr>
+            <apex:outputPanel layout="none;" rendered="{!objActivationServiceComp.Entertainment_Programming_Product__c != ''}" >
+                <tr>
+                    <td class="text-left">IP-MobileCast Entertainment &amp; Training Packages</td>
+                    <td>{!objActivationOrder.Entertainment_News_Sports_Training_Term__c} months</td>
+                </tr>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none;" rendered="{!OR(objActivationServiceComp.Operations_Data_Services__c != '',objActivationServiceComp.Independent_Entertainment_Channels__c != '')}" >
+                <tr>
+                    <td class="text-left">IP-MobileCast Independent Entertainment Channels &amp; Operations Data Services</td>
+                    <td>{!objActivationOrder.Operation_Data_Services_Term__c} month</td>
+                </tr>
+            </apex:outputPanel>
+           <!-- <apex:outputPanel layout="none;" rendered="{!objActivationServiceComp.Operations_Data_Services__c != ''}" >
+                <tr>
+                    <td class="text-left">IP-MobileCast Operations Data Services</td>
+                    <td>{!objActivationOrder.Operation_Data_Services_Term__c} month</td>
+                </tr>
+            </apex:outputPanel> -->
+        </tbody>
+    </table>
+    
+    
+    <h2 class="inline">Review Services</h2>
+    <apex:commandLink style="margin-bottom: -5px;" styleClass="button pad-left" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();editServiceClear(); return false;" ></apex:commandLink> 
+    <apex:outputPanel id="waitforquotepriceupdation">
+        <table class="collapse-panels">
+            <tbody><tr>
+                <td class="row-hdr">Product</td>
+                <td class="text-center row-hdr"></td>
+                <td class="text-center row-hdr">Bill Type</td>
+                <td class="text-center row-hdr">Discount</td>
+                <td class="text-center row-hdr">Price</td>
+                </tr>
+                <apex:repeat value="{!lstSBQQQuoteLines}" var="objSBQQQuoteLine">
+                    <tr class="{!IF(objSBQQQuoteLine.SBQQ__RequiredBy__c != null , 'bundle', 'product')}">
+                        <td>{!objSBQQQuoteLine.SBQQ__Product__r.Name}</td>
+                        <td>
+                            <apex:outputText style="" rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.SBQQ__Product__r.Name),'CREW CALLING'), true, false)}" value="{!objSBQQQuoteLine.Quantity_Online_Activation__c}">
+                            </apex:outputText> 
+                        </td>
+                        <td>
+                            <apex:outputPanel style="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'INCLUDED'),'font-style: italic;', '')}">{!objSBQQQuoteLine.Bill_Type__c}</apex:outputPanel>
+                        </td>
+                        <td>
+                            <apex:outputPanel layout="none" rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'INCLUDED'), false, true)}">
+                                <apex:outputText rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'RATE SHEET'), false, true)}" value="{!objSBQQQuoteLine.Discount_for_quote__c}">
+                                </apex:outputText>
+                                <apex:outputText rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'RATE SHEET'), true, false)}" value="">
+                                </apex:outputText>
+                            </apex:outputPanel>
+                        </td>
+                        <td style="text-align:right"> 
+                            <apex:outputPanel layout="none" rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'INCLUDED'), false, true)}">
+                                <apex:outputText rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'RATE SHEET'), false, true)}" value="USD {0, number, ###,###,###,##0.00}">
+                                    <apex:param value="{!objSBQQQuoteLine.SBQQ__CustomerPrice__c}" />
+                                </apex:outputText>
+                                <apex:outputText style="padding-right:20px;" rendered="{!IF(CONTAINS(UPPER(objSBQQQuoteLine.Bill_Type__c),'RATE SHEET'), true, false)}" value="-   ">
+                                </apex:outputText>
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                </apex:repeat>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="total plan-name">One-time Total:</td>
+                    <td class="total" style="text-align:right">
+                        <apex:outputText value="USD {0, number, ###,###,###,##0.00}">
+                            <apex:param value="{!decOneTimeTotal}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="total plan-name">Monthly Total:</td>
+                    <td class="total" style="text-align:right"> 
+                        <apex:outputText value="USD {0, number, ###,###,###,##0.00}">
+                            <apex:param value="{!decMonthlyTotal}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <script>
+        if({!lstSBQQQuoteLines.size} > 0){
+            hideLoadingDiv();
+        }
+        </script>
+        <apex:actionPoller action="{!incrementCounter}" rerender="waitforquotepriceupdation" enabled="{!boolSuccesscheck}" interval="5" rendered="{!boolSuccesscheck}"/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="true">
+    <h2>Review Additional Subscription and Service Details</h2>
+    <table class="collapse-panels">
+        <tbody>
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Special_Instructions__c != '', true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">Airtime Plans</span>
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Airtime_Plans'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left width-50">
+                        Special Instructions:
+                    </td>
+                    <td class="text-left">"{!objActivationServiceComp.Special_Instructions__c}"</td>
+                </tr>
+            </apex:outputPanel>
+           
+           
+            <tr class="product">
+                <td colspan="2"><span class="left">mini-VSAT Broadband Enhanced Voice Service LINE 1</span>
+                    <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Voice_Lines'); return false;" ></apex:commandLink> 
+                </td>
+            </tr>
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Voice_Line_1_Type__c == 'KVH-assigned Phone Number', true, false)}">
+                <tr class="bundle">
+                    <td class="text-left">
+                        KVH-assigned Phone Number
+                    </td>
+                    <td class="text-left">Yes</td>
+                </tr>
+            </apex:outputPanel> 
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Voice_Line_1_Type__c == 'User-specified Phone Number', true, false)}">
+                <tr class="bundle">
+                    <td class="text-left">
+                        User-specified Phone Number
+                    </td>
+                    <td class="text-left">
+                        <p>Requested Country: <strong>{!objActivationServiceComp.Voice1_User_Country__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_User_Specified_Code__c}</strong></p>
+                    </td>
+                </tr>
+            </apex:outputPanel>
+            <tr class="bundle">
+                <td class="text-left"> 
+                    Virtual Local Phone Numbers
+                </td>
+                <td class="text-left">
+                    <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice1_Country1__c != '',objActivationServiceComp.Voice1_Code1__c != ''), true, false)}">
+                        <p> Requested Country: <strong>{!objActivationServiceComp.Voice1_Country1__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_Code1__c}</strong> </p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice1_Country2__c != '',objActivationServiceComp.Voice1_Code2__c != ''), true, false)}">
+                        <p> Requested Country: <strong>{!objActivationServiceComp.Voice1_Country2__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_Code2__c}</strong> </p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice1_Country3__c != '',objActivationServiceComp.Voice1_Code3__c != ''), true, false)}">
+                        <p> Requested Country: <strong>{!objActivationServiceComp.Voice1_Country3__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_Code3__c}</strong> </p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice1_Country4__c != '',objActivationServiceComp.Voice1_Code4__c != ''), true, false)}">
+                         <p>Requested Country: <strong>{!objActivationServiceComp.Voice1_Country4__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_Code4__c}</strong> </p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice1_Country5__c != '',objActivationServiceComp.Voice1_Code5__c != ''), true, false)}">
+                         <p>Requested Country: <strong>{!objActivationServiceComp.Voice1_Country5__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice1_Code5__c}</strong> </p>
+                    </apex:outputPanel>
+                </td>
+            </tr>
+            
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Voice_Line_2_Type__c != '', true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">mini-VSAT Broadband Enhanced Voice Service LINE 2</span> 
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Voice_Lines'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr>
+                <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Voice_Line_2_Type__c == 'KVH-assigned Phone Number', true, false)}">
+                    <tr class="bundle">
+                        <td class="text-left">
+                            KVH-assigned Phone Number
+                        </td>
+                        <td class="text-left">Yes</td>
+                    </tr>
+                </apex:outputPanel> 
+                <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Voice_Line_2_Type__c == 'User-specified Phone Number', true, false)}">
+                    <tr class="bundle">
+                        <td class="text-left">
+                            User-specified Phone Number
+                        </td>
+                        <td class="text-left">
+                            <p>Requested Country: <strong>{!objActivationServiceComp.Voice2_User_Country__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_User_Specified_Code__c}</strong></p>
+                        </td>
+                    </tr>
+                </apex:outputPanel>
+                <tr class="bundle">
+                    <td class="text-left"> 
+                        Virtual Local Phone Numbers
+                    </td>
+                    <td class="text-left">
+                        <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice2_Country1__c != '',objActivationServiceComp.Voice2_Code1__c != ''), true, false)}">
+                          <p>Requested Country: <strong>{!objActivationServiceComp.Voice2_Country1__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_Code1__c}</strong>  </p> 
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice2_Country2__c != '',objActivationServiceComp.Voice2_Code2__c != ''), true, false)}">
+                            <p> Requested Country: <strong>{!objActivationServiceComp.Voice2_Country2__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_Code2__c}</strong>   </p> 
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice2_Country3__c != '',objActivationServiceComp.Voice2_Code3__c != ''), true, false)}">
+                            <p> Requested Country: <strong>{!objActivationServiceComp.Voice2_Country3__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_Code3__c}</strong>  </p> 
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice2_Country4__c != '',objActivationServiceComp.Voice2_Code4__c != ''), true, false)}">
+                            <p> Requested Country: <strong>{!objActivationServiceComp.Voice2_Country4__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_Code4__c}</strong>  </p> 
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(OR(objActivationServiceComp.Voice2_Country5__c != '',objActivationServiceComp.Voice2_Code5__c != ''), true, false)}">
+                            <p> Requested Country: <strong>{!objActivationServiceComp.Voice2_Country5__c}</strong><br/>Area/City Code: <strong>{!objActivationServiceComp.Voice2_Code5__c}</strong>  </p> 
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </apex:outputPanel>
+             <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Media_Server_Serial_Number__c != '', true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">IP-MobileCast Media Server</span>   
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('IP_MobileCast'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr>
+                <tr class="bundle" style="display:{!IF(objActivationServiceComp.Media_Server_Serial_Number__c != '' ,'table-row;', 'none;')}">
+                    <td class="text-left width-50">
+                        Serial Number: 
+                    </td>
+                    <td class="text-left">
+                         {!objActivationServiceComp.Media_Server_Serial_Number__c}
+                    </td>
+                </tr>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Global_Static_IP_Selected__c, true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">Global Static IP Service</span> 
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Additional_Plans_and_Services'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">
+                        Internet access originates from:
+                    </td>
+                    <td class="text-left">
+                        {!objActivationServiceComp.World_Region__c}
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">
+                        IP addresses with inbound access to vessel:
+                    </td>
+                    <td class="text-left">
+                        <apex:outputText value="{!SUBSTITUTE(JSENCODE(objActivationServiceComp.Inbound_IPs_ranges__c),',','<br/>')}" escape="false"/>
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Applications with inbound access to vessel:</td>
+                    <td class="text-left">
+                        <apex:outputText value="{!SUBSTITUTE(JSENCODE(objActivationServiceComp.Inbound_Applications__c),';','<br/>')}" escape="false"/>
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Individual who can assist network operations with setup and testing:</td>
+                    <td class="text-left">{!objActivationServiceComp.Activation_Contact__r.First_Name__c} {!objActivationServiceComp.Activation_Contact__r.Last_Name__c}, {!objActivationServiceComp.Activation_Contact__r.Contact_Role__c}</td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">More than 5 global static IP addresses required:</td>
+                    <td class="text-left">{!IF(objActivationServiceComp.More_than_one_global_static_IP_addresses__c, 'Yes', 'No')}</td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Additional Comments:</td>
+                    <td class="text-left">"{!objActivationServiceComp.Additional_Comments__c}"</td>
+                </tr>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!IF(objActivationServiceComp.Iridium_OpenPort_Selected__c, true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">Iridium OpenPort Back up</span>
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Additional_Plans_and_Services'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Pilot SIM Card Number:</td>
+                    <td class="text-left">{!objActivationServiceComp.Pilot_SIM_Card_Number__c}</td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Pilot IMEI Number:</td>
+                    <td class="text-left">{!objActivationServiceComp.Pilot_IMEI_Number__c}</td>
+                </tr>
+                <tr class="bundle">
+                    <td class="text-left">Pilot Firmware Version:</td>
+                    <td class="text-left">{!objActivationServiceComp.Pilot_Firmware_Version__c}</td>
+                </tr>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!IF(lstActivationHardwareIntegrated.size > 0, true, false)}">
+                <tr class="product">
+                    <td colspan="2"><span class="left">OneCare Technical Assistance Integrated Systems</span> 
+                        <apex:commandLink style="margin:0;" styleClass="button small-button right ui-link" html-data-role="none" rendered="{!boolIsShowEdit}" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Technical_Assistance_Package'); return false;" ></apex:commandLink> 
+                    </td>
+                </tr> 
+                <apex:repeat value="{!lstActivationHardwareIntegrated}" var="objActivationHardwareIntegrated">
+                    <tr class="bundle">
+                       <td class="text-left">{!objActivationHardwareIntegrated.Integrated_Product_Type__c}</td>
+                       <td class="text-left">
+                           Antenna Serial Number: <strong>{!objActivationHardwareIntegrated.Antenna_Serial_Number__c}</strong><br/>
+                           SIM Card Number: <strong>{!objActivationHardwareIntegrated.Below_Decks_Serial_Number__c}</strong><br/>
+                        </td>
+                     </tr>
+                </apex:repeat>
+            </apex:outputPanel>
+        </tbody>
+    </table>
+    </apex:outputPanel>
+    <div class="clear" style="padding-bottom:20px;"></div>
+    <div class="button-bar clear">
+        <apex:outputPanel layout="none" rendered="{!boolIsShowEdit}">
+            <apex:outputPanel layout="none" rendered="{!OR(AND($User.Id != objActivationOrder.CreatedById, objActivationOrder.Activation_Type__c == 'Activation on behalf of Customer'), objActivationOrder.Activation_Type__c != 'Activation on behalf of Customer')}">
+                <a href="#confirm1" class="button right ui-link" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="confirm1" aria-expanded="false"><strong>Confirm Airtime Activation Order</strong></a>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!AND($User.Id == objActivationOrder.CreatedById, objActivationOrder.Activation_Type__c == 'Activation on behalf of Customer')}">
+                <a href="#confirm2" class="button right ui-link" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="confirm2" aria-expanded="false"><strong>Save Activation Order and Alert Subscriber to Confirm Order</strong></a>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </div>
+</apex:component>

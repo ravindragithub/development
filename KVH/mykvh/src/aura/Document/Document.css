@@ -1,0 +1,36 @@
+.THIS .tabelheader {
+    background:#f3f3f3;
+    font-weight:bold;
+    padding:5px 10px;
+    font-size:85%;
+    text-align:left;
+}
+.THIS .button{
+    border-radius: 0px;
+}
+.THIS .textleft {
+    text-align: left;
+    align-items: left;
+}
+.THIS table{
+    table-layout:fixed;
+}
+.THIS td, .THIS th {
+    word-wrap:break-word;
+    padding: 5px 0px;
+    vertical-align: top;
+    border:none;
+}
+.THIS .aligncenter{
+    align-items: center;
+    text-align: center;
+}
+.THIS .width-40 {
+    width: 40%;
+}
+.THIS .width-15 {
+    width: 15%;
+}
+.THIS .width-10 {
+    width: 10%;
+}

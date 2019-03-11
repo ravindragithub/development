@@ -1,0 +1,62 @@
+<apex:page controller="Manage_myKVH_Users" action="{!onLoad}" cache="false" sidebar="false" showHeader="false"> <!-- Set cache="false" to fix firefox reload behavior --> 
+<style>
+    h1{
+    font-size: 200%;
+    }
+    /* specific salesforce class selectors */
+    .header{
+        background-color: #2F435B;
+        background-image: none;
+        color: white;
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 100%;
+        font-style: normal;
+    }
+
+    .active{
+        background-color: #2F435B;
+        background-image: none;
+        color: white;
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 100%;
+        font-style: italic;
+    }
+    .clsCenter{
+        text-align:center;
+    }
+    .clsRight{
+        text-align:right;
+    }
+</style>
+<script>
+function closeHelp() {
+        window.self.close();
+    }
+</script>
+<apex:form >
+<div align="center" >
+    <h1>Manage myKVH Users Instructions</h1>
+</div>
+    <br/>
+    
+    This page is accessible only by Users who are "Customer Admins". A list of Users that you can Manage, and the Fleet to shich they belong are in the two leftmost columns.
+     The myKVH Fleet "Roles" that can be assigned to these users are displayed as Column headings. The checkboxes indicate which Roles are assigned to which Users.<br/><br/>
+     
+    To add a Role to a given user, simply check the box at the intersection of the User's Row and the Role's Column. To remove an existing Role, simply uncheck the box.
+     As you make changes to each User, thier Name will appear in <b>Bold</b> until the changes are saved.
+    <br/><br/>
+    The available Roles are described below. Click on the heading bar to expand or collapse the descriptions.
+    <br/><br/>
+    <apex:pageMessages />
+    <apex:panelBar headerClass="header" headerClassActive="active" items="{!ExtendedRolesList}" var="roleExts" >
+        <apex:panelBarItem label="{!roleExts.Name}" expanded="false" >
+            <apex:outputText value="{!roleExts.Description__c}" escape="false"/>
+        </apex:panelBarItem>
+    </apex:panelBar>
+    <br/>
+    <div align="center" draggable="false">
+        <apex:commandButton id="closeButton" value="Close" onclick="closeHelp()" title="Click to close the help page"/>
+    </div>
+</apex:form>
+<!-- End Default Content REMOVE THIS -->
+</apex:page>

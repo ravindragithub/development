@@ -1,0 +1,63 @@
+<apex:page showChat="false" showheader="true" sidebar="false" standardStylesheets="false" cache="false" tabStyle="My_Cases__tab">
+<apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+<style>
+        .block {
+        margin:20px 0;
+        overflow: auto;
+        padding:15px 15px 15px 15px;
+        -moz-border-radius: 3px;
+        border-radius:3px;
+        /*background-color: #eeeeee; adding static resource image to block Class */
+        background: #eeeeee url({!URLFOR($Resource.portalArrow)}) no-repeat 15px 50%;
+    }
+</style>
+<div class="page-content home">
+    
+    <h1>Welcome to myKVH Support</h1>
+    
+    <h2>What do you need to do?</h2>
+        
+        <div class="block">
+            <a href="{!$Page.OrderNewAirtimeServicePage}" target="_parent">
+            <h4>Order a New Airtime Service</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.ChangeExistingAddServicePage}" target="_parent">
+            <h4>Change or Add an Existing Airtime Service</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.RequestInfoExistingServicePage}" target="_parent">
+            <h4>Request Information on an Existing Airtime Service</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.ReportServiceProductProblemPage}" target="_parent">
+            <h4>Report a Problem</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.SubmitProfessionalRequestPage}" target="_parent">
+            <h4>Professional Services Request</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.RequestInstallationSupportPage}" target="_parent">
+            <h4>Installation Support</h4>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="{!$Page.myKVHSupportPage}" target="_parent">
+            <h4>myKVH Feedback</h4>
+            </a>
+        </div>
+        
+    </div>
+</apex:page>

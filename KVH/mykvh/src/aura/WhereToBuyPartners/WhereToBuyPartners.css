@@ -1,0 +1,117 @@
+.THIS .slds-required{
+    display: none;
+}
+
+.THIS {
+    font-family: arial, sans-serif;
+}
+.THIS .lightningInput div{
+    width : 100%;
+}
+.THIS .slds-form-element__control{
+    width : 100%;
+}
+
+.THIS .cCenterPanel {
+  max-width:1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.THIS .cCenterPanel {
+  max-width:1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.THIS .cAccountMap {
+  width: 45%;
+}
+
+.THIS .slds-align--absolute-left {
+  margin-bottom:10px;
+}
+
+.THIS .slds-button_destructive {
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 0px;
+  color: #fff;
+}
+
+.THIS .slds-button_destructive {
+    margin-top:15px;
+  }
+  
+/* restyle where to buy/get service buttons */
+.THIS .slds-radio_button {
+  line-height: normal;
+  background-color: #f3f3f3 !important;
+  border-left:0;
+  border-radius: 0;
+  border-radius: 0;
+}
+
+.THIS .slds-radio_button__label {
+  background-color: #eeeeee;
+  color: #999;
+  box-shadow: inset 0 0 2px rgba(0,0,0,.15);
+
+}
+
+.THIS .slds-select {
+  border-radius: 0;
+
+}
+
+.THIS .slds-button {
+  color:#fff;
+}
+
+.THIS .slds-radio_button-group {
+  border-radius: 0;
+  border:none;
+}
+
+/* removing the extra vertical  padding between sidebar elements */
+.THIS .slds-p-bottom_small {
+  padding-bottom:0;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.THIS .slds-p-right_small{
+    padding-right: .25rem;
+}
+
+.THIS .slds-p-top_small{
+    padding-top: 0;
+}
+
+/* resize and reposition Distance label */
+.THIS .slds-text-body_regular{
+    font-size: 1em;
+    padding-top: 20px;
+}
+
+/* remove padding in input fields */
+.THIS .slds-input {
+  padding: 0 .5rem 0 .5rem;
+  border-radius:0;
+}
+
+.THIS .slds-select_container{
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.THIS .slds-p-vertical_small{
+    padding-top: 0;
+}
+
+
+.THIS .leaflet-popup-content-wrapper {
+  border-radius: 0;
+}
+.THIS .hr {
+    margin: 1.25rem 0;
+}

@@ -1,0 +1,15 @@
+<apex:page showHeader="false" id="SiteTemplate">
+    
+    <apex:slds /> 
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <apex:stylesheet value="{!$Resource.MASTERAppsStyles}"/>
+    
+    <apex:insert name="header">
+        <c:LTE_SiteHeader />
+    </apex:insert>
+    
+    <apex:insert name="body"/>
+    <apex:insert name="footer" />
+
+</apex:page>

@@ -1,0 +1,1459 @@
+<apex:page id="thePage" controller="ortoo_e2a.EmailClientMobileController" sidebar="false" action="{!emailClientObject.ProcessTemplateAndSaveParms}" standardstylesheets="false" showheader="false" showQuickActionVfHeader="false" cache="false" doctype="html-5.0"> 
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ 
+<head>
+    
+    <title>Email Client</title>
+
+ 
+    <!--<script type="text/javascript" src="{!URLFOR($Resource.tinymce,'tinymce/tinymce.min.js')}"></script>-->
+    <!--<script type="text/javascript" src="{!URLFOR($Resource.ckeditor,'ckeditor/ckeditor.js')}" />-->
+        
+  
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.fonts, '/font/css/font-awesome.min.css')}"/>
+	
+	<style>
+
+.dont-break-out 
+			{
+
+			/* These are technically the same, but use both */
+				overflow-wrap: break-word;
+				word-wrap: break-word;
+
+				-ms-word-break: break-all;
+				/* This is the dangerous one in WebKit, as it breaks things wherever */
+				word-break: break-all;
+				/* Instead use this non-standard one: */
+				word-break: break-word;
+
+				/* Adds a hyphen where the word breaks, if supported (No Blink) */
+				-ms-hyphens: auto;
+				-moz-hyphens: auto;
+				-webkit-hyphens: auto;
+				hyphens: auto;
+
+			}
+        .card{
+
+            background: #CFEEF8;
+            border: 1px dashed #1797C0;      
+            padding: 4px;
+            opacity: 0.8;       
+            text-align: center;  
+            vertical-align: middle;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .SalesForceClassic
+        {
+            align-content: center; 
+            margin-left: 110px;
+        }
+        
+        .ConsoleApp
+        {
+            align-content: center; 
+            margin-left: 161px;
+        }
+    
+    .input-width
+    {
+        min-width:100%;
+    }
+    .fieldset-top-margin
+    {
+        margin-top:10px;
+    }
+    .break
+    {
+        word-wrap: break-word;
+        word-break: break-all;
+        height: 80px;
+    }
+    
+    .customCSS
+    {
+        width: 8%;
+    }
+	
+	div.pager {
+	    text-align: center;
+	    margin: 1em 0;
+	}
+	
+	div.pager span {
+	    display: inline-block;
+	    width: 1.8em;
+	    height: 1.8em;
+	    line-height: 1.8;
+	    text-align: center;
+	    cursor: pointer;
+     	border: 1px solid #d8dde6;
+		background-color: #fff;
+		color: blue;
+	    margin-right: 0.5em;
+	}
+	
+	div.pager span.active {
+	    background: blue;
+    	color: white;
+	} 
+	
+	input, input:before, input:after {
+      -webkit-user-select: initial;
+      -khtml-user-select: initial;
+      -moz-user-select: initial;
+      -ms-user-select: initial;
+      user-select: initial;
+     }
+	
+    </style> 
+    
+    
+   
+    
+</head>    
+    
+    <apex:remoteObjects >
+       
+        <apex:remoteObjectModel name="Attachment" fields="Id,ParentId,OwnerId, Name,LastModifiedDate"/> 
+    </apex:remoteObjects>   
+
+<body style="background-color:white">    
+
+<div class="slds">
+           <!-- Attachment Popup -->
+	       <div id="attachmentPage" style="display:none" >
+               <div class="slds-modal__header" >
+                   
+                   <!-- Picklist Location -->
+                   <div class="slds-picklist" aria-expanded="true" data-aljs="option_selected">
+                       <button class="slds-button slds-button--neutral slds-picklist__label" style="width:100%">
+                           <span class="slds-truncate">Select Location</span>
+                           <svg aria-hidden="true" class="slds-icon">
+                               <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"/>
+                           </svg>
+                       </button>
+                       <div class="slds-dropdown slds-dropdown--center slds-dropdown--menu slds-hide" style="min-width:100%" >
+                           <ul id="AttachmentDropdown" class="slds-dropdown__list" role="menu">
+                           </ul>
+                       </div>
+                   </div>
+                   <div id = "documentFoldersDropdownDiv" class="slds-picklist" data-aljs="documnent_folder_selected">
+                       <button class="slds-button slds-button--neutral slds-picklist__label" aria-haspopup="true" style="width:100%">
+                           <span class="slds-truncate">Select Document Folder</span>
+                           <svg aria-hidden="true" class="slds-icon">
+                               <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"/>
+                           </svg>
+                       </button>
+                       <div class="slds-dropdown slds-dropdown--center slds-dropdown--menu slds-hide" style="min-width:100%" >
+                           <ul id="documentFoldersDropdown" class="slds-dropdown__list" role="menu">
+                           </ul>
+                       </div>
+                   </div>
+                   <div id = "relatedObjectAttachmentsDropdownDiv" class="slds-picklist" data-aljs="related_object_attachments_selected">
+                       <button class="slds-button slds-button--neutral slds-picklist__label" aria-haspopup="true" style="width:100%">
+                           <span class="slds-truncate">Select Related File</span>
+                           <svg aria-hidden="true" class="slds-icon">
+                               <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"/>
+                           </svg>
+                       </button>
+                       <div class="slds-dropdown slds-dropdown--center slds-dropdown--menu slds-hide" style="min-width:100%" >
+                           <ul id="relatedObjectAttachmentsDropdown" class="slds-dropdown__list" role="menu">
+                           </ul>
+                       </div>
+                   </div>
+                   <div class="slds-grid">
+                       <div class="slds-col" >
+                           <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right" >                                                               
+                               <input id="searchInput" onKeyUp="updateOutputDiv(); return false;" class="slds-input" placeholder="Type your text here to search" type="text" aria-autocomplete="list" role="combobox" />                        
+                           </div>          		                   
+                       </div>
+                   </div>
+               </div>
+               <div class="slds-modal__content slds-p-around--medium">
+                   <!-- Attachment = LIST TABLE -->
+                   <div id="attachmentError"  style="font-size: small;color:red;text-align: left;" >
+                       
+                   </div>
+                   <div id="attachmentList" class="slds-p-vertical--medium" >
+                   </div>
+                   <!-- / Attachment LIST TABLE --> 
+               </div>
+               <div class="slds-modal__footer">
+                   <button class="slds-button slds-button--neutral" data-aljs-dismiss="modal" onclick="hideAttachmentPage();return false;">Cancel</button>
+                   <button id="attach_file" class="slds-button slds-button--neutral slds-button--brand" 
+                           onclick="attach();return false;"
+                           >Attach</button>
+               </div>
+           </div>
+           <!-- Attachment Popup Ended -->
+   </div>
+
+
+   <div id="mainPage" style="display:block;" class="slds">
+   
+   			
+       <!-- PAGE HEADER -->
+       <div class="slds-grid slds-grid--align-center">
+           
+                   <div class="slds-button-group" role="group" data-aljs="icon-group">
+                       <a id="back" style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="goBack();return false;">
+                           <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                       </a>
+                       <label class="slds-form-element__label" ><h1 class="slds-text-heading--small" style="margin-top:10%;" >Compose</h1></label>
+                       <div class="slds-button-group slds-float--right" role="group"  data-aljs="icon-group">
+                           <a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="setDefaultLocationOption(); return false;" >
+                               <i class="fa fa-paperclip" aria-hidden="true"></i>
+                           </a>
+                           <a id="sendEmailButton" style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="Send();return false;">
+                               <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                           </a>
+                       </div>
+                    </div>
+               
+       </div>
+        <!-- / PAGE HEADER -->
+
+       <div id="attachments_div" class="slds-picklist" style="margin-bottom:5px;margin-top:5px;" aria-expanded="false">
+       </div>
+       <!--Email Client Form -->
+       <form class="slds-form" style="width:100%;">
+           <apex:outputPanel id="pageError" >
+           <div id="errorMessage"  style="font-size: small;color:red;margin-bottom:5px;" >
+               <div style="font-size: small;color:silver;">
+                   <apex:pageMessages id="pageMsgs"/>
+               </div>
+           </div>
+           </apex:outputPanel>
+           
+           
+            <!-- From Addresses -->
+               <div class="form-element">
+                   <div class="slds-grid">
+                       
+                       <div class="slds-col" style="width: 17%;">
+                           <label class="slds-form-element__label" >From:</label>  
+                       </div>
+                       
+                       <div class="slds-col" style="width: 75%;">
+                           <div  class="slds-picklist" aria-expanded="false" data-aljs="from_address_selected" >
+                               <button class="slds-button slds-button--neutral slds-picklist__label" style="border: none !important;background-color: transparent;min-width:100%;">
+                                   <span id = "from" class="slds-truncate">Select Email </span>
+                                   <svg aria-hidden="true" class="slds-icon">
+                                       <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"/>
+                                   </svg>
+                               </button>
+                               <div class="slds-dropdown slds-dropdown--left slds-dropdown--menu slds-hide" style="min-width: 100%;">
+                                   <ul id="fromAddressesDropdown" class="slds-dropdown__list" role="menu">
+                                   </ul>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div> 
+           <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+           <!-- From Addresses Ended Here-->
+           
+           <!--To Field and Show more Button-->
+           <apex:outputPanel rendered="{!emailClientObject.HideToField == false}">
+               
+                    <div class="slds-grid">
+                        
+                            <div class="slds-col" style="width: 20%;">
+                                <label class="slds-form-element__label" for="toLookup">To:</label>
+                            </div>
+                           <div class="slds-col" style="width: 75%;">
+                           
+                           
+                               <div class="slds-lookup" aria-expanded="false"  data-select="single"  >                                            
+                                   <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right" >                                                               
+                                       <svg aria-hidden="true" class="slds-input__icon">                              
+                                           <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#search')}" />                            
+                                       </svg>
+                                       <input id="toLookup" class="slds-input--bare input-width" type="text" aria-autocomplete="list" role="combobox" />
+                                   </div>
+                                   
+                           </div> 
+                           
+                           
+                        </div>
+                        <div class="slds-col slds-text-align--right" style="width: 2%;">
+                            <a href="#" onclick="addItem(); return false;" id="showAdditionalFieldButtonOnTo">
+                                <svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+                                    <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevrondown')}"></use>
+                                </svg>
+                            </a>
+                            <a href="#" onclick="addItem(); return false;" id="hideAdditionalFieldButton">
+                                <svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+                                    <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevronup')}"></use>
+                                </svg>
+                            </a>
+                        </div>
+                   </div>
+               <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+               
+            <!--To Field Ended and Show more Button-->
+               
+           </apex:outputPanel>
+           <div id="additionalToGrid" class="slds-form-element">
+               
+                   <div class="slds-grid">
+                       <div class="slds-col" style="width: 20%;">
+                       		<label class="slds-form-element__label" for="additionalTo">{!toLabel}:</label>
+                       </div>
+                       <div class="slds-col" style="width: 75%;">
+                           <div class="slds-form-element">
+                               <div class="slds-form-element__control ">
+                                   <input id="additionalTo" class="slds-input--bare input-width" value="{!emailClientObject.ToAddresses}" type="text" aria-autocomplete="list" role="combobox"/>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="slds-col slds-text-align--right" style="width: 2%;">
+                           <a href="#" onclick="addItem(); return false;" id="showAdditionalFieldButtonOnAdditionalTo">
+                               <svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+                                   <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevrondown')}"></use>
+                               </svg>
+                           </a>
+                           <a href="#" onclick="addItem(); return false;" id="hideAdditionalFieldButtonOnAdditionalTo">
+                               <svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+                                   <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevronup')}"></use>
+                               </svg>
+                           </a>
+                       </div>
+                   </div>
+               <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+               
+               
+           </div>
+           <!--Additional Fileds -->
+            <div id="additionalFields">
+                <!--CC-->
+                    <div class="slds-form-element">
+                        <div class="slds-grid">
+                            <div class="slds-col" style="width: 17%;">
+                                <label class="slds-form-element__label"  for="cc">CC:</label>
+                            </div>
+                            
+                            <div class="slds-col" style="width: 75%;">
+                                <div class="slds-form-element__control">
+                                    <input id="cc" class="slds-input--bare input-width" type="text" aria-autocomplete="list" role="combobox"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+                <!--CC Ended-->
+                <!--BCC-->
+                
+                <div class="slds-form-element">
+                    <div class="slds-grid">
+                        <div class="slds-col" style="width: 17%;">
+                           <label class="slds-form-element__label" for="bcc">BCC:</label>
+                        </div>
+
+                        <div class="slds-col" style="width: 75%;">
+                            <div class="slds-form-element__control">
+                                <input id="bcc" class="slds-input--bare input-width" type="text" aria-autocomplete="list" role="combobox"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+                <!--BCC Ended-->
+                
+                    <!--Related To and Show less Button-->
+                    <div class="slds-grid">
+                        <div class="slds-col" style="width: 17%;">
+                             <label class="slds-form-element__label" style="margin-top:1%;" for="relatedTo">Related To:</label>
+                        </div>
+                        <div class="slds-col" style="width: 75%;">
+                            <!--Related To-->
+                            <div class="slds-form">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="name">{!emailClientObject.RelatedToSObjectName}</label>
+                                </div>
+                            </div>
+                            <!--Related To Ended-->
+                        </div>
+                        
+                    </div>
+               <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+                <!--Related To and Show less Button Ended-->
+            </div>   
+           <!--Additional Fileds Ended-->
+           
+           <!--SUBJECT-->
+           <div class="slds-form-element" style="margin-bottom:5px;" >
+               <div class="slds-form-element__control">
+                   <input id="subject" placeholder="Type Subject Here..." style="font-weight:bold;" class="slds-input--bare input-width" value="{!emailClientObject.Subject}" type="text" />
+               </div>
+           </div> 
+           <!--SUBJECT Ended-->
+           <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-bottom:5px;margin-top:5px"/>
+           <!--BODY-->
+           <apex:form id="theform" >
+           <div class="slds-grid">
+               <div class="slds-col"  >
+                   <div class="slds-form-element">
+                       <div class="slds-form-element__control" >
+                           <div class="slds-grid">
+                               <div class="slds-size--1-of-1">
+                                   
+                                       <div class="slds-docked-composer__body slds-docked-composer__body--email slds-col slds-grid slds-grid--vertical slds-nowrap">
+                                           
+                                           <apex:outputPanel rendered="{!$CurrentPage.parameters.isrichtext == 'false'}">
+                                               <textarea id="body" style="height:100%;width:100%;" rows="18" >{!emailClientObject.Body}</textarea>
+                                           </apex:outputPanel>
+                                           <apex:outputPanel id="panelchange" rendered="{!$CurrentPage.parameters.isrichtext == 'true'}" >
+
+
+                                           <div id="editor" style="width: 100%;height: 450px;border: 1px solid #ccc;padding: 5px;overflow: auto;" contenteditable="true" class="slds-form-element__static dont-break-out" >
+
+                                           </div>
+
+
+                                           </apex:outputPanel>
+                                            
+                                            
+                                       </div>
+                                   
+                               </div>
+                           </div>
+                           
+                               <apex:actionfunction name="sendMobileEmail" action="{!sendEmailMobile}" oncomplete="'{!emailClientObject.emailSendingErrors}' != '' ? document.getElementById('sendEmailButton').disabled=false : '' ;" rerender="pageError" >
+                                   <apex:param name="from" value=""/>
+                                   <apex:param name="to" value=""/>
+                                   <apex:param name="additionalTo" value=""/>
+                                   <apex:param name="cc" value=""/>
+                                   <apex:param name="bcc" value=""/>
+                                   <apex:param name="subject" value=""/>
+                                   <apex:param name="body" value=""/>
+                               </apex:actionfunction>
+                           
+                               <apex:actionfunction name="saveDraft" action="{!saveEmailToDraftAutoSave}" rerender="" >
+                                   <apex:param name="from" value=""/>
+                                   <apex:param name="to" value=""/>
+                                   <apex:param name="additionalTo" value=""/>
+                                   <apex:param name="cc" value=""/>
+                                   <apex:param name="bcc" value=""/>
+                                   <apex:param name="subject" value=""/>
+                                   <apex:param name="body" value=""/>
+
+                               </apex:actionfunction>
+                               <apex:actionfunction name="jsGoBack" action="{!goBack}"  rerender="" />
+                               <apex:actionPoller interval="20" onsubmit="saveEmailDraft();"/>
+                           
+                       </div>
+                   </div>
+               </div>
+           </div>
+           </apex:form>
+           <!--BODY Ended-->
+       </form>
+            
+       <!--Email Client Form Ended-->
+	</div>
+      
+    <script src="{!URLFOR($Resource.aljs, '/jquery/jquery-1.11.1.min.js')}"></script>
+    <script src="{!URLFOR($Resource.aljs, '/moment/moment.js')}"></script>
+    <script src="{!URLFOR($Resource.aljs, '/jquery/jquery.aljs-all.min.js')}"></script>
+    <script>
+
+
+function setPagination()
+{
+	$('#searchTable').each(function() {
+	    var currentPage = 0;
+	    var numPerPage = 3;
+	    var $table = $(this);
+	    $table.bind('repaginate', function() {
+	        $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).show();
+	    });
+	    $table.trigger('repaginate');
+	    var numRows = $table.find('tbody tr').length;
+	    var numPages = Math.ceil(numRows / numPerPage);
+	    var $pager = $('<div class="pager"></div>');
+	    for (var page = 0; page < numPages; page++) {
+	        $('<span class="page-number"></span>').text(page + 1).bind('click', {
+	            newPage: page
+	        }, function(event) {
+	            currentPage = event.data['newPage'];
+	            $table.trigger('repaginate');
+	            $(this).addClass('active').siblings().removeClass('active');
+	        }).appendTo($pager).addClass('clickable');
+	    }
+	    $pager.insertAfter($table).find('span.page-number:first').addClass('active');
+	});
+} 
+    function addItem() {
+        $( "#additionalFields" ).toggle();
+        $( "#hideAdditionalFieldButton").toggle();
+        $( "#showAdditionalFieldButton" ).toggle();
+        
+        if({!emailClientObject.HideToField == true})
+        {
+            $( "#showAdditionalFieldButtonOnAdditionalTo" ).toggle();
+            $( "#hideAdditionalFieldButtonOnAdditionalTo").toggle();
+            
+            
+        }
+        else
+        {
+            $( "#showAdditionalFieldButtonOnTo" ).toggle();
+            $( "#additionalToGrid" ).toggle();
+        }
+
+        
+    }
+
+	$(document).ready(function(){
+        $("#additionalFields").hide(); 
+        $( "#hideAdditionalFieldButton").toggle();
+        $( "#hideAdditionalFieldButtonOnAdditionalTo").toggle();
+        if({!emailClientObject.HideToField == false})
+        {
+            $("#showAdditionalFieldButtonOnAdditionalTo").hide();
+            $( "#additionalToGrid" ).toggle();
+        }
+        
+       
+	});
+    
+    var assets_location = '{!URLFOR($Resource.slds)}';
+    
+	//ALJS Initialization   
+	       
+	$.aljsInit({
+	  assetsLocation: assets_location,
+	  scoped: true
+	});
+        
+    $(document).ready(function() {
+            $('[data-aljs="modal"]').modal();
+    });
+
+	//lookups controls js functions 
+	var selected_to_lookup = '';
+	var assetsLocation = '{!URLFOR($Resource.slds)}'
+
+    //Content load on page load
+    $(document).ready(function() {
+        // remote object
+        
+        var email_redords = [];
+        
+        var json_record = '{!currentObjectRelatedRecords}' ;
+        var object_records;
+        console.log('json_record  '+json_record);
+        //all current object 
+        try
+        {
+        	object_records = jQuery.parseJSON( json_record );
+        }
+        catch(e)
+        {}
+
+    
+        var current_records = [];
+        function setCurrentRecordsForLookup()
+        {
+            if(object_records != undefined )
+            {
+                object_records.forEach
+                (
+                    
+                    function(record) 
+                    {
+                        if(record.Name !== undefined)
+                        {
+                            var id_email = '';
+                            try
+                            {
+                            	if(record.Email != undefined)
+                            	{
+                                	id_email = record.Id + '$|:'+record.Email;
+                                }
+                                else
+                                {
+                                	id_email = record.Id + '$|:'+'';
+                                }
+                            }
+                            catch(e)
+                            {
+                                id_email = record.Id ;
+                                
+                            }
+                            
+                            current_records.push({id: id_email, label: record.Name});
+                        }
+                    }
+                    
+                );
+	        }
+        
+    	}
+    	setCurrentRecordsForLookup();
+    	// populate dropdown menu of lookup field
+        var islead = '{!objectName}' != 'lead' ? 'contact' : 'lead';
+    	
+  		$('#toLookup').lookup({
+            items: current_records,
+            objectIconUrl: assetsLocation+'/assets/icons/standard-sprite/svg/symbols.svg#'+islead,
+            showSearch: true,
+            onChange: function (e){
+            	console.log('on change:');
+            	console.log(e);
+                if(e!==null)
+                {
+                	selected_to_lookup = e.id+'$|:'+e.label;
+                }
+                else
+                {
+                    selected_to_lookup = '';
+                }                
+            }
+        });
+        console.log('target: '+'{!targetObjectNameAndEmail}');
+        if('{!targetObjectNameAndEmail}' != '')
+        {
+            console.log('targetObjectNameAndEmail :'+ '{!targetObjectNameAndEmail}');
+            var record =  '{!targetObjectNameAndEmail}'.split('$|:');
+            console.log(record[0]+'  '+record[1]+' '+record[2]);
+            $('#toLookup').lookup('setSelection', { id: record[0]+'$|:'+record[1], label: record[2] });
+            selected_to_lookup = record[0] + '$|:' + record[1] + '$|:' + record[2];
+        }
+        
+
+	});
+    
+    </script>
+   
+    <!--<script>
+        $('body').modal({
+            selector: '[data-aljs="modal"]',
+            backdropDismiss: true
+        });
+    </script>-->
+    
+    
+<!-- Attachment Search Option -->    
+    <script> 
+    var attachment_options = []; 
+    var folder_options = []; 
+    var related_object_attachments = [];
+    var valid_owe =[];
+  
+    </script> 
+    <apex:repeat value="{!attachmentOptions}" var="attachment_option"> 
+        <script> 
+        attachment_options.push('{!attachment_option}'); 
+        </script> 
+    </apex:repeat>  
+    
+ <!-- Folder Option -->     
+    <apex:repeat value="{!documentFolders}" var="folders"> 
+        <script> 
+        folder_options.push('{!folders}'); 
+        </script> 
+    </apex:repeat>  
+    
+    <!-- Related Attachment Option -->     
+    <apex:repeat value="{!relatedObjectAttachments}" var="relatedAttachments"> 
+        <script> 
+        related_object_attachments.push('{!relatedAttachments}'); 
+        </script> 
+    </apex:repeat> 
+
+    <!-- Valid OWEAs -->     
+    <apex:repeat value="{!fromAddressOptions}" var="owea"> 
+        <script> 
+        valid_owe.push('{!owea}'); 
+        </script> 
+    </apex:repeat> 
+    
+    
+<!-- JAVASCRIPT -->
+<script>
+   var from_adress_size;
+     var default_from_address ; 
+    $(document).ready(function() {
+        /* 
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true) 
+    {
+        if($('#thePage:theform:ckeditor').val() == '') $('#thePage:theform:ckeditor').val('&nbsp;<br/>');
+        var editor = CKEDITOR.replace('thePage:theform:ckeditor', {
+            toolbar: 'CMS_Default',
+            height: '450px',
+            width: '100%'
+        });
+        
+        editor.on('contentDom', function( event ) {
+            editor.document.on('mouseup', function(event) {
+                console.log('mouse key');
+                $('[data-aljs="from_address_selected"]').picklist('setValue', 'menu-0-' + default_from_address, true);
+                 editor.document.focus();
+                //$("#fromAddressesDropdown").hide();
+            });
+        }); 
+        
+
+    }
+*/
+    
+    // other stuff happens down here
+    
+});
+    function setFromAddressOptions()
+    {
+        var from_addresses = '';
+        var i=0;
+        valid_owe.forEach
+        (
+            
+            function(option) 
+            {
+               from_addresses+= '<li id="menu-0-'+i+'" class="slds-dropdown__item" >'+
+                    '<a id="'+i+'" href="#" onclick="fromAddressIndex(this.id);return false;" role="menuitemradio">'+
+                    '<p class="slds-truncate">'+
+                    '<svg aria-hidden="true" class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small">'+
+                    '<use xlink:href="{!$Resource.slds}/assets/icons/utility-sprite/svg/symbols.svg#check"/>'+
+                    '</svg>'+option.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p></a></li>' ;
+                console.log(option);
+            i++;   
+            }
+   
+        );
+        $('#fromAddressesDropdown').html(from_addresses);
+      from_adress_size = i;
+    }
+    setFromAddressOptions();
+    
+
+    //creating attachment options 
+    function setSearchOptions()
+    {
+   
+        var attachmentDorpdownList = '';
+        var i=0;
+        attachment_options.forEach
+        (
+            
+            function(option) 
+            {
+               
+                attachmentDorpdownList += '<li id="menu-0-'+i+'" class="slds-dropdown__item" >'+
+                    '<a href="javascript:void(0)" role="menuitemradio">'+
+                    '<p class="slds-truncate">'+
+                    '<svg aria-hidden="true" class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small">'+
+                    '<use xlink:href="{!$Resource.slds}/assets/icons/utility-sprite/svg/symbols.svg#check"/>'+
+                    '</svg>'+option+'</p></a></li>' ;
+             i++;   
+            }
+   
+        );
+        
+        $('#AttachmentDropdown').html(attachmentDorpdownList);
+    }
+    setSearchOptions();
+    
+    //creating document folder options 
+    function setDocumentFolderOptions()
+    {
+   
+        var folder_list = '';
+        var i=0;
+        folder_options.forEach
+        (
+            
+            function(option) 
+            {
+               
+                folder_list += '<li id="menu-0-'+i+'" class="slds-dropdown__item" >'+
+                    '<a href="javascript:void(0)" role="menuitemradio">'+
+                    '<p class="slds-truncate">'+
+                    '<svg aria-hidden="true" class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small">'+
+                    '<use xlink:href="{!$Resource.slds}/assets/icons/utility-sprite/svg/symbols.svg#check"/>'+
+                    '</svg>'+option+'</p></a></li>' ;
+             i++;   
+            }
+   
+        );
+        
+        $('#documentFoldersDropdown').html(folder_list);
+    }
+    setDocumentFolderOptions();
+    
+    function setRelatedObjectAttachmentsOptions()
+    {
+   
+        var related_object_attachments_list = '';
+        var i=0;
+        related_object_attachments.forEach
+        (
+            
+            function(option) 
+            {
+               
+                related_object_attachments_list += '<li id="menu-0-'+i+'" class="slds-dropdown__item" >'+
+                    '<a href="javascript:void(0)" role="menuitemradio">'+
+                    '<p class="slds-truncate">'+
+                    '<svg aria-hidden="true" class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small">'+
+                    '<use xlink:href="{!$Resource.slds}/assets/icons/utility-sprite/svg/symbols.svg#check"/>'+
+                    '</svg>'+option+'</p></a></li>' ;
+             i++;   
+            }
+   
+        );
+        
+        $('#relatedObjectAttachmentsDropdown').html(related_object_attachments_list);
+    }
+    setRelatedObjectAttachmentsOptions();
+    
+    
+    //Attachment popup codes start from here 
+    var outputDiv = document.getElementById("attachmentList");
+    var optionSelected = ''; 
+
+    $('#relatedObjectAttachmentsDropdownDiv').hide();
+    $('#documentFoldersDropdownDiv').hide();
+    
+
+    //Picklist for attachment location option_selected
+    $(document).ready(function() {
+        //$('[data-aljs="option_selected"]').picklist('setValue', 'menu-0-0', true);
+        //updateOutputDiv();
+        $('[data-aljs="option_selected"]').picklist({
+            onChange: function(e) {
+                //{!fromAddress} = obj.data;
+                optionSelected = e.value.trim();
+          
+                if(optionSelected == 'Documents')
+                {
+                    $('#documentFoldersDropdownDiv').show();
+                    $('#relatedObjectAttachmentsDropdownDiv').hide();
+                }
+                else if(optionSelected == 'Files')
+                {
+                    
+                    $('#documentFoldersDropdownDiv').hide();
+                    $('#relatedObjectAttachmentsDropdownDiv').hide();
+                }
+                else
+                {
+                    $('[data-aljs="related_object_attachments_selected"]').picklist('setValue', 'menu-0-0', true);
+                    optionSelected = 'Attachments';
+                    if(optionSelected != 'Documents' && optionSelected != 'Files')
+                    {
+                        
+                        $('#relatedObjectAttachmentsDropdownDiv').show();
+                    }
+                    $('#documentFoldersDropdownDiv').hide();
+                }
+                console.log(optionSelected);
+                //refreshDiv();
+                attachmentIds='';
+                
+                updateOutputDiv();
+                
+            }
+        });
+    });
+  
+  var show_html = false;
+  function toggleQuotedText()
+  {
+  	  if(show_html)
+	  {
+	  	show_html = false;
+	  	document.getElementById("editor").style.display = "none";
+	  }
+	  else
+	  {
+	  	show_html = true;
+	  	document.getElementById("editor").style.display = "block";
+	  }
+  
+  }
+  function hideQuotedText()
+  {
+  	  if(show_html)
+	  {
+	  	document.getElementById("editor").style.display = "none";
+	  }
+  }
+  function showQuotedText()
+  {
+  	  if(show_html)
+	  {
+	  	document.getElementById("editor").style.display = "block";
+	  }
+  }
+  function showAttachmentPage()
+  {
+	  	document.getElementById("attachmentPage").style.display = "block";
+	  	document.getElementById("mainPage").style.display = "none";
+  }
+  
+  function hideAttachmentPage()
+  {
+	  	document.getElementById("attachmentPage").style.display = "none";
+	  	document.getElementById("mainPage").style.display = "block";
+  }  
+
+    function setDefaultLocationOption()
+    {
+    	if(!navigator.onLine)
+		{
+			alert('No internet connection');
+			return;
+		}
+    	hideQuotedText();
+        if(optionSelected == '')
+        {
+            $('[data-aljs="option_selected"]').picklist('setValue', 'menu-0-0', true);
+            $('[data-aljs="documnent_folder_selected"]').picklist('setValue', 'menu-0-0', true);
+            optionSelected = 'Documents';
+            documnent_folder_selected = 'My Personal Documents';
+            $('#documentFoldersDropdownDiv').show();
+            $('#relatedObjectAttachmentsDropdownDiv').hide();
+            
+            console.log('Default selection :'+optionSelected);
+            //refreshDiv();
+            attachmentIds='';
+            
+            updateOutputDiv();
+        }
+        showAttachmentPage();
+    }
+    
+    var documnent_folder_selected = '';
+    //Picklist for document folder selected
+    $(document).ready(function() {
+        $('[data-aljs="documnent_folder_selected"]').picklist({
+            onChange: function(e) {
+
+                documnent_folder_selected = e.value.trim();
+                
+                console.log(documnent_folder_selected);
+                //console.log(e.id);
+                //refreshDiv(); 
+                attachmentIds='';
+                
+                updateOutputDiv();
+                
+            }
+        });
+    });
+    
+     var related_object_attachments_selected = '';
+    //Picklist for document folder selected
+    $(document).ready(function() {
+        $('[data-aljs="related_object_attachments_selected"]').picklist({
+            onChange: function(e) {
+                //{!fromAddress} = obj.data;
+                related_object_attachments_selected = e.value.trim();
+
+                console.log(related_object_attachments_selected);
+                //console.log(e.id);
+                //refreshDiv();
+                attachmentIds='';
+                
+                updateOutputDiv();
+                
+            }
+        });
+    });
+    
+    var from_address = '';
+    //Picklist for from_address_selected
+    $(document).ready(function() {
+       
+        from_adress_size = ( from_adress_size -1 );
+        if({!emailClientObject.FromAddress} > from_adress_size )
+        {
+            default_from_address = '0';
+        }
+        else
+        {
+            default_from_address = '' + {!emailClientObject.FromAddress};
+        }
+        console.log('default_from_address : '+default_from_address);
+        $('[data-aljs="from_address_selected"]').picklist('setValue', 'menu-0-' + default_from_address, true);
+        //from_address_selected_id = {!emailClientObject.FromAddress};
+        $('[data-aljs="from_address_selected"]').picklist({
+            onChange: function(e) {
+               
+                from_address = e.value.trim();  
+            }
+        });
+    });
+   
+    //Remoting functions 
+    var from_address_selected_id = '' + {!emailClientObject.FromAddress}; 
+    function fromAddressIndex(index) 
+    {
+        from_address_selected_id = index;
+        default_from_address = from_address_selected_id;
+    }
+    function saveEmailDraft()
+    {
+        var from = from_address;
+        var subject = document.getElementById("subject").value;
+        var to = selected_to_lookup;
+        var additionalTo = document.getElementById("additionalTo").value;
+        var cc = document.getElementById("cc").value;
+        var bcc = document.getElementById("bcc").value;
+        var body = '';
+        
+        if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true)
+        {
+            body = document.getElementById("editor").innerHTML;
+        }
+        else
+        {
+            body = document.getElementById("body").value;
+        }
+        console.log(body);
+        if(to != undefined && to != null && to != '')
+        {
+            var to_fields = to.split('$|:');
+            
+            if( to_fields[1] != 'null' )
+            {
+                to =  to_fields[1];
+                
+            }
+            else
+            {
+                to = '';
+            }
+            
+        }
+        else 
+        {
+            to = '';
+        }
+        
+        saveDraft(from_address_selected_id,to,additionalTo,cc,bcc,subject, body);
+    }
+    function goBack()
+    {
+        if(!navigator.onLine)
+		{
+			alert('No internet connection');
+			return;
+		}
+        jsGoBack();
+        
+    }
+    function Send()
+    {
+        if(!navigator.onLine)
+		{
+			alert('No internet connection');
+			return;
+		}
+        var from = from_address;
+        var subject = document.getElementById("subject").value;
+
+        var to = selected_to_lookup;
+        var additionalTo = document.getElementById("additionalTo").value;
+        var cc = document.getElementById("cc").value;
+        var bcc = document.getElementById("bcc").value;
+        var body = '';
+        
+        
+        if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true)
+        {
+            body = document.getElementById("editor").innerHTML;
+        }
+        else
+        {
+            body = document.getElementById("body").value;
+        }
+        
+        console.log(body);
+        console.log('email client to lookup '+   selected_to_lookup);
+        console.log('from address'+   from_address);
+        console.log('from address index'+   from_address_selected_id);
+        console.log(' body   :'+   body);
+        console.log(' to   :'+   to);
+        console.log('additionalTo :'+additionalTo);
+        
+        console.log('bcc  : '+   bcc);
+        var is_valid = validatePage(from_address_selected_id,to,additionalTo,cc,bcc,subject);
+        if(is_valid)
+        {
+            if(to != undefined && to != null && to != '')
+            {
+                var to_fields = to.split('$|:');
+              
+                if( to_fields[1] != 'null' && to_fields[1] != undefined )
+                {
+                    to =  to_fields[1];                    
+                }
+                else
+                {
+                    to = '';
+                }
+            }
+            else 
+            {
+                to = '';
+            }
+            
+            bcc = (bcc != undefined && bcc != null && bcc != '') ? bcc : '';
+            cc = (cc != undefined && cc != null && cc != '') ? cc : '';
+            
+            console.log(' to  After validation  :'+to);
+
+            document.getElementById('sendEmailButton').disabled=true;
+            //console.log(richtext.find("inputRT").get("v.value"));
+            sendMobileEmail(from_address_selected_id,to,additionalTo,cc,bcc,subject, body);
+            
+            
+            $("#errorMessage").hide();
+        }
+   
+    }
+   
+    function validatePage(from_address_selected_id,to,additionalTo,cc,bcc,subject)
+    {
+        //Lead does not have a valid email address
+        var error = '';
+        var is_valid = true;
+        if(from_address_selected_id == '')
+        {
+            error += '*  An email from-address must be selected<br/>'; 
+            is_valid = false;
+        }
+        if(to == '' && additionalTo == '' && cc == '' && bcc == '')
+        {
+            error += '*  Please specify any; Additional To, CC, BCC\n<br/>';
+            is_valid = false;
+        }
+        if(to != '' && additionalTo == '' )
+        {
+            
+            if({!emailClientObject.HideToField} == false)
+            {
+                var to_fields = to.split('$|:');
+                console.log('to_fields  12: '+to_fields[1]);
+                if( to_fields[1] == '' )
+                {
+                    error += '*  Please specify either a To with valid email or Additional To: <br/>';
+                    is_valid = false;
+                }
+                
+                
+                var tempTo = $('#toLookup').lookup('getSelection');
+                console.log('tempTo  : '+tempTo);
+                
+                if( tempTo == null && tempTo == undefined )
+                {
+                    error += '*  Please specify either a To with valid email or Additional To: <br/>';
+                    is_valid = false;
+                }
+                else
+                {
+                    //console.log('tempTo.Id :'+tempTo.id);
+                    var email = tempTo.id.split('$|:');
+                    if( email[1] == undefined || email[1] == null)
+                    {
+                        error += '*  Please specify either a To with valid email or Additional To: <br/>';
+                        is_valid = false;
+                    }
+                    
+                }
+            }
+            else
+            {
+                to = '';
+            }
+        }
+        if(to == '' && additionalTo == '')
+        {
+        	if({!emailClientObject.HideToField} == false)
+            {
+	         	error += '*  Please specify either a To or Additional To<br/>';
+	         	is_valid = false;
+            }
+            else
+            {
+            	error += '*  Please specify To<br/>';
+	            is_valid = false;
+            }
+            
+        }
+        if(subject == '')
+        {
+            error += '*  Subject: you must enter a value<br/>';
+            is_valid = false;
+        }
+        if(!is_valid)
+        {
+            $("#errorMessage").html(error);
+        }
+        return is_valid;
+        
+    }
+    
+    function updateOutputDiv() 
+    {      
+       var searchString = document.getElementById("searchInput").value.trim() + "%";
+       ortoo_e2a.EmailClientMobileController.getAllFiles(searchString, optionSelected,
+                                                         documnent_folder_selected, 
+                                                         related_object_attachments_selected,'{!relatedObjectIdParm}',
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+                            createTable(result);
+                            setPagination();
+					}
+					else
+					{
+                        //alert(event.message);
+					}
+					
+				}, {escape:false});
+      
+    }
+
+    //Adding and removing attachments
+    getAttachment();
+    function getAttachment()
+    {
+        // parent_id = 'a0EA000000XETCeMAP';
+        // alert('parent id'+'{!tempAttachmentParentId}');
+        
+        var  attachment_list = new SObjectModel.Attachment();
+        if('{!tempAttachmentParentId}' != null)
+        {
+            attachment_list.retrieve(
+                {
+                    where: { 
+                        ParentId: {eq: '{!tempAttachmentParentId}' }
+                        
+                    },  
+                    orderby: [{LastModifiedDate: 'ASC'}], limit: 100
+                },
+                function(error, records) 
+                {
+                    //alert(searchString);
+                    var message = (error) ? alert(error.message) : attachmentsDiv(records);
+                }
+                
+            );
+        }
+         
+        
+       
+        
+  
+        
+    }
+    function removeAttachment(clicked_id)
+    {
+        var delete_attachment = new SObjectModel.Attachment();
+       delete_attachment.del(clicked_id);
+         getAttachment();
+
+    }
+    function attachmentsDiv(records)
+    {
+        var selected_attachment_list = '';
+        records.forEach(function(record) {
+            var name = record.get('Name');
+            name = name.length > 10 ? name.substr(0, 6) +'...' : name; 
+            
+            selected_attachment_list += '<div class="card"> '+name+' <button Id="'+record.get('Id')+'" type="button" onclick="removeAttachment(this.id)">X</button></div>';
+            
+        });
+        
+        $('#attachments_div').html(selected_attachment_list);    
+
+    }
+    
+    var attachmentIds='';
+    var map_sObject = new Object();
+    
+    function attach()
+    {
+        if(!navigator.onLine)
+		{
+			alert('No internet connection');
+			return;
+		}
+        var error = '';
+        console.log('attachmentIds dssgs     :'+attachmentIds);
+        document.getElementById('attach_file').disabled=true;
+        addAttachment();
+        getAttachment();
+        updateOutputDiv();
+        if(attachmentIds == '')
+        {
+            document.getElementById('attach_file').disabled=false;
+            var error = '* Please Select an Attachment';
+        }
+        else
+        {
+        	hideAttachmentPage();
+            document.getElementById('attach_file').disabled=false;
+        }
+        $("#attachmentError").html(error);
+    }
+    //
+    function addAttachment()
+    {
+        ortoo_e2a.EmailClientMobileController.addToAttachmentsMap(attachmentIds, optionSelected,related_object_attachments_selected, '{!tempAttachmentParentId}',//parent_id,
+				function(result, event)
+				{
+					if (event.status && event.result)
+                    {
+                        if(result)
+                        {
+                            attachmentIds='';
+                            map_sObject = null;
+                            map_sObject = new Object();
+                        }
+                        /*
+                        map_sObject.entrys.forEach(function(record) {
+                        var selected_attachment_list = '';
+                        selected_attachment_list += '<div class="card"> <button value="'+record.Name+'" type="button" onclick="console.log('+record.Name+')">X</button></div>';
+     
+ 
+                            
+                            $('#attachments_div').appendChild(selected_attachment_list);    
+                        });*/
+					}
+					else
+					{
+						alert(event.message);
+					}
+					
+				}, {escape:false});
+    }
+    function createTable(records)
+    {
+         // create data table
+                    var dataTable = document.createElement('table');
+                    dataTable.className = 'slds-table slds-table--bordered';
+                    dataTable.id = 'searchTable';
+                    
+                    
+                     
+                    // add header row
+                    var tableHeader = dataTable.createTHead();
+                    var tableHeaderRow = tableHeader.insertRow();
+                    
+                    var tableHeaderRowCell1 = tableHeaderRow.insertCell(0);
+                    tableHeaderRowCell1.appendChild(document.createTextNode(''));
+                    tableHeaderRowCell1.setAttribute('scope', 'col');
+                    
+                    var tableHeaderRowCell2 = tableHeaderRow.insertCell(1);
+                    tableHeaderRowCell2.appendChild(document.createTextNode('Name'));
+                    tableHeaderRowCell2.setAttribute('scope', 'col');
+                    
+                    // build table body
+                    var tableBody = dataTable.appendChild(document.createElement('tbody'))
+                    var dataRow, dataRowCell1, dataRowCell2, recordName, recordId;
+                    records.forEach(function(record) {
+                        
+                        dataRow = tableBody.insertRow();
+                        
+                        
+                        var checkbox = document.createElement('input');
+                        checkbox.type = "checkbox";
+                        
+                        checkbox.value = record.Id;
+                        if(optionSelected == 'Files' )
+                        {
+                            checkbox.name = record.Title;
+                        }
+                        else 
+                        {
+                            checkbox.name = record.Title === undefined ? record.Name : record.Title;
+                        }
+                        
+                        checkbox.onclick =  function() 
+                        {
+  
+                            var valueCheck = this.value;
+ 
+                            if(this.checked)
+                            {
+                                //map_sObject[this.value] = record;
+                                if(attachmentIds == '')
+                                {
+                                    attachmentIds = '\''+this.value+'\'';
+                                }
+                                else
+                                {
+                                    attachmentIds += ',\''+ this.value + '\'';
+                                }
+                            }
+                            else
+                            {
+                                console.log('unchecked');
+                                attachmentIds = attachmentIds.replace(',\''+this.value+'\'','');
+                                attachmentIds = attachmentIds.replace('\''+this.value+'\',','');
+                                attachmentIds = attachmentIds.replace('\''+this.value+'\'','');
+                                //map_sObject[this.value].remove;
+                            }
+                            //console.log('Map Values'+map_sObject);
+                            console.log('attachmentIds :'+attachmentIds);
+ 						} // myField has changed
+                        dataRowCell2 = dataRow.insertCell(0);
+                        recordId = document.createTextNode(record.Id);
+                        dataRowCell2.appendChild(checkbox);//recordId);
+                        
+                        dataRowCell1 = dataRow.insertCell(1);
+                        if(optionSelected == 'Files')
+                        {
+                            recordName = document.createTextNode(record.Title);
+                        }
+                        else
+                        {
+                            recordName = document.createTextNode( record.Name === undefined ? record.Title : record.Name);
+                        }
+                        
+                        dataRowCell1.appendChild(recordName);
+                        
+                        
+                        
+                    });
+                    
+                    // create data table wrapper
+                    var tableWrapper = document.createElement('div');
+                    tableWrapper.className = 'slds-scrollable--x';
+                    tableWrapper.appendChild(dataTable);
+                    
+                    if (outputDiv.firstChild) {
+                        // replace table if it already exists
+                        // see later in tutorial
+                        outputDiv.replaceChild(tableWrapper, outputDiv.firstChild);
+                    } else {
+                        outputDiv.appendChild(tableWrapper);
+                    }
+        
+    }
+    
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true)
+    {
+        document.getElementById("editor").innerHTML = "<div>&nbsp;</div>"+ "{!JSENCODE(emailClientObject.Body)}";
+    }
+    
+    
+</script>  
+       
+<!-- JAVASCRIPT Ended -->
+
+</body>   
+</html>
+
+</apex:page>

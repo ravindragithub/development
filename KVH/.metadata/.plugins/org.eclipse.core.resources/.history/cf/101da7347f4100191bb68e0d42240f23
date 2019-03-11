@@ -1,0 +1,70 @@
+<apex:page standardcontroller="Case" extensions="SubmitProfessionalRequestController" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var $j = jQuery.noConflict();
+        
+        $j(document).ready(function()
+        {
+            // $j('.btn').removeClass('btn').addClass('kvhbtn');
+            
+        });
+        function goB()
+        {
+            goBack();
+        }
+        
+    </script>
+    <apex:pagemessages />
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+
+        <apex:pageblock rendered="{!firstpage}">
+            <div class="page-content">
+                 <h1>Submit a Professional Services Request</h1>
+                            <br></br>
+                            <p>Leverage the skill and expertise of the KVH Professional Services team to ensure a successful satellite communications deployment for your operation. The KVH Professional Services team develops custom solutions based on each customer's requirements, including testing and documentation of the solution. The team's services include:</p>
+                            <br></br>
+                            <ul>
+                                <li>Network design</li>
+                                <li>Assembly and testing of integrated onboard terminal systems</li>
+                                <li>Project management</li>
+                                <li>Training</li>
+                                <li>Installation of onboard terminals</li>
+                                <li>Creation of vessel monitoring and notification systems</li>
+                                <li>Customer-specific CommBox configurations</li>
+                            </ul>
+            <apex:commandbutton value="Next" styleClass="right-btn" action="{!nextButton}"/><br/><br/>
+            </div>
+            
+        </apex:pageblock>
+    
+        <apex:pageblock rendered="{!IF(firstpage==false,true,false)}">
+            <div class="page-content">
+                <h1>Submit a Professional Services Request</h1><br/><br></br>
+                <h2>Please select your vessel or installation platform:</h2><br/>
+                <!--<p><apex:inputfield value="{!srvCase.Platform_Account__c}" style="width:380px; height:20px; padding:5px;"/></p><br/>-->
+                <p><apex:selectList value="{!srvCase.Platform_Asset_Account__c}" styleClass="inputbox" multiselect="false" size="1" required="false">
+                   <apex:selectOptions value="{!accounts}" />
+                </apex:selectList></p>  
+                <br/>
+                <h2>Add New vessel or installation platform:</h2><br/>
+                <p><apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please enter a subject for your Case:</h2>
+                <p><apex:inputfield value="{!srvCase.Subject}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please add any additional details:</h2>
+                <p><apex:inputfield style="width:380px; height:200px; padding:5px;" value="{!srvCase.Description}"/></p>
+                <br/>
+                <apex:outputpanel >
+                        <apex:outputText value="Attach a File:" />
+                        &nbsp;&nbsp;
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        <br/>
+                        <p style="text-align:right;width:390px"><apex:commandButton value="Previous" styleClass="left"  onclick="goB(); return false;"/><apex:commandButton value="Finish"  action="{!CreateCase}"/></p>
+                </apex:outputpanel>
+            </div>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

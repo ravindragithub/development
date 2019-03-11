@@ -1,0 +1,51 @@
+<apex:component allowDML="true" controller="ActivationOneCare_Component_Ctrl">
+    
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Product detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    
+    <div><div class="clear" style="padding-bottom:20px;"></div>
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here" id="errorMsg">
+        </div>
+        <div class="clear" style="padding-bottom:20px;"></div>
+        <div class="left two-col">
+            <div class="box-content">
+                <apex:actionRegion >
+                    <p class="ProductType"><label style="font-size: 1em;font-weight: bold;">Select Product Type: </label>
+                        <apex:selectList id="Integrated_Product_Type__c" tabindex="31" value="{!actProd.Integrated_Product_Type__c	}" multiselect="false"  size="1"  html-data-role="none" >
+                          <apex:selectOptions value="{!ProductTypeList}" />
+                             <apex:actionSupport event="onchange" rerender="Render" />
+                        </apex:selectList>
+                    </p>
+                </apex:actionRegion>
+                <apex:outputPanel id="Render">
+                 <p>
+                    <label style="font-size: 1em;font-weight: bold;">
+                    <apex:outputPanel rendered="{!actProd.Integrated_Product_Type__c != 'IP-MobileCast Media Server'}">Antenna Serial Number:</apex:outputPanel> 
+                    <apex:outputPanel rendered="{!actProd.Integrated_Product_Type__c == 'IP-MobileCast Media Server'}">Media Server Serial Number:</apex:outputPanel>
+                    </label>
+                    <apex:inputField value="{!actProd.Antenna_Serial_Number__c}" html-tabIndex="32" id="Antenna_Serial_Number__c" styleClass="requiredRedMarkFld" html-data-role="none"/>
+                </p>
+                <p><label style="font-size: 1em;font-weight: bold;">
+                    <apex:outputPanel rendered="{!And(actProd.Integrated_Product_Type__c != 'IP-MobileCast Media Server',actProd.Integrated_Product_Type__c != 'TracVision TV-series',actProd.Integrated_Product_Type__c != 'TracVision HD-series')}">SIM Card Number:</apex:outputPanel>
+                    <apex:outputPanel rendered="{!actProd.Integrated_Product_Type__c == 'IP-MobileCast Media Server'}">Set-top Box Serial Number:</apex:outputPanel>
+                    <apex:outputPanel rendered="{!actProd.Integrated_Product_Type__c == 'TracVision TV-series'}">HUB Serial Number:</apex:outputPanel>
+                    <apex:outputPanel rendered="{!actProd.Integrated_Product_Type__c == 'TracVision HD-series'}">ACU Serial Number:</apex:outputPanel>
+                   </label>
+                   <apex:inputField value="{!actProd.Below_Decks_Serial_Number__c}" html-tabIndex="34" id="SIM_Card_Number__c" styleClass="requiredRedMarkFld" html-data-role="none"/></p>
+           </apex:outputPanel></div>
+        </div>
+        
+        <div class="clear">
+            <apex:outputPanel >
+                <apex:commandLink styleClass="button right" value="Save Product" onclick="showLoadingDiv(); validateError('{!parentContainer}','true'); return false;">
+                </apex:commandLink>
+                <apex:commandLink styleClass="button left" value="Cancel" action="{!reloadprodtactlist}" onclick="showLoadingDiv();"  oncomplete="hideLoadingDiv();" >
+                </apex:commandLink>
+            </apex:outputPanel>
+        </div>
+    </div>
+    <apex:actionFunction name="searchroootasset" action="{!SearchAsset}" oncomplete="hideLoadingDiv();" ></apex:actionFunction>
+</apex:component>

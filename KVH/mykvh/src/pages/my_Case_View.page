@@ -1,0 +1,9 @@
+<apex:page standardController="Case" sidebar="false" tabStyle="my_Cases__tab" standardStylesheets="false">
+<apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <apex:outputLink value="/apex/my_Cases">Return to Cases List...</apex:outputLink>
+    <br/>
+    <br/>
+    <apex:detail subject="{!Case.Id}" relatedList="false" title="false"/> 
+
+    <c:my_Case_Comments ParentCase="{!Case.Id}"/> 
+</apex:page>

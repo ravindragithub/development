@@ -1,0 +1,54 @@
+<apex:page standardController="Case" showheader="false" sidebar="false" standardStylesheets="false" extensions="myKVH_Case_ViewCtrl">
+<apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    <style>
+        body {
+       background-color:#f3f3f3;
+        }
+    .label{
+        text-align: left;
+        }
+    </style>
+    <div class="partner_portal">
+        <div class="case-info" style="text-align: left; align-content: left;">
+            <apex:outputLink target="_parent" value="{!$Site.BaseUrl}/s/mykvh-support-landing" styleClass="button right">Back to Cases</apex:outputLink>
+            <apex:pageBlock >
+                <h1>
+                    Case Detail
+                </h1>
+                <apex:pageBlockSection columns="2" title="Case Information:" >
+                    <apex:outputField style="text-align: left;" styleClass="left" value="{!caseObj.CaseNumber}"/>
+                    <apex:outputField label="Parent Case" value="{!caseObj.Parent_Case__c}"/>
+                    <apex:outputField value="{!caseObj.Contact_Name__c}"/>
+                    <apex:outputField label="Platform" value="{!caseObj.New_Vessel_or_Platform__c}"/>
+                    <apex:outputField value="{!caseObj.Asset_Name__c}"/>
+                    <apex:outputField value="{!caseObj.Type}"/>
+                    <apex:outputField value="{!caseObj.Product_or_Service__c}"/>
+                    <apex:outputField value="{!caseObj.Status}"/>
+                    <apex:outputField value="{!caseObj.Subject}"/>
+                    <apex:outputField value="{!caseObj.Case_Symptom__c}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection columns="1" title="Description:">
+                    <apex:outputText id="desc" label="" style="width: 10%;" value="{!caseObj.Description}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Web Information:" columns="2">
+                    <apex:outputField value="{!caseObj.CreatedDate}"/>
+                    <apex:outputField value="{!caseObj.ClosedDate}"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </div>
+        <div class="case-comments pad-top" style="margin-bottom:40px;">
+            <c:myKVH_Case_Comments ParentCase="{!caseObj.Id}" showAddComment="{!showAddComment}"/>
+        </div> 
+        
+       
+     </div>
+     <script>
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+    </script>
+</apex:page>

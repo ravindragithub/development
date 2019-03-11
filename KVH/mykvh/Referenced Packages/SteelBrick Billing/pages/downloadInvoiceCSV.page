@@ -1,0 +1,22 @@
+<apex:page standardController="invoiceit_s__Invoice__c" extensions="invoiceit_s.ClassDownloadInvoiceCSV" sidebar="false">
+   <apex:sectionHeader title="Invoice" subtitle="Download CSV"/>
+     
+     <div class="bPageTitle">
+        <div class="ptBreadcrumb">&nbsp;«&nbsp;
+            <a href="/{!HTMLENCODE(invoice.Id)}">Back to : {!HTMLENCODE(invoice.Name)}</a> 
+        </div>
+    </div>
+      
+    <apex:pageBlock title="Download Attachments for Usage">
+        <apex:pageBlockTable value="{!listofAttachment}" var="attachment">
+          <apex:column headerValue="Attachmnet Name">
+            {!attachment.name}
+           </apex:column> 
+           
+           <apex:column headerValue="Click to Download File">
+            <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.id)}" target="_blank">{!attachment.name}</apex:outputLink>
+           </apex:column>
+           
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

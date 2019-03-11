@@ -1,0 +1,266 @@
+<apex:page controller="JKT_myKVHPermissionsMatrix" sidebar="false" showheader="true" >
+	
+	<apex:stylesheet value="{!URLFOR($Resource.FixedHeader, '/perfect-scrollbar.css')}"/>
+    <apex:includescript value="{!URLFOR($Resource.jquery, '/jquery/js/jquery-1.10.2.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.FixedHeader, '/perfect-scrollbar.js')}" />
+        
+	<head>
+        <style type="text/css">
+            .kvh-main {
+	            height: 100%;
+	            width: 100%;
+	        }
+	        .kvh-header {
+	            padding: 5px;
+	            font-weight: bold;
+	            font-size: 24px;
+	            margin-bottom: 25px;
+	        }
+	        .kvh-header-color {
+	            background: rgba(224,224,224,1);
+	            background: -moz-linear-gradient(top, rgba(224,224,224,1) 0%, rgba(224,224,224,1) 29%, rgba(207,207,207,1) 62%, rgba(199,199,199,1) 100%);
+	            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(224,224,224,1)), color-stop(29%, rgba(224,224,224,1)), color-stop(62%, rgba(207,207,207,1)), color-stop(100%, rgba(199,199,199,1)));
+	            background: -webkit-linear-gradient(top, rgba(224,224,224,1) 0%, rgba(224,224,224,1) 29%, rgba(207,207,207,1) 62%, rgba(199,199,199,1) 100%);
+	            background: -o-linear-gradient(top, rgba(224,224,224,1) 0%, rgba(224,224,224,1) 29%, rgba(207,207,207,1) 62%, rgba(199,199,199,1) 100%);
+	            background: -ms-linear-gradient(top, rgba(224,224,224,1) 0%, rgba(224,224,224,1) 29%, rgba(207,207,207,1) 62%, rgba(199,199,199,1) 100%);
+	            background: linear-gradient(to bottom, rgba(224,224,224,1) 0%, rgba(224,224,224,1) 29%, rgba(207,207,207,1) 62%, rgba(199,199,199,1) 100%);
+	            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e0e0', endColorstr='#c7c7c7', GradientType=0 );
+	            border-bottom: 1px solid rgb(171, 171, 171);
+	        }
+	        .kvh-container {
+	            margin: 5px;
+	            background: rgb(242, 242, 242);
+	            border: 1px solid rgb(215, 215, 215);
+	        }
+	        .kvh-sub-header {
+	            padding: 5px 10px;
+	            font-weight: bold;
+	            font-size: 12px;
+	            margin-bottom: 10px;
+	        }
+	        .kvh-box {
+	            padding: 2px 5px;
+	            background: rgb(137, 174, 146);
+	            color: white;
+	            font-size: 10px;
+	            font-family: sans-serif;
+	            margin-right: 2px;
+	        }
+	        .kvh-highlight {
+	            width: 100%;
+	            background: rgb(207, 168, 168);
+	        }
+            .kvh-scroll-main {
+            	padding: 10px;
+	            margin: 10px;
+	            overflow: auto;
+            }
+            .kvh-scroll-main table {
+                border-spacing: 0;
+                border-collapse: collapse;
+                text-align: left;
+            }
+            .kvh-scroll-main th, .kvh-scroll-main td {
+                padding: 5px;
+                min-width: 100px;
+            }
+            .kvh-scroll-main .table0 {
+                width: 100%;
+                display: inline-block;
+                overflow: hidden;
+            }
+            .kvh-scroll-main .table0 .table0-head {
+            	font-weight: bold;
+            }
+            .kvh-scroll-main .table0 .table0-head .table0-head-td {
+            	padding: 0px;
+            	vertical-align: top;
+            }
+            .kvh-scroll-main .table0 .table1, .kvh-scroll-main .table0 .table2 {
+            	border-bottom: 1px solid rgb(187, 187, 187);
+            }
+            .kvh-scroll-main .table0 .table0-head .kvh-columns {
+            	overflow:hidden;
+            	position: absolute;
+            }
+            .kvh-scroll-main .table0 .table0-body .kvh-rows {
+            	max-height: 500px;
+            	overflow: hidden;
+            	//height: 150px;
+            }
+            .kvh-scroll-main .table0 .table0-body tr:nth-child(odd){ 
+                background: #E7E7E7;
+            }
+            .kvh-scroll-main .table0 .table0-body .kvh-matrix {
+                position: absolute;
+                overflow: hidden;
+                max-height: 500px;
+                //height: 150px;
+            }
+        </style>
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.kvh-matrix').perfectScrollbar();
+                
+                var lastScrollLeft = 0;
+                var lastScrollTop = 0;
+                $('.kvh-matrix').scroll(function() {
+                    var divScrollLeft = $('.kvh-matrix').scrollLeft();
+                    var divScrollTop = $('.kvh-matrix').scrollTop();
+                    if (divScrollLeft != lastScrollLeft) {
+                        lastScrollLeft = divScrollLeft;
+                        $('.kvh-columns').scrollLeft(lastScrollLeft);
+                    }
+                    if (divScrollTop != lastScrollTop) {
+                        lastScrollTop = divScrollTop;
+                        $('.kvh-rows').scrollTop(lastScrollTop);
+                    }
+                });
+                
+                /* Table1 and Table3 'td' width Compare */
+                var tdW1 = 0;
+                var tdW3 = 0;
+                var index = 0;
+                $('.table1 tr:first-child').find('td').each(function() {
+                    tdW1 = $(this).width();
+                    tdW3 = $('.table3 tr:first-child').find('td').eq(index).width();
+                    if(tdW1 > tdW3) {
+                        $('.table3 tr:first-child').find('td').eq(index).width(tdW1+1);
+                    }
+                    else if(tdW1 < tdW3) {
+                        $(this).width(tdW3+1);
+                    }
+                    index++;
+                });
+                
+                /* Table1 and Table2 'td' height Compare */
+                var tdH1 = $('.table1 tr:first-child').find('td').eq(0).height();
+                var tdH2 = $('.table2 tr:first-child').find('td').eq(0).height();
+                if(tdH1 > tdH2) {
+                    $('.table2 tr:first-child').find('td').eq(0).height(tdH1);
+                }
+                else if(tdH1 < tdH2) {
+                    $('.table1 tr:first-child').find('td').eq(0).height(tdH2);
+                }
+                
+                /* Table3 and Table4 'td' height Compare */
+                var tdH3 = 0;
+                var tdH4 = 0;
+                index = 0;
+                $('.table3').find('tr td:first-child').each(function() {
+                    tdH3 = $(this).height();
+                    tdH4 = $('.table4').find('tr').eq(index).find('td').eq(0).height();
+                    if(tdH3 > tdH4) {
+                        $('.table4').find('tr').eq(index).find('td').eq(0).height(tdH3);
+                    }
+                    else if(tdH3 < tdH4) {
+                        $(this).height(tdH4);
+                    }
+                    index++;
+                });
+                
+                /* Table2 and Table4 'td' width Compare */
+                var tdW2 = 0;
+                var tdW4 = 0;
+                index = 0;
+                $('.table2 tr:first-child').find('td').each(function() {
+                    tdW2 = $(this).width();
+                    tdW4 = $('.table4 tr:first-child').find('td').eq(index).width();
+                    if(tdW2 > tdW4) {
+                        $('.table4 tr:first-child').find('td').eq(index).find('div').width(tdW2+1);
+                    }
+                    else if(tdW2 < tdW4) {
+                        $(this).find('div').width(tdW4+1);
+                    }
+                    index++;
+                });
+                
+				var table0W = $('.table0').width();
+                var table1W = $('.table1').width();
+                $('.kvh-matrix').width(table0W-table1W);
+                $('.kvh-columns').width(table0W-table1W);
+            });
+        </script>
+    </head>
+    
+    <div class="kvh-main" >
+        <div class="kvh-header kvh-header-color" >
+            <span>Permissions Matrix</span>
+        </div>
+        <div class="kvh-container" >
+            <div class="kvh-sub-header kvh-header-color" >
+                <span>Product Features</span>
+            </div>
+            
+		    <div class="kvh-scroll-main" >
+		        <table border="0" class="table0">
+		            <tbody>
+		                <tr class="table0-head" >
+		                    <td class="table0-head-td" >
+		                        <table border="0" class="table1">
+		                            <tr>
+		                                <td>FEATURE</td>
+		                                <td>STATUS</td>
+		                            </tr>
+		                        </table>
+		                    </td>
+		                    <td class="table0-head-td" >
+		                        <div class="kvh-columns" >
+		                            <table border="0" class="table2" style="width: 100%;" >
+		                                <tr>
+		                                    <apex:repeat value="{!lstRoles}" var="r" >
+		                                    	<td ><div>{!r.Name}</div></td>
+		                                    </apex:repeat>
+		                                </tr>
+		                            </table>
+		                        </div>
+		                    </td>
+		                </tr>
+		                <tr class="table0-body">
+		                    <td style="padding:0px;">
+		                        <div class="kvh-rows" >
+		                            <table border="0" class="table3" >
+		                            	<apex:repeat value="{!lstKVHFeatures}" var="l" >
+			                                <tr>
+			                                    <td>{!l.objFeature.Name}</td>
+			                                    <td><span class="kvh-box" >{!l.objFeature.Status__c}</span></td>
+			                                </tr>
+		                                </apex:repeat>
+		                                <tr style="background: none !important;" ><td colspan="2" style="height:1px;" ></td></tr>
+		                            </table>
+		                        </div>
+		                    </td>
+		                    <td style="padding:0px;vertical-align: top;">
+		                        <div class="kvh-matrix" >
+		                            <table border="0" class="table4" style="width: 100%;" >
+		                                <apex:repeat value="{!lstKVHFeatures}" var="l" >
+		                                	<tr> 
+			                                    <apex:repeat value="{!l.lstPermissions}" var="p" >
+				                                    <td >
+					                                    <apex:outputpanel rendered="{!IF(p.id != null, true, false)}" >
+						                                    <div>	
+						                                       	<apex:outputpanel rendered="{!p.canCreate__c}" ><span class="kvh-box" >C</span></apex:outputpanel>
+						                                       	<apex:outputpanel rendered="{!p.canRead__c}" ><span class="kvh-box" >R</span></apex:outputpanel>
+						                                       	<apex:outputpanel rendered="{!p.canUpdate__c}" ><span class="kvh-box" >U</span></apex:outputpanel>
+						                                       	<apex:outputpanel rendered="{!p.canDelete__c}" ><span class="kvh-box" >D</span></apex:outputpanel>
+							                                </div>
+						                                </apex:outputpanel> 
+						                                <apex:outputpanel rendered="{!IF(p.id == null, true, false)}" >
+							                                <div class="kvh-highlight" >&nbsp;</div>
+							                            </apex:outputpanel>
+						                            </td>            
+			                                    </apex:repeat>
+		                                	</tr>
+		                                </apex:repeat>
+		                                <tr style="background: none !important;" ><td style="height:1px;" colspan="15" ></td></tr>
+		                            </table>
+		                        </div>
+		                    </td>
+		                </tr>
+		            </tbody>
+		        </table>
+		    </div>
+	    </div>
+    </div>
+</apex:page>

@@ -1,0 +1,336 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" controller="myKVH_changePassword" >
+    
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <apex:slds />
+        </head>
+        
+        <apex:stylesheet value="{!URLFOR($Resource.MASTERAppsStyles)}"/>
+        <style>
+            .messageCell{
+            padding: 1rem!important;
+            background: red;
+            color: white!important;
+            }
+            .messageText h4{
+            color: white!important;
+            }
+            .footer {        
+            background:#555;
+            padding:20px; 
+            Width: 100%;
+            display: block;
+            font-size: 100%;
+            font-family: sans-serif;
+            vertical-align: baseline;
+            box-sizing: border-box;  
+            margin-bottom: 0px;
+            }
+            
+            .push {
+            height: 120px;
+            }
+            .col {
+            display: block;
+            float: left;
+            margin: 0;
+            }
+            .span_6_of_12 {
+            width: 50%;
+            }
+            .section {
+            clear: both;
+            padding: 0px;
+            margin: 0px;
+            }
+            .group {
+            zoom: 1;
+            }
+            
+            .list {
+            display:inline;
+            margin:0 0 0 20px;
+            font-size: 10.88px;
+            }
+            .right{
+            float: right;
+            
+            }
+            
+            .right1{
+            
+            position: relative;
+            top: -30px;
+            left: 70px;
+            overflow: auto;
+            
+            }
+            
+            .right2{
+            
+            position: relative;
+            top: -30px;
+            }
+            
+            
+            
+            .topright {
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 18px;
+            }
+            
+            .another {
+            
+            text-decoration: none!important;
+            color:#ddd!important;
+            line-height: 125%!important;
+            cursor: auto!important;
+            padding-left:7px!important;
+            }
+            
+            .another1 {
+            padding-left:7px;
+            text-decoration: none;
+            color:#ddd;
+            line-height: 125%;
+            cursor: auto;
+            float: right;
+            
+            }
+            
+            .clear {
+            clear: both;
+            }
+            .uplist{
+            list-style: none;
+            list-style-position: inside;
+            margin-bottom: 20px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+            }
+            .button-red {
+            background: #cc0000;
+            color: #fff;
+            border: transparent;
+            
+            }
+            .button-gray {
+            background: #666;
+            color: #fff;
+            border: transparent;
+            
+            }
+            .button {
+            
+            padding: 10px 10px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 85%;
+            
+            }
+            .pad-top{
+            margin-top: 5px;
+            }
+            
+            .pad-links{
+            margin-top: 5px;
+            }
+            
+            .pad-bottom{
+            margin-bottom: 70px;
+            }
+            
+            .para {
+            text-decoration: none;
+            color:#ddd!important;	
+            line-height: 125%;
+            margin-bottom: 15px;
+            margin: 0;
+            padding: 0 0 10px 0;
+            border: 0;
+            font-size: 10.88px;
+            vertical-align: baseline;
+            }
+            .division{
+            border: 0;
+            font: inherit;
+            vertical-align: baseline;
+            }
+            
+            .index {
+            color:#999;
+            padding-right:10px;
+            }
+            .font-85 {
+            font-size: 85%;
+            }
+            
+            
+            .testing {
+            
+            float: right;
+            
+            }.right-align{
+            float : right;
+            }
+            .another{
+            cursor: pointer!important;
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+            $( document ).ready(function() {
+            var deviceHeight = window.screen.availHeight;  
+            var width = window.screen.availWidth;
+            var headerheight = 60;
+            var footerheight;
+            if(width < 750){
+                footerheight = 82;
+            }
+            else if(width > 750 && width < 1400){
+                footerheight = 80;            
+            }
+                else if(width > 1400 ){
+                    footerheight = 76;            
+                }
+            var finalHeight = deviceHeight - headerheight - footerheight;
+            $("#mainPanel").css('background','#f3f3f3');
+            $("#mainPanel").css('min-height',finalHeight);
+        });
+        </script>
+        <body>
+            <div class="slds-scope">
+                <div class="slds-grid slds-wrap" style="height : 60px;background-color: #cc0000;">
+                    <div class="slds-size_1-of-12 slds-small-size--1-of-12 slds-medium-size--1-of-12 slds-large-size--1-of-12 slds-col slds-align--absolute-center slds-medium-show"
+                         style="background-color: #a00;height: 60px;text-align:center;">
+                        
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_1-of-1">
+                                <a href="{!$Site.BaseUrl}/s/" onclick="">                        
+                                    <img src="{!$Resource.IconmyKVH}" style="width: 35px;margin-top:12px;" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-size_11-of-12 slds-small-size--11-of-12 slds-medium-size--10-of-12 slds-large-size--10-of-12  slds-col"
+                         style="background-color: #cc0000;">
+                        <div class="slds-text-heading--large header1 slds-truncate"
+                             style="color:#fff;padding-top: 17px;
+                                    font-weight:400;
+                                    display: inline-block;
+                                    float:left;width:60%">
+                            <a style="color: #fff;text-decoration: none;" href="">
+                                <span style="padding-left:4%">myKVH Customer Portal</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-12 slds-medium-show"
+                         style="background-color: #a00;text-align: center;padding-top:2px;">
+                        <img style="height : 38px" class="slds-m-top--x-small imagetopmargin" src="{!$Resource.icons + '/KVHLogo.gif'}" />
+                    </div>
+                </div>             
+                <div class="slds-col content"  id="mainPanel">                
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-medium-size_3-of-12"/>
+                        <div class="slds-col slds-medium-size_6-of-12" style="min-height: 550px;background: #fff;padding: 30px;">
+                            <h1>Reset Password</h1>
+                            
+                            <apex:pageMessages id="error"/>
+                            <br/><br/>
+                            <p>Passwords must:</p>
+                            <ul class="slds-list_dotted">
+                                <li>Be at least 8 characters long</li>
+                                <li>Be a mix of alpha and numeric characters</li>
+                                <li>Have at least 1 uppercase character</li>
+                                <li>Have at least 1 numerical character</li>
+                            </ul>
+                            <ul class="slds-is-nested">
+                                <li>Please note that passwords are case-sensitive, and that old passwords cannot be reused.</li>
+                            </ul>
+                            
+                            <apex:form >            
+                                <div >
+                                    <label>New Password:</label>
+                                    <apex:inputSecret id="psw" value="{!newPassword}"  html-placeholder=""
+                                                      styleClass="slds-input"
+                                                      style="border-left:4px solid #cc0000 !important;width:100%"/> 
+                                </div>
+                                
+                                <div >
+                                    <label>Confirm New Password:</label>
+                                    <apex:inputSecret id="vpsw" value="{!verifyNewPassword}"  html-placeholder=""
+                                                      styleClass="slds-input"
+                                                      style="border-left:4px solid #cc0000 !important;width:100%"/>  
+                                </div>
+                                <br/>
+                                <br/>
+                                <div > 
+                                    <apex:commandButton value="Change Password" styleclass="slds-button slds-button_brand"
+                                                        reRender="error" onclick="changepassword();" style="width:100%"/>
+                                </div>
+                                
+                                <apex:actionFunction name="changepassword" action="{!changePassword}" reRender="error"  />
+                            </apex:form>        
+                        </div>  
+                        <div class="slds-col slds-medium-size_3-of-12"/>
+                    </div>                
+                </div>            
+                <div class="fa-events-icons-ready footer footerstyle">
+                    <div class="division section group font-85">
+                        <div class="slds-grid slds-wrap clear">
+                            <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12">
+                                <p class="para">Copyright ©2018 KVH Industries, Inc. All rights reserved.</p>
+                                <a href="https://www.linkedin.com/company/kvh-industries-inc-?trk=company_logo" target="_blank" class="another pad-bottom" style="padding-left:0px;">
+                                    <i class="fa fa-linkedin-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>
+                                <a href="https://www.facebook.com/kvhindustries/" target="_blank" class="another ">
+                                    <i class="fa fa-facebook-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>
+                                <a href="http://twitter.com/#!/kvh" target="_blank" class="another ">
+                                    <i class="fa fa-twitter-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>
+                                <a href="https://www.youtube.com/user/KVHindustries?sub_confirmation=1" target="_blank" class="another">
+                                    <i class="fa fa-youtube-play fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>
+                                <a href="http://instagram.com/kvhindustries" target="_blank" class="another ">
+                                    <i class="fa fa-instagram fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>
+                                <a href="http://www.kvhmobileworld.com/" target="_blank" class="another index ">
+                                    <i class="fa fa-rss-square fa-2x" style="color: #ddd;" aria-hidden="true"></i>
+                                </a>								
+                            </div>
+                            
+                            <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12 ">
+                                
+                            </div>
+                            
+                            
+                            <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12">
+                                <div class="slds-grid slds-wrap right-align">
+                                    <div>
+                                        <a href="http://www.kvh.com/Legal/Privacy.aspx" target="_blank" class="another pad-links   ">Privacy Policy |</a>
+                                        <a href="http://www.kvh.com/Legal/Terms-of-Use.aspx" target="_blank" class="another pad-links  ">Terms of Use </a>
+                                        
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+</apex:page>

@@ -1,0 +1,229 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId"
+                controller="LTEAct_Controller">
+    <aura:attribute name="newLTEActivation" type="Object"/>
+    <aura:attribute name="simpleLTEActivation" type="Object" 
+                    default="{'sobjectType':'LTE_Activation__c'}"/>
+    
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="newLTEActivationError" type="String" />    
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="serialnumber" type="String" default=""/>
+    <!--  boolean for each accordion-->
+    <aura:attribute name="accountAccordion" type="boolean" default="true"/>
+    <aura:attribute name="paymentAccordion" type="boolean" default="true"/>
+    <aura:attribute name="addContactAccordion" type="boolean" default="true"/>    
+    <aura:attribute name="installAccordion" type="boolean" default="true"/>
+    <aura:attribute name="serviceAccordion" type="boolean" default="true"/>
+    <aura:attribute name="agreementAccordion" type="boolean" default="true"/>
+    <!--  boolean for each accordion-->
+    <!--  Required field boolean each card-->
+    <aura:attribute name="subInfoRequired" type="boolean" default="true"/>
+    <aura:attribute name="billingInfoRequired" type="boolean" default="true"/>
+    <aura:attribute name="vesselInfoRequired" type="boolean" default="true"/>
+    <aura:attribute name="payInfoRequired" type="boolean" default="true"/>
+    <aura:attribute name="onboardRequired" type="boolean" default="true"/>
+    <aura:attribute name="cont1Required" type="boolean" default="false"/>
+    <aura:attribute name="agreeRequired" type="boolean" default="false"/>
+    <aura:attribute name="serviceRequired" type="boolean" default="true"/>
+    <aura:attribute name="firstnameFlag" type="boolean" default="false"/>
+    <aura:attribute name="lastnameFlag" type="boolean" default="false"/>
+    <aura:attribute name="emailFlag" type="boolean" default="false"/>
+    <aura:attribute name="phoneFlag" type="boolean" default="false"/>
+    <aura:attribute name="antennaFlag" type="boolean" default="false"/>
+    <aura:attribute name="countryFlag" type="boolean" default="false"/>
+    <aura:attribute name="stateFlag" type="boolean" default="false"/>
+    <aura:attribute name="inhibitTransform" type="boolean" default="false"/>
+    <aura:attribute name="submitFormOnce" type="boolean" default="false"/>
+    <force:recordData aura:id="LTERecordCreator"
+                      layoutType="FULL"
+                      targetRecord="{!v.newLTEActivation}"
+                      targetFields="{!v.simpleLTEActivation}"
+                      targetError="{!v.newLTEActivationError}"
+                      />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="billingInfoFlag" type="boolean"/>    
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+    <!-- Display the new LTE Activation form -->
+    <aura:if isTrue="{!v.isOpen}">  
+        <c:myKVH_CorporateAccountHierarchy simpleLTEActivation="{!v.simpleLTEActivation}"
+                                           isOpen = "{!v.isOpen}"/>
+    </aura:if>
+    <div class="CreateLTEActivation" style="position:relative">
+        <aura:if isTrue="{!v.spinner}">
+            <lightning:spinner variant="brand"
+                               size="large"
+                               alternativeText="Loading Page"/>
+        </aura:if>        
+        <div class="slds-docked-form-body content-panel" id="scrollMain">
+            <h1 style="float:left;">KVH TracPhone LTE Activation Order</h1>
+            <div style="float:right;">
+                <lightning:button label="Back to Home" class="go-btn button"
+                                  variant="brand" onclick="{!c.onBackHome}" />
+                <div class="req-note" style="margin-top: 1rem;"><span class="required">*</span> indicates required field</div>
+            </div>
+            <div class="clear"></div>
+            <lightning:accordion aura:id="accordion" activeSectionName="Account">
+                
+                <div id="scrollAccount"></div>
+                <lightning:accordionSection name="Account" label="Account">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! !(v.subInfoRequired)}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="action:remove" title="" size="xx-small"/>    
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <c:LTEAct_SubscriberInfo_cmp simpleLTEActivation="{!v.simpleLTEActivation}" subInfoRequired="{!v.subInfoRequired}" 
+                                                     countryList="{!v.countryList}"
+                                                     billingInfoFlag="{!v.billingInfoFlag}"
+                                                     firstnameFlag ="{!v.firstnameFlag}" lastnameFlag ="{!v.lastnameFlag}"
+                                                     emailFlag ="{!v.emailFlag}" phoneFlag ="{!v.phoneFlag}"
+                                                     inhibitTransform = "{!v.inhibitTransform}"
+                                                     countryFlag="{!v.countryFlag}" stateFlag="{!v.stateFlag}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Next" onclick="{!c.handleNextPayment}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                
+                <!-- PAYMENT PANEL -->
+                <div id="scrollPayment"></div>
+                <lightning:accordionSection name="Payment" label="Payment">    
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.paymentAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{! !or(v.billingInfoRequired,v.payInfoRequired)}">
+                                    <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                                    <aura:set attribute="else">   
+                                        <lightning:icon iconName="action:remove" title="" size="xx-small"/> 
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">                        
+                        <c:LTEAct_BillingInfo_cmp simpleLTEActivation="{!v.simpleLTEActivation}" billingInfoRequired="{!v.billingInfoRequired}" 
+                                                  countryList="{!v.countryList}"
+                                                  billingInfoFlag="{!v.billingInfoFlag}"
+                                                  inhibitTransform = "{!v.inhibitTransform}"/>
+                        <c:LTEAct_PaymentInfo_cmp simpleLTEActivation="{!v.simpleLTEActivation}" payInfoRequired="{!v.payInfoRequired}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousAccount}"/>
+                            <lightning:button label="Next" onclick="{!c.handleNextAddContact}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                <!-- CONTACT PANEL -->
+                <div id="scrollAddContact"></div>
+                <lightning:accordionSection name="AdditionalContact" label="Additional Contact (Optional)">    
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.addContactAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">                        
+                        <c:LTEAct_Contact1Info_cmp simpleLTEActivation="{!v.simpleLTEActivation}" countryList="{!v.countryList}" />
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousPayment}"/>
+                            <lightning:button label="Next" onclick="{!c.handleNextInstallation}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                <!-- INSTALLATION PANEL -->
+                <div id="scrollInstallation"></div>
+                <lightning:accordionSection name="Installation" label="Installation">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.installAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!or(or(v.vesselInfoRequired, v.onboardRequired) , v.serviceRequired ) }">
+                                    <lightning:icon iconName="action:remove" title="" size="xx-small"/> 
+                                    <aura:set attribute="else">  
+                                        <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <c:LTEAct_VesselInfo_cmp simpleLTEActivation="{!v.simpleLTEActivation}" vesselInfoRequired="{!v.vesselInfoRequired}" 
+                                                 countryList="{!v.countryList}"/>
+                        <c:LTEAct_OnboardContact_cmp simpleLTEActivation="{!v.simpleLTEActivation}" onboardRequired="{!v.onboardRequired}"
+                                                     countryList="{!v.countryList}" 
+                                                     inhibitTransform = "{!v.inhibitTransform}" />         
+                        <c:LTEAct_SystemInfo simpleLTEActivation="{!v.simpleLTEActivation}" serviceRequired="{!v.serviceRequired}"
+                                             antennaFlag="{!v.antennaFlag}"/>
+                        <c:LTEAct_InstallerInfo_cmp simpleLTEActivation="{!v.simpleLTEActivation}" 
+                                                    countryList="{!v.countryList}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousAddContact}"/>
+                            <lightning:button label="Next" onclick="{!c.handleNextService}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                <!-- SERVICE PANEL -->
+                <div id="scrollService"></div>
+                <lightning:accordionSection name="Service" label="Service">	
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.serviceAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <c:LTEAct_Rateplan_cmp simpleLTEActivation="{!v.simpleLTEActivation}"/>  
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousInstaller}"/>
+                            <lightning:button label="Next" onclick="{!c.handleNextAgreement}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set> 
+                </lightning:accordionSection> 
+                
+                <!-- AGREEMENT PANEL -->
+                <div id="scrollAgreement"></div>
+                <lightning:accordionSection name="Agreement" label="Agreement">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.agreementAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body"> 
+                        <c:LTEAct_MSA_cmp onclickSave="{!c.handleSaveLTE}" onclickError="{!c.hideShowError}" submitFormOnce="{!v.submitFormOnce}" />
+                        <!--
+                        <c:LTEAct_Signature_cmp simpleLTEActivation="{!v.simpleLTEActivation}"/>
+--> <!--
+                        <div class="button-bar">
+                            <lightning:button label="Back" iconName="utility:chevronleft" iconPosition="left"  variant="brand" onclick="{!c.handlePreviousService}"/>
+                        </div>
+-->
+                        <div class="clear"></div>
+                    </aura:set>            
+                </lightning:accordionSection>
+                
+            </lightning:accordion>
+            
+            <!-- <c:LTEAct_Signature_cmp simpleLTEActivation="{!v.simpleLTEActivation}"/> -->
+        </div>
+        {!v.body }
+    </div>
+</aura:component>

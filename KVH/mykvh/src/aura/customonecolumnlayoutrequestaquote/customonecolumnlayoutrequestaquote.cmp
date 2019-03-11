@@ -1,0 +1,23 @@
+<aura:component description="one column layout request a quote" access="global"
+                implements="forceCommunity:layout">
+
+    <aura:attribute name="header" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="s1c1" type="Aura.Component[]" required="false" access="global"/>    
+    <aura:attribute name="sFooter" type="Aura.Component[]" required="false" access="global"/>
+	<aura:attribute name="miniheight" type="string" access="global"/>
+    
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    
+    <div class="slds">
+        <div class="slds-grid slds-wrap ">
+            <div class="slds-size--1-of-1 slds-medium-size--1-of-1">{!v.header}</div>
+        </div>
+        <div class="slds-grid slds-wrap ">
+            <div class="slds-size--1-of-1 slds-medium-size--1-of-1 graybackground" style="{!'min-height:'+v.miniheight}">{!v.s1c1}</div>
+        </div>
+
+        <div class="slds-grid slds-wrap">
+            <div class="slds-size--1-of-1 slds-medium-size--1-of-1">{!v.sFooter}</div>
+        </div>
+    </div>
+</aura:component>

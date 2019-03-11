@@ -1,0 +1,494 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:appHostable" 
+                access="global" 
+                controller="myKVH_SupportCenterController">
+    <aura:attribute type="Case[]"    name="allCases" />
+    <aura:attribute type="Case[]"    name="currentList" />
+    <aura:attribute type="CaseComment[]"    name="caseCommentList" />
+    <aura:attribute type="Integer"      name="pageNumber"		default="1" />
+    <aura:attribute type="Integer"      name="pageCount"		default="10" />
+    <aura:attribute type="Integer"      name="maxPage"			default="1" />
+    <aura:attribute type="String"       name="filter" default=""/>
+    <aura:attribute type="String"       name="sortField" default="CaseNumber"/>
+    <aura:attribute type="Boolean"		name="sortAsc" default="false"/>   
+    
+    <aura:attribute name="caseRecord" type="Case" 
+                    default="{'sobjectType':'Case'}"/>  
+    <aura:attribute name="mode" type="String" default="landingPage"/>
+    <aura:attribute name="productTypeCheckFlag" type="boolean" default="true"/>
+    <aura:attribute name="saveValid" type="boolean" default="false"/>
+    <aura:attribute name="saveAirtimeValid" type="boolean" default="false"/>
+    
+    <aura:attribute name="productType" type="String" default=""/>
+    <aura:attribute name="productTypes" type="List" />
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="caseCommentAccess" type="Boolean" default="false"/>    
+    <aura:attribute name="hideCaseComment" type="Boolean" default="false"/>    
+    <aura:attribute name="attachmentList" type="List"/>
+    <aura:attribute name="maxheight" type="String" />
+    
+    <aura:attribute name="headerList" type="List" default="[
+                                                           {'label': 'Case Number', 'fieldName': 'CaseNumber'},
+                                                           {'label': 'Case Type', 'fieldName': 'RecordType.Name'},
+                                                           {'label': 'Subject', 'fieldName': 'Subject'},
+                                                           {'label': 'Platform/Vessel', 'fieldName': 'Platform_Name__c'},
+                                                           {'label': 'Product', 'fieldName': 'Product_Group__c'},
+                                                           {'label': 'Serial Number', 'fieldName': 'Asset_Name__c'},
+                                                           {'label': 'Date Opened', 'fieldName': 'CreatedDate'},
+                                                           {'label': 'Status', 'fieldName': 'Status'}
+                                                           ]"/>   
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'Questions about policies (such as suspension or plan change policies)', 'value': 'option1'},
+                                                        {'label': 'Questions about available services (e.g. airtime rate plans, IP-MobileCast, OneCare, Vessel Tracking, Crew Calling, etc.)', 'value': 'option2'},
+                                                        {'label': 'Questions about activation forms', 'value': 'option3'},
+                                                        {'label': 'General question or feedback', 'value': 'option4'},
+                                                        ]"/> 
+    <aura:attribute name="filterList" type="Object[]"/> 
+    
+    <aura:attribute name="exportCaseType" type="String" default=""/> 
+    <aura:attribute name="exportCaseStatus" type="String" default="Open,"/>  
+    <aura:attribute name="selectedCaseType" type="String"/> 
+    <aura:attribute name="selectedCaseStatus" type="String" default='["Open"]'/>  
+    
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <ltng:require styles="{!$Resource.partner_portal_0817}"/>    
+    
+    <aura:handler name="init"			value="{!this}"			action="{!c.doInit}" />
+    <aura:handler name="change"			value="{!v.pageNumber}"	action="{!c.renderPage}" />
+    <aura:handler name="change" value="{!v.saveValid}" action="{!c.submitTechnicalCase}"/>
+    <aura:handler name="change" value="{!v.saveAirtimeValid}" action="{!c.submitAirtimeCase}"/>
+    
+    <aura:handler name="cmpEvent" event="c:myKVH_SupportCenterSearchFilterEvent" action="{!c.parentComponentEvent}"/>
+    
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>      
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="1" largeDeviceSize="1">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-medium" size="12" class="c-container"
+                              smallDeviceSize="12" mediumDeviceSize="10" largeDeviceSize="10">
+            
+            <ul class="breadcrumb">
+                <li><a href="" onclick="{! c.onBackHome }" >Home</a></li>
+                <li>Support Center</li>
+            </ul>
+            <aura:if isTrue="{!v.mode == 'landingPage'}">
+                <div>
+                    <span style="font-size:20px;">Support Center</span>
+                    <span style="float:right">
+                        <lightning:button variant="neutral" label="Back to Home"
+                                          onclick="{! c.onBackHome }" class="backtoHomebtn"/>
+                    </span>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-m-top_large page-main">
+  					<div class="slds-col slds-size_1-of-1">
+                        <span style="font-size:18px;">Create a New Case:</span>
+                        	<div class="slds-grid slds-wrap slds-m-top_small">
+  								<div class="slds-col slds-size_1-of-12">
+                                </div>
+                                <div class="slds-col slds-size_12-of-12 slds-small-size_5-of-12 slds-m-around_x-small">
+                                    <lightning:button variant="brand" label="Airtime Service Support"
+                                                  onclick="{! c.openAirtimeCase }" class="quickgobtn"/>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12 slds-small-size_5-of-12 slds-m-around_x-small">
+                                    <lightning:button variant="brand" label="Technical Support"
+                                                  onclick="{! c.openTechSupport }" class="quickgobtn"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page-table slds-p-horizontal_small">
+                    <div style="font-size:18px;padding:.5rem 0;">Current Case List</div>
+                    <div>
+                        <c:myKVH_SupportCenterSearchFilterContainer filterList="{!v.filterList}"/>
+                    </div>
+                    <span style="font-size:9px;float:right;padding-bottom: .5rem;">
+                        <i>Click Column Header for Sorting</i>   
+                    </span>
+                    <aura:if isTrue="{! !empty(v.currentList)}">
+                        <!--Show Case table code-->
+                        <lightning:layoutItem size="12">                            
+                            <div class="slds">
+                                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-max-medium-table--stacked-horizontal">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <aura:iteration items="{!v.headerList}"
+                                                            var="record">
+                                                <th scope="col" >
+                                                    <div onclick="{!c.sortByField}"
+                                                         id="{!record.fieldName}"
+                                                         class="slds-truncate header-text"
+                                                         title="{!record.label}">	
+                                                        {!record.label}
+                                                        <aura:if isTrue="{!(v.sortField==record.fieldName)}">
+                                                            <span>
+                                                                <aura:if isTrue="{!v.sortAsc}">
+                                                                    &#8593;
+                                                                    <aura:set attribute="else">
+                                                                        &#8595;
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                            </span>
+                                                        </aura:if>
+                                                    </div>
+                                                </th>
+                                            </aura:iteration>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.currentList}"
+                                                        var="record">
+                                            <tr>
+                                                <td data-label="Case Number">
+                                                    <div class="slds-truncate" 
+                                                         title="{!record.CaseNumber}" >
+                                                        <a href="" onclick="{!c.onCaseView}" id="{!record.Id}">
+                                                            {!record.CaseNumber}
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                                <td data-label="Case Record Type">
+                                                    <div class="slds-truncate" title="{!record.RecordType}">
+                                                        {!record.RecordType.Name}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Subject">
+                                                    <div class="slds-truncate" title="{!record.Subject}">
+                                                        {!record.Subject}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Platform/ Vessel">
+                                                    <div class="slds-truncate" title="{!record.Platform_Name__c}">
+                                                        {!record.Platform_Name__c}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Product">
+                                                    <div class="slds-truncate" title="{!record.Product_Group__c}">
+                                                        {!record.Product_Group__c}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Serial Number">
+                                                    <div class="slds-truncate" title="{!record.Asset_Name__c}">
+                                                        {!record.Asset_Name__c}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Date Opened">
+                                                    <div class="slds-truncate" title="{!record.CreatedDate}">
+                                                        <ui:outputDateTime value="{!record.CreatedDate}"
+                                                                           format="MM/dd/yy hh:mm a"/>
+                                                    </div>
+                                                </td>
+                                                <td data-label="Status">
+                                                    <div class="slds-truncate" title="{!record.Status}">
+                                                        {!record.Status}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </lightning:layoutItem>
+                        <!--Show Case table pagination-->
+                        <lightning:layout multipleRows="true" horizontalAlign="center">
+                            <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="12" mediumDeviceSize="2" largeDeviceSize="2">
+                                <b>Total Cases:
+                                    <ui:outputText value="{!v.allCases.length}"></ui:outputText>
+                                </b>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="12" mediumDeviceSize="2" largeDeviceSize="2">
+                                <lightning:button variant="neutral" label="Export as Excel" iconName="utility:download" iconPosition="left"
+                                                  onclick="{! c.Exporttoexcel }" class="quickgoLightGrey"/>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6">
+                                <div class="slds-button-group" role="group">
+                                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                                      onclick="{!c.firstPage}" disabled="{! v.pageNumber == 1}"
+                                                      class="btnSupportCase"/>
+                                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                                      onclick="{!c.prevPage}" disabled="{! v.pageNumber == 1}"
+                                                      class="btnSupportCase"/>
+                                    
+                                    <button class="slds-button slds-button--neutral btnSupportCase">
+                                        {!v.pageNumber} / {!v.maxPage}
+                                    </button>
+                                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                                      disabled="{! v.pageNumber == v.maxPage}" 
+                                                      onclick="{!c.nextPage}" class="btnSupportCase"/>
+                                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                                      disabled="{! v.pageNumber == v.maxPage}" 
+                                                      onclick="{!c.lastPage}" class="btnSupportCase"/>                                
+                                </div>    
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="12" mediumDeviceSize="2" largeDeviceSize="2">
+                                <div style="">
+                                    <ui:inputSelect aura:id="pageSize" 
+                                                    label="" change="{! c.onChangePageSize }"
+                                                    class="page-size-class">
+                                        <ui:inputSelectOption text="" label="Cases Displayed"/>
+                                        <ui:inputSelectOption text="5" label="5"/>
+                                        <ui:inputSelectOption text="10" label="10"/>
+                                        <ui:inputSelectOption text="25" label="25"/>
+                                        <ui:inputSelectOption text="50" label="50"/>
+                                        <ui:inputSelectOption text="100" label="100"/>
+                                    </ui:inputSelect>
+                                </div>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <aura:set attribute="else">   
+                            No Support case found
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{! or(v.mode == 'airtimeCase',v.mode == 'techSupportCase')}">   
+                
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" padding="" smallDeviceSize="12" mediumDeviceSize="3" largeDeviceSize="3">
+                        <ul class="support-sidenav">
+                            <li class="{! (v.mode == 'landingPage') ? 'active' : ''}"><a href="" onclick="{!c.openCustomerCase}" target="_parent">Support Main</a></li>
+                            <li class="{! (v.mode == 'airtimeCase') ? 'active' : ''}"><a href="" onclick="{!c.openAirtimeCase}" target="_parent">Airtime Services Support</a></li>
+                            <li class="{! (v.mode == 'techSupportCase') ? 'active' : ''}"><a href="" onclick="{!c.openTechSupport}" target="_parent">Technical Support</a></li>
+                        </ul>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="12" mediumDeviceSize="9" largeDeviceSize="9">
+                        <aura:if isTrue="{!v.mode == 'airtimeCase'}">
+                            
+                            <c:myKVH_SupportCenterAirtimeCaseCreation caseRecord="{!v.caseRecord}" 
+                                                                      saveAirtimeValid="{!v.saveAirtimeValid}"
+                                                                      options="{!v.options}"
+                                                                      productType="{!v.productType}"
+                                                                      productTypeCheckFlag="{!v.productTypeCheckFlag}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.mode == 'techSupportCase'}">
+                            <c:myKVH_SupportCenterTechSuppCaseCreation caseRecord="{!v.caseRecord}"
+                                                                  saveValid="{!v.saveValid}"
+                                                                  productTypes="{!v.productTypes}" />
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>                
+            </aura:if>
+            
+            <aura:if isTrue="{!v.mode == 'viewCase'}">
+                <div class="case-detail">
+                    <fieldset class="slds-box slds-theme--default slds-container--large">
+                        <legend id="newexpenseform" class="slds-text-heading--large 
+                                                           slds-p-vertical--medium">
+                            Case Detail
+                        </legend>
+                        <div class="case-info">
+                            <div style="text-align:right">
+                                <lightning:button variant="neutral" label="Back to Cases"
+                                                  onclick="{! c.openCustomerCase }" class="backtoHomebtn"/>
+                            </div>
+                        </div>
+                        <div class="case-info">
+                            <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                                <h3>Case Information</h3>
+                            </div>
+                            <div class="slds-grid ">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Case Number:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.CaseNumber}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Contact Name:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Contact_Name__c}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Asset Name:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Asset_Name__c}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Product or Service Type:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Product_or_Service__c}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Subject:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Subject}"/>
+                                    </div>
+                                </div>                            
+                                <div class="slds-col slds-size_1-of-2"> 
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Parent Case:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Parent_Case__c}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Platform:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.New_Vessel_or_Platform__c}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Type:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.RecordType.Name}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Status:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Status}"/><br/>
+                                    </div>
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Symptom / Service Request:</label>
+                                        <ui:outputText class="field" value="{!v.caseRecord.Case_Symptom__c}"/><br/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="case-info">
+                            <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                                <h3>Description</h3>
+                            </div>
+                            <div class="output-text">
+                                <label class="slds-form-element__label" for="text-input-id-1">Description:</label>
+                                <ui:outputText value="{!v.caseRecord.Description}"/>
+                            </div>
+                        </div>
+                        <div class="case-info">
+                            <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                                <h3>Web Information</h3>
+                            </div>
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_1-of-2"> 
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Date/Time Opened:</label>
+                                        <ui:outputDateTime class="field" value="{!v.caseRecord.CreatedDate}"
+                                                           format="MM/dd/yy hh:mm a"/><br/>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">  
+                                    <div class="output-text">
+                                        <label class="slds-form-element__label" for="text-input-id-1">Date/Time Closed:</label>
+                                        <ui:outputDateTime class="field" value="{!v.caseRecord.ClosedDate}" 
+                                                           format="MM/dd/yy hh:mm a"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="case-detail">
+                    <fieldset class="slds-box slds-theme--default slds-container--large">
+                        <legend id="newexpenseform" class="slds-text-heading--large 
+                                                           slds-p-vertical--medium">
+                            Case Comments
+                        </legend>
+                        <aura:if isTrue= "{! v.caseCommentAccess}">
+                            <aura:if isTrue= "{! !(v.hideCaseComment)}">  
+                                <div>
+                                    <lightning:button variant="neutral" label="Add Comment"
+                                                      onclick="{! c.toggleCaseComment }" class="btnSupportCase"/>
+                                </div>
+                            </aura:if>
+                            <div class="case-info">
+                                <aura:if isTrue="{!v.hideCaseComment}">
+                                    <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                                        <h3>Add comment</h3>
+                                    </div>
+                                    <div class="case-info">
+                                        <lightning:textarea name="input1" required="true" 
+                                                            placeholder="Enter a comment here..." 
+                                                            label="Comment" aura:id="addComment"/>  
+                                    </div>
+                                    <div class="case-info">
+                                        <lightning:button variant="neutral" label="Submit"
+                                                          onclick="{! c.submitCaseComment }" class="btnSupportCase"/>&nbsp;
+                                        <lightning:button variant="neutral" label="Cancel"
+                                                          onclick="{! c.toggleCaseComment }" class="btnSupportCase"/>
+                                    </div>
+                                </aura:if>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="case-comments pad-top" style="margin-bottom:40px;">
+                                    To add a comment to the case, please visit the <a href="" onclick="{!c.openCustomerCase}">Support Center</a> or contact <a href="mailto:mykvhsupport@kvh.com">mykvhsupport@kvh.com</a>.                
+                                </div> 
+                            </aura:set>
+                        </aura:if>
+                        <div class="case-info">
+                            <aura:if isTrue= "{! !empty(v.caseCommentList)}">                             
+                                <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                                    <h3>Comment Details</h3>
+                                </div><br/>                       
+                                <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th scope="col" class="slds-cell-shrink">
+                                                <div class="slds-truncate"
+                                                     title="Created Date">	
+                                                    Created Date
+                                                </div>
+                                            </th>
+                                            <th scope="col" class="slds-cell-shrink">
+                                                <div class="slds-truncate"
+                                                     title="Comment">	
+                                                    Comment
+                                                </div>
+                                            </th>
+                                            <th scope="col" class="slds-cell-shrink">
+                                                <div class="slds-truncate"
+                                                     title="Created By">	
+                                                    Created By
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.caseCommentList}"
+                                                        var="record">
+                                            <tr class="slds-hint-parent">
+                                                <td class="slds-cell-shrink" data-label="Created Date">
+                                                    <div class="slds-truncate" 
+                                                         title=" Created Date" >
+                                                        <ui:outputDateTime value="{!record.CreatedDate}"
+                                                                           format="MM/dd/yy hh:mm a"/>                                                
+                                                    </div>
+                                                </td>
+                                                <td class="slds-cell-shrink" data-label="Comment">
+                                                    <div class="slds-truncate" 
+                                                         title="Comment" >
+                                                        <ui:outputText value="{!record.CommentBody}"/>
+                                                    </div>
+                                                </td>
+                                                <td class="slds-cell-shrink" data-label="Created By">
+                                                    <div class="slds-truncate" 
+                                                         title="Created By" >
+                                                        {!record.CreatedBy.Name}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>                            
+                                    </tbody>
+                                </table>
+                            </aura:if>
+                        </div>
+                    </fieldset>
+                </div>
+                <!--
+                <div class="case-detail">
+                    <fieldset class="slds-box slds-theme-default slds-container-large">
+                        <legend id="newexpenseform" class="slds-text-heading-large 
+                                                           slds-p-vertical-medium">
+                            Case Attachment
+                        </legend>
+                        <aura:if isTrue="{! !empty(v.caseRecord.Id)}">
+                            <c:AddAttachment_Lightning objectId="{!v.caseRecord.Id}" spinner="{!v.spinner}"
+                                                       label= "Upload Attachment"
+                                                       disabled="{! or(or(v.caseRecord.Status == 'Closed',v.caseRecord.Status == 'Closed As Duplicate'), !v.caseCommentAccess)}"/>
+                        </aura:if>
+                    </fieldset>	
+                </div>
+-->
+            </aura:if>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="1" largeDeviceSize="1">
+        </lightning:layoutItem>
+    </lightning:layout>    
+</aura:component>

@@ -1,0 +1,5 @@
+<aura:component >
+  <aura:attribute name="searchString" type="string" Description="This is the search attribute" />
+  <aura:attribute name="foundAsset" type="Asset" Description="This is the one and only one Asset found by name" />
+  <aura:attribute name="state" type="string" Description="This is the state of the component" default="INIT"/>
+</aura:component>

@@ -1,0 +1,91 @@
+<!--
+ - Created by Jai Chaturvedi on 6/08/2017.
+ -->
+
+<aura:component description="WhereToBuyPartners"
+                implements="forceCommunity:availableForAllPageTypes">
+    
+    <aura:attribute name="selectedPartnerType" type="String" default="All Partners"/>
+    <aura:attribute name="partnerType" type="String[]"/>
+    <aura:attribute name="partners" type="WhereToBuyController.AccountType[]"/>
+    <aura:attribute name="productId" type="String"/>
+    <aura:attribute name="searchOption" type="String" default="WhereToBuy"/>
+    <aura:attribute name="partnersLength" type="String"/>
+    <aura:attribute name="stateCountry" type="String"/>
+    <aura:attribute name="location" type="String"/>
+    <aura:attribute name="originalPartners" type="WhereToBuyController.AccountType[]"/>
+    <aura:attribute name="initLoad" type="Boolean" default="true"/>
+    
+    <aura:attribute name="partnersNotEmpty" type="Boolean" default="false"/>
+    <aura:attribute name="partnerTypeDistanceWrappersNotEmpty" type="Boolean" default="false"/>
+    
+    <aura:handler event="c:SendPartners" action="{!c.showPartners}"/>
+    <aura:handler name="change" value="{!v.partners}" action="{!c.sendUpdatesToMap}"/>
+    
+    <aura:registerEvent name="updateWhereToBuyMap" type="c:UpdateWhereToBuyMap"/>
+    <aura:handler action="{!c.showPartners}"
+                  name="init"
+                  value="{!this}"/>
+    
+    
+    
+    <div style="width: 100%;font-family: arial, sans-serif;" class="slds-scrollable_y">
+        <div class="slds-p-horizontal_small">
+            <div class="slds-grid slds-wrap slds-grid_pull-padded slds-p-bottom_medium"
+                 style="background-color: #f3f3f3;">
+                
+                <div class="slds-p-horizontal_medium slds-p-bottom_none slds-size_1-of-1" style="padding-top:5px;">
+                    
+                    <!-- tooltip -->
+                    <a href="#" style="float:right;font-weight:bold;font-size:90%;cursor:pointer;clear:both;">KEY</a>
+                    
+                    <aura:if isTrue="{!!v.initLoad}">
+                        <lightning:select name="partners" 
+                                          aura:id="partner"
+                                          value="{!v.selectedPartnerType}"
+                                          onchange="{!c.filterPartners}">
+                            <aura:iteration items="{!v.partnerType}" var="item" indexVar="index">
+                                <option text="{!item}"
+                                        value="{!item}"
+                                        selected="{!index==0}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:if>
+                    <aura:if isTrue="{!v.partnersNotEmpty}">
+                        <div class="slds-p-horizontal_xx-small slds-p-top_small slds-p-bottom_none slds-size_1-of-1">
+                            <div class="slds-text-body_small" style="padding-top: 5px;"> 
+                                {!v.partnersLength} result(s) for: <b>{!v.location}</b>
+                            </div>
+                            
+                        </div>
+                    </aura:if>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-wrap slds-grid_pull-padded slds-p-right_none" style="overflow-y:auto;height:660px;">
+                <aura:iteration items="{!v.partners}" var="partnerType">
+                    <span style="width: 100%;">
+                        <aura:if isTrue="{!v.partnerTypeDistanceWrappersNotEmpty}">
+                            <div class="slds-p-horizontal_none slds-size--1-of-1">
+                                <div class="slds-section slds-is-open" style="margin-top:0px;">
+                                    <h3 class="slds-section__title slds-theme_shade slds-p-horizontal_small"
+                                        style="background-color: #ddd;font-weight:bold;color:#888;border-radius: 0px;font-family:arial, sans-serif;font-size:1em;margin-top:15px;">
+                                        <span class="slds-truncate" title="{!partnerType.accType}">
+                                            {!partnerType.accType}(s)
+                                        </span>
+                                    </h3>
+                                </div>
+                            </div>
+                            <aura:iteration items="{!partnerType.distanceWrappers}" var="partner" indexVar="index">
+                                
+                                <c:PartnerAccount partner="{!partner}" ProductID="{!v.productId}" searchOption="{!v.searchOption}" stateCountry="{!v.stateCountry}"/>
+                                
+                            </aura:iteration>
+                        </aura:if>
+                    </span>
+                </aura:iteration>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

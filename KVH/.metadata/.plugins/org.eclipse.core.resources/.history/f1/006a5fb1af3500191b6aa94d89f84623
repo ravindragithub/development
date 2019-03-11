@@ -1,0 +1,208 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SalesAidsController" >
+	
+    <ltng:require styles="{!$Resource.remodalcss}" />
+    <ltng:require styles="{!$Resource.gridcss}" />
+	<ltng:require styles="{!$Resource.remodal_default_theme}" />
+    <ltng:require styles="{!$Resource.handle_counter_min}" />
+    
+    <aura:attribute name="showspinner"
+                    type="String"
+                    description="show/hide spinner" default="slds-show"/>
+    <aura:attribute name="documentobj"
+                    type="Object"
+                    description="Sales aids object for popup" />
+    <aura:attribute name="SalesAidsMap"
+                    type="map"
+                    description="map of product documnet with id" />
+    
+    <aura:attribute name="categories" type="Object[]"
+                    description="document type list"/>
+    
+     <aura:attribute name="showaddtocartbuttton" type="boolean" default="true"
+                    description="show add to cart button"/>
+    <aura:attribute name="successmessage" type="String" 
+                    description="show add to cart button"/>
+    <aura:attribute name="errormessage" type="String" default=""
+                    description="Show validation error on the popup when click on add/update to cart"/>
+    
+    <aura:attribute name="showpopup"
+                    type="string"
+                    default="none"
+                    description="show the popup when click on the add to cart button"/>
+    
+   
+    <aura:attribute name="showblankerror"
+                    type="boolean"
+                    default="false"
+                    description="disable decrease button"/>
+    
+    
+    <aura:attribute name="disableddincreasebtn"
+                    type="boolean"
+                    default="false"
+                    description="disable decrease button"/>
+    
+    
+    <aura:handler event="c:SearchSalesAidsEvent"
+                  action="{!c.searchSalesAids}"
+                  description="Search sales aids"/>
+    
+  
+    
+    
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+   
+    
+    <aura:registerEvent name="SalesAidsUpdateCartEvent" type="c:SalesAidsUpdateCartEvent" description="update cart in header component" />
+    
+<div class="slds">
+   <aura:if isTrue="{!v.showblankerror}">  
+        <div class="slds-box" data-aura-rendered-by="3:229;a"><div class="slds-text-color--error slds-text-heading--medium slds-m-bottom--xx-large" data-aura-rendered-by="4:229;a">
+                Unfortunately there are no results matching your query...it happens.
+                Let's try again
+            </div>
+            <div class="slds-text-heading--small slds-m-bottom--large" >
+                Try these search suggestions:
+            </div>
+            <ul class="slds-list--dotted" >
+                <li >Check your spelling</li>
+                <li >Try more general words</li>
+                <li >Try different words that mean the same thing</li>
+                <li >Try using our Content Type filters to help refine your search</li>
+                <li ><a class="slds-text-color--error" href="javascript:void(0);" data-aura-rendered-by="18:229;a">
+                        Contact Us
+                    </a>
+                    to see if we can help
+                </li>
+            </ul>
+        </div>
+    </aura:if> 
+    
+    <aura:if isTrue="{!v.categories.length > 0}">  
+        <!--<p style="margin-bottom: 15px;">(Add page descriptive text here)</p>-->
+        
+       <table class="documents" id="documents" style="margin-bottom:0;">
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-right">
+                        <a href="./salesaidscart" class="button button-red">PROCEED TO REVIEW ORDER</a>
+                    </td>
+                </tr>
+                <aura:iteration var="category" items="{!v.categories}">            
+                    
+                    <tr>
+                        <td colspan="5" class="heading">
+                            <h3>{!category.categoryName}</h3>
+                        </td>
+                    </tr>
+                    <aura:iteration var="subcategory" items="{!category.subcategorylist}">
+                        <tr>
+                            <td colspan="5" class="section-cat">
+                                <h4>{!subcategory.subcategoryName}</h4>
+                            </td>
+                        </tr>
+                        <aura:iteration var="row" items="{!subcategory.rows}" >
+                          
+                            <tr >
+                                <aura:iteration var="salesAids" items="{!row.salesAidslist}" >
+                                        
+                                    <td style="width:20%;"> 
+                                       
+                                        <aura:if isTrue="{!salesAids.productName != 'blank column'}">
+                                            {!v.salesAids.blankColumn}
+                                           
+                                           <div>
+                                            <a style="word-wrap:break-word;" target="_blank" href="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix + '/downloaddocument?id=' + salesAids.productDocId}">
+                                            	<aura:if isTrue="{!salesAids.imageURL == 'noimage'}">
+                                                     <img style="width:150px" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix +'/resource/NoImage'}"/>
+                                                     <aura:set attribute="else">
+                                                         <img style="width:150px" src="{!salesAids.imageURL}"/>
+                                                     </aura:set>
+                                                </aura:if>
+                                                <br/>
+                                                {!salesAids.productName}                                                
+                                            </a>
+                                               <aura:if isTrue="{!!empty(salesAids.language)}">
+                                                   <br/>
+                                                   {!salesAids.language} 
+                                               </aura:if>
+                                               <aura:if isTrue="{!!empty(salesAids.subtitle)}">
+                                                   <br/>
+                                                   {!salesAids.subtitle} 
+                                               </aura:if>
+                                               
+                                           </div>                                           
+                                            
+                                            <!--<p class="slds-truncate" style="width:150px;" title="{!salesAids.description}"><aura:unescapedHtml value="{!salesAids.description}"/></p>-->
+                                            
+                                            <a href="javascript:void(0);"  data-id="{!salesAids.productDocId}" onclick="{!c.showAddCartPopup}" style="{!if(salesAids.salesOrderItemId != null,'background:#A1C944;font-size: smaller;','font-size: smaller;')}" class="button button-blue mt-8">{!if(salesAids.salesOrderItemId != null,'Added to Order','Add to Order')}</a>
+                                        </aura:if>
+                                    </td>
+                                          
+                                        
+                                </aura:iteration>
+                            </tr >
+                        </aura:iteration>
+                    </aura:iteration>
+                    
+                       
+               </aura:iteration>
+                
+             
+                
+            </tbody>
+        </table>
+       
+        <!-- popup code start-->
+        <div class="remodal-overlay remodal-is-opened" style="{!'display: ' + v.showpopup}"></div>
+        <div class="remodal-wrapper remodal-is-opened" style="{!'display: ' + v.showpopup}"><div class="remodal remodal-is-initialized remodal-is-opened" data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc" tabindex="-1">
+              <!--  <h1>Added to Sales Aids Order</h1>-->
+                <button data-remodal-action="close" class="remodal-close" aria-label="Close" onclick="{!c.hideAddCartPopup}"></button>
+                <div class="section group">
+                    <div class="col span_3_of_12 pad-15">
+                        <aura:if isTrue="{!v.documentobj.imageURL == 'noimage'}">
+                            <img style="width:150px" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix +'/resource/NoImage'}" class="width-100"/>
+                            <aura:set attribute="else">
+                                <img src="{!v.documentobj.imageURL}" class="width-100"/>
+                            </aura:set>
+                        </aura:if>                    
+                    </div>
+                    <div class="col span_9_of_12 text-left pad-15">
+                        <h2>{!v.documentobj.productName}</h2>
+                        <p><aura:unescapedHtml value="{!v.documentobj.description}"/></p>
+                        <!--<p>Document Size: {!v.documentobj.size}</p>
+                        <p><em>Brochure ships in packs of 25, 5 pack limit</em></p>-->
+                        <div class="handle-counter" id="handleCounter2">
+                            <label class="left pad-right">Quantity:</label>
+                            <button class="counter-minus btn btn-primary" disabled="{!if(v.documentobj.quantity == 1,true,false)}" onclick="{!c.decreaseqty}">-</button>
+                            <input type="text" value="{!v.documentobj.quantity}" data-num="1" disabled="true"/>
+                            <button class="counter-plus btn btn-primary" onclick="{!c.increaseqty}" disabled="{!v.disableddincreasebtn}">+</button>
+                        </div>
+                        <aura:if isTrue="{!v.errormessage != ''}">
+                            <b style="color:#CC0000">Error : </b>
+                            <span style="color:#CC0000">{!v.errormessage}</span>
+                            <br/>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.showaddtocartbuttton}">
+                            <a href="javascript:void(0);" data-id="{!v.documentobj.productDocId}" class="button button-blue pad-top" onclick="{!c.addtocart}">{!if(v.documentobj.salesOrderItemId != NULL,'Update Order','Add to Cart')}</a>
+                            <aura:set attribute="else">
+                                <br/>
+                                <b style="margin-top:10px;">{!v.successmessage}</b>
+                            </aura:set>
+                        </aura:if>
+                        
+                    </div>                  
+                </div>
+                <div class="button-bar">
+                    <a href="javascript:void(0);" class="button pad-right white-bg" onclick="{!c.hideAddCartPopup}">Continue</a>
+                    
+                    /<a href="./salesaidscart" class="button button-red pad-left" >PROCEED TO REVIEW ORDER</a>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <!--<lightning:spinner variant="brand" aura:id="spinner" size="large" class="{!v.showspinner}" />-->
+</div>        
+</aura:component>

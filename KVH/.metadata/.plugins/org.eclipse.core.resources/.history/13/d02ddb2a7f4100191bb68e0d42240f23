@@ -1,0 +1,254 @@
+<apex:component allowDML="true" controller="Activation_Corporate_Authorized_Rep">
+   <style>
+       .KVH-table {
+       border: solid 1px #DDEEEE;
+       border-collapse: collapse;
+       border-spacing: 0;
+       font: normal 13px Arial, sans-serif;
+       width: 100%;
+       }
+       .KVH-table thead th {
+       background-color: #DDEFEF;
+       border: solid 1px #DDEEEE;
+       color: #336B6B;
+       padding: 10px;
+       text-align: left;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table tbody td {
+       border: solid 1px #DDEEEE;
+       color: #333;
+       padding: 10px;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table-horizontal tbody td {
+       border-left: none;
+       border-right: none;
+       }
+   </style>
+   <script>
+
+   function selectedActivationContactid(selectedEdit, thisparam, selectedRole){
+       j$(thisparam).text('Loading..');
+       populateActContact(selectedEdit,selectedRole);
+   }
+   
+   function selectedrecordremovehandler(recordId, recordRole, recordonlyone, recordonlyrole){
+       console.log(recordId);
+       console.log(recordRole);
+       console.log(recordonlyone); 
+       console.log({!countAuthorizedRepRecord});
+        console.log({!countInvoiceRepRecord});
+       if( recordRole.indexOf('{!strMainContactRole}')> -1 && {!parentContainer == 'contactlistcomponent'} ){
+         var instmodel1 = j$('[data-remodal-id=onlyoneIR]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+         var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' /> <input type='hidden' class='passsedrecordRole' value='"+'{!strMainContactRole}'+"' />"
+         setcontent1 += "There must be at least one "+'{!strMainContactRole}'+".</div>";
+         j$("#kvh-remodelinvoicemessageonlyoneIR").html(setcontent1);
+         instmodel1.open();
+         j$('[data-remodal-id=onlyoneIR]').find('.remodal-close').hide();
+        } 
+        else if(recordRole.indexOf('{!strBillingRepresentativeRole}')> -1 && {!parentContainer != 'contactlistcomponent'}){
+           var instmodel1 = j$('[data-remodal-id=onlyoneIR]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+           var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' /> <input type='hidden' class='passsedrecordRole' value='"+'{!strBillingRepresentativeRole}'+"' />"
+           setcontent1 += "There must be at least one "+'{!strBillingRepresentativeRole}'+".</div>";
+           j$("#kvh-remodelinvoicemessageonlyoneIR").html(setcontent1);
+           instmodel1.open();
+           j$('[data-remodal-id=onlyoneIR]').find('.remodal-close').hide();
+       }
+       /*else if({!countAuthorizedRepRecord} ==1 && recordRole.indexOf('{!strAuthorizedRepRole}')> -1 && {!parentContainer == 'contactlistcomponent'}){
+            var instmodel1 = j$('[data-remodal-id=onlyoneIR]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+           var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' /> <input type='hidden' class='passsedrecordRole' value='"+'{!strAuthorizedRepRole}'+"' />"
+           setcontent1 += "There must be at least one "+'{!strAuthorizedRepRole}'+".</div>";
+           j$("#kvh-remodelinvoicemessageonlyoneIR").html(setcontent1);
+           instmodel1.open();
+           j$('[data-remodal-id=onlyoneIR]').find('.remodal-close').hide();
+       }*/
+       else if({!countInvoiceRepRecord} ==1 && recordRole.indexOf('{!strInvoiceRole}')> -1 && {!parentContainer != 'contactlistcomponent'}){
+            var instmodel1 = j$('[data-remodal-id=onlyoneIR]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+           var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' /> <input type='hidden' class='passsedrecordRole' value='"+'{!strInvoiceRole}'+"' />"
+           setcontent1 += "There must be at least one {!strInvoiceRole}. To remove this contact from receiving account invoices, first add a new invoice recipient.</div>";
+           j$("#kvh-remodelinvoicemessageonlyoneIR").html(setcontent1);
+           instmodel1.open();
+           j$('[data-remodal-id=onlyoneIR]').find('.remodal-close').hide();
+       }else{
+           console.log(recordRole);
+           var instmodel = j$('[data-remodal-id=AuthorizedRepRoleRemove]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+           var setcontent = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' /> <input type='hidden' class='passsedrecordRole' value='"+recordonlyrole+"' />"
+           // if(recordRole.indexOf(',') >= 0 && (recordRole != 'Authorized Representative, Invoice Recipient' && recordRole != 'Invoice Recipient, Authorized Representative' )){
+              if({!parentContainer == 'contactlistcomponent'} ||  recordRole == 'Invoice Recipient')
+                   setcontent += "Are you sure you want to remove this contact?";
+                   else
+               setcontent += "Are you sure you do not want this email address to receive invoices?";
+               //}else{ 
+               // setcontent += "Are you sure you want to remove this contact from the Activation Order?";
+               //}
+           j$("#kvh-remodelcontentmessage").html(setcontent);
+           instmodel.open();
+           j$('[data-remodal-id=AuthorizedRepRoleRemove]').find('.remodal-close').hide();
+       }
+   }
+   
+   j$(document).on('click', '#removecontactrecord', function(){
+       var recordId = j$(this).closest(".remodal").find("input[type='hidden'].passsedrecordId").val();
+       var recordIdRole = j$(this).closest(".remodal").find("input[type='hidden'].passsedrecordRole").val();
+       console.log(recordId +'---'+recordIdRole);
+       if(recordId != undefined && recordId != null){
+            showLoadingDiv();
+            RemoveContactRole(recordId, recordIdRole);
+       }
+   });
+   
+   function UpdateContactRole(recordID, selectedRole){
+       showLoadingDiv();
+       callContact(recordID, selectedRole);
+   }
+   
+   j$( document ).ready(function() {
+       j$('.setRadiovalue').each(function(){
+           if(j$(this).attr("currentvalue") == "true" || j$(this).attr("currentvalue") == true){
+               j$(this).attr("checked","checked");
+           }
+           if(j$(this).attr("style") == "background-color:gray;"){
+               j$(this).attr("disabled","disabled");
+           }else{
+           j$(this).removeAttr("disabled");
+           }
+           if({!boolDisableRadio})
+               j$(this).attr("disabled","disabled");
+       });
+   });
+   
+
+   </script>
+   
+   <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact records"
+                   type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                   type="string" required="required" assignTo="{!parentContainer}"/>
+   
+   <apex:actionFunction name="populateActContact" action="{!EditContact}" reRender="theForm">
+       <apex:param name="strActivationContactId" value="" assignTo="{!strActivationContact}"/>
+       <apex:param name="currentRole" value="" assignTo="{!currentRole}"/>
+   </apex:actionFunction> 
+   
+   <apex:actionFunction name="RemoveContactRole" action="{!RemoveRole}" reRender="tablecontactlist" oncomplete="hideLoadingDiv();">
+       <apex:param name="strActivationContactId" value="" assignTo="{!strActivationContact}"/>
+        <apex:param name="currentRole" value="" assignTo="{!currentRole}"/>
+   </apex:actionFunction> 
+   
+   <apex:actionFunction name="callContact" action="{!UpdatedContact}" reRender="theForm">
+       <apex:param name="strActivationContactId" value="" assignTo="{!strActivationContact}"/>
+       <apex:param name="currentRole" value="" assignTo="{!currentRole}"/>
+   </apex:actionFunction> 
+   
+   <apex:outputPanel id="tablecontactlist" rendered="{!IF(ActivationContactList.size > 0,true,false)}">
+       <table class="KVH-table KVH-table-horizontal">
+           <thead>
+               <tr>
+                   <apex:outputPanel >
+                   <!--<apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">-->
+                       <th width="5%"></th>
+                   </apex:outputPanel>
+                   <th width="15%">Name</th>
+                   <th width="15%">Email Address</th>
+                   <th width="20%">Primary Phone Number</th>
+                   <th width="15%">Role</th>
+                   <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                   <th width="15%" style="text-align: center;">
+                      <!-- <apex:outputPanel rendered="{!parentContainer == 'contactlistcomponent'}">
+                           Company Main Contact
+                       </apex:outputPanel> -->
+                       <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                           Billing Representative <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                           <span class="tooltiptext" style="background-color: #fff !important;color: #444 !important;">
+                               The Billing Representative will be the account contact for any financial or billing issue that requires attention.
+                           </span>
+                           </span>
+                       </apex:outputPanel>
+                   </th> 
+                   </apex:outputPanel>
+                   <apex:outputPanel rendered="{!strCorpduplicate != 'No'}">
+                   <th width="15%" style="text-align: center;">Remove</th>
+                   </apex:outputPanel>
+               </tr>
+           </thead>
+           <tbody>
+               
+               <apex:Repeat value="{!ActivationContactList}" var="ActivationContact" >
+                   <tr> <!--  style="background: {!IF($CurrentPage.parameters.conActID == ActivationContact.id, 'lightblue' ,'transparent')}" -->
+                       <!--<td width="5%"><a href="javascript:;" onclick="selectedActivationContactid('{!ActivationContact.id}',this);" >Edit</a></td>-->
+                       <apex:outputPanel >
+                           <td width="5%">
+                               <apex:outputPanel rendered="{!IF(AND(parentContainer == 'Billinglistcomponent',ActivationContact.Contact__c == null,CONTAINS(ActivationContact.Contact_Role__c, strInvoiceRole),strCorpduplicate != 'No',NOT(CONTAINS(ActivationContact.Contact_Role__c,strMainContactRole))), true, false)}" >
+                                   <a href="javascript:;" onclick="selectedActivationContactid('{!ActivationContact.id}',this, '{!ActivationContact.Contact_Role__c}');" html-tabIndex="1" >Edit</a>
+                               </apex:outputPanel>   
+                            <apex:outputPanel rendered="{!AND(parentContainer == 'contactlistcomponent', ActivationContact.Contact__c == null,strCorpduplicate != 'No')}" >
+                                   <a href="javascript:;" onclick="selectedActivationContactid('{!ActivationContact.id}',this, '{!ActivationContact.Contact_Role__c}');" html-tabIndex="1">Edit</a>
+                               </apex:outputPanel> </td>
+                       </apex:outputPanel>
+                       <td width="15%">{!ActivationContact.First_Name__c} {!ActivationContact.Last_Name__c}</td>
+                       <td width="15%">{!ActivationContact.Email__c}</td>
+                       <td width="20%">{!ActivationContact.Primary_Phone__c}</td>
+                       <td width="15%"><apex:outputText value="{!SUBSTITUTE(JSENCODE(ActivationContact.Contact_Role__c),',','<br/>')}" escape="false"/></td>
+                       <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                       <td width="15%" align="center">
+                       <!--<apex:outputPanel rendered="{!parentContainer == 'contactlistcomponent'}">
+                           <input type="radio" name="actCorp" currentvalue="{!IF(CONTAINS(ActivationContact.Contact_Role__c, strMainContactRole), true, false)}" class="setRadiovalue"  onclick="UpdateContactRole('{!ActivationContact.Id}', '{!strMainContactRole}');" />
+                       </apex:outputPanel> -->
+                       <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                           <input type="radio" name="actCorp" currentvalue="{!IF(CONTAINS(ActivationContact.Contact_Role__c, strBillingRepresentativeRole), true, false)}" class="setRadiovalue" style="{!IF(ActivationContact.Contact_Role__c == 'Group Invoice Recipient', 'background-color:gray;', '')}" onclick="UpdateContactRole('{!ActivationContact.Id}', '{!strBillingRepresentativeRole}');" html-tabIndex="2" data-role="none"/>
+                       </apex:outputPanel>    
+                       </td>
+                       </apex:outputPanel>
+                       <apex:outputPanel rendered="{!strCorpduplicate != 'No'}">
+                       <td width="15%" align="center">
+                           <!--<apex:outputPanel rendered="{!parentContainer == 'contactlistcomponent'}">
+                               <apex:outputPanel rendered="{!IF(CONTAINS(ActivationContact.Contact_Role__c, strBillingRepresentativeRole), false, true)}" ><a style="cursor: pointer;" onclick="selectedrecordremovehandler('{!ActivationContact.Id}', '{!ActivationContact.Contact_Role__c}', {!IF(CONTAINS(ActivationContact.Contact_Role__c, strMainContactRole), true, false)}, '{!strMainContactRole}');">[X]</a>
+                               </apex:outputPanel>
+                           </apex:outputPanel>
+                           <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                                <apex:outputPanel rendered="{!IF(CONTAINS(ActivationContact.Contact_Role__c, strMainContactRole), false, true)}" ><a style="cursor: pointer;" onclick="selectedrecordremovehandler('{!ActivationContact.Id}', '{!ActivationContact.Contact_Role__c}', {!IF(CONTAINS(ActivationContact.Contact_Role__c, strBillingRepresentativeRole), true, false)}, '{!strBillingRepresentativeRole}');">[X]</a>
+                           </apex:outputPanel>
+                           </apex:outputPanel>
+                           -->
+                          <apex:outputPanel rendered="{!parentContainer == 'contactlistcomponent'}">
+                               <apex:outputPanel rendered="{!IF(CONTAINS(ActivationContact.Contact_Role__c, strMainContactRole), false, true)}"><a style="cursor: pointer;" onclick="selectedrecordremovehandler('{!ActivationContact.Id}', '{!ActivationContact.Contact_Role__c}', {!IF(CONTAINS(ActivationContact.Contact_Role__c, strMainContactRole), true, false)}, '{!strMainContactRole}');">[X]</a>
+                               </apex:outputPanel>
+                               </apex:outputPanel>
+                               <apex:outputPanel rendered="{!parentContainer == 'Billinglistcomponent'}">
+                                    <apex:outputPanel ><a style="cursor: pointer;" onclick="selectedrecordremovehandler('{!ActivationContact.Id}', '{!ActivationContact.Contact_Role__c}', {!IF(CONTAINS(ActivationContact.Contact_Role__c, strBillingRepresentativeRole), true, false)}, '{!strBillingRepresentativeRole}');">[X]</a>
+                               </apex:outputPanel>
+                           </apex:outputPanel>
+                       </td>
+                      </apex:outputPanel>
+                   </tr>
+               </apex:Repeat>
+           </tbody>
+       </table>
+   </apex:outputPanel>
+   
+   <!-- ** remodal popup Start ** -->
+   <div class="remodal remodalAgain" data-remodal-id="AuthorizedRepRoleRemove" id="AuthorizedRepRoleRemove" >
+       <div style="display: inherit;text-align:justify;padding-right:25px;">
+           <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+           <span id="kvh-remodelcontentmessage" ></span>
+       </div>
+       <div style="text-align:center;padding-bottom:5px;">
+           <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="removecontactrecord">Yes</button>
+       </div>
+       <div style="text-align:center;">
+           <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >Cancel</a>
+       </div>
+   </div>
+   
+   <div class="remodal remodalAgain" data-remodal-id="onlyoneIR" id="onlyoneIR" >
+       <div style="display: inherit;padding-right:25px;text-align:justify;">
+           <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/>
+               <span id="kvh-remodelinvoicemessageonlyoneIR" class="WIP" style="display: inherit;"></span></span>
+       </div>
+       <div style="text-align:center;">
+           <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="Cancelbuttonremodelinvoice">OK</button>
+       </div>
+   </div>
+   <!-- ** remodal popup End ** -->
+</apex:component>

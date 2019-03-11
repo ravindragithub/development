@@ -1,0 +1,17 @@
+<apex:page standardController="case" extensions="Update_or_AddSubscriber">
+    <script>
+        function CheckCase()
+        {
+            if({!AssociateAssetPlatform} || {!platformAssetAccount} || {!AssociateAssetplatformSalesforce})
+            {
+                alert("Please confirm that the appropriate platform is in the :\n 1) Search Platform / Asset Account must not be null and \n 2) Search for or create Platform Account is checked and \n 3) Associate Asset to Platform in Salesforce is checked.\n Or you can initiate the Find_and_Add_Account_to_Asset."); 
+            }else
+            {
+                window.open("/apex/SearchForSubscriber?caseid="+'{!CaseID}');    
+            }
+        }
+    </script>
+    <apex:form >
+       <apex:commandLink value="Update or AddSubscriber(opens in new tab)" onclick="CheckCase()"/>
+    </apex:form>
+</apex:page>

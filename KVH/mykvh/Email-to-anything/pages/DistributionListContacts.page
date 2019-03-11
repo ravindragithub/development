@@ -1,0 +1,26 @@
+<apex:page controller="ortoo_e2a.EmailDistributionListContacts" tabStyle="ortoo_e2a__Email_Distribution_List__c">
+    <apex:stylesheet value="{!$Resource.ortoo_e2a__EmailPageCSS}" />
+    <apex:form >
+    <apex:sectionHeader title="Contacts for distribution list: {!DistributionListName}"/>
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!DLContacts}" var="CO" id="contact_list">
+            <apex:column headerValue="Action" rendered="{!ActionIsRendered}">
+                <apex:commandLink action="{!DeleteDLContact}" reRender="contact_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                    <b>Del</b>
+                    <apex:param name="dlcontactid" value="{!CO.Id}" assignTo="{!DeleteDLContactID}"/>
+                </apex:commandLink>
+            </apex:column>
+            <apex:column value="{!CO.Contact__r.LastName}, {!CO.Contact__r.FirstName}" headerValue="Name"/>
+            <apex:column value="{!CO.ortoo_e2a__Contact__c}"/>
+            <apex:column value="{!CO.Contact__r.Email}"/>
+            <apex:column value="{!CO.Contact__r.AccountId}"/>
+        </apex:pageBlockTable>
+        <apex:toolbar styleClass="pagingToolBar">
+        <apex:toolbarGroup itemSeparator="grid" location="right">
+            <apex:commandLink action="{!PreviousPage}"  rendered="{!HasPrevious}">&lt;Previous page</apex:commandLink>
+            <apex:commandLink action="{!NextPage}" rendered="{!HasNext}">Next page&gt;</apex:commandLink>
+        </apex:toolbarGroup>
+    </apex:toolbar>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

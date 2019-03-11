@@ -1,0 +1,256 @@
+<apex:page standardController="Case" extensions="CreateContactandContactRole" sidebar="false">
+    <script type="text/javascript">
+    var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+    <apex:includescript value="{!URLFOR($Resource.jquery, '/jquery/js/jquery-1.10.2.js')}" ></apex:includescript>
+    <script>
+    var globalSelection;
+    function Radioselection(){
+        globalSelection = true;
+    }
+    
+    function CustomCancel()
+    {
+        var final = confirm("Are you sure you want to cancel?");
+        if (final == true) {
+            var CurrentPageID = '{!CaseID}';
+            window.location.href = '/'+CurrentPageID;
+        }
+    }
+    
+    function newContactandContactRolebutton(){
+        var r = confirm("Are you sure you want to create a new contact & ContactRole ?");
+        if (r == true){
+            Selectedcontact();
+        }
+    }
+    function newContactRolebutton(){
+        if(globalSelection){
+            var r = confirm("Are you sure you want to create a new ContactRole ?");
+            if (r == true){
+                newContactRole();
+            }
+        }else{
+            alert("please select one contact");
+        }
+    }
+    
+    function NewContactAndContactRoleJS(){
+        var r = confirm("Are you sure you want to create this new contact and contact role OR new contactrole for selected contact?");
+        if (r == true){
+            NewContactAndContactRole();
+        }
+    }
+    
+    function finalSaveFunction(){
+        var r = confirm("Are you sure you want to create this new contact and contact role OR new contactrole for selected contact?");
+        if (r == true){
+            callSaveFunction();
+        }
+    }
+    
+    
+    function EnableCustomerPortalUser(contactID){
+        try{
+            var query = "select id from user where Email = '" + contactID + "'";
+            result = sforce.connection.query(query);
+            records = result.getArray("records");
+            if(records[0] == null){
+                var r = confirm("You are about to create a Customer Portal User");
+                if (r == true){
+                    customerPortalUser();
+                }
+            }else{
+                alert('There are multiple email addresses for that user. Please validate the Contact’s email address prior to provisioning.');
+            }
+        }catch(e){
+            alert('An Error has Occured. Error:' +e);
+        }
+    }
+    </script>
+    
+    
+    
+    
+    <apex:form id="frm">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock id="CurrentBlock" title="Contact & ContactRoles">
+            <apex:actionFunction name="callSaveFunction" action="{!contactRolesave}" reRender="frm" status="UserStatus"/>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:inputtext value="{!ContactName}" label="Enter the Contact Name:"/>
+                <div Style="margin-left:23%;">
+                    <b>OR</b>
+                </div>
+                <apex:inputText value="{!ContactEmail}" label="Contact Email:"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="Bottom">
+                <apex:commandButton value="Search" action="{!SearchforContact}" reRender="frm" rendered="{!searchAgainButton}" status="searchData"/>
+                <!--<apex:commandButton value="Search Again" action="{!SearchforContact}" reRender="frm" rendered="{!!searchAgainButton}"/>-->
+                <apex:outputPanel rendered="{!!searchAgainButton}">
+                    <input type="button" value="Search Again" onClick="window.location.href=window.location.href" class="btn"/>
+                </apex:outputPanel>
+                <apex:commandButton value="Cancel" action="{!returnToCase}"/>
+                <apex:commandButton value="Create New Contact and Role" onclick="newContactandContactRolebutton(); return false;" rendered="{!ifRecordsNotFound}"/>
+                <apex:actionStatus id="searchData" stopText="">
+                    <apex:facet name="start" >
+                        <img src="/img/loading.gif" />                   
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:actionFunction name="Selectedcontact" action="{!createNewContactAndContactRole}" reRender="frm" status="newCreation"/>
+        <apex:actionFunction name="newContactRole" action="{!newContactRole}" reRender="frm"  status="newCreation"/>
+        <apex:actionFunction name="customerPortalUser" action="{!EnableCustomerPortalMethod}" reRender="frm,finalBlock" status="finalUserStatus"/>
+        <apex:actionRegion >
+            <apex:pageBlock rendered="{!ContactRecordsBlock}" title="Select Correct Contact">
+                <apex:pageblockTable value="{!ContactSearchRecords}" var="ContactRecords">
+                    <apex:column headerValue="Select">
+                        <input type="radio" name="selectRadio" id="radio" onclick="Radioselection();">
+                        <apex:actionSupport event="onclick" action="{!SelectedContact}" rerender="unknown" status="pleaseWait">
+                            <apex:param name="id" value="{!ContactRecords.properSubscriberContact.id}"/>
+                        </apex:actionSupport>
+                    </input>
+                    <apex:actionStatus id="pleaseWait" stopText="">
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />                   
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:column>
+                <apex:column headerValue="Contact Name">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Contact Email">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Email}"/>
+                </apex:column>
+                <apex:column headerValue="Contact Phone">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Phone}"/>
+                </apex:column>
+                
+                <apex:column headerValue="Contact Account">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Account.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Account Status">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Account.Account_Status__c}"/>
+                </apex:column>
+                <apex:column headerValue="Custom Call AcctId">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Account.Custom_Call_Acct_ID__c}"/>
+                </apex:column>
+                <apex:column headerValue="Account Type(CC)">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Account.Account_Type__c}"/>
+                </apex:column>
+                <apex:column headerValue="Account Record Type">
+                    <apex:outputtext value="{!ContactRecords.properSubscriberContact.Account.recordtype.name}"/>
+                </apex:column>
+            </apex:pageblockTable>
+            <apex:pageblockbuttons location="bottom">
+                <input type="button" value="Search Again" onClick="window.location.href=window.location.href" class="btn"/>
+                <apex:commandButton value="Cancel" action="{!returnToCase}"/>
+                <apex:commandButton value="Create New Contact and Role" onclick="newContactandContactRolebutton(); return false;" rendered="{!onceClicked}"/>
+                <apex:commandButton value="Create New ContactRole" onclick="newContactRolebutton(); return false;" rendered="{!onceClicked}"/>
+                <apex:actionStatus id="newCreation" stopText="">
+                    <apex:facet name="start" >
+                        <img src="/img/loading.gif" />                   
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageblockbuttons>
+        </apex:pageBlock>
+    </apex:actionRegion>
+    <!-- Creating New Contact & ContactRole  -->
+    <apex:actionRegion id="inputBlock">
+        <apex:pageBlock rendered="{!newContactAndContactRole}">
+            <apex:pageBlockSection columns="1" title="{!titleOfNewContactRole}">
+                <apex:outputText value="{!accountName}" label="Subscriber Account Name"/>
+                <apex:outputText value="{!customCallID}" label="Subscriber Customer Call AcctID"/>
+                <apex:inputField value="{!newRecContactandContactRole.FirstName}" id="FN" required="true" rendered="{!onlyNewContactFlds}"/>
+                <apex:inputField value="{!newRecContactandContactRole.LastName}" id="LN" required="true" rendered="{!onlyNewContactFlds}"/>
+                <apex:inputField value="{!newRecContactandContactRole.Email}" id="Email" required="true" rendered="{!onlyNewContactFlds}"/>
+                
+                
+                <apex:outputField value="{!newRecContactandContactRole.FirstName}"  rendered="{!!onlyNewContactFlds}"/>
+                <apex:outputField value="{!newRecContactandContactRole.LastName}"  rendered="{!!onlyNewContactFlds}"/>
+                <apex:outputField value="{!newRecContactandContactRole.Email}"  rendered="{!!onlyNewContactFlds}"/>
+                
+                <apex:inputField value="{!newRecContactandContactRole.mobilePhone}" rendered="{!onlyNewContactFlds}" id="OP"/>  
+                <apex:inputField value="{!newRecContactandContactRole.phone}" rendered="{!onlyNewContactFlds}" id="phone"/> 
+                <!--<apex:inputField value="{!newRecContactandContactRole.Receive_Network_Service_Notifications__c}" rendered="{!onlyNewContactFlds}" id="RNS"/>-->
+                <apex:inputField value="{!newRecContactandContactRole.Job_Function__c}" rendered="{!onlyNewContactFlds}" id="JF"/>              
+                <apex:inputField value="{!newRecContactandContactRole.Privacy_Policy_Paper__c}"/><!-- rendered="{!onlyNewContactFlds}"-->
+                <!--<apex:inputField value="{!newRecContactandContactRole.User_Activation_Order_Terms__c}"/><!-- rendered="{!onlyNewContactFlds}"-->
+                
+                
+                <!-- New Code : SSA-229 -->
+                <apex:selectList multiselect="false" size="1" value="{!selectedContactRole}" rendered="true" label="Contact Role" id="CR" required="true" style="border-left: 3px solid red;" >
+                    <apex:selectOptions value="{!ContactRoleValues}"/>
+                    <apex:actionSupport event="onchange" action="{!pickListProcess}" rerender="frm" status="loadRoleSearch">
+                    </apex:actionSupport>  
+                    <apex:actionStatus id="loadRoleSearch" stopText="">
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />                   
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:selectList>
+                <apex:selectList multiselect="false" size="1" id="airtime" rendered="{!roleDependentField}" value="{!newRecContactandContactRole.User_Activation_Order_Terms__c}" label="Airtime Services Order Terms" style="border-left: 3px solid red;">
+                    <apex:selectOptions value="{!AirtimeServiceOrder}"/>
+                </apex:selectList>
+                <apex:selectList multiselect="false" size="1" id="perInfo" rendered="{!roleDependentField}" value="{!newRecContactandContactRole.Transfer_of_Personal_Information__c}" label="Transfer of Personal Information" style="border-left: 3px solid red;">
+                    <apex:selectOptions value="{!TPersonalInfo}"/>
+                </apex:selectList>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Cancel" onclick="CustomCancel();" reRender="Final"/>
+                <apex:commandButton value="Search Again" action="{!Cancel}"/>
+                <apex:commandButton value="Submit" onclick="finalSaveFunction(); return false;" rerender="frm"/>
+                <apex:actionStatus id="UserStatus" stopText="">
+                    <apex:facet name="start" >
+                        <img src="/img/loading.gif" />                   
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+        </apex:pageBlock>
+    </apex:actionRegion>
+    
+    
+    <apex:pageBlock rendered="{!listOfFieldsView}" id="finalBlock">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlockSection columns="2">
+            <apex:outputtext value="{!accountName}" label="Subscriber Account Name"/>
+            <apex:outputtext value="{!findCustomerPortalUser[0].profile.Name}" label="Portal User Profile" rendered="{!CPU}"/>
+            <apex:outputtext value="{!customCallID}" label="Subscriber Customer Call AcctID"/>
+            <apex:outputtext value="{!findCustomerPortalUser[0].UserRole.Name}" label="Portal User Role" rendered="{!CPU}"/>
+            <apex:outputField value="{!newRecContactandContactRole.FirstName}"/>
+            <apex:outputtext value="{!findCustomerPortalUser[0].IsActive}" label="Active" rendered="{!CPU}"/>
+            <apex:outputField value="{!newRecContactandContactRole.LastName}"/>
+            <apex:outputtext value="{!myKVHUser}" label="myKVH Role" rendered="{!CPU}"/>
+            <apex:outputField value="{!newRecContactandContactRole.Email}"/>
+            <apex:outputField value="{!newRecContactandContactRole.OtherPhone}" rendered="{!onlyNewContactFlds}"/>
+            <apex:outputField value="{!newRecContactandContactRole.Privacy_Policy_Paper__c}"/>
+            <!--<apex:outputField value="{!newRecContactandContactRole.User_Activation_Order_Terms__c}"/>-->
+            <apex:outputtext rendered="{!CPU}"/>
+            <apex:outputField value="{!newRecContactandContactRole.phone}" rendered="{!onlyNewContactFlds}"/> 
+            <!--<apex:outputField value="{!newRecContactandContactRole.Network_Notification_Type__c}" rendered="{!onlyNewContactFlds}"/>-->
+            <apex:outputField value="{!newRecContactandContactRole.Job_Function__c}" rendered="{!onlyNewContactFlds}"/>
+            
+            <apex:outputField value="{!newAccContactRole.ContactID}"/>
+            <apex:outputtext rendered="{!CPU}"></apex:outputtext>
+            <apex:outputtext value="{!selectedContactRole}" label="Contact Role"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Return and Update Case" action="{!returnToCase}"/>
+            <apex:commandButton value="Create an additional Role for this contact" action="{!CreateAdditionContactRole}" reRender="frm"/>
+            <!-- <apex:commandButton value="Search and an additionalContact and Role" onclick="window.reLoad();"/>-->
+            <input type="button" value="Search and add an Additional Contact and Role" onClick="window.location.href=window.location.href" class="btn"/>
+            <apex:commandButton value="Provision Customer Portal user" rendered="{!portaluserDisable}" onclick="EnableCustomerPortalUser('{!newRecContactandContactRole.Email}'); return false;" reRender="finalBlock"/>
+            <apex:actionStatus id="finalUserStatus" stopText="">
+                <apex:facet name="start" >
+                    <img src="/img/loading.gif" />                   
+                </apex:facet>
+            </apex:actionStatus>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

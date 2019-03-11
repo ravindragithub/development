@@ -1,0 +1,76 @@
+<apex:page showHeader="false" cache="false" standardStyleSheets="false">
+    <html>
+        <head>
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width,initial-scale=1"/>
+            
+            <title>myKVH</title>
+            
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.util_styles)}" rel="stylesheet"/>
+            
+            <style>
+                .messageText{
+                color: #cc0000;
+                }
+            </style>
+            
+        </head>
+        
+        
+        <body>
+            
+            <apex:stylesheet value="{!$Resource.portal_styles2}"/>
+            <apex:insert name="header">
+                <c:myKVHSiteHeader />
+            </apex:insert>
+                    <!-- header -->
+                    <!--<c:SelfRegHeader /> -->
+                    <!-- /header -->
+                    
+                    
+                    <!-- content area -->
+                    <div id="util-main">
+                        
+                        <h1 class="caution" style="background:#ff5900 url({!URLFOR($Resource.icon_caution)}) no-repeat 15px center;">Error</h1>
+                        <p><script>
+                            console.log('{!$CurrentPage.parameters.showError}');
+                            </script>
+                            <apex:pageMessage rendered="{!IF($CurrentPage.parameters.showError != '',true,false)}"  summary="We have identified an issue with your user. Our Support Team has been alerted and will follow up with you as soon as possible." severity="error" strength="3" />
+                        </p>
+                        <p>Thanks for your patience while we get this worked out!</p>
+                        <button class="button right ui-link" type="button" id="finalexit" onclick="window.location.href = '{!$Page.SiteLogin}'">Go to Home</button>
+                        
+                        <!-- <a href="#" class="button">Contact Us</a> -->
+                        
+                    </div>
+                    <!-- /content area -->
+                    
+                    
+                    <!-- footer -->
+                    <c:SelfRegFooter />
+                    <!-- /footer -->
+  
+        </body>
+    </html>
+    
+    <!--   <apex:composition template="SelfRegExceptionTemplate"> -->
+    <!--     <apex:define name="icon"> -->
+    <!--       <apex:image url="{!URLFOR($Resource.SiteSamples, 'img/warning.gif')}"/> -->
+    <!--     </apex:define> -->
+    <!--     <apex:define name="error"> -->
+    <!--       <apex:outputText escape="false" styleClass="title" value="{!$Label.site.down_for_maintenance}">
+<!--         <apex:param value="{!$Site.CurrentSiteUrl}"/> -->
+    <!--       </apex:outputText> -->
+    <!--       <apex:outputText value="{!$Label.site.sorry_for_inconvenience_back_shortly}"/> -->
+    <!--       <apex:outputText escape="false" value=" {!$Label.site.get_in_touch}"> -->
+    <!--       <apex:param value="mailto:{!$Site.AdminEmailAddress}"/> -->
+    <!--       <apex:param value="{!$Label.site.email_us}"/> -->
+    <!--     </apex:outputText> -->
+    <!--    </apex:define> -->
+    <!--   </apex:composition> -->
+</apex:page>

@@ -1,0 +1,13 @@
+<aura:component >
+    <aura:attribute name="checkboxlabel" type="String" description="holds the checkbox option label"/>
+    <aura:attribute name="sectionname" type="String" description="holds the section name under which checkbox is placed"/>
+    
+    <aura:registerEvent name="searchcheckboxevent" type="c:SearchCheckBoxOptionEvent"/>
+    
+    <lightning:input type="checkbox" 
+                     label="{!v.checkboxlabel}"
+                     name="{!v.checkboxlabel}" 
+                     checked="false"
+                     onchange="{!c.fireSearchEvent}"/>
+    
+</aura:component>

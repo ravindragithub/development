@@ -1,0 +1,187 @@
+<!--
+ - Created by Jai Chaturvedi on 22/03/2017.
+ -->
+
+<aura:component description="DocumentType.
+                Component used to display the Document results sectionwise">
+
+    <aura:attribute name="documentType"
+                    type="ProductSearchClass.DocumentType"
+                    description="Stores the ProductSearchClass.DocumentType record.
+                    This is used to show the heading for document result sections"/>
+
+    <table class="documents" style="margin-bottom:0;">
+                    <tbody>
+                        
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Advertising</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Brochures &amp; Datasheets</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="section-cat">
+                                <h4>Section Category</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td><a href="#" class="button">ORDER</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="section-cat">
+                                <h4>Section Category</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td><a href="#" class="button">ORDER</a></td>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td><a href="#" class="button">ORDER</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Case Studies</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td><a href="#" class="button">ORDER</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Coverage Maps</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Dealer Presentations</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="heading">
+                                <h3>Dealer Program</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tabelheader width-10"></th>
+                            <th class="tabelheader width-40">Description <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-20">Date <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Revision <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">File <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                            <th class="tabelheader width-10">Sales Aids <i class="fa fa-sort" aria-hidden="true" style="color:#999;"></i></th>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><img class="thubnailimg" src="http://progressive.kvh.com/myKVH_Files/images/img_doc.png"/></td>
+                            <td><a href="#">Document Name</a><p>Document description if available</p></td>
+                            <td>DD Month YYYY</td>
+                            <td>A</td>
+                            <td><i class="fa fa-file-pdf-o" aria-hidden="true"></i> X MB</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+</aura:component>

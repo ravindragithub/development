@@ -1,0 +1,51 @@
+<aura:component >
+    
+    <aura:attribute name="caseRecord" type="Case" />  
+    <aura:attribute name="saveAirtimeValid" type="boolean"/>
+    <aura:attribute name="options" type="List" />
+    <aura:attribute name="productTypeCheckFlag" type="boolean"/>    
+    <aura:attribute name="productType" type="String"/>
+    
+    <div>
+        <h1>Airtime Services Support</h1>
+        <aura:if isTrue="{!v.productTypeCheckFlag }">
+            <h3><abbr lightning-input_input="" title="required" class="slds-required">*</abbr>General Account or Service Inquiry</h3>
+            <br/>
+            <aura:iteration items="{!v.options}" var="stage">    
+                <lightning:input type="radio" label="{!stage.label}"
+                                 name="others" onchange="{!c.getAirtimeType}" 
+                                 class="service-acc-class"/>
+            </aura:iteration>
+            <br/>                                     
+            <div style="border-top: 1px solid #dfdede;">
+                <button onclick="{! c.nextLayout }"
+                        class="button button-blue right" >Next</button>
+            </div>
+            <aura:set attribute="else">  
+                <p style="font-weight: bold;">{!v.productType}</p>                                      
+                <h3>Case Details:</h3>
+                <lightning:input aura:id="airtimeCase" label="Vessel or Installation Platform:"
+                                 value="{!v.caseRecord.New_Vessel_or_Platform__c}"
+                                 required="true" maxlength="80"/>   
+                <lightning:input aura:id="airtimeCase" label="Service Account Number (if applicable):"
+                                 value="{!v.caseRecord.Account_Number__c}" maxlength="20"/>   
+                <lightning:input aura:id="airtimeCase" label="Case Subject:"
+                                 value="{!v.caseRecord.Subject}"
+                                 required="true" maxlength="255"/>   
+                <lightning:textarea aura:id="airtimeCase" label="Case Description:"
+                                    value="{!v.caseRecord.Description}"
+                                    required="true"/>    
+                <br/> 
+                <i>To upload an attachment, please first click 'Submit' to create your case. </i>
+                <br/>                                                                       
+                <br/>                                                          
+                <div style="border-top: 1px solid #dfdede;">
+                    <button onclick="{! c.backLayout }"
+                            class="button button-blue left" >Back</button>
+                    <button onclick="{! c.submitCase }"
+                            class="button button-blue right" >Submit</button>
+                </div>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

@@ -1,0 +1,12 @@
+<apex:page controller="ortoo_e2a.EmailToAnythingAuthorInitController">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pagemessages />
+        </apex:pageBlock>
+        <apex:actionStatus id="step1_status" startText="Redirecting..." stopText="Redirecting..." />
+        <apex:actionFunction name="step1" status="step1_status" action="{!PageInit}"/>
+    </apex:form>
+    <script>
+        step1();
+    </script>
+</apex:page>

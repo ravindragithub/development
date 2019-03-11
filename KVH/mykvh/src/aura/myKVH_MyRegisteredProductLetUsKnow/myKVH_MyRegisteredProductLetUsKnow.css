@@ -1,0 +1,11 @@
+.THIS .noAttach{
+    background: #ddd;
+    border: 1px solid #ccc;
+    /*box-shadow: 0 2px 10px rgba(0,0,0,.2);*/
+    padding: 5px;
+    text-align: center;
+    margin-top:5px;
+}
+.THIS .remvoebuttonradius{
+    border-radius : 0px;
+}

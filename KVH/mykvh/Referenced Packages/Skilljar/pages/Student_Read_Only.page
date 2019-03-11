@@ -1,0 +1,11 @@
+<apex:page standardController="skilljar__Student__c">
+  <apex:pageBlock >
+          <apex:pageMessage strength="3" severity="warning" title="Read Only">
+              <p>Skilljar custom objects should be treated as read-only within Salesforce.  
+              These objects are updated via API calls from the Skilljar platform.<br/><br/>If 
+              you are a Skilljar organization admin, please visit the 
+              <a href="https://dashboard.skilljar.com/">Skilljar Dashboard</a> to manage 
+              Skilljar objects.<br/><br/></p> 
+          </apex:pageMessage>
+  </apex:pageBlock>
+</apex:page>

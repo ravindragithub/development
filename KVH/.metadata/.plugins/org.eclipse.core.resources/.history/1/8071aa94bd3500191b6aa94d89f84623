@@ -1,0 +1,220 @@
+<apex:page controller="myKVH_my_cases_controller" showChat="false" showheader="false" sidebar="false" standardStylesheets="false" cache="false" tabStyle="My_Cases__tab">
+    <apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    
+    <apex:form >
+        <style>
+            body {
+            background-color:#f3f3f3;
+            }
+            
+            table.support-buttons {
+            width:100%;
+            padding:10px;
+            border:1px solid #ccc;
+            border-collapse: separate;
+            border-spacing: 10px;
+            border-radius: 0px;
+            }
+            
+            table.support-buttons td.buttons {
+            padding:10px 5px;
+            background: #1f83ad;
+            border-radius: 0px;
+            text-align: center;
+            }
+            td.buttons {
+            width: 30%;
+            }
+            table.support-buttons td.buttons a {
+            color:#fff;
+            text-decoration: none;
+            font-weight:bold;
+            }
+            
+            table.support-buttons td.buttons:hover {
+            background:#167298;
+            }
+            
+            .centered {
+            text-align: center;
+            float: center;
+            }
+        </style>
+        <div class="partner_portal slds-scrollable_none">
+            <div class="white-bg" style="margin:auto;">
+                <a href="{!$Site.BaseUrl}/s/" target="_parent" class="button right">Back to Home</a>   
+                <h1>Welcome to the Support Center</h1>
+                <table class="support-buttons">
+                    <tr>
+                        <td nowrap="true" style="border-bottom: 0px solid #ddd;"><h3><strong>Create a New Case:</strong></h3></td>
+                    </tr>
+                    <tr>
+                        <td class="buttons">
+                            <a href="{!$Site.BaseUrl}/s/mykvh-airtime-support" target="_parent">
+                                <h4>Airtime Services Support</h4>
+                            </a>
+                        </td>
+                        <td class="buttons">
+                            <a href="{!$Site.BaseUrl}/s/mykvh-technical-support" target="_parent">
+                                <h4>Technical Support</h4>
+                            </a>
+                        </td>
+                      
+                    </tr>
+                    
+                </table>
+            </div>
+            <br/>
+            <br/>
+            <apex:pageBlock id="pgblock">
+                <h3><strong>Current Case List</strong> <span class="font-85 pad-left">Filter:</span> &nbsp;
+                    <apex:selectList id="selected_list" value="{!filter}" required="false" size="1">
+                        <apex:selectOptions value="{!items}" />
+                        <apex:actionSupport event="onchange" reRender="pgblock" action="{!refresh}" status="ajaxStatus"/>
+                    </apex:selectList>
+                    &nbsp;&nbsp;<apex:actionStatus id="ajaxStatus" startText="Loading..."  stopText=""/>
+                </h3>
+                
+                <em class="right" style="font-size:75%; margin-bottom:5px;">Click Column Header for Sorting</em>
+                
+                <apex:pageBlockTable value="{!CaseList}" var="CsList"  cellpadding="5" title="Click Column Header for Sorting" headerClass="header-row centered" >
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Case Number" action="{!toggleSort}" rerender="pgblock">
+                                <!-- Value attribute should have field (API Name) to sort in asc or desc order -->
+                                <apex:param name="sortField" value="CaseNumber" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputLink target="_parent" value="{!$Site.BaseUrl}/s/mykvh-case-view?recordid={!CsList.Id}">{!CsList.CaseNumber}</apex:outputLink>
+                    </apex:column> 
+                    
+                    <apex:column headerClass="centered">
+                        <apex:facet name="header">
+                            <apex:commandLink value="Case Record Type" action="{!toggleSort}" rerender="pgblock">
+                                <!-- Value attribute should have field (API Name) to sort in asc or desc order -->
+                                <apex:param name="sortField" value="RecordType.Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.RecordType.Name}"/>
+                    </apex:column> 
+                    
+                    <apex:column width="300px">
+                        <apex:facet name="header">
+                            <apex:commandLink value="Subject" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Subject" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.Subject}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Platform/Vessel" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Platform_Name__c" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.Platform_Name__c}"/>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink value="Product" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Product_Group__c" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.Product_Group__c}"/>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink value="Serial Number" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Asset_Name__c" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.Asset_Name__c}"/>
+                    </apex:column> 
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Date Opened" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="CreatedDate" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.CreatedDate}"/>
+                    </apex:column>
+                    
+                    <apex:column rendered="{!IF(AND(filter != 'open', filter != 'Activations'), true, false) }">
+                        <apex:facet name="header">
+                            <apex:commandLink value="Date Closed" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="ClosedDate " assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!CsList.ClosedDate }"/>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="Status" action="{!toggleSort}" rerender="pgblock">
+                                <apex:param name="sortField" value="Status" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputText value="{!CsList.status}" />
+                    </apex:column>
+                    
+                </apex:pageBlockTable>
+                
+                <!-- Pagination -->
+                <table style="width: 100%" bgcolor="#eeeeee" id="pagination">
+                    <tr>
+                        <td>
+                            Page: <apex:outputText value=" {!PageNumber}"/>
+                        </td>
+                        
+                        <td>
+                            <!-- First Page -->
+                            <!-- active -->
+                            <apex:commandLink action="{!first}" rendered="{! HasPrevious }" status="ajaxStatus">&laquo; First</apex:commandlink>
+                            <!-- inactive (no earlier pages) -->
+                            <apex:outputText rendered="{! NOT(HasPrevious) }">&laquo; First</apex:outputText>
+                            &nbsp;&nbsp;  
+                            <!-- Previous page -->
+                            <!-- active -->
+                            <apex:commandLink action="{! Previous }" rendered="{! HasPrevious }" status="ajaxStatus">&lt; Previous</apex:commandLink>
+                            <!-- inactive (no earlier pages) -->
+                            <apex:outputText rendered="{! NOT(HasPrevious) }">&lt; Previous</apex:outputText>
+                            &nbsp;&nbsp;  
+                            <!-- Next page -->
+                            <!-- active -->
+                            <apex:commandLink action="{! Next }" rendered="{! HasNext }" status="ajaxStatus">Next &gt;</apex:commandLink>
+                            <!-- inactive (no more pages) -->
+                            <apex:outputText rendered="{! NOT(HasNext) }">Next &gt;</apex:outputText>
+                            &nbsp;&nbsp;  
+                            <!-- Last Page -->
+                            <!-- active -->
+                            <apex:commandLink action="{!last}" rendered="{! HasNext }" status="ajaxStatus">Last &raquo;</apex:commandlink>
+                            <!-- inactive (no more pages) -->
+                            <apex:outputText rendered="{! NOT(HasNext) }">Last &raquo;</apex:outputText>
+                        </td>
+                        
+                        <td>
+                            <apex:actionStatus id="rppStatus" startText="Setting Page Size..."  stopText=""/>&nbsp;&nbsp;
+                            Records per page:
+                            <apex:selectList value="{! con.PageSize }" size="1">
+                                <apex:selectOption itemValue="5" itemLabel="5"/>
+                                <apex:selectOption itemValue="10" itemLabel="10"/>
+                                <apex:actionSupport event="onchange" reRender="pgblock" action="{!setRecsPerPage}" status="rppStatus"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                </table>
+            </apex:pageBlock>
+        </div>
+    </apex:form>
+    <script>
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+    </script>
+</apex:page>

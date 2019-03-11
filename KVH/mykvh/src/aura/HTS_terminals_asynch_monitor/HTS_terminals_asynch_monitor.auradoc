@@ -1,0 +1,25 @@
+<aura:documentation>
+	<aura:description>
+    <p>This Component is used to monitor an OSS Asynchronous Job POSTed to /hts/terminals/async.</p>
+    <p>When the jobId attribute is populated, the component begins polling OSS for the job status,
+    and renders itself displaying various status messages.</p>
+    <p>When the Asynchronous Job is complete,
+    the polling for status stops, and the component displays the results which are two Booleans.</p>
+    <ul>
+      <li>"complete" is either true or false</li>
+      <li>"result" returns null if the job is not complete, then either true or false if the job was successful.</li>
+    </ul>
+    <p>The Component can have the following States:
+      <ul>
+        <li>Initializing - The component has not had it's jobId attribute set</li>
+        <li>Waiting - The component is waiting for the polling interval to count down</li>
+        <li>Polling - The component is calling the Server, which is Calling OSS, for a new job status</li>
+        <li>Finished - The response from the server contains {... "complete": true, ...} 
+            indicating that the Asynchronous Job has been completed</li>
+      </ul>
+    </p>
+  </aura:description>
+	<aura:example name="ExampleName" ref="exampleComponentName" label="Label">
+		Example Description
+	</aura:example>
+</aura:documentation>

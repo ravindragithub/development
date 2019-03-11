@@ -1,0 +1,11 @@
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+}
+.THIS .checkBoxSideBar{
+    padding: 0 0 1rem 1rem;
+}

@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="componentID" type="string" />
+    <aura:attribute name="stateSelected" type="string" />
+    <aura:attribute name="countrySelected" type="string" />
+</aura:event>

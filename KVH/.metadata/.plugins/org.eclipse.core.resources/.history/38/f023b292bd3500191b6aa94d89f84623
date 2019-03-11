@@ -1,0 +1,4 @@
+<apex:page controller="VW_CreateNewAssetController">
+    <flow:interview name="Create_New_Asset" interview="{!myFlow}" finishlocation="{!FinishPage}">
+    </flow:interview>
+</apex:page>

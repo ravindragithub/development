@@ -1,0 +1,26 @@
+<apex:page standardController="case" extensions="Add_New_Global_StaticIP">
+
+    <script src="/soap/ajax/30.0/connection.js" type="text/javascript"></script>
+    <script src="/support/console/30.0/integration.js" type="text/javascript"></script> 
+    <script src="/xdomain/xdomain.js" type="text/javascript"></script>
+    
+    
+    <script>
+        function CheckCase(){
+            if({!accountValidate} || {!assetValidate}){
+                alert("You will need to add an account and system asset to continue"); 
+            }else{
+                if (sforce.console.isInConsole()) { 
+                    sforce.console.openPrimaryTab(null, '/apex/Add_New_Global_StaticIPImplentation?isdtp=vw&CaseId={!CaseID}', true, 'Add_New_Global_StaticIPImplentation', openSuccess, 'ConsoleTab');
+                    var openSuccess = function openSuccess(result) { }; 
+                }else{
+                    var url = '/apex/Add_New_Global_StaticIPImplentation?CaseId={!CaseID}';
+                    window.open(url,'_blank'); 
+                }  
+            }
+        }
+    </script>
+    <apex:form >
+       <apex:commandLink value="Add_New_Global_StaticIP(opens in new tab)" onclick="CheckCase()"/>
+    </apex:form>
+</apex:page>

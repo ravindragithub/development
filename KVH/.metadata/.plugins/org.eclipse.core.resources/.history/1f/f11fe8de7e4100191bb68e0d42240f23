@@ -1,0 +1,54 @@
+<aura:component >
+  <aura:attribute name="subscription" type="SBQQ__Subscription__c" />
+  <aura:attribute name="diagnostics" type="HTS_ltgsvc_diagnostics" description="Results of the Service-Side validation" />
+  <aura:attribute name="statusMessage" type="string" description="Status message returned from server" default="Initializing..." />
+  <aura:attribute name="renderCard" type="Boolean" description="Used to inhibit the rendering of the subscription card" default="false" />
+  <!--PUBLISHER -->
+  <aura:registerEvent name="subscriptionsAppEvent" type="c:HTS_subscriptions_application_evt"/>
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="validationComplete" event="c:HTS_subscriptions_component_evt" action="{!c.handleValidationComplete}" />
+  <aura:handler name="updateComplete" event="c:HTS_subscriptions_component_evt" action="{!c.handleUpdateComplete}" />
+
+  <!-- conditionally rendered -->
+  
+  <lightning:card >
+      <aura:set attribute="title">
+        Subscription: {!v.subscription.Name}
+      </aura:set>
+      <div class="slds-grid slds-grid_pull-padded-medium">
+
+        <div class="slds-col slds-p-horizontal_medium">
+          Details
+          <div class="slds-form slds-form_stacked">
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="asset">Asset</label>
+              <div class="slds-form-element__control slds-m-left_medium">
+                <b><ui:outputText value="{!v.subscription.Asset__r.Name}" aura:id="vtidString"/> </b>
+              </div>
+            </div>
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="service">Data Plan</label>
+              <div class="slds-form-element__control slds-m-left_medium">
+                <b><ui:outputText value="{!v.subscription.SBQQ__Product__r.Name}"/></b>
+              </div>
+            </div>
+          </div>
+          <c:HTS_subscriptions_list assetName="{!v.subscription.Asset__r.Name}" aura:id="existing"/>
+        </div>
+
+        <aura:if isTrue="{!v.renderCard}">
+          <div class="slds-col slds-p-horizontal_medium">
+            <c:HTS_assetValidation_cmp aura:id="validator"/>
+          </div>
+
+          <div class="slds-col slds-p-horizontal_medium">
+            Provisioning
+            <c:HTS_provisioning_cmp subscription="{!v.subscription}" aura:id="provisioner"/>
+          </div>
+        </aura:if>
+
+      </div>
+  </lightning:card>
+
+</aura:component>

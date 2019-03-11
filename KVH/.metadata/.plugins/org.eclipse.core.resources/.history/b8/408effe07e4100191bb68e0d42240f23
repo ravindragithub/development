@@ -1,0 +1,23 @@
+<aura:component description="QuickLinkOption">
+<!---<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />-->  
+    <aura:attribute name="quicklink"
+                    type="Quick_Link__c"
+                    description="Holds the quick link single record"/>
+    
+    <aura:registerEvent name="QuickLink"
+                        type="c:QuickLinkEvent"/>
+   
+
+    <div class=" slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--3-of-12" 
+         onclick="{!c.fireQuickLinkEvent}"
+         style="cursor: pointer;text-align: center;">
+            <aura:if isTrue="{!v.quicklink.QuickLink_Label__c != NULL}">
+                <div class="quickitem slds-p-around--small slds-m-top--x-small">
+                    <i style="margin-bottom: 10px;" class="{!v.quicklink.Icon__c + ' fa-2x fa-fw'}" aria-hidden="true"></i>    
+                    <h4>{!v.quicklink.QuickLink_Label__c}</h4>
+                </div>         
+            </aura:if> 
+        
+    </div>
+
+</aura:component>

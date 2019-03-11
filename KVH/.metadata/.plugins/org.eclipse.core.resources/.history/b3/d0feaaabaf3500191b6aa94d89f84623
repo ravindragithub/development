@@ -1,0 +1,3 @@
+<design:component label="New on the Portal">
+    <design:attribute name="header" label="Header"/>
+</design:component>

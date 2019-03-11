@@ -1,0 +1,34 @@
+<apex:page standardController="invoiceit_s__Job__c" extensions="IITCreateOrder" >
+ <apex:form >
+   <apex:pageMessages ></apex:pageMessages>
+     <apex:sectionHeader title="Order Edit" subtitle="{!invoiceit_s__Job__c.Name}(Record Type : {!recordTypeObj.Name})" />
+     <apex:pageBlock >
+         
+        <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}"/>
+          <apex:commandButton value="Quick Save" action="{!quicksave}"/>
+          <apex:commandButton value="Cancel" action="{!Cancel}"/>
+         </apex:pageBlockButtons>
+         
+             <apex:pageBlockSection title="Order Information- {!recordTypeObj.Name}" rendered="{!recordTypeObj.Name = 'Master Order'}">
+                <apex:repeat value="{!$ObjectType.invoiceit_s__Job__c.FieldSets.MasterOrder}" var="fieldAPI">
+                    <apex:inputField value="{!job[fieldAPI]}"/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            
+             <apex:pageBlockSection title="Order Information- {!recordTypeObj.Name}" rendered="{!recordTypeObj.Name = 'Child Order'}">
+                    <apex:repeat value="{!$ObjectType.invoiceit_s__Job__c.FieldSets.ChildOrder}" var="fieldAPI">
+                        <apex:inputField value="{!job[fieldAPI]}"/>
+                    </apex:repeat>
+            </apex:pageBlockSection>
+            
+             <apex:pageBlockSection title="Order Information- {!recordTypeObj.Name}" rendered="{!recordTypeObj.Name = 'Sale Order'}">
+                    <apex:repeat value="{!$ObjectType.invoiceit_s__Job__c.FieldSets.SaleOrder}" var="fieldAPI">
+                        <apex:inputField value="{!job[fieldAPI]}"/>
+                    </apex:repeat>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+ 
+ </apex:form>
+</apex:page>

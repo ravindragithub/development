@@ -1,0 +1,18 @@
+<!--
+ - Created by Jai Chaturvedi on 31/03/2017.
+ -->
+
+<aura:component description="SearchFilter"
+                implements="forceCommunity:availableForAllPageTypes" access="global"
+                controller="ProductSearchClass">
+
+    <ltng:require styles="/resource/jstree/style.css"
+                  scripts="/resource/jstree/jquery-2.2.4.min.js, /resource/jstree/jstree.js"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>
+
+    <aura:attribute name="ready" type="Boolean" default="false"/>
+
+
+    <div aura:id="jstree"></div>
+    
+</aura:component>

@@ -1,0 +1,263 @@
+.THIS label, 
+.THIS p, 
+.THIS h1, 
+.THIS h2, 
+.THIS h3, 
+.THIS h4, 
+.THIS select,
+.THIS ul,
+.THIS table,
+.THIS button,
+.THIS .slds-input {
+    font-family: arial, san-serif;
+}
+
+.THIS .go-btn {
+    background-color:#fff;
+    color: #333;
+    border:1px solid #ddd;
+    line-height:normal;
+    margin:0;
+    padding:10px 15px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    border-radius:0px;
+    font-size:85%;
+}
+
+.THIS .go-btn:hover {
+    background-color:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS h1 {
+    font-size:1.5em;
+    font-weight:lighter !important;
+    margin-bottom:15px;
+}
+
+.THIS h2 {
+    font-size:1.4em;
+    font-weight:lighter !important;
+    color:#666;
+}
+
+.THIS h3 {
+    font-size:1.2em;
+    font-weight:lighter;
+    margin-bottom:15px;
+    }
+
+.THIS .slds-docked-form-body{
+    padding: 0 0 .5rem 0;
+}
+
+.THIS .content-panel {
+    width:80%;
+    max-width:1100px;
+    min-height:400px;
+    margin:0 auto;
+    background:#fff;
+    padding:30px;
+}
+
+@media (max-width: 768px) {
+    .THIS .content-panel  {
+        width:100%;
+    }
+}
+
+.THIS .toggle{
+    display:none;
+}
+
+.THIS .slds-popover__header{
+    background-color: #c23934!important;
+    color: white!important;
+}
+
+.THIS .errorTag{
+    position: absolute;
+    float: right;
+    bottom: 36px;
+}
+
+.THIS .uiInput,
+.THIS .slds-input, 
+.THIS .slds-select,
+.THIS .slds-form-element__label {
+    font-size:1em;
+    color:#555555;
+    border-radius:0px;
+    padding:0px 5px;
+}
+
+.THIS select {
+    font-size:85%;
+}
+
+.THIS .uiInput,
+.THIS .slds-form-element {
+    margin-bottom:15px;
+}
+
+.THIS .slds-input[disabled], 
+.THIS .slds-input.slds-is-disabled {
+    background-color:#f3f3f3;
+    color:#888;
+}
+
+.THIS ::-webkit-input-placeholder {color: #ccc; font-style:italic;}
+.THIS ::-moz-placeholder {color: #ccc; font-style:italic;}
+.THIS :-ms-input-placeholder {color: #ccc; font-style:italic;}
+.THIS :-moz-placeholder {color: #ccc; font-style:italic;}
+
+.THIS .myCheckbox{
+    display: inline-block;
+    float: left;
+}
+.THIS .slds-truncate {
+    white-space: normal;
+}
+
+.THIS .slds-icon {
+    margin-top:3px;
+}
+
+.THIS .slds-icon-action-remove {
+    background-color: #cc0000;
+}
+
+.THIS .slds-icon-action-approval{
+    background-color: #79b143;    
+}
+
+.THIS .nextbtn{
+    float: right;
+}
+.THIS .notStarted{
+    background-color: #bbbbbb;    
+}
+
+.THIS button {
+    border-radius:0px;
+    padding:0px 10px;
+    /*background-color:#1984c7;*/
+    text-transform:uppercase;
+    font-weight:bold;
+    font-size:85%;
+}
+
+/*.THIS button:hover {
+    background-color: #13437e;
+}*/
+
+.THIS .slds-truncate {
+    white-space: normal;
+}
+
+.THIS .slds-card {
+    border-radius:0;
+    border:none;
+    background-color:transparent;
+}
+
+.THIS .slds-accordion__content {
+    background:#fff;
+}
+
+.THIS  h3.slds-accordion__summary-heading button {
+    background-color:transparent;
+    padding:0;
+    color:#13437e;
+}
+
+.THIS  h3.slds-accordion__summary-heading span {
+    padding-left:5px;
+}
+
+.THIS .button-bar {
+    padding:0;
+    margin:0;
+    overflow: auto;
+}
+
+.THIS .button-bar button {
+    margin:15px 0;
+}
+
+.THIS .savebtn {
+    margin-top:30px;
+    background-color:#79b143;  
+    border:0;
+    width:100%;
+    padding:5px 40px;
+}
+
+@media (min-width: 500px) {
+    .THIS .savebtn {
+        width:auto;
+    }
+}
+
+.THIS .clear {
+    clear:both;
+}
+
+.THIS .req-note {
+    font-size:80%;
+    font-style:italic;
+}
+
+.THIS .slds-icon_container_circle, 
+.THIS .slds-icon_container--circle, 
+.THIS .slds-icon__container_circle, 
+.THIS .slds-icon__container--circle {
+    width:20px;
+    height:20px;
+    border-radius: 50%;
+    display: inline-block;
+    padding:0 0 0 3px;
+}
+
+.THIS .note {
+    font-size:80%;
+    font-style:italic;
+    margin:0 0 15px 20px;
+    color:#555;
+}
+
+.THIS .required {
+    text-align:left;
+}
+
+.THIS abbr.slds-required {
+    float:right;
+    margin:0;
+}
+
+
+.THIS .callout {
+    padding:20px;
+    background-color:rgba(25,132,199,.10);
+    margin:30px 0;
+    overflow:auto;
+}
+
+.THIS .callout2 {
+    padding:10px;
+    text-align:center;
+    color:#999;
+    font-size:90%;
+    font-style:italic;
+}
+.THIS .forceVisualMessageQueue{
+    white-space : pre-line !important;
+}
+.THIS .hidden {
+    display: none;
+}
+.THIS .slds-spinner {
+    position: fixed;
+}

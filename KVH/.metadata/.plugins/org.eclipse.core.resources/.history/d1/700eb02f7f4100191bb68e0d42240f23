@@ -1,0 +1,204 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" controller="SelfRegisteredUserWelcomePage_Ctrl" action="{!RedirectActOrder}">
+     <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <apex:outputPanel id="Rerenderall">
+            <head>
+                <title>Welcome to myKVH</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+                </script>
+                <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+                </script>
+                <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+                <!-- <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>-->
+                <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+                <!-- Handle jQuery conflicts (e.g. "$") -->
+                <script type="text/javascript">
+                var j$ = jQuery.noConflict();
+                </script>
+                <script>
+                function returnPage(param1,param2){
+                    var urlredirection = "{!URLFOR($Page.Account_Setup)}"+"{!IF(CONTAINS(URLFOR($Page.Account_Setup),'?'), '&','?')}"+"order=" + param1;
+                    if(param2 != 'true')
+                       window.top.location =  urlredirection;
+                    else
+                        hideLoadingDiv();
+                }
+                </script>
+                <style type="text/css">
+                    
+                    .loadingStatus {
+                        display: none;
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        list-style: none;
+                        z-index: 9999;
+                    }
+                    
+                    #showOrders-popup {
+                        top: 100px !important;
+                    }
+                    
+                    .loadingStatus .img {
+                        width: 32px;
+                        margin: 0 auto;
+                    }
+                    
+                    .loadingBox {
+                        display: none;
+                        background: #000000;
+                        opacity: 0.45;
+                        filter: alpha(opacity=45);
+                        position: fixed;
+                        top: 0px;
+                        left: 0px;
+                        min-width: 100%;
+                        min-height: 100%;
+                        z-index: 9999;
+                    }
+                    p {
+                        padding-bottom: initial;
+                    }
+                        .KVH-table {
+                        border: solid 1px #DDEEEE;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        font: normal 13px Arial, sans-serif;
+                        width: 100%;
+                    }
+                    .KVH-table thead th {
+                        background-color: #f3f3f3 !important;
+                        border: medium none !important;
+                        color: #444 !important;
+                        font-weight: bold !important;
+                        padding: 5px !important;
+                    }
+                    .KVH-table tbody td {
+                        border: solid 1px #DDEEEE;
+                        color: #333;
+                        padding: 10px;
+                    }
+                    .KVH-table-horizontal tbody td {
+                        border-left: none;
+                        border-right: none;
+                    }
+                    .box a.button {
+                        border: 1px solid #ddd;
+                        border-radius: 3px;
+                        display: block;
+                        font-size: 1em;
+                        margin-bottom: 20px;
+                        padding: 10px 20px;
+                        text-align: center;
+                        text-decoration: none;
+                    }
+                    .button {
+                        color: #cc0000 !important;
+                    }
+                    .body {
+                        background: #f3f3f3 none repeat scroll 0 0 !important;
+                        font-family: arial,sans-serif !important;
+                    }
+             </Style>       
+            </head>
+            
+            <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+                <div class="loadingStatus" id="loadingDiv">
+                    <div class="">
+                        <div class="img"><img src="/img/loading.gif"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="loadingBox" class="loadingBox"></div>
+                
+                <apex:form id="frm">
+                
+                    <apex:actionFunction name="NavigateTopg" action="{!AgreeActivationOrderTerms}" oncomplete="returnPage('{!ActOrderId}','{!ActivationOrderTerms}');" reRender="{!IF(ActivationOrderTerms,'frm','')}">
+                        <apex:param name="param1" assignTo="{!ActOrderId}" value="" />
+                    </apex:actionFunction>
+                    <apex:actionFunction name="updateActivationOrderTerms1" action="{!updateActivationOrderTerms}" oncomplete="returnPage('{!ActOrderId}','false');" reRender="Ord">
+                        <apex:param name="param2" assignTo="{!strActivationOrderTerms}" value="" />
+                    </apex:actionFunction>
+                    <apex:outputPanel rendered="{!lstActivationOrderTable.size>0}" id="OrderTable">
+                        <apex:outputPanel layout="none" id="pop" rendered="{!ActivationOrderTerms}" > 
+                            <br/>
+                            <div data-role="popup"   id="showPopup" data-history="false" style="min-width:500px !important; max-width:800px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                                <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                    <h1 class="ui-title" role="heading" aria-level="1">Activation Order Terms</h1>
+                                </div>
+                                <div role="main" class="ui-content width-90 ">
+                                    <br/>
+                                    <p>In the course of providing Airtime Services to you, KVH will obtain certain usage-related information about the quantity and type of the telecommunication services that you use and the manner of your use, which is referred to as customer proprietary information or CPI. CPI relates to the type, quantity, destination, browsing history, technical configuration, location, and amount of use of the telecommunications and interconnected VoIP services you purchase from us, as well as related billing information. KVH does not sell, trade or share your CPI with anyone outside of the KVH family of companies and its service providers used for the provision of your service, unless required by law (example: a court order).</p>
+                                    <p>By checking “Accept,” you agree that KVH, and its service providers for the provision of your service, may use your CPI to make you aware of services that are different from the services you currently purchase from us and may better meet all of your communications and content delivery needs, for example, a discount or a promotion on a new or different service from KVH.   The protection of your information is important to us, and you have a right, and we have a duty, under US federal law and the laws of other jurisdictions, to protect the confidentiality of your CPI. At any time you may change, deny or withdraw your approval for KVH to use your CPI by sending an email to us at <a href="mailto:privacy@kvh.com">privacy@kvh.com</a>.  Denying KVH’s use of your CPI will not eliminate other types of marketing communications from KVH or KVH’s use of your CPI to offer additional services of the types you already purchase from KVH, nor will it affect the provision of any telecommunications services we provide to you.</p>
+                                    <div class="center">
+                                        <apex:commandButton id="confirmButton1" styleClass="button pad-right remodal-cancel defaultclick" onclick="updateActivationOrderTerms1('Accept');" value="Accept" tabindex="12" html-data-role="none"> 
+                                        </apex:commandButton>
+                                        <apex:commandButton id="confirmButton2" styleClass="button pad-left remodal-cancel defaultclick" onclick="updateActivationOrderTerms1('Deny');" value="Decline" tabindex="12" html-data-role="none"> 
+                                        </apex:commandButton>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /popup Show Buttons contents -->
+                            <script>
+                            j$(function() {
+                                j$( "#showOrders" ).popup("close" );
+                                j$(".ui-mobile .ui-page-active").css("background-color","rgba(0, 0, 0, 0.5)");
+                                j$( "#showPopup" ).popup( "open" );
+                                
+                            });
+                            </script>
+                            <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" id="Ord" rendered="{!!ActivationOrderTerms}" >
+                            <apex:iframe >
+                            <div data-role="popup"  data-dismissible="false" id="showOrders" data-history="false" style="min-width:800px !important; max-width:800px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a> 
+                                <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                    <h1 class="ui-title" role="heading" aria-level="1">Select an Activation Order to be confirmed.</h1>
+                                    
+                                </div>
+                                <div role="main" class="ui-content width-90 ">
+                                    <br/>
+                                    <table class="KVH-table KVH-table-horizontal" style="width: 560px !important; margin-left: auto; margin-right: auto;">
+                                        <thead>
+                                            <tr>
+                                                <th width="110px">Activation Order</th> 
+                                                <th width="180px">Activation Platform Name</th>
+                                                <th width="50px">System</th>
+                                                <th width="120px">Created By</th>
+                                                <th width="100px">Created Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            <apex:Repeat value="{!lstActivationOrderTable}" var="ActOrder" >
+                                                <tr> 
+                                                    <td width="100px"> <a href="#" onclick="showLoadingDiv();NavigateTopg('{!ActOrder.OrderId}');" target='_Top'>{!ActOrder.Order}</a></td>
+                                                    <td width="180px">{!ActOrder.Platform}</td>
+                                                    <td width="50px">{!ActOrder.SystemName}</td>
+                                                    <td width="120px">{!ActOrder.CreatedBy}</td>
+                                                    <td width="100px">{!ActOrder.CreatedDate}</td>
+                                                </tr>
+                                            </apex:Repeat>
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <div class="clear">
+                                        <!-- <a href="#" onclick="showLoadingDiv();returnHome();" style="color: #38c; font-weight: 700; text-decoration: none;padding-top: 5px;margin-left: auto; margin-right: auto;display:block;width:150px;padding-left: 440px;">Return to myKVH Home</a>-->
+                                    </div> 
+                                </div>
+                            </div>
+                            <script>
+                            j$(function() { 
+                                j$( "#showOrders" ).popup( "open" );
+                            });
+                            </script>
+                            </apex:iframe>
+                        </apex:outputPanel>
+                    </apex:outputPanel>         
+                </apex:form>
+            </body>
+        </apex:outputPanel>
+    </html>
+</apex:page>

@@ -1,0 +1,4 @@
+.THIS .bold-blue{
+    color: #1f83ad;
+    font-weight: bold;
+}

@@ -1,0 +1,182 @@
+<apex:page standardStylesheets="true" controller="Product_Registration_ListViewCtrl" tabStyle="Product_Registration__tab" sidebar="false" cache="false" readOnly="true" >
+    <head>
+        <!--<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/> -->
+        <title>Product Registration List View</title>
+        <script src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/docs/js/jquery-latest.min.js')}" type="text/javascript"></script>
+        <script src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/js/jquery.tablesorter.js')}" type="text/javascript"></script>
+        <script src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/addons/pager/jquery.tablesorter.pager.js')}" type="text/javascript"></script> 
+        
+        <link href="{!URLFOR($Resource.jquery_tablesorter, 'tablesorter-master/css/theme.blue.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.jquery_tablesorter, 'tablesorter-master/addons/pager/jquery.tablesorter.pager.css')}" rel="stylesheet"/>    <script type="text/javascript">
+                var j$ = jQuery.noConflict();
+        </script>
+        <style>
+            .pager{
+            position: initial !important;
+            float: right !important;
+            }
+            .outerNoSidebar {
+            padding: 10px 10px 0px 10px;
+            width: 100%;
+            }
+            
+            .list .headerRow th, .list .headerRow th a {
+            color: #555555;
+            font-family: Arial, Helvetica, sans-serif;
+            border-bottom-color: #CC0000;
+            text-decoration: underline;
+            cursor: pointer; 
+            }
+            table.curtable .header {
+            padding-left: 30px;
+            padding-top: 0px;
+            height: auto;
+            }
+            <!--table.curtable td {
+padding-left: 30px;
+}-->
+            table.curtable tbody>tr:hover {
+            background-color: lightgray;
+            }
+            table.curtable tbody>tr:hover td {
+            background-color: transparent;
+            }
+            
+        </style>
+    </head>
+    <body>
+        
+        <apex:form id="frm" >
+            <div title="My Registered Products" id="out">
+                Filter: &nbsp; <apex:selectList value="{!strSelectedType}" multiselect="false" size="1" >
+                <apex:selectOptions value="{!RegistrationTypes}"/>
+                <apex:actionSupport event="onchange" action="{!onchangeType}" reRender="frm" status="ajaxStatus"/>
+                </apex:selectList>
+                &nbsp;&nbsp;<apex:actionStatus id="ajaxStatus" startText="Loading..."  stopText=""/>
+                <apex:outputPanel rendered="{!lstwrapAllRegisteredProductsDetail.size == 0 && lstAssets.size == 0}" id="OrderTable2">
+                0 Records Found
+                </apex:outputPanel> 
+                <div id="pager" class="pager">
+                    <img src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/addons/pager/icons/first.png')}" class="first"/> 
+                    <img src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/addons/pager/icons/prev.png')}" class="prev"/> 
+                    <span class="pagedisplay"></span>
+                    <img src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/addons/pager/icons/next.png')}" class="next"/> 
+                    <img src="{!URLFOR($Resource.TableSorterM, 'tablesorter-master/addons/pager/icons/last.png')}" class="last"/> 
+                    Display Rows:
+                    <select class="pagesize">
+                        <option value="10">10</option>
+                        <option selected="selected" value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                    </select>
+                    <select class="gotoPage" title="Select page number"></select>
+                </div>
+            </div>
+            <apex:outputPanel rendered="{!lstAssets.size>0}" id="OrderAssets">
+                <div class="bPageBlock brandSecondaryBrd secondaryPalette" >
+                    <div class="pbHeader"></div>  
+                    <div class="pbBody">
+                        <table class="list curtable" id="inprogressregistrations" cellspacing="0" cellpadding="0" border="0" style="width:100%;background: white;" >
+                            <thead>
+                                <tr class="headerRow">
+                                    <th class="headerSortDown" style="width:33.33%" >Account</th> 
+                                    <th style="width:33.33%">Serial Number</th>
+                                    <th style="width:33.33%">Product</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:Repeat value="{!lstAssets}" var="objAsset" >
+                                    <tr style="white-space: nowrap;"> 
+                                        <td><apex:outputText value="{!objAsset.Account.Name}"/> </td>
+                                        <td><apex:outputText value="{!objAsset.Name}"/></td>
+                                        <td><apex:outputText value="{!objAsset.Product2.Name}"/></td>
+                                    </tr>
+                                </apex:Repeat>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!lstwrapAllRegisteredProductsDetail.size>0}" id="OrderTable">
+                <div class="bPageBlock brandSecondaryBrd secondaryPalette" >
+                    <div class="pbHeader"></div>  
+                    <div class="pbBody">
+                        <apex:outputPanel rendered="{!strSelectedType  != 'Customer_Pending_Confirmation'}">
+                            <table class="list curtable" id="inprogressregistrations" cellspacing="0" cellpadding="0" border="0" style="width:100%;background: white;" >
+                                <thead>
+                                    <tr class="headerRow">
+                                        <th>Account</th> 
+                                        <th>Product</th>
+                                        <th>Serial Number</th>
+                                        <th>Secondary Serial Number</th>
+                                        <th>Status</th>
+                                        <th>CreatedBy</th>
+                                        <th class="headerSortDown">View Registration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:Repeat value="{!lstwrapAllRegisteredProductsDetail}" var="objwrapAllRegisteredProductsDetail" >
+                                        <tr style="white-space: nowrap;">
+                                            <td>
+                                                {!objwrapAllRegisteredProductsDetail.objActivationSubscriber.Account__r.Name}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Antenna_Serial_Number__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Below_Decks_Serial_Number__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationOrder.Order_Status__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationOrder.CreatedBy.Name}</td>
+                                            <td> 
+                                                <a href="{!$Page.Activation_Product_Registration}?order={!objwrapAllRegisteredProductsDetail.objActivationOrder.Id}" onclick="showLoadingDiv();" target="_Blank" >
+                                                    View Registration
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </apex:Repeat>
+                                </tbody>
+                            </table>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!strSelectedType  == 'Customer_Pending_Confirmation'}">
+                            <table class="list curtable" id="inprogressregistrations" cellspacing="0" cellpadding="0" border="0" style="width:100%;background: white;" >
+                                <thead>
+                                    <tr class="headerRow">
+                                        <th>Product</th>
+                                        <th>Primary Serial Number</th>
+                                        <th>CreatedBy</th>
+                                        <th>CreatedDate</th>
+                                        <th class="headerSortDown">View Registration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:Repeat value="{!lstwrapAllRegisteredProductsDetail}" var="objwrapAllRegisteredProductsDetail" >
+                                        
+                                        <tr style="white-space: nowrap;">
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Antenna_Serial_Number__c}</td>
+                                            <td>{!objwrapAllRegisteredProductsDetail.objActivationOrder.CreatedBy.Name}</td>
+                                            <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                <apex:param value="{!objwrapAllRegisteredProductsDetail.objActivationOrder.CreatedDate}" />
+                                                </apex:outputText></td>
+                                            <td> 
+                                                <a href="{!$Page.Activation_Product_Registration}?order={!objwrapAllRegisteredProductsDetail.objActivationOrder.Id}&tabName=Product" onclick="showLoadingDiv();" target="_Blank" >
+                                                    View Registration
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </apex:Repeat>
+                                </tbody>
+                            </table>
+                        </apex:outputPanel>
+                    </div> 
+                </div>
+            </apex:outputPanel>   
+            
+            <script type="text/javascript">
+            j$(document).ready(function () {
+                j$("#inprogressregistrations").tablesorter({theme: 'green',widthFixed: true, widgets: ['zebra'],headers: {0: { sortInitialOrder: 'desc' }}}).tablesorterPager({container: j$("#pager"),size: 20, updateArrows: true,page: 0});
+            });
+            </script>
+            
+        </apex:form>
+        
+    </body>  
+</apex:page>

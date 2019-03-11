@@ -1,0 +1,111 @@
+<apex:page showChat="false" showheader="false" sidebar="false" controller="CustomerPortalApps" standardStylesheets="false" cache="false">
+    <apex:stylesheet value="{!URLFOR($Resource.customer_portal_styles)}" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+    </script>
+    <!-- <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+    </script>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/> -->
+    <script type="text/javascript">
+    var j$ = jQuery.noConflict();
+    </script>
+    
+    <div class="page-content">
+            <apex:outputPanel layout="none" rendered="{!boolRenderWarningMessage}"> <!-- {!boolRenderWarningMessage} -->
+                <div id="warningmsg">
+                    <div class="warning-box">
+                        <img src="{!URLFOR($Resource.IconClose)}" id="closewarning" style="cursor: pointer;" class="right pad-left-20" />
+                        <div class="pad-right-10"><img src="{!URLFOR($Resource.IconWarning)}" class="left pad-right-10" /> Hmm…it looks like you are not setup to view the Shipboard mini-VSAT Manager. For access, please  &nbsp;<a href="#opencaseship" class="ui-link" data-position-to="window" data-rel="popup" ><strong> contact us  </strong></a>.</div>
+                        <script type="text/javascript">
+                        j$("#closewarning").on("click", function(){
+                            j$("#warningmsg").remove();
+                        });
+                        function hidepopup(){
+                            j$("#opencaseship").popup( "close" );
+                            j$("#warningmsg").remove();
+                        }
+                        function callcreatecase(){
+                            //console.log('j$("textarea[id$=strDescription]").val()' +j$('textarea[id$=strDescription]').val())
+                            callcreatecaseMethod(j$('textarea[id$=strDescription]').val());
+                        }
+                        </script>
+                    </div>
+                </div>
+               
+            </apex:outputPanel>
+
+        <h1>Welcome to myKVH</h1>
+        
+        <div class="box-row no-space">
+            
+            <div class="box">
+                <div class="box-title">
+                    <img src="{!URLFOR($Resource.CustomerPortalIconSupport)}" />
+                    <h2 class="center">Technical Support</h2>
+                </div>
+                <div class="content">
+                    <a href="{!$Page.ReportServiceProductProblemPage}" target="_parent" class="button lower-case">Report a Problem</a>
+                    <a href="{!$Page.SubmitProfessionalRequestPage}" target="_parent" class="button lower-case">Request Professional Services</a>
+                    <a href="{!$Page.RequestInstallationSupportPage}" target="_parent" class="button lower-case">Request Installation Support</a>
+                </div>
+            </div>
+            <!--777{!boolIsShowBehalfButton} {!$User.UserName} ttt {!$User.ContactId} ttt {!$User.Id} -->
+            <div class="box">
+                <div class="box-title">
+                    <img src="{!URLFOR($Resource.CustomerPortalIconAirtime)}" />
+                    <h2 class="center">Product Services</h2>
+                </div>
+                <div class="content">
+                    <apex:outputPanel layout="none" rendered="{!boolRenderPermissionSet}" > 
+                        <a href="{!$Page.ActivationAccountsPage}" target="_top" class="button lower-case">Register and Activate <br />mini-VSAT Broadband<br/> (TracPhone V-series) Satellite Communications Systems</a> <!-- mini&#8209;VSAT Broadband SATCOM Systems -->
+                    </apex:outputPanel>
+                    <a href="{!$Page.Activation_Product_Registration}" target="_parent" class="button lower-case">Register All Other KVH Systems</a>
+                    <apex:outputPanel layout="none" rendered="{!boolIsShowBehalfButton}" >
+                    <a href="{!$Page.Activation_Product_Registration}?onbehalf=true" target="_parent" class="button lower-case">Register All Other KVH Systems on Behalf of Customer</a>
+                    </apex:outputPanel>
+                    <!-- delete per meeting 4/17 
+                    <a href="{!$Page.OrderNewAirtimeServicePage}" target="_parent" class="button lower-case">Add or Order a New Airtime Service</a>
+                    -->
+                    <a href="{!$Page.ChangeExistingAddServicePage}" target="_parent" class="button lower-case">Upgrade or Change<br/> my Existing Airtime Service</a>
+                    <a href="{!$Page.RequestInfoExistingServicePage}" target="_parent" class="button lower-case">Inquire about my Account</a>
+                </div>
+            </div>
+            
+            <apex:outputPanel layout="none" rendered="{!boolRenderShip}">
+                <div class="box">
+                <div class="box-title center">
+                    <img src="{!URLFOR($Resource.CustomerPortalIconMVBManager)}" />
+                    <h2 class="center">Applications</h2>
+                </div>
+                <div class="content">
+                    <a href="../idp/login?app=0sp13000000Gmco" target="_blank" class="button lower-case">
+                        Shipboard Login <br />for mini-VSAT Manager
+                        <span style="font-weight:normal; margin-top:10px; font-size:85%; display:block;">Airtime free on a KVH VSAT Network</span>
+                    </a>
+                    <a href="#" target="_blank" class="button lower-case">Onshore Login<br />for mini-VSAT Manager</a>
+                </div>
+            </div>
+            </apex:outputPanel>
+        </div>
+    </div>
+    <!-- ** remodal popup Start ** -->
+    <apex:form id="frm">
+        <apex:actionFunction name="callcreatecaseMethod" action="{!createcaseMethod}" oncomplete="hidepopup();" reRender="pg">
+            <apex:param name="strDescription" assignTo="{!strDescription}" value=""  />
+        </apex:actionFunction>
+        <div data-role="popup" id="opencaseship" style="top: -200px !important;width: 500px;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+            <div data-role="header" role="banner" class="ui-header ui-bar-inherit" style="padding-bottom: 10px;">
+                <h1 class="ui-title" role="heading" aria-level="1">myKVH Support Case</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <p><b>Subject:</b> Verify my KVH mini-VSAT Manager Permissions</p>
+                <p><b>Description (please provide us with some details): </b> <apex:inputTextarea id="strDescription" value="{!strDescription}" /></p>
+                <div class="center">
+                    <a href="#" class="button ui-link" onclick=" hidepopup();callcreatecase();" data-rel="none">Submit</a>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    <!-- ** remodal popup End ** -->
+    <c:CommunityHomeComponent />
+</apex:page>

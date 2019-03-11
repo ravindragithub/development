@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>e2a email rule list</description>
+    <icon>Ortoo/Ortoo_e2a_icon.png</icon>
+    <label>e2a Email Rules</label>
+    <mobileReady>false</mobileReady>
+    <motif>Custom208: TV Widescreen</motif>
+    <page>EmailServicesFunctionList</page>
+</CustomTab>

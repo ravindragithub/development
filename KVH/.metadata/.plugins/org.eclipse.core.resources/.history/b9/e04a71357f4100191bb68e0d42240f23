@@ -1,0 +1,6 @@
+<apex:page standardController="Prod_Documents__c" recordSetVar="docs" extensions="AWSFileURLGenrationCtrl" action="{!startbatch}" >
+ <apex:pageMessages ></apex:pageMessages>
+ <apex:form >
+     <apex:commandLink action="{!redirectToListview}" value="Go Back"/>
+ </apex:form>
+</apex:page>

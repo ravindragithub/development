@@ -1,0 +1,48 @@
+<apex:page extensions="QuicklinkToolkitCreation" title="Remove Quicklink" standardController="Quick_Link__c" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    <style>
+        .button{
+        background-image : none !important;
+        color : #cc0000 !important;
+        background-color: #fff;
+        padding: 0px 3px;
+        height: 22px;
+        font-size: 11px;
+        line-height: 22px;
+        border: 1px;
+        }
+        
+    </style>
+    <apex:define name="body"> 
+        <apex:sectionHeader subtitle="Remove QuickLink" title="Partner Portal Administration"/>
+        <apex:form id="frm" styleClass="page-content">
+            <apex:pageBlock >
+                <div>
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:pageBlockTable cellspacing="5" style="background: #fff; border-width: 0 0 0px 0;" cellpadding="6" columns="3" value="{!QLs}" var="quick">
+                        <apex:column value="{!Quick.QuickLink_Label__c}"/>
+                        <apex:column value="{!Quick.Display_Order__c}"/>
+                        <apex:column value="{!Quick.Content_Type_s__c}"/>      
+                        <apex:column style="align: center; padding-left: 0px; vertical-align: center;" title=" ">
+                            <apex:commandLink style="text-align: center; padding 2px;" styleClass="button lower-case" action="{!RemoveQL}" value="Remove">
+                                <apex:param assignTo="{!QLid}" value="{!Quick.Id}" name="QLiD"/>
+                            </apex:commandLink>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </div>
+                </apex:pageBlock>
+            <br/>
+                    <div style="padding: 0 20px 0 0;">
+                        <input type="button" style="float: right; padding: 3px;" onclick="returnToTool()" value="Back"/> 
+                    </div>
+            
+            
+        </apex:form>
+        
+    </apex:define>
+    <script>
+    
+    function returnToTool(){
+        location.href = '/apex/QuickLinkLanding';
+    }
+    </script>
+</apex:page>

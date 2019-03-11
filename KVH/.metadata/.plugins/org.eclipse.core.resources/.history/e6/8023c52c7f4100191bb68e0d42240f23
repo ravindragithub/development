@@ -1,0 +1,212 @@
+<apex:page controller="Activation_ThankYou_Controller" sidebar="false" showHeader="false" standardStyleSheets="false">
+    <!-- <!doctype html> -->
+    <html> 
+        <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <title>Online Activation Order - Review Activation Order</title>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+            
+            <!-- Handle jQuery conflicts (e.g. "$") -->
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            function returnPage(){
+                if({!!isAirtimeActivationCase})
+                    window.location.href = '{!$Site.Prefix + "/home/home.jsp"}';
+                else
+                    window.location.href = '/{!strCaseId}';    
+            }
+            </script>
+
+            <style>
+                * {
+                font-family: sans-serif !important;
+                margin: 0;
+                padding: 0;
+                } 
+                .panel{
+                box-shadow: none;
+                }
+                #main {
+                background: white;
+                padding-left: 20%;
+                }
+                #main {
+                float: left;
+                width: 100%;
+                }
+                .button {
+                color: #fff !important;
+                padding: 7px 27px 8px;
+                margin: 15px 0;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                display: -moz-inline-stack;
+                display: inline-block;
+                zoom: 1;
+                _overflow: hidden;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                background: #6699cc;
+                border: 0;
+                text-shadow: none !important;
+                }
+                
+                .pad-bottom {
+                margin-bottom: 20px;
+                }
+                
+                table.collapse-panels th.plan-type {
+                text-align: left;
+                vertical-align: top;
+                background: transparent;
+                }
+                table.collapse-panels th {
+                background: #f3f3f3;
+                text-align: left;
+                font-weight: bold;
+                font-size: 100%;
+                width: 200px;
+                padding: 10px;
+                }
+                table.collapse-panels {
+                width: 100%;
+                margin: 20px auto;
+                border: 1px solid #ddd;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                }
+                table.collapse-panels td.plan-name {
+                background: #ecf5fc;
+                }
+                table.collapse-panels td {
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+                padding: 10px;
+                }
+
+                h3 {
+                font-size: 1.3em;
+                color: #7c7c7c;
+                font-weight: bold;
+                }
+                h1, h2, h3, p {
+                padding-bottom:15px;
+                line-height: normal;
+                }
+                h4 {
+                font-size: 1em;
+                font-family: DINPro-Bold;
+                color: #30445b;
+                }
+                .text-center {
+                text-align: center !important;
+                }
+                
+                #main p {
+                padding-bottom: 10px;
+                }
+                .notes {
+                font-style: italic;
+                font-size: .875em;
+                font-weight: normal;
+                }
+                
+                hr {
+                border: 0;
+                height: 1px;
+                border-bottom: 1px solid #c7c7c7;
+                margin-bottom: 30px;
+                }
+                .pad-top {
+                margin-top: 20px;
+                }
+                .inline {
+                display: inline;
+                }
+            </style>
+        </head>
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                
+                <!-- ** Form tag Start ** -->
+                <apex:form id="theForm">
+                    <!-- ** Top header Start **-->
+                    <c:Activation_Header />
+                    <!-- ** Top header End **-->
+                    
+                    <!-- ** Sidebar Start **-->
+                    <div id="sidebar">
+                        <c:Activation_Status state="{!ActivationStatus}" pageOrderID="{!ActivationOrderId}"/> 
+                    </div>
+                    <!-- ** Sidebar End **-->
+                    
+                    <div id="main">
+                        <apex:outputPanel layout="block" id="wrapper" styleClass="wrapper">
+                            <h1>Thank You!</h1>
+                            <div class="panel">
+                                
+                                <p><strong>Your mini-VSAT Broadband activation request has been <apex:outputPanel rendered="{!!BoolDealerOrNot}" layout="none"> successfully submitted.</apex:outputPanel>
+                                    <apex:outputPanel rendered="{!BoolDealerOrNot}" layout="none"> sent to a customer for approval.</apex:outputPanel>
+                                    </strong></p>
+                                <apex:outputPanel rendered="{!!BoolDealerOrNot}" layout="none">
+                                <p>Your request has been assigned case number <a href="{!$Site.Prefix +'/'+strCaseId}" class="ui-link">{!strCaseNumber}</a> and is being processed. To complete your order, an email will be sent to <a style="color: black;" class="ui-link">{!strEmailId}</a> from the KVH Airtime Services team within two business hours.  If no email is received, please first check your anti-spam software.</p>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!BoolDealerOrNot}" layout="none">
+                                <p>Your request to activate a system on behalf of a customer has been assigned case number <a href="{!$Site.Prefix +'/'+strCaseId}" class="ui-link">{!strCaseNumber}</a> and is being processed. An email will be sent to <a style="color: black;" class="ui-link">{!strEmailId}</a> from the KVH Airtime Services team within two business hours.  If your customer reports that no email was received, please ask them to first check their anti-spam software.</p>
+                                </apex:outputPanel>
+                                <p>To see the status of your order, submit additional information, or inquire about anything pertaining to your order, click directly into your case <a href="{!$Site.Prefix +'/'+strCaseId}" class="ui-link">{!strCaseNumber}</a>, or contact <a href="mailto:satelliteservices@kvh.com" class="ui-link">satelliteservices@kvh.com</a>.</p>
+                                <p class="pad-bottom"><strong>Thank you for choosing KVH!</strong></p>
+                                <br/><br/>
+                                
+                                <table class="collapse-panels">
+                                    <tbody><tr>
+                                        <th colspan="4" class="text-center">
+                                            <h3>KVH Airtime Services Worldwide</h3>
+                                        </th>
+                                        </tr><tr>
+                                        <td>
+                                            <strong>Europe, Middle East &amp; Africa<br/>
+                                                21:30 Sun. – 23:00 Fri. (CET)</strong><br/>
+                                            Tel: +45 45 160 197
+                                        </td>
+                                        <td>
+                                            <strong>North &amp; South America<br/>
+                                                15:30 Sun. – 17:00 Fri. (ET)</strong><br/>
+                                            Tel: +1 401.851.3862
+                                        </td>
+                                        <td>
+                                            <strong>Asia<br/>
+                                                04:30 Mon. – 05:00 Sat. (SGT)</strong><br/>
+                                            Tel: +65 31584084
+                                        </td>
+                                        <td>
+                                            <strong>U.S. &amp; Canada<br/>
+                                                15:30 Sun. – 17:00 Fri. (ET)</strong><br/>
+                                            Tel: +1 866.399.8509<br/>
+                                            (toll-free)<br/>
+                                        </td>
+                                        </tr>
+                                    </tbody></table>
+                                
+                                <div class="button-bar">
+                                    <button class="button right ui-link" type="button" id="finalexit" onclick="returnPage();">Exit Activation Order</button>
+                                </div>
+                                
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                </apex:form>
+            </div>
+        </body>
+    </html>
+</apex:page>

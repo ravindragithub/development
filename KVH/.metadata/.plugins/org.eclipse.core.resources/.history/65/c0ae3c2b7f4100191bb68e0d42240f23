@@ -1,0 +1,161 @@
+<apex:component controller="Act_OpenPort_Component_Ctrl" allowDML="true" id="OpenPort_Id">
+    
+    <apex:attribute name="OpenPortActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}" />
+    <script>
+    function openportValidate(param){
+        var Isvalidparent = false ;
+        var Isvalid;
+        var currentcomp  = document.getElementById(param);
+        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+        j$(currentcomp).find(".productselectedclass").each(function(){
+            if(j$(this).val() == 'Selected'){
+                Isvalidparent = true;
+            }
+        });
+        
+        if(j$(currentcomp).find("[Id$='Pilot_SIM_Card_Number__c']").length >0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("[Id$='Pilot_SIM_Card_Number__c']").valid();
+            else
+                Isvalid = j$(currentcomp).find("[Id$='Pilot_SIM_Card_Number__c']").valid() && Isvalid;
+        }
+         if(j$(currentcomp).find("[Id$='Pilot_IMEI_Number__c']").length >0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("[Id$='Pilot_IMEI_Number__c']").valid();
+            else
+                Isvalid = j$(currentcomp).find("[Id$='Pilot_IMEI_Number__c']").valid() && Isvalid;
+        }
+        if(!Isvalid){
+            var errordiv = currenttabtoshowerror();
+            j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+            var html = "";
+            if(j$(currentcomp).find("[Id$='Pilot_SIM_Card_Number__c']").hasClass("error") && (j$(currentcomp).find("[Id$='Pilot_SIM_Card_Number__c']").valid() == false)){
+                html += "<li>Select Pilot SIM Card Number</li>";
+            }
+            if(j$(currentcomp).find("[Id$='Pilot_IMEI_Number__c']").hasClass("error") && (j$(currentcomp).find("[Id$='Pilot_IMEI_Number__c']").valid() == false)){
+                html += "<li>Select Pilot IMEI Number</li>";
+            }
+            j$(currentcomp).find('.error-box').find('.bullets').html(html);
+            j$(currentcomp).find('.error-box').show();
+        }
+        else if(!Isvalidparent){
+            var msg = 'Select Iridium OpenPort Backup Plan';
+            showgenericpopup(msg, '25%');
+        }
+        
+        if(Isvalidparent && Isvalid){
+            showLoadingDiv();
+            updateActivationServiceopenportbackup();
+        }
+    }
+    
+    function openportClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmopenport]');
+        var instmodel = j$('[data-remodal-id=clearconfirmopenport]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmopenport").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmopenport]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmopenport]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    </script>
+    
+    <apex:actionFunction name="updateServiceMethodopenport" action="{!updateActivationServiceopenport}" oncomplete="hideLoadingDiv();" reRender="openportId, openportMainIdButton">
+        <apex:param name="param1" assignTo="{!objActivationService.Iridium_OpenPort_Product__c}" value="" />
+        <apex:param name="param2" assignTo="{!objActivationService.Iridium_OpenPort_Selected__c}" value="false" />
+    </apex:actionFunction> 
+    
+    <apex:actionFunction name="updateActivationServiceopenportbackup" action="{!updateActivationServiceopenport}" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="openportId, openportMainIdButton">
+        <apex:param name="param2" assignTo="{!objActivationService.Iridium_OpenPort_Selected__c}" value="true" />
+    </apex:actionFunction> 
+    
+    
+    
+    <apex:outputPanel id="openportMainId">
+        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                Iridium OpenPort Backup
+                <apex:outputPanel id="openportMainIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!objActivationService.Iridium_OpenPort_Selected__c == false}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" rendered="{!!objActivationService.Iridium_OpenPort_Selected__c}" >
+                            Add
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!objActivationService.Iridium_OpenPort_Selected__c == true}">
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link" rendered="{!objActivationService.Iridium_OpenPort_Selected__c}" >
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <p class="collapse-p">Small and easy to install, the Iridium Pilot is an economical complementary system for mini-VSAT Broadband SATCOM systems, providing pole-to-pole global coverage for data and voice. Available as a secondary system to any mini-VSAT Broadband system.</p>
+                
+            </h2> 
+            <div aria-hidden="true">
+                <apex:outputPanel id="openportId">
+                    <div class="panel-contents"> 
+                        <!--** div contain error msg contents -Start **-->
+                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                        </div>
+                        <!--** div contain error msg contents -End **-->
+                        <div class="two-col left">
+                            <p><label>Pilot SIM Card Number:</label>
+                                <apex:inputText id="Pilot_SIM_Card_Number__c" value="{!objActivationService.Pilot_SIM_Card_Number__c}" html-placeholder="898816..." styleClass="requiredRedMarkFld pad-bottom" html-data-role="none" />
+                            </p>
+                            <p><label>Pilot IMEI Number:</label>
+                                <apex:inputText id="Pilot_IMEI_Number__c" value="{!objActivationService.Pilot_IMEI_Number__c}" html-placeholder="300..." styleClass="requiredRedMarkFld pad-bottom" html-data-role="none" />
+                            </p>
+                        </div>
+                        <div class="two-col right">
+                            <p><label>Pilot Firmware Version:</label>
+                                <apex:inputText value="{!objActivationService.Pilot_Firmware_Version__c}" styleClass="pad-bottom" html-data-role="none" />
+                            </p>
+                        </div>
+                        <c:Activation_RatePlanTable className="collapse-panels" currentTab="openport_plans" SelectedProductName="{!objActivationService.Iridium_OpenPort_Product__c}" selectedProductBundle="Iridium OpenPort Backup" selectedRatePlan="{!strFeatureIds}" planType="Iridium OpenPort Backup"  activationServices="{!objActivationService}" planTypepopupId="Iridium_OpenPort"/> 
+                        
+                        <div style="width:40%; text-align:right;" class="right">
+                            <apex:commandLink styleClass="pad-right ui-link" id="openportclearBtn" value="Clear Form" onclick="openportClearValidate('{!$Component.openportId}'); return false;">
+                            </apex:commandLink>
+                            <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="openportBackBtn" value="Save" onclick="openportValidate('{!$Component.openportId}'); return false;">
+                                <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+                            </apex:commandLink>
+                        </div>
+                        
+                        <div class="clear"></div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:outputPanel>
+    <!-- /popup contents --> 
+    <div data-role="popup" id="openport-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">Iridium OpenPort Terms</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <ul class="pad-left terms">
+                <li>Available as backup to mini-VSAT Broadband service only.</li>
+                <li>Calls to other satellite networks are $9.99/minute.</li>
+                <li>Incoming calls are not charged to vessel.</li>
+                <li>In order to operate within Russia, Iridium devices must be registered with Iridium’s Russian affiliate (Iridium Communications OOO).&nbsp; Users may register their Iridium SIM card at <a href="http://www.iridium-russia.com" target="_blank" class="ui-link">www.iridium-russia.com</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /popup contents --> 
+    
+     <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmopenport" id="clearconfirmopenport"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmopenport"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!clearActivationService}" onclick="showLoadingDiv();" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="openportId, openportMainIdButton">
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+</apex:component>

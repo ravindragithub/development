@@ -1,0 +1,866 @@
+<apex:page controller="ReplacementAsset" title="Replacement Asset" showHeader="false" sideBar="false" tabStyle="Contact" id="pg" action="{!SubscriptionMove}">
+    
+    <apex:includeScript value="{!$Resource.AssetWindowJquery}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/jquery-1.11.1.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/jquery.dataTables.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/dataTables.jqueryui.js')}"/>
+    
+    
+    <apex:stylesheet value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowCSS/dataTables.jqueryui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowCSS/jquery-ui.css')}"/>
+    
+    
+    <!-- <script>
+$(document).ready(function() {
+    $('#example').dataTable();
+    $('[id$=brand2]').attr("disabled","disabled");
+} );
+</script>--> 
+    
+    <script>
+    function ValidateInputFunction(){
+        var len = {min:3};
+        var input = document.getElementById('pg:frm:brand2');
+        if(input.value.length>=len.min) {
+            SearchAsset(input.value);
+        } else {
+            alert("Please enter atleast " +len.min+ " numbers");
+            input.focus();
+            return false;
+        }
+    }
+    function DisablePartener(e){
+        if($(e).val() != "Service Partner"){
+            $(".sp").attr("disabled","disabled");
+            $(".sp").closest("span").find("a").hide();
+        }else{
+            $(".sp").removeAttr("disabled");
+            $(".sp").closest("span").find("a").show();
+        }
+    }
+    </script>
+    <script>
+    var changeAssestText;
+    var myAssetID;
+    var oldAssetID;
+    var oldAssetName;
+    sforce.connection.sessionId = '{!$Api.Session_ID}';
+    function callCheckBox(e,myStr,nodePlace,assetName){
+        changeAssestText = $(e).closest('span').find('em > a');
+        nodePlace = 1;
+        oldAssetID = myStr;
+        oldAssetName = assetName;
+        //ShowDialog(true);
+        showOnlyButtons(true,oldAssetID,oldAssetName);
+    }
+    
+    function generate_table() {
+        // get the reference for the body
+        var body = document.getElementsByTagName("body")[0];
+        
+        // creates a <table> element and a <tbody> element
+        var tbl = document.createElement("table");
+        var tblBody = document.createElement("tbody");
+        
+        // creating all cells
+        for (var i = 0; i < 2; i++) {
+            // creates a table row
+            var row = document.createElement("tr");
+            
+            for (var j = 0; j < 2; j++) {
+                // Create a <td> element and a text node, make the text
+                // node the contents of the <td>, and put the <td> at
+                // the end of the table row
+                var cell = document.createElement("td");
+                var cellText = document.createTextNode("cell in row "+i+", column "+j);
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+            }
+            
+            // add the row to the end of the table body
+            tblBody.appendChild(row);
+        }
+        
+        // put the <tbody> in the <table>
+        tbl.appendChild(tblBody);
+        // appends <table> into <body>
+        body.appendChild(tbl);
+        // sets the border attribute of tbl to 2;
+        tbl.setAttribute("border", "2");
+    }
+    
+    function revert(e){
+        //var replacedAsset = $(e).closest('tr').find('td:eq(2)').text();
+        var replacedAsset = $(".ReplacedAsset").text();
+        //var replacementAsset = $(e).closest('tr').find('td:eq(4)').text();
+        var replacementAsset = $(".ReplacemetAsset").text();
+        
+        //console.log(replacedAsset +' : '+replacementAsset);
+        
+        $( ".treeNode > span" ).each(function( index ) {
+            if($(this).find('em').find('a').text() == replacementAsset){
+                $(this).find('em').find('a').text(replacedAsset);
+                //$(this).find('input').attr('disabled', false);
+                
+                $(this).find('span[id $= "seqNo"]').text((parseInt($(this).find('span[id $= "seqNo"]').text().slice(0,-1).trim()) - 1) + " ,");
+                
+                revertFunction(replacedAsset);
+            }
+        });
+        
+        $(".treeNode > span > input").removeAttr('disabled');
+    }
+    </script>
+    <style type="text/css">
+        .web_dialog_overlay
+        {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: #000000;
+        opacity: .15;
+        filter: alpha(opacity=15);
+        -moz-opacity: .15;
+        z-index: 101;
+        display: none;
+        }
+        .web_dialog
+        {
+        display: none;
+        position: fixed;
+        min-width: 650px;
+        max-width: 700px;
+        width:50%;
+        height: auto;
+        top: 0%;
+        left: 25%;
+        margin:auto;
+        background-color: #F8F8F8;
+        border: 2px solid #62B5D7;
+        padding: 0px;
+        z-index: 102;
+        font-family: Verdana;
+        font-size: 10pt;
+        }
+        .web_dialog_title
+        {
+        border-bottom: solid 2px #62B5D7;
+        background-color: #62B5D7;
+        padding: 4px;
+        color: White;
+        font-weight:bold;
+        }
+        .web_dialog_title a
+        {
+        color: White;
+        text-decoration: none;
+        }
+        .align_right
+        {
+        text-align: right;
+        }
+        .tableContainer
+        {
+        height:500px; 
+        width: 100%;
+        overflow: auto;
+        } 
+    </style>
+    <!--<style>
+    .web_dialog
+    {
+    display: none;
+    position: fixed;
+    width: 380px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -100px;
+    background-color: #ffffff;
+    border: 2px solid #336699;
+    padding: 0px;
+    z-index: 102;
+    font-family: Verdana;
+    font-size: 10pt;
+    }
+    </style>-->
+    <script type="text/javascript">
+    var dataSet;
+    $(document).ready(function (){
+        $("#btnClose").click(function (e){
+            HideDialog();
+            e.preventDefault();
+        });
+        
+        $("#btnSubmit").click(function (e){
+            if($('[id$=brand2]').val().length > 0){
+                var isDuplicate = false;
+                $( ".treeNode > span" ).each(function( index ) {
+                    if($(this).find('em').find('a').text() == $('[id$=brand2]').val()){
+                        isDuplicate = true;
+                    }
+                });
+                
+                if(isDuplicate){
+                    $('[id$=brand2]').val('');
+                    alert('Asset already selected.');
+                }
+                else{
+                    $(changeAssestText).text($('[id$=brand2]').val());
+                    $(changeAssestText).closest('span').find('input').attr('disabled', true);
+                    
+                    if($(changeAssestText).closest('span').find('span[id $= "seqNo"]').length > 0
+                       && $(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().length > 0
+                       && $.isNumeric($(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().slice(0,-1).trim()) ){
+                        
+                        $(changeAssestText).closest('span').find('span[id $= "seqNo"]').text((parseInt($(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().slice(0,-1).trim()) + 1) + " ,");
+                    }
+                    
+                    HideDialog();
+                    e.preventDefault();
+                    passSelectedID($('[id$=brand2]').val(),oldAssetName,oldAssetID);
+                    SelectingTable();
+                }
+            }
+            else{
+                $('#modalValidtor').show();
+            }
+        });
+    });
+    
+    function addAsset(e,selectedNewAssetID,assetType){
+        if($(e).text().length > 0){
+            $('#newAssetdiv').css('display','none');
+            var isDuplicate = false;
+            $( ".treeNode > span" ).each(function( index ) {
+                if($(this).find('em').find('a').text() == $(e).text()){
+                    isDuplicate = true;
+                }
+            });
+            
+            if(isDuplicate){
+                $('#newAssetdiv').show();
+                alert('Asset already selected.');
+            }
+            else{
+                if(assetType!="childAsset"){
+                    $(changeAssestText).text($(e).text());
+                }
+                $(changeAssestText).closest('span').find('input').attr('disabled', true);
+                
+                //$(".treeNode").find("span").find("input").attr('disabled', true);
+                $(".treeNode > span > input").attr('disabled', true);
+                
+                if($(changeAssestText).closest('span').find('span[id $= "seqNo"]').length > 0
+                   && $(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().length > 0
+                   && $.isNumeric($(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().slice(0,-1).trim()) ){
+                    
+                    //$(changeAssestText).closest('span').find('span[id $= "seqNo"]').text((parseInt($(changeAssestText).closest('span').find('span[id $= "seqNo"]').text().slice(0,-1).trim()) + 1) + " ,");
+                }
+                
+                HideDialog();
+                //e.preventDefault();
+                passSelectedID($(e).text(),oldAssetName,oldAssetID,selectedNewAssetID,assetType);
+                SelectingTable();
+            }
+        }
+        else{
+            $('#modalValidtor').show();
+        }
+    }
+    dataSet = [['00132448','0010991225B3','Prodct1','0010991236B4','X']];
+    
+    function SelectingTable(){
+        $('#demo').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table><div style="margin-left: 37%;"><input type="submit" value="Replace More" style="text-align: center;"/><input type="submit" value="Submit Changes" style="text-align: center;"/><input type="submit" value="Cancel Transaction" /></div>' );
+        
+        $('#example').dataTable( {
+            "data": dataSet,
+            "columns": [
+                { "title": "Case" },
+                { "title": "Replaced Asset" },
+                { "title": "Product" },
+                { "title": "Replacement Asset", "class": "center" },
+                { "title": "Product", "class": "center" }
+            ]
+        } );
+    }
+    
+    function ShowDialog(modal)
+    { 
+        $('#modalValidtor').hide();
+        $('[id$=brand2]').val('');
+        $("#overlay").show();
+        $("#dialog").fadeIn(300);
+        if (modal)
+        {
+            $("#overlay").unbind("click");
+        }
+        else
+        {
+            $("#overlay").click(function (e)
+                                {
+                                    HideDialog();
+                                });
+        }
+    }
+    function HideDialog(){
+        $("#overlay").hide();
+        $("#dialog").fadeOut(300);
+    } 
+    
+    function CancelTransaction(){
+        var final = confirm("Are you sure you want to return to the case with no further transactions?");
+        if (final == true) {
+            var CurrentPageID = '{!CaseID}';
+            window.location.href = '/'+CurrentPageID;
+        }
+    }
+    
+    
+    function CancelInitialStage(){
+        var final = confirm("Are you sure you want to cancel?");
+        if (final == true) {
+            var CurrentPageID = '{!CaseID}';
+            window.location.href = '/'+CurrentPageID;
+        }
+    }
+    
+    function oncompleteCaseReturn(){
+        var CurrentPageID = '{!CaseID}';
+        window.location.href = '/'+CurrentPageID;
+    }
+    
+    function validateSearchAssets(){
+        
+        if( $("#tsa").find("span[id='spn2']").text().length > 0 && parseInt( $("#tsa").find("span[id='spn2']").text() ) > 20 ){
+            
+            $("#tsa").css("color", "red");
+            
+            $("#tsa").find("span[id='spn1']").text("Total Search Results > than 20. Please refine your search criteria");
+            $("#tsa").find("span[id='spn2']").text("");
+        }
+    }
+    
+    </script>
+    <apex:form id="frm">
+        
+        <apex:actionFunction name="passSelectedID" action="{!passSelectedID}" reRender="Selected,replacedAssests" status="counterStatus">
+            <apex:param name="AssetName" value="" assignTo="{!assetNameFromVF}"/>
+            <apex:param name="OldAssetID" value="" assignTo="{!oldAssetIDFromVF}"/>
+            <apex:param name="OldAssetName" value="" assignTo="{!oldAssetNameFromVF}"/>
+            <apex:param name="NewAssetID" value="" assignTo="{!assetID}"/>
+            <apex:param name="assetTypes" value="" assignTo="{!assetTypes}"/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="callFinalReplacementAssetSubmission" action="{!FinalReplacement}" reRender="frm" status="counterStatus" ></apex:actionFunction> <!-- oncomplete="oncompleteCaseReturn(); return false;" oncomplete="window.location.href=window.location.href" -->
+        
+        <apex:actionFunction name="SearchAsset" action="{!SearchAsset}" rerender="thisPBT,thisReplacePBT" status="popupReplaceStatus">
+            <apex:param name="assetsearch" value="" assignTo="{!searchAssetName}"/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="SearchAssetReplace" action="{!SearchAsset}" rerender="thisPBT,thisReplacePBT" status="popupStatus">
+            <apex:param name="assetsearch" value="" assignTo="{!searchAssetName}"/>
+        </apex:actionFunction>
+        
+        
+        
+        <apex:actionFunction name="revertFunction" action="{!replacingAsset}" reRender="Selected" status="counterStatus">
+            <apex:param name="RevertAsset" value="" assignTo="{!revertAsset}"/>
+        </apex:actionFunction>
+        
+        
+        <apex:outputPanel id="treeView" rendered="{!!isShowSubscriptions}">
+            <apex:outputPanel >
+                <apex:pageBlock title="Asset Hierarchy">
+                    
+                    <span style="color: green"><b>Select the Asset to be replaced or removed. If adding an asset, select the asset that will be the parent to the asset added.</b></span><br/><br/>
+                    
+                    <div class="treeNode">
+                        <apex:repeat value="{!ObjectStructure}" var="pos" >
+                            <apex:repeat value="{!pos.levelFlag}" var="flag" first="0">
+                                <apex:image url="/img/tree/empty.gif" height="16" width="20" rendered="{!IF(flag,false,true)}"/>
+                                <apex:image url="/s.gif" alt="" width="3" height="16" rendered="{!IF(flag,true,false)}"/>
+                                <apex:image url="/img/tree/chain.gif" height="16" width="20" rendered="{!IF(flag,true,false)}"/>
+                            </apex:repeat>
+                            
+                            <span height="16" v="top">
+                                
+                                <apex:outputText rendered="{!IF(pos.nodeType=='start',true,false)}">
+                                    <apex:image id="tree_start" url="/img/tree/minusStart.gif" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                                    <apex:image id="Icon_start" url="/img/icon/custom51_100/globe16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                                    <apex:image id="Icon_start_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                                </apex:outputText>
+                                <apex:outputText rendered="{!IF(OR(pos.nodeType=='parent',pos.nodeType=='parent_end'),true,false)}">
+                                    <apex:image id="Tree_parent" url="/img/tree/minus.gif" rendered="{!IF(pos.nodeType=='parent',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                                    <apex:image id="Tree_parent_end" url="/img/tree/minusEnd.gif" rendered="{!IF(pos.nodeType=='parent_end',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/> 
+                                    <apex:image id="Icon_parent" url="/img/icon/factory16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                                    <apex:image id="Icon_parent_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                                </apex:outputText>
+                                <apex:outputText rendered="{!IF(OR(pos.nodeType=='child',pos.nodeType=='child_end'),true,false)}">
+                                    <apex:image id="Tree_child" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='child',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                                    <apex:image id="Tree_child_current" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='child_end',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                                    <apex:image id="Icon_child" url="/img/icon/desk16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/> 
+                                    <apex:image id="Icon_child_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                                </apex:outputText>
+                                <apex:outputText rendered="{!IF(pos.nodeType=='end',true,false)}">
+                                    <apex:image id="Tree_end" url="/img/tree/nodeEnd.gif" height="16" width="20"/>&nbsp;
+                                    <apex:image id="Icon_end" url="/img/icon/desk16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                                    <apex:image id="Icon_end_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                                </apex:outputText>
+                                <!-- Change Below -->
+                                <!-- Changed for Revision 1 and 2 "Assets" -->
+                                <!-- Display the sequence number first (if there is one!) -->
+                                
+                                <input type="radio" name="selectRadio" id="radio" onchange="callCheckBox(this,'{!pos.asset.id}','{!pos.nodeType}','{!pos.asset.Name}'); return false;" value="{!pos.asset.id}"/> 
+                                
+                                <apex:outputText id="seqNo" style="{!IF(pos.currentNode,'font-weight: bold;','')}" value="{!pos.asset.Sequence_No__c} ," rendered="{!IF(pos.asset.Sequence_No__c != '', true, false)}"/>
+                                <!-- Display the link to the Asset detail page next... -->
+                                <em><apex:outputLink value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!pos.asset.id}','{!pos.asset.Name}', false)" rendered="{!NOT(ISNULL(pos.asset.id))}">{!pos.asset.name}</apex:outputLink></em> 
+                                <!-- <em><apex:outputLink value="/{!pos.asset.id}" style="{!IF(pos.currentNode,'font-weight: bold;','')}" styleClass="columnHeadActiveBlack" target="_top">{!pos.asset.name}</apex:outputLink></em>-->
+                                <!-- Display the Item Description -->
+                                <apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", {!pos.asset.Item_Description__c}" rendered="{!IF(pos.asset.Item_Description__c != '', true, false)}"/>
+                                <!-- Display installation date if there is one... -->
+                                <apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Installed {0,date,short}" rendered="{!IF(NOT(ISBLANK(pos.asset.InstallDate)), true, false)}">
+                                    <apex:param value="{!pos.asset.InstallDate}"/>
+                                </apex:outputText>
+                                <!-- ***OR*** indicate that the field is missing -->
+                                <mark><apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Installation date *UNKNOWN*" rendered="{!IF(ISBLANK(pos.asset.InstallDate), true, false)}"/></mark>
+                                
+                                <!-- Display the Date removed if there is one... -->
+                                <mark><apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Removed {0,date,short}" rendered="{!IF(NOT(ISBLANK(pos.asset.Date_Removed__c)), true, false)}">
+                                    <apex:param value="{!pos.asset.Date_Removed__c}"/>
+                                    
+                                    </apex:outputText></mark>
+                                
+                                <!-- Stop -->
+                            </span>
+                            <div> </div>
+                            <apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),false,true)}">
+                                <div id='{!pos.nodeId}'></div>
+                            </apex:outputText>
+                            <apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),true,false)}">
+                                <div id='{!pos.nodeId}'><apex:image url="/s.gif" alt="" width="1" height="1"/></div>
+                            </apex:outputText>
+                            
+                            <apex:repeat value="{!pos.closeFlag}" var="close">
+                            </apex:repeat> 
+                        </apex:repeat>
+                        <br/><br/><br/>
+                    </div>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- <div id="output"></div> -->
+        
+        <script>
+        var assetSubmission;
+        $(document).ready(function(){
+            $("#btnLogon").click(function(e){
+                $('#showButtons').css('display','none');
+                return false;
+            });
+            
+            $("#newassetlogon").click(function(e){
+                $("#overlay").hide();
+                $('#newAssetdiv').css('display','none');
+                return false;
+            });
+            
+            $("#replaceAsset").click(function(e){
+                assetSubmission = 'replaceAsset';
+                ShowDialog(true);
+                $('#showButtons').css('display','none');
+                return false;
+            });
+            
+            $("#newAsset").click(function(e){
+                assetSubmission = 'newAsset';
+                $("#overlay").show();
+                $("#newAssetdiv").fadeIn(300);
+                $('#showButtons').css('display','none');
+                return false;
+            });
+            
+            $("#removieAsset").click(function(e){
+                var r = confirm("Are you sure want to remove Asset?");
+                if (r == true) {
+                    removeasset(oldAssetID);
+                }
+                return false;
+            });
+        });
+        
+        function showOnlyButtons(modal,assetID,assetName){
+            $("#showButtons").css({ "top": "100px", "left": "400px" });
+            $("#showButtons").show();
+            $("#showButtons").fadeIn(300);
+            $("#overlay").unbind("click");
+            var value = $(this).attr( 'href' );
+            $("p").css({"background-color": "#F8F8F8", "font-size": "100%", "text-align" : "center"}).text("Asset Name: "+assetName);
+        }
+        
+        function ValidateAddAssetFunction(){
+            var len = {min:3};
+            var input = document.getElementById('pg:frm:brandReplace');
+            if(input.value.length>=len.min) {
+                SearchAsset(input.value);
+            } else {
+                alert("Please enter atleast " +len.min+ " numbers");
+                input.focus();
+                return false;
+            }
+        }
+        function callAssetFunction(){
+            var len = {min:3};
+            var input = document.getElementById('pg:frm:brand2');
+            if(input.value.length>=len.min) {
+                SearchAssetReplace(input.value);
+            } else {
+                alert("Please enter atleast " +len.min+ " numbers");
+                input.focus();
+                return false;
+            }
+        }
+        
+        function FinalSubmission(){
+            if($(".rb").val() == "Service Partner" && $(".sp").val().trim() < 1){
+                alert("Please select Service Partner.");
+                return null;
+            }
+            if(assetSubmission == 'replaceAsset'){
+                r = confirm("Are you sure you want to replace the Asset?");
+            }
+            
+            if(assetSubmission == 'newAsset'){
+                r = confirm("Are you sure you want to add this asset?");
+            }
+            
+            if (r == true) {
+                callFinalReplacementAssetSubmission();
+            }
+        }
+        
+        
+        </script>
+        
+        <!-- Initiall Block Loading to process -->
+        
+        <apex:actionFunction name="removeasset" action="{!removeAsset}" rerender="frm" status="counterStatus" oncomplete="window.location.reload(true);">
+            <apex:param name="firstParam" value="" />
+        </apex:actionFunction>
+        
+        <div id="showButtons" class="web_dialog">
+            <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td class="web_dialog_title">Replace / Remove / Add an Asset </td>
+                    <td class="web_dialog_title align_right">
+                        <a href="#" id="btnLogon">Close</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="ex"></p>
+                        <div>
+                            <button class='yui3-button success' id="replaceAsset" style="margin-left: 25%;">Replace Asset</button>
+                            <button class='yui3-button success' id="removieAsset">Remove an Asset</button>
+                            <button class='yui3-button success' id="newAsset">Add an Asset</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- New Asset -->
+        
+        
+        
+        <div id="newAssetdiv" class="web_dialog">
+            <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td class="web_dialog_title">Asset to be Added</td>
+                    <td class="web_dialog_title align_right">
+                        <a href="#" id="newassetlogon">Close</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: inline;float: left;">
+                            <b>Search for Asset:</b>
+                        </div>
+                        
+                        <div id="brands" style="display: inline;float: left;margin-left: 4px;">
+                            <apex:inputText id="brandReplace" value="{!searchAssetName}"/>
+                        </div>
+                        <div style="display: inline;float: left;margin-left: 30px;">
+                            <apex:commandButton value="Search Asset" onclick="ValidateAddAssetFunction(); return false;"/>
+                            <apex:commandButton value="Clear Search" action="{!ClearAsset}" rerender="thisReplacePBT" status="popupReplaceStatus"/>
+                            <apex:actionStatus id="popupReplaceStatus" >
+                                <apex:facet name="start" >
+                                    <img src="/img/loading.gif"/> 
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </div>
+                        <!--<div id="modalValidtor" style="display:none;color: red;font-style: italic;">Please enter Asset</div>-->
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <apex:pageBlock id="thisReplacePBT">
+                            <b id="tsa"> <span id="spn1">TOTAL SEARCH ASSETS: </span><span id="spn2">{!totalCount}</span></b>
+                            <apex:outputPanel styleClass="tableContainer" layout="block" style="height:400px;">
+                                <apex:pageBlockTable value="{!searchAssets}" var="show">
+                                    <apex:column headerValue="Asset Name">
+                                        <apex:commandLink value="{!show.Name}" onClick="addAsset(this,'{!show.id}','childAsset'); return false;" rerender="thisPBT">
+                                            <apex:param name="ID" value="{!show.id}" assignTo="{!assetID}"/>
+                                        </apex:commandLink>
+                                    </apex:column>
+                                    <apex:column value="{!show.Product2.Name}" headerValue="Product Name"/>
+                                    <apex:column value="{!show.SerialNumber}" headerValue="Serial Number"/>
+                                    <apex:column value="{!show.InstallDate}" headerValue="Install Date"/>
+                                    <apex:column value="{!show.Account.Name}" headerValue="Account Name"/>
+                                    <apex:column value="{!show.Contact.Name}" headerValue="Contact Name"/>
+                                    <apex:column value="{!show.Date_Removed__c}" headerValue="Date Removed"/>
+                                </apex:pageBlockTable>
+                            </apex:outputPanel>
+                        </apex:pageBlock>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        
+        <!-- Replace Asset ---->
+        
+        
+        
+        <div id="overlay" class="web_dialog_overlay"></div>
+        
+        <div id="dialog" class="web_dialog" >
+            <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td class="web_dialog_title">Replace Asset</td>
+                    <td class="web_dialog_title align_right">
+                        <a href="#" id="btnClose">Close</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: inline;float: left;">
+                            <b>Search for Replacement Asset:</b>
+                        </div>
+                        
+                        <div id="brands" style="display: inline;float: left;margin-left: 4px;">
+                            <apex:inputText id="brand2" value="{!searchAssetName}"/>
+                        </div>
+                        <div style="display: inline;float: left;margin-left: 30px;">
+                            <apex:commandButton value="Search Asset" onclick="callAssetFunction(); return false;"/>
+                            <apex:commandButton value="Clear Search" action="{!ClearAsset}" rerender="thisPBT" status="popupStatus"/>
+                            <apex:actionStatus id="popupStatus" >
+                                <apex:facet name="start" >
+                                    <img src="/img/loading.gif" /> 
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </div>
+                        <!--<div id="modalValidtor" style="display:none;color: red;font-style: italic;">Please enter Asset</div>-->
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <apex:pageBlock id="thisPBT">
+                            <b id="tsa"> <span id="spn1">TOTAL SEARCH ASSETS: </span><span id="spn2">{!totalCount}</span></b>
+                            <apex:outputPanel styleClass="tableContainer" layout="block" style="height:400px;">
+                                <apex:pageBlockTable value="{!searchAssets}" var="show">
+                                    <apex:column headerValue="Asset Name">
+                                        <apex:commandLink value="{!show.Name}" onClick="addAsset(this,'{!show.id}','replaceAsset'); return false;" rerender="thisPBT">
+                                            <apex:param name="ID" value="{!show.id}" assignTo="{!assetID}"/>
+                                        </apex:commandLink>
+                                    </apex:column>
+                                    <apex:column value="{!show.Product2.Name}" headerValue="Product Name"/>
+                                    <apex:column value="{!show.SerialNumber}" headerValue="Serial Number"/>
+                                    <apex:column value="{!show.InstallDate}" headerValue="Install Date"/>
+                                    <apex:column value="{!show.Account.Name}" headerValue="Account Name"/>
+                                    <apex:column value="{!show.Contact.Name}" headerValue="Contact Name"/>
+                                    <apex:column value="{!show.Date_Removed__c}" headerValue="Date Removed"/>
+                                </apex:pageBlockTable>
+                            </apex:outputPanel>
+                            <script>
+                            validateSearchAssets();
+                            </script>
+                        </apex:pageBlock>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <apex:outputPanel id="Selected">
+            <apex:pageBlock rendered="{!AND(assetsReplaced,!isShowSubscriptions)}" title="Case Asset Moves">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageBlockTable value="{!caseAssets}" var="CA">
+                    <apex:column value="{!CA.Asset_Being_Removed__c}"/>
+                    <apex:column value="{!CA.Asset_Being_Removed_KVH_P_N__c}"/>
+                    <apex:column value="{!CA.Asset_Being_Installed__c}"/>
+                    <apex:column value="{!CA.Asset_Installed_KVH_P_N__c}"/>
+                </apex:pageBlockTable>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Return to Case" onclick="CancelTransaction(); return false;"/>
+                    <apex:commandButton value="Update Subscriptions" action="{!SubscriptionMove}" reRender="frm" status="counterStatus" />
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            
+            <apex:pageBlock rendered="{!Initial}" title="{!headerTitle}" id="RAD">
+                <apex:pageMessages ></apex:pageMessages>
+                <!-- <apex:pageBlockTable value="{!replacements}" var="RA">
+                <apex:column value="{!RA.CaseName}" headerValue="CaseName"/>
+                <apex:column value="{!RA.caseAssetName}" headerValue="Assets Account"/>
+                <apex:column value="{!RA.ReplacedAsset}" headerValue="Replaced Asset"/>
+                <apex:column value="{!RA.ReplacedProduct}" headerValue="Replaced Product"/>
+                <apex:column value="{!RA.ReplacemetAsset}" headerValue="Replacemet Asset"/>
+                <apex:column value="{!RA.ReplacementProduct}" headerValue="Replacement Product"/>
+                <apex:column headerValue="Revert">
+                <apex:commandLink value="Reverse Asset Move" onclick="revert(this); return false;" rerender="Selected"/>
+                </apex:column>
+                </apex:pageBlockTable>-->
+                <apex:pageblocksection columns="2" id="onlyAsset">
+                    <apex:pageBlockSection >
+                        <apex:outputText value="{!replacements[0].CaseName}" label="CaseName"/>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection >
+                        <apex:outputText value="{!replacements[0].caseAssetName}" label="Assets Account"/>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageblocksection title="{!leftTitle}" columns="1">
+                        <apex:outputText styleClass="ReplacedAsset" value="{!replacements[0].ReplacedAsset}" label="{!leftType} Asset"/>
+                        <apex:outputText value="{!replacements[0].ReplacedProduct}" label="{!leftType} Product"/>
+                    </apex:pageblocksection>
+                    <apex:pageblocksection title="{!rightTitle}" columns="1">
+                        <apex:outputText styleClass="ReplacemetAsset" value="{!replacements[0].ReplacemetAsset}" label="{!rightType} Asset"/>
+                        <apex:outputText value="{!replacements[0].ReplacementProduct}" label="{!rightType} Product"/>
+                    </apex:pageblocksection>
+                    <apex:pageblocksection title="Replaced Asset Subscriptions" columns="1">
+                        <apex:pageBlockTable value="{!replacements[0].OldSubscriptionNames}" var="OSN" id="OSNTable" >
+                            <apex:column headerValue="Subscription"><a href="/{!OSN}">{!OSN.Name}</a></apex:column>
+                            <apex:column headerValue="Asset" value="{!OSN.Asset__c}" />
+                            <apex:column headerValue="Product Name" value="{!OSN.SBQQ__Product__r.Name}" />
+                            <apex:column headerValue="Contract" value="{!OSN.SBQQ__ContractNumber__c}" />
+                            <apex:column headerValue="Account Name" value="{!OSN.SBQQ__Account__r.Name}" />
+                            <apex:column headerValue="Start Date" value="{!OSN.SBQQ__StartDate__c}" />
+                            <apex:column headerValue="End Date" value="{!OSN.SBQQ__EndDate__c}" />
+                        </apex:pageBlockTable>
+                    </apex:pageblocksection>
+                    <apex:pageblocksection title="Replacement Asset Subscriptions" columns="1">
+                        <apex:pageBlockTable value="{!replacements[0].NewSubscriptionNames}" var="NSN" id="NSNTable">
+                            <apex:column headerValue="Subscription"><a href="/{!NSN}">{!NSN.Name}</a></apex:column>
+                            <apex:column headerValue="Asset" value="{!NSN.Asset__c}" />
+                            <apex:column headerValue="Product Name" value="{!NSN.SBQQ__Product__r.Name}" />
+                            <apex:column headerValue="Contract" value="{!NSN.SBQQ__ContractNumber__c}" />
+                            <apex:column headerValue="Account Name" value="{!NSN.SBQQ__Account__r.Name}" />
+                            <apex:column headerValue="Start Date" value="{!NSN.SBQQ__StartDate__c}" />
+                            <apex:column headerValue="End Date" value="{!NSN.SBQQ__EndDate__c}" />
+                        </apex:pageBlockTable>
+                    </apex:pageblocksection>
+                </apex:pageblocksection>
+                
+                <apex:pageBlock >
+                    <script>
+                    $(".sp").attr("disabled","disabled");
+                    $(".sp").closest("span").find("a").hide();
+                    </script>
+                    <apex:pageBlockSection columns="2">
+                        <apex:pageBlockSection >
+                            <apex:inputField styleClass="rb" value="{!cam.Replaced_by__c}" onchange="DisablePartener(this);"/>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection >
+                            <apex:inputField value="{!cam.Service_Partner__c}" styleClass="sp"/>
+                        </apex:pageBlockSection>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Submit Asset Move" onclick="FinalSubmission(); return false;"/>
+                    <apex:commandButton value="Cancel Transaction" onclick="CancelTransaction(); return false;"/>
+                    <apex:commandButton value="Reverse Asset Move" onclick="revert(this); return false;" rendered="{!buttonHide}"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <apex:pageBlock rendered="{!isShowSubscriptions}" title="Subscriptions" id="Subscriptions">
+                <div style="color:green;font-weight: bold;">Update Subscriptions using Asset Hierarchy.<br/><br/></div>
+                <apex:pageblocksection columns="2">
+                    <c:AssetHierarchyTree currentId="{!oldAssetNameFromVF}" />
+                    <c:AssetHierarchyTree currentId="{!assetID}" />
+                </apex:pageblocksection>
+                <apex:pageblocksection columns="2">
+                    <apex:pageblocksection title="Replaced Asset Subscriptions" columns="1">
+                        <apex:pageBlockTable value="{!replacements[0].OldSubscriptionNames}" var="OSN" id="OSNTable" >
+                            <apex:column headerValue="Subscription"><a href="/{!OSN}">{!OSN.Name}</a></apex:column>
+                            <apex:column headerValue="Asset" value="{!OSN.Asset__c}" />
+                            <apex:column headerValue="Product Name" value="{!OSN.SBQQ__Product__r.Name}" />
+                            <apex:column headerValue="Contract" value="{!OSN.SBQQ__ContractNumber__c}" />
+                            <apex:column headerValue="Account Name" value="{!OSN.SBQQ__Account__r.Name}" />
+                            <apex:column headerValue="Start Date" value="{!OSN.SBQQ__StartDate__c}" />
+                            <apex:column headerValue="End Date" value="{!OSN.SBQQ__EndDate__c}" />
+                            <apex:column headerValue="Replace Asset With"><apex:selectList size="1" value="{!OSN.Asset__c}"><apex:selectOptions value="{!replacements[0].NAoptions}"/></apex:selectList> </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageblocksection>
+                    <apex:pageblocksection title="Replacement Asset Subscriptions" columns="1">
+                        <apex:pageBlockTable value="{!replacements[0].NewSubscriptionNames}" var="NSN" id="NSNTable">
+                            <apex:column headerValue="Subscription"><a href="/{!NSN}">{!NSN.Name}</a></apex:column>
+                            <apex:column headerValue="Asset" value="{!NSN.Asset__c}" />
+                            <apex:column headerValue="Product Name" value="{!NSN.SBQQ__Product__r.Name}" />
+                            <apex:column headerValue="Contract" value="{!NSN.SBQQ__ContractNumber__c}" />
+                            <apex:column headerValue="Account Name" value="{!NSN.SBQQ__Account__r.Name}" />
+                            <apex:column headerValue="Start Date" value="{!NSN.SBQQ__StartDate__c}" />
+                            <apex:column headerValue="End Date" value="{!NSN.SBQQ__EndDate__c}" />
+                        </apex:pageBlockTable>
+                    </apex:pageblocksection>
+                </apex:pageblocksection>
+               
+                    <apex:pageBlockButtons location="bottom" id="SingleSubscriptionButton">
+                        <apex:commandButton value="Update Subscriptions" action="{!SubscriptionUpdateBySelection}"  reRender="Subscriptions" status="counterStatus"/>
+                        <apex:commandButton value="Reverse Subscription Move" action="{!ReverseSubscriptionMove}"  reRender="Subscriptions" status="counterStatus"/>
+                        <apex:commandButton value="Return to Case" onclick="CancelTransaction(); return false;" rendered="{!$CurrentPage.parameters.UpdateSubscription=='true'}" />
+                        <apex:commandButton value="Done" onclick="window.location.href=window.location.href" reRender="frm" status="counterStatus" rendered="{!$CurrentPage.parameters.UpdateSubscription!='true'}"/>
+                    </apex:pageBlockButtons>
+               
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+        <apex:actionstatus id="counterStatus">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:250%;opacity:0.65;width:100%;">
+                    <div class="waitingHolder" style="top: 100%; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus> 
+        
+    </apex:form>
+    <!-- <div id="demo"></div> -->
+</apex:page>

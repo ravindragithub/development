@@ -1,0 +1,35 @@
+.THIS th{
+    padding: 0px 2px 0 2px;
+    font-size: 13px;    
+    text-transform: capitalize;
+}
+.THIS td{
+    padding: 3px 3px 3px 4px!important;
+    font-size: 12px;
+}
+.THIS .nobordertop{
+    background: #f2f3f3;
+    border: .5px solid #d8dde6;
+    padding: 0px 3px 0 4px!important;
+}
+.THIS .nobordertop{white-space: initial!important;}
+.THIS .rowDataClass{white-space: initial!important;}
+.THIS .slds-table{
+    border: 1px solid rgb(216, 221, 230)
+}
+@media (min-width: 48em){
+    .THIS .slds-modal__container
+    {
+        width: 60%!important;
+        max-width: 100%!important;
+    }
+}
+.THIS .slds-pill{
+    width:100%;
+}
+.THIS .slds-form-element__control{
+    display: flex!important;
+}
+.THIS .slds-input-has-icon{
+    width: 100%!important;
+}

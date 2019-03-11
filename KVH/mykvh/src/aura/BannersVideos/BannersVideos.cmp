@@ -1,0 +1,31 @@
+<aura:component description="Used to iterate through map components">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="key" type="String"
+                    description="Used to store the map key"/>
+    <aura:attribute name="value" type="String"
+                    description="Used to store the map value"/>
+    <aura:attribute name="map" type="Map"
+                    description="Used to store the full Map"/>
+    <aura:attribute name="maptype" type="String"
+                    description="Used to store the type of Map used (banner/video)"/>
+    <aura:attribute name="size" type="Integer"
+                    description="Used to store the number of tiles needed"/>
+    
+    
+    
+    <aura:if isTrue="{!v.maptype=='banner'}">
+        <li class="slds-size--1-of-2">
+            <div class="slds-p-left--medium">
+                <img src="{!v.key}" style="height: 100px;" class="thumbnail"/>
+                <p class="break-word" style="font-size: 10px; padding-top: 10px;">{!v.value}</p>
+            </div>
+        </li>
+    </aura:if>
+    <aura:if isTrue="{!v.maptype=='video'}">
+        <li class="slds-size--1-of-3 slds-p-right--medium">
+            <iframe src="{!v.key}" frameborder="0" style="width: 100%;"></iframe>
+            <p class="break-word" style="font-size: 10px; padding-top: 10px;">{!v.value}</p>
+        </li>
+    </aura:if>
+    
+</aura:component>

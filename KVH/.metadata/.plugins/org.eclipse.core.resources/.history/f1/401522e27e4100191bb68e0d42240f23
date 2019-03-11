@@ -1,0 +1,179 @@
+<aura:component controller="myKVH_AccountHierarchyController" access="global">
+    <aura:attribute name="accountHierarchyWrapper" type="object"/>
+    <aura:attribute name="isOpen" type="boolean" />
+    <aura:attribute type="string" name="displayDetail"  />
+    <aura:attribute type="string" name="btnId"  />
+    <aura:attribute type="string" name="typeForm" default=""/>
+    <aura:attribute name="showHighlighter"	
+                    type="String" default=""/>
+    <aura:attribute name="simpleLTEActivation" type="Object" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div aura:id="modalDiv">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" 
+                 aria-describedby="modal-content-id-1" 
+                 class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                
+                <!--Modal Box Header-->
+                <div class="slds-modal__header">
+                    <h1 class="slds-text-heading--medium">
+                        <img src="{!$Resource.myFleet_Vessel}"/>&nbsp;
+                        Account</h1>
+                </div>                    
+                <div class="slds-modal__content slds-p-around--medium">
+                    <aura:if isTrue="{! or(v.typeForm == 'Multiple Customer',v.typeForm == 'Single Customer')}">  
+                        <p>We've idenfied you have existing account with KVH.</p>
+                        <p>To activate your new service for existing account, select the vessel below.</p>
+                        <div>
+                            <lightning:accordion >
+                                <aura:iteration items="{! v.accountHierarchyWrapper }" var="parent" indexVar="index">
+                                    <aura:if isTrue="{! and(and(parent.unqiueNo  != 'Orphan',parent.unqiueNo  != 'Orphan Cust Account'),parent.unqiueNo  != 'Orphan Corp Account' ) }">
+                                        <lightning:accordionSection name="{!parent.corporateAccount.Name}" label="{!parent.corporateAccount.Name}">
+                                            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title="Installation Name">Installation Name</div>
+                                                        </th>
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title="Account Number">Account Number</div>
+                                                        </th>
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title="Action"></div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>                                                    
+                                                    <aura:iteration items="{!parent.customerAccountListWrap}" var="child">
+                                                        <tr class="slds-hint-parent">
+                                                            <c:myKVH_CustomerAccountSelected childWrap = "{!child}" onclickSave="{!c.handleClick}" 
+                                                                                             displayDetail = "{!v.displayDetail}"/> 
+                                                        </tr>
+                                                    </aura:iteration>
+                                                    
+                                                </tbody>
+                                            </table>  
+                                        </lightning:accordionSection>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{! parent.unqiueNo  == 'Orphan Cust Account' }">
+                                        <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                                            <thead>
+                                                <tr class="slds-line-height_reset">
+                                                    <th class="slds-text-title_caps" scope="col">
+                                                        <div class="slds-truncate" title="Installation Name">Installation Name</div>
+                                                    </th>
+                                                    <th class="slds-text-title_caps" scope="col">
+                                                        <div class="slds-truncate" title="Account Number">Account Number</div>
+                                                    </th>
+                                                    <th class="slds-text-title_caps" scope="col">
+                                                        <div class="slds-truncate" title=""></div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>                                                    
+                                                <tr class="slds-hint-parent">
+                                                    <td data-label="Installation Name" class="slds-hint-child">
+                                                        <div class="slds-truncate" title="Installation Name">
+                                                            <img src="{!$Resource.vessel_img}"/>&nbsp;
+                                                            {! parent.platformCustAccount.Installation__r.Name}
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Account Number" class="slds-hint-child">
+                                                        <div class="slds-truncate" title="Account Number">
+                                                            {! parent.customerSingleAccount.Billing_Account_ID__c}
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="" class="slds-hint-child">
+                                                        <lightning:button variant="Neutral" label="Activate LTE Dome >" value ="{!parent.customerSingleAccount.Account__c}"
+                                                                          name="{!parent.customerSingleAccount.Id}" ariaLabel="{!parent.platformCustAccount.Installation__c}"
+                                                                          onclick="{!c.getBillingAccountInfo}"  class="go-btn"/>
+                                                    </td>
+                                                </tr>
+                                                
+                                            </tbody>
+                                        </table>  
+                                    </aura:if>
+                                </aura:iteration>
+                                <aura:iteration items="{! v.accountHierarchyWrapper }" var="parent" indexVar="index">
+                                    <aura:if isTrue="{! parent.unqiueNo  == 'Orphan' }">
+                                        <lightning:accordionSection name="No Corporate Account" label="No Corporate Account">
+                                            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title="Installation Name">Installation Name</div>
+                                                        </th>
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title="Account Number">Account Number</div>
+                                                        </th>
+                                                        <th class="slds-text-title_caps" scope="col">
+                                                            <div class="slds-truncate" title=""></div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>                                                    
+                                                    <aura:iteration items="{!parent.customerAccountListWrap}" var="child">
+                                                        <tr class="slds-hint-parent">
+                                                            <c:myKVH_CustomerAccountSelected childWrap = "{!child}" onclickSave="{!c.handleClick}" 
+                                                                                             displayDetail = "{!v.displayDetail}"/> 
+                                                        </tr>
+                                                    </aura:iteration>
+                                                    
+                                                </tbody>
+                                            </table>  
+                                        </lightning:accordionSection>
+                                    </aura:if>
+                                </aura:iteration>
+                            </lightning:accordion>
+                        </div>
+                        <aura:set attribute="else">  
+                            <p>We've idenfied you have existing account with KVH.</p>
+                            <p>To activate your new service for existing account, select the vessel below.</p>
+                            <div>                                  
+                                <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate" title=""></div>
+                                            </th>
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate" title="Corporate Account">Corporate Account</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{! v.accountHierarchyWrapper }" var="parent" indexVar="index">
+                                            <aura:if isTrue="{! parent.unqiueNo  != 'Orphan'  }">
+                                                <tr class="slds-hint-parent">
+                                                    <th data-label="Opportunity Name" scope="row">
+                                                        <div class="slds-truncate" title="">
+                                                            <span data-index="{!index}" onclick="{!c.onGroup}">
+                                                                <ui:inputRadio aura:id="r0" name="accounts" />
+                                                            </span>
+                                                        </div>
+                                                    </th>
+                                                    <td data-label="Corporate Account">
+                                                        <div class="slds-truncate" title="Corporate Account">{!parent.corporateAccount.Name}</div>
+                                                    </td>
+                                                </tr>
+                                            </aura:if>                                    
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </div>
+                <div class="slds-modal__footer">
+                    <aura:if isTrue="{!v.typeForm == 'Multiple Corporate'}">  
+                        <lightning:button label="Back" class="slds-button_brand" onclick="{!c.handleBackModal}" disabled="{!v.typeForm == 'Multiple Customer'}"/>
+                    </aura:if>
+                    <lightning:button label="Continue" class="slds-button_brand" onclick="{!c.handleContinueModal}"/>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </div>
+</aura:component>

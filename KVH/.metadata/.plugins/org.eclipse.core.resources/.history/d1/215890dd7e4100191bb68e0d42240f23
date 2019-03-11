@@ -1,0 +1,6 @@
+/**
+ * Created by Jai Chaturvedi on 12/03/2017.
+ */
+.THIS .customKVH .ui-widget{
+    margin: 0px !important ;
+}

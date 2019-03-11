@@ -1,0 +1,119 @@
+<apex:component allowDML="true" controller="Act_Contact_list_component_controller">
+   <style>
+       .KVH-table {
+       border: solid 1px #DDEEEE;
+       border-collapse: collapse;
+       border-spacing: 0;
+       font: normal 13px Arial, sans-serif;
+       width: 100%;
+       }
+       .KVH-table thead th {
+       background-color: #DDEFEF;
+       border: solid 1px #DDEEEE;
+       color: #336B6B;
+       padding: 10px;
+       text-align: left;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table tbody td {
+       border: solid 1px #DDEEEE;
+       color: #333;
+       padding: 10px;
+       text-shadow: 1px 1px 1px #fff;
+       }
+       .KVH-table-horizontal tbody td {
+       border-left: none;
+       border-right: none;
+       }
+       
+   </style>
+   <script>
+
+   function selectedActivationContactid(selectedEdit, thisparam){
+       j$(thisparam).text('Loading..');
+       populateActContact(selectedEdit);
+   }
+   
+   function selectedrecordremovehandler(recordId, recordRole){
+       console.log(recordId);
+       console.log(recordRole);
+       var instmodel = j$('[data-remodal-id=AuthorizedRepRoleRemove]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+       var setcontent = "<input type='hidden' class='passsedrecordId' value='"+recordId+"' />"
+       if(recordRole.indexOf(',') >= 0 && (recordRole != 'Authorized Representative, Invoice Recipient' && recordRole != 'Invoice Recipient, Authorized Representative' )){
+           setcontent += "Are you sure you want to remove this contact as an Authorized Representative?";
+       }else{ 
+           setcontent += "Are you sure you want to remove this Authorized Representative from the Activation Order?";
+        }
+       j$("#kvh-remodelcontentmessage").html(setcontent);
+       instmodel.open();
+       j$('[data-remodal-id=AuthorizedRepRoleRemove]').find('.remodal-close').hide();
+   }
+   
+   j$(document).on('click', '#removecontactrecord', function(){
+       var recordId = j$(this).closest(".remodal").find("input[type='hidden']").val();
+       if(recordId != undefined && recordId != null){
+           showLoadingDiv();
+           RemoveContactRole(recordId);
+       }
+   });
+
+   </script>
+   
+   <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact records"
+                   type="string" required="required" assignTo="{!ActOrderId}"/> 
+   
+   <apex:actionFunction name="populateActContact" action="{!EditContact}" reRender="theForm">
+       <apex:param name="strActivationContactId" value="" assignTo="{!strActivationContact}"/>
+   </apex:actionFunction> 
+   
+   <apex:actionFunction name="RemoveContactRole" action="{!RemoveRole}" reRender="tablecontactlist" oncomplete="hideLoadingDiv();">
+       <apex:param name="strActivationContactId" value="" assignTo="{!strActivationContact}"/>
+   </apex:actionFunction> 
+   
+   <apex:outputPanel id="tablecontactlist" rendered="{!IF(ActivationContactList.size > 0,true,false)}">
+       <table class="KVH-table KVH-table-horizontal">
+           <thead>
+               <tr>
+                   <th width="5%"></th> 
+                   <th width="30%">Name</th>
+                   <th width="25%">Email Address</th>
+                   <th width="25%">Primary Phone Number</th>
+                   <!--<th width="20%">Role</th> -->
+                   <th width="15%" style="text-align: center;"></th>
+               </tr>
+           </thead>
+           <tbody>
+               
+               <apex:Repeat value="{!ActivationContactList}" var="ActivationContact" >
+                   <tr> <!--  style="background: {!IF($CurrentPage.parameters.conActID == ActivationContact.id, 'lightblue' ,'transparent')}" -->
+                       <td width="5%">
+                           <apex:outputPanel rendered="{!ActivationContact.Contact__c == null}" >
+                               <a href="javascript:;" onclick="selectedActivationContactid('{!ActivationContact.id}',this);" >Edit</a>
+                       </apex:outputPanel>
+                       </td>
+                       <td width="30%">{!ActivationContact.First_Name__c} {!ActivationContact.Last_Name__c}</td>
+                       <td width="25%">{!ActivationContact.Email__c}</td>
+                       <td width="25%">{!ActivationContact.Primary_Phone__c}</td>
+                      <!-- <td width="20%"><apex:outputText value="{!SUBSTITUTE(JSENCODE(ActivationContact.Contact_Role__c),',','<br/>')}" escape="false"/></td> -->
+                       <td width="15%" align="center"><a style="cursor: pointer;" onclick="selectedrecordremovehandler('{!ActivationContact.Id}', '{!ActivationContact.Contact_Role__c}');">[X]</a></td>
+                   </tr>
+               </apex:Repeat>
+           </tbody>
+       </table>
+   </apex:outputPanel>
+   
+   <!-- ** remodal popup Start ** -->
+   <div class="remodal remodalAgain" data-remodal-id="AuthorizedRepRoleRemove" id="AuthorizedRepRoleRemove" >
+       <div style="display: inherit;padding-right:25px;text-align:justify;">
+           <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+           <span id="kvh-remodelcontentmessage"></span>
+       </div>
+       <div style="text-align:center;padding-bottom:5px;">
+           <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="removecontactrecord">Yes</button>
+       </div>
+       <div style="text-align:center;">
+           <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >Cancel</a>
+       </div>
+   </div>
+   <!-- ** remodal popup End ** -->
+</apex:component>

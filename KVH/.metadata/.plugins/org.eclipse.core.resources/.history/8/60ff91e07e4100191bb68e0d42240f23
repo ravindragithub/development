@@ -1,0 +1,124 @@
+<!--
+ - Created by Jai Chaturvedi on 8/03/2017.
+ -->
+
+<aura:component description="PortalView.
+                             Used for presenting the Portal view options for logged in user" controller="CommunityUtilityClass" implements="forceCommunity:availableForAllPageTypes">
+
+    <aura:attribute name="portalOptions" type="PortalOptionsWrapper[]" description="Wrapper class list which holds the available options
+                    for Portal view drop down.
+                    The options availability depends upon the Partner Portal Setting
+                    record associated with logged in user's Partner Account" />
+
+    <aura:attribute name="optionBgColor" type="String" description="Stores the selected option back-ground color code.
+                    This is calculated and updated runtime depending upon selected option." />
+    <aura:attribute name="bgOptionImage" type="String" description="Stroe the main service component background image" />
+    
+
+    <aura:attribute name="currentOption" type="String" description="Holds the current selected option value.
+                    This attribute is updated upon selection change" />
+
+    <aura:attribute name="optionSize" type="String" description="This is the total number of option available for the portal view.
+                    Used for calculation the width of select option which avoids
+                    the spreading of drop down all over the row " />
+
+    <aura:attribute name="remainingOptions" type="String[]" description="Used to store the non-selected remaining options.
+                    This is useful to construt the dropdown design" />
+    
+    <aura:attribute name="lineitemcount" type="Integer" default="0" description="number of items in the cart." />
+    <aura:attribute name="cartId" type="String" description="cart id" />
+    <aura:attribute name="showcart" type="boolean" default="false"/>
+    
+
+   <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" />-->
+    <aura:handler event="aura:locationChange" action="{!c.doInit}"/>
+   
+   
+	
+    <!-- update cart event handler-->
+    <aura:handler event="c:SalesAidsUpdateCartEvent" action="{!c.updateCartHandeler}"/>
+
+
+    <!--
+   - event to fire the service name to PartnerMainServiceComponent
+   - event handler will call get the selected option name as param
+   - only used by top level services - Case Management, Partner Resources
+    -->
+    <aura:registerEvent name="portalViewChangeEvent" type="c:PortalViewOptionEvent" description="Registering the event which fires the selected option.
+                        This is handled by PartnerMainServices component" />
+    
+    <aura:registerEvent name="portalViewSelection" type="c:PortalViewChangeEvent" description="Only fires when portal view changes."/>
+	
+    
+   
+
+    <!--
+    <aura:registerEvent name="availableServiceEvent"
+                        type="c:CheckAvailableServicesEvent"
+                        description="Registering the event which will fire with selected option value.
+This is handled by self and upon handling it fires another event with the selected option value."/>
+-->
+    <!--
+    - event to fire the service name and boolean flag if that is available or active
+    - this will be handle by other service components.
+     -->
+    <aura:registerEvent name="placeServiceAppEvent" type="c:PlaceAvailableServicesEvent" description="Event used to send the service name and boolean flag if that is available or active.
+This will be handle by other service components and will be shown or hidden." />
+
+    <!--
+    <aura:handler name="availableServiceEvent"
+                  event="c:CheckAvailableServicesEvent"
+                  action="{!c.handleAvailableServiceEvent}"/>
+-->
+
+    <!-- aura:registerEvent name="getPortalViewFromHeader" type="c:GetPortalFromHeader"/ -->
+    <!-- aura:handler event="c:SendPortalOption" action="{!c.handleSendPortalOption}"/ -->
+
+    <div class="slds">
+
+
+
+        <div class="slds-grid slds-wrap " style="background: #595959">
+
+            <div class="dropdown-center  slds-grid slds-wrap slds-m-vertical--small slds-col slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--8-of-8">
+                <div class="hide-narrow slds-size--1-of-6 slds-medium-size--1-of-6 slds-large-size--1-of-8 portalview slds-text-title slds-m-left--medium" style="">
+                    Choose portal view:
+                </div>
+				
+                <div class="slds-size--4-of-6 slds-medium-size--4-of-6 slds-large-size--5-of-8 portalviewselect">                        
+                    
+                    <li class="dropdown-center slds-dropdown-trigger slds-dropdown-trigger--hover " style="min-width:300px">
+                        <a href="javascript:void(0);" class="slds-truncate slds-context-bar__label-action optionClass selectClass" title="{!v.currentOption}" style="{! 'width:auto;color:#fff;background-color:'+ v.optionBgColor + ' !important;'  + ' width:' +  v.optionSize}">
+                            <span class="slds-truncate" style="width:100%">{!v.currentOption}</span>
+                            <lightning:icon iconName="utility:down"
+                                            variant="inverse"
+                                            size="x-small"
+                                            class="slds-m-left--small"/>
+                        </a>
+                        
+                        <div class="slds-dropdown slds-dropdown--left " style="width:100%;padding-top:15px;">
+                            <ul class="slds-dropdown__list" role="menu" >
+                                <aura:iteration items="{!v.remainingOptions}" var="remain">
+                                    <li class="slds-dropdown__item" role="presentation" style="padding: 3px 15px 5px 15px;justify-content: space-between;cursor: pointer;">
+                                        <ui:outputText value="{!remain}" click="{!c.onSelectChange}" />
+                                        
+                                    </li>
+                                </aura:iteration>
+                            </ul>
+                        </div>
+                    </li>                   
+                </div>  
+                <div class="slds-size--2-of-6 slds-medium-size--2-of-6 slds-large-size--2-of-8" > 
+                    <aura:if isTrue="{!v.showcart}">
+                        <div class="{!if(v.lineitemcount > 0,'sales-aids','sales-aids-inactive')}" style="margin-right: 3%;">
+                            <a href="{!if(v.lineitemcount > 0,$Label.c.OrgURL +  '/s/salesaidscart','javascript:void(0);')}" style="{!if(v.lineitemcount > 0,'color:#fff;',' cursor: default;color:#fff;')}">({!v.lineitemcount}) <i class="fa fa-shopping-cart fa-lg" aria-hidden="true" style="color:#fff;"></i></a>
+                        </div>                       
+                    </aura:if>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+</aura:component>

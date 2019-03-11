@@ -1,0 +1,29 @@
+<apex:page showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+        <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/> 
+    <apex:stylesheet value="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <body style="background: #f2f2f2;">
+        <div style="padding: 20px;">
+            <div class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" style="background: #ffffff;">
+            <div style="background: #d9d9d9; border: 1px solid #dddddd; color: #333333; font-weight: bold; padding: 15px;">
+                <h2 style="margin-bottom:0">Partner Interests Defined</h2>
+            </div>
+            <div id="dialog2" class="ui-dialog-content ui-widget-content" style="padding: 10px;">
+				<p>
+                    <strong>Sales &amp; Service - </strong> Partner is willing to sell and service KVH products.
+                </p>
+                <p>
+                    <strong>Sales Only - </strong> Partner is willing to sell KVH products, not provide service.
+                </p>
+                <p>
+                    <strong>Service Only - </strong> Partner is willing to service KVH products, not provide sales activites.
+                </p>
+            </div>
+            </div>
+        </div>
+    </body>
+</apex:page>

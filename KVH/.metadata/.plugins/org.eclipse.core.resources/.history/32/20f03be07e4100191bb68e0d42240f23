@@ -1,0 +1,23 @@
+<!--
+ - Created by Jai Chaturvedi on 11/03/2017.
+ -->
+
+<aura:component description="NewsPortalComponent"
+                implements="forceCommunity:availableForAllPageTypes"
+                access="global">
+
+    <aura:attribute name="newsHeader" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>
+    <aura:attribute name="availableCheck" type="String" access="global" default="slds-hide"/>
+
+    <!--
+    - event handler to catch the service name and available flag as event param
+     -->
+    <aura:handler event="c:PlaceAvailableServicesEvent" action="{!c.handlePlaceAvailableServiceEvent}"/>
+
+    <div class="{! 'slds-grid slds-wrap slds-grid--pull-padded ' + v.availableCheck}">
+        <div  class="slds-p-horizontal--small">
+            <img src="{! '/' + $Label.c.Community_Prefix + '/resource/icons/' + v.newsHeader}"/>
+        </div>
+    </div>
+</aura:component>

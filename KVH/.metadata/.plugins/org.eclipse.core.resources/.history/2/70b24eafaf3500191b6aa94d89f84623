@@ -1,0 +1,17 @@
+<aura:component controller="HTS_ltgsvc_termStatus">
+  <aura:attribute name="search" type="string" Description="This is the search attribute" /> 
+  <aura:registerEvent name="lookupVTID_done" type="c:foundVTID_evt"/>
+  <aura:registerEvent name="searchingVTID" type="c:searchVTID_evt"/>
+  <form class="slds-form--inline">
+    <div class="slds-form-element slds-is-required">
+      <label class="slds-form-element__label" for="VTID">Virtual Terminal Id</label>
+      <div class="slds-form-element__control">
+        <ui:inputText aura:id="VTID" class="slds-input" value="{!v.search}" required="true" placeholder="Enter VTID..." />
+      </div>
+    </div>
+    <input type="text" style="display:none;"/> <!-- kind of a hack, inhibits enter key from scanner -->
+    <div class="slds-form-element">
+      <lightning:button variant="brand" label="Search" iconName="utility:search" iconPosition="left" onclick="{!c.handleLookup}" /> 
+    </div>
+  </form>
+</aura:component>

@@ -1,0 +1,51 @@
+.THIS .applybutton{
+    width:190px;
+    font-size: 85%;
+    padding-right:0;
+    padding-left:0;    
+    font-weight: bold;
+    border-radius: 0px;
+}
+.THIS .custominput{
+    background-color: #f9f9f9;
+}
+.THIS .hide{
+    display: none;
+}
+.THIS .show{
+    display: block;
+}
+.THIS .searchicon{ 
+    border-radius: 0px;
+    font-style: italic;
+    font-size: 1em;
+    color: #4a4a4a;
+    border: 1px solid #ccc;
+    background-position: 98% 8px;
+    background-repeat: no-repeat;
+    background-image: url('/myKVH/resource/icons/icon_search.png');
+}
+
+.THIS .searchicon::-webkit-input-placeholder{
+    color: #aaa;
+    font-style: italic;
+    font-size : 11.5px;
+}
+.THIS .clearbutton{
+    width: 70px;
+    font-weight: bold;
+    font-size: 85%;
+    padding-right:0;
+    padding-left:0;
+    color: #444;
+    float :right;
+    background : #fff;
+    border-radius: 0px;
+    border: 1px solid #DDD;
+}
+.THIS .applybutton, .THIS .clearbutton{
+    width : 100%;
+}
+.THIS .bluespin{
+    position: fixed;
+}

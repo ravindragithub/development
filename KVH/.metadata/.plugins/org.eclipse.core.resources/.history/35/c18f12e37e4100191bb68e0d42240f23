@@ -1,0 +1,33 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="videoURL" type="String" />    
+    <aura:attribute name="documentURL" type="String" />
+    <aura:attribute name="bottomImageName" type="String" />
+    
+	<div style="max-width:1000px;padding: 20px;margin:auto;background:#fff">
+        <h1>mini‑VSAT Manager</h1>
+        <div class="slds-grid slds-wrap slds-grid--pull-padded" >
+            <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-2" >
+                <div style="padding:20px">
+                	<iframe width="440" height="315" src="{!v.videoURL}" frameborder="0" allowfullscreen=""></iframe>
+                    <p class="notes pad-top-10">Check out an overview of the mini‑VSAT Manager: a quick tour of the myKVH web portal and the valuable network management tools that are available there.</p>
+                </div>
+            </div>
+            <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-2" >
+                <div style="padding:20px">
+                	<h2>An easy-to-use portal to configure your customers' onboard network, monitor their vessels, and manage the onboard data usage</h2>
+                    <p>As the sophistication of maritime broadband communications grows, you need a simple way to provide value to your customers by configuring their onboard network, monitoring their vessel(s), get a vessel’s data usage status, apply usage warning thresholds, and allocate usage to individual users and/or to certain tasks onboard. mini‑VSAT Manager, a web portal available to all mini‑VSAT Broadband customers, offers a single, secure site with the tools to manage these important functions.</p>
+                    <h4>In short, mini‑VSAT Manager helps you harness the power of the mini‑VSAT Broadband solution simply and intuitively, saving time and energy.</h4>
+                    <p>Fill out the form to apply for access:</p>
+                    <a href="{!v.documentURL}" target="_blank" class="button white-bg">Download Form</a>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-wrap slds-grid--pull-padded" >
+            <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1" style="padding:20px" >
+                <img src="{!  '/resource/images/' + v.bottomImageName}" class="border width-100"/>
+            </div>
+        </div>
+        
+        
+    </div>
+</aura:component>

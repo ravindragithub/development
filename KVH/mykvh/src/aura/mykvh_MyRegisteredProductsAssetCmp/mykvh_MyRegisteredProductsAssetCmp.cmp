@@ -1,0 +1,77 @@
+<aura:component controller="myKVH_MyRegisteredProductsController">   
+	<aura:attribute name="assetObj" type="Object"/>   
+    <aura:attribute name="newdocumentId" type="String" default=""/>
+    <aura:attribute name="buttonName" type="String" default=""/>
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+   
+ 
+    <aura:handler name="change" value="{!v.newdocumentId}" action="{!c.newdocumentIdChange}"/>
+     <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>      
+    
+    <div class="product">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12 productname slds-truncate" title="TracPhone V-IP, HTS System Name" >
+                <span class="productNameText">{!v.assetObj.productDisplayName}</span>
+            </div> 
+        </div>
+         <lightning:layout multipleRows="true" class="productdetail">
+            <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">
+                <aura:if isTrue="{!v.assetObj.showICMserialNumber}">
+                    	<div class="label">ICM Serial No.:</div>
+                    <aura:set attribute="else">
+                        <div class="label">Serial No.:</div>
+                    </aura:set>
+                </aura:if>                
+                <div class="value">{!v.assetObj.serialNumber}</div>
+            </lightning:layoutItem>
+             <aura:if isTrue="{! !empty(v.assetObj.activationDate)}">
+                 <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">                
+                         <div class="label">Activation Date:</div>
+                         <div class="value"><ui:outputDate value="{!v.assetObj.activationDate}" /></div>              
+                 </lightning:layoutItem>
+             </aura:if>
+            <aura:if isTrue="{! !empty(v.assetObj.purchasedFrom)}">
+                <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">                
+                        <div class="label">Purchased From:</div>
+                        <div class="value">{!v.assetObj.purchasedFrom}</div>               
+                </lightning:layoutItem>
+            </aura:if>
+            <aura:if isTrue="{!v.assetObj.prodReg != null}">
+                <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">                
+                        <div class="label">Product Registration:</div>                
+                        <div class="value">{!v.assetObj.prodReg.Name}&nbsp;(<a href="javascript:void(0)" onclick="{!c.openProductRegistrationPopup}">Details</a>)</div>               
+                </lightning:layoutItem>
+            </aura:if>
+             <aura:if isTrue="{!v.assetObj.prodReg != null}">
+                 <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">
+                    <div class="label" style="padding-top: 8px;">Proof of Purchase:</div>
+                      <div class="value" >
+                        <aura:if isTrue="{!v.assetObj.popDocument != null}">
+                           <a href="{!$Label.c.myKVH_Community_Prefix +'/sfc/servlet.shepherd/version/download/'+v.assetObj.popDocument.documentId}" class="slds-m-right_x-small" target="_blank">Download</a>
+                        </aura:if>
+                        <lightning:button label="Upload New" title="Upload New"  onclick="{!c.pophandleClick}" iconName="utility:upload"/>
+                      </div>
+                </lightning:layoutItem>
+                 <lightning:layoutItem class="slds-m-top_small" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" size="12">
+                    <div class="label" style="padding-top: 8px;">Installation Checklist:</div>
+                     <div class="value">
+                        <aura:if isTrue="{!v.assetObj.ckListDocument != null}">
+                            <a href="{!$Label.c.myKVH_Community_Prefix +'/sfc/servlet.shepherd/version/download/'+v.assetObj.ckListDocument.documentId}" class="slds-m-right_x-small" target="_blank">Download</a>
+                        </aura:if>
+                        <lightning:button label="Upload New" title="Upload New" onclick="{!c.ckListhandleClick }" iconName="utility:upload"/>
+                    </div>
+                </lightning:layoutItem>
+            </aura:if>
+        </lightning:layout>    
+    </div>
+</aura:component>

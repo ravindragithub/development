@@ -1,0 +1,242 @@
+<apex:component controller="Act_Voice_Line_Component_Ctrl" allowDML="true" id="voice_line2_Comp_Id">
+    
+    <apex:attribute name="VoiceLine2ActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <style>
+        .radio-margin {
+        margin-bottom: 20px !important;
+        }
+        .width-60 {
+        width: 60% !important;
+        }
+    </style>
+    <script>
+    j$(function (){
+        
+        j$("input[type=radio][name=voiceline2]").each(function(){
+            if(j$(this).val() == '{!objActivationService.Voice_Line_2_Type__c}'){
+                j$(this).prop('checked','checked');
+            }
+            if('{!objActivationService.Voice_Line_2_Type__c}' == '' || '{!objActivationService.Voice_Line_2_Type__c}' == 'KVH-assigned Phone Number'){
+                j$("#userSpecificDependentLine2").find("input[type='text']").attr('disabled','disabled');
+                
+            }
+            if('{!objActivationService.Voice_Line_2_Type__c}' == ''){
+                j$("#secondVoiceLineBlock").find("input[type='radio']").attr('disabled','disabled');
+            }
+        });
+        
+        j$("input[type=radio][name=voiceline2]").change(function(){
+            j$('.kvh-show-errormsg-here').empty(); 
+            j$("#userSpecificDependentLine2").hide();
+            j$("#userSpecificDependentLine2").find("input[type='text'] , input[type='radio']").attr('disabled','disabled');
+            if(j$(this).attr("id") == 'user-spec' && j$(this).prop('checked')){
+                j$("#userSpecificDependentLine2").find("input[type='text'] , input[type='radio']").removeAttr('disabled');
+                j$("#userSpecificDependentLine2").toggle('slow');
+            }else{
+                j$("[Id$=Voice2_User_Country__c]").val("");
+                j$("[Id$=Voice2_User_Specified_Code__c]").val("");
+            }
+        });
+    });
+    
+    
+    function showhidesecondblock(boolparam){
+        if(boolparam == 'true'){
+            j$("#secondVoiceLineBlock").show();
+            j$("#secondVoiceLineBlock").find("input[type='text'] , input[type='radio']").removeAttr('disabled');
+            j$("#userSpecificDependentLine2").find("input[type='text'] , input[type='radio']").attr('disabled','disabled');
+        }else{
+            j$("#secondVoiceLineBlock").hide();
+            j$("input[type=radio][name=voiceline2]").each(function(){
+                j$(this).removeAttr('checked');
+            }); 
+            j$('.kvh-show-errormsg-here').empty(); 
+            j$("#secondVoiceLineBlock").hide();
+            j$("#userSpecificDependentLine2").hide();
+            j$("#secondVoiceLineBlock").find("input[type='text'], input[type='radio']").attr('disabled','disabled');
+            j$("[Id$=Voice2_User_Country__c]").val("");
+            j$("[Id$=Voice2_User_Specified_Code__c]").val("");
+            
+            j$("[Id$=Voice2_Country1__country]").val("");
+            j$("[Id$=Voice2_Code1__c]").val("");
+            j$("[Id$=Voice2_Country2__country]").val("");
+            j$("[Id$=Voice2_Code2__c]").val("");
+            j$("[Id$=Voice2_Country3__country]").val("");
+            j$("[Id$=Voice2_Code3__c]").val("");
+            j$("[Id$=Voice2_Country4__country]").val("");
+            j$("[Id$=Voice2_Code4__c]").val("");
+            j$("[Id$=Voice2_Country4__country]").val("");
+            j$("[Id$=Voice2_Code5__c]").val("");
+            
+            cancelVoiceLine2();
+        }
+    }
+    
+    j$( document ).ready(function() {
+        if('{!boolSecondVoiceLine}' == 'true'){
+            j$("#secondVoiceLineBlock").show();
+        }else{
+            j$("#secondVoiceLineBlock").hide();
+        }
+    });
+    
+    
+     function voice2ClearValidate(){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmvoice2]');
+        var instmodel = j$('[data-remodal-id=clearconfirmvoice2]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmvoice2").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmvoice2]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmvoice2]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    
+    </script>
+     <apex:actionFunction name="cancelVoiceLine2" action="{!saveActivationServiceVoice}"  reRender="voice2MainIdButton">
+    </apex:actionFunction>
+    <div class="clear" style="text-align:left;">
+        <apex:commandLink styleClass="button left ui-link" style="display: {!IF(!boolSecondVoiceLine, 'block;', 'none;')}" id="secondVoiceLineshow" value="+ Add Second Voice Line" onclick="showLoadingDiv();" oncomplete="showhidesecondblock('{!boolSecondVoiceLine}');hideLoadingDiv();" action="{!ActivationServiceVoice2Show}" reRender="secondVoiceLineshow">
+        </apex:commandLink>
+    </div>
+    <div class="clear" style="padding-bottom:30px;" /> <!-- html-style="display: {!IF(boolSecondVoiceLine, 'block;', 'none;')}" -->
+    
+    <div id="secondVoiceLineBlock" style="display:none;">
+        <h3>Voice Line 2</h3>
+        <div class="pad-bottom" style="display: flex;">
+            <input id="kvh-number" name="voiceline2" type="radio" value="KVH-assigned Phone Number" data-role="none"/><label>KVH-assigned Phone Number</label> <h4 class="inline pad-left">$20/month</h4><br/>
+        </div> 
+        <div class="pad-bottom" style="display: flex;">
+            <input id="user-spec" name="voiceline2" type="radio" value="User-specified Phone Number" data-role="none"/><label>User-specified Phone Number</label> <h4 class="inline pad-left">$40/month</h4>
+        </div>
+        <div id="userSpecificDependentLine2" style="display: {!IF(objActivationService.Voice_Line_2_Type__c == 'User-specified Phone Number', 'block;', 'none;')}">
+            <div class="pad-left">
+                <span class="left pad-right" style="width:30%;">
+                    <label>Requested Country:</label><apex:inputField html-data-role="none" taborderhint="21" id="Voice2_User_Country__c"  styleClass="requiredRedMarkFld" value="{!objActivationService.Voice2_User_Country__c}" /><br/>
+                    <span class="notes">(subject to availability &amp; in-country regulations)</span>
+                </span>
+                <span class="left" style="width:10%;">
+                    <label>Area/City Code:</label><apex:inputField html-data-role="none" taborderhint="22" id="Voice2_User_Specified_Code__c" value="{!objActivationService.Voice2_User_Specified_Code__c}" />
+                </span>
+            </div>
+        </div>
+            <div class="clear"></div> 
+            
+            <div class="pad-top" style="width:50%;">
+                <div data-role="collapsible" data-collapsed-icon="carat-r"  data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content">
+                    <h2 class="ui-collapsible-heading">
+                        Virtual Local Phone Numbers
+                        <apex:outputPanel id="voice2MainIdButton" style="pointer-events:none;">
+                            <apex:commandLink style="margin:0; padding:3px 10px;" rendered="{!AND(objActivationService.Voice2_Country1__c == '', objActivationService.Voice2_Code1__c  == '', objActivationService.Voice2_Country2__c == '', objActivationService.Voice2_Code2__c  == '', objActivationService.Voice2_Country3__c == '', objActivationService.Voice2_Code3__c  == '', objActivationService.Voice2_Country4__c == '', objActivationService.Voice2_Code4__c  == '', objActivationService.Voice2_Country5__c == '', objActivationService.Voice2_Code5__c  == '')}" html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" >
+                                Add 
+                            </apex:commandLink>
+                            <apex:commandLink style="margin:0; padding:3px 10px;" rendered="{!OR(objActivationService.Voice2_Country1__c != '', objActivationService.Voice2_Code1__c  != '', objActivationService.Voice2_Country2__c != '', objActivationService.Voice2_Code2__c  != '', objActivationService.Voice2_Country3__c != '', objActivationService.Voice2_Code3__c  != '', objActivationService.Voice2_Country4__c != '', objActivationService.Voice2_Code4__c  != '', objActivationService.Voice2_Country5__c != '', objActivationService.Voice2_Code5__c  != '')}" html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link">
+                                <i class="fa fa-check fa-lg"></i>Added
+                            </apex:commandLink>
+                        </apex:outputPanel>
+                    </h2>
+                    <div aria-hidden="false" >             <!--  data-collapsed="false" -->   
+                        <div class="panel-contents">
+                            <p>Incoming calls only, 5 virtual local phone numbers available per line. Subject to availability &amp; in-country regulations.
+                                &nbsp;&nbsp; <a href="#Virtual_Local_Phone_Number" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-link" aria-haspopup="true" aria-owns="Virtual_Local_Phone_Number" aria-expanded="false"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> View terms</a>
+                            </p>
+                             <apex:outputPanel id="voice2Id">
+                            <table class="collapse-panels1">
+                                <tbody><tr>
+                                    <th>Requested Country</th>
+                                    <th style="text-align:center;">Area/City Code</th>
+                                    <th style="text-align:center;">$/Month</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="width-60" >
+                                            <apex:inputField html-data-role="none" id="Voice2_Country1__country" taborderhint="23" value="{!objActivationService.Voice2_Country1__c}" />
+                                        </td>
+                                        <td class="width-15">
+                                            <apex:inputField html-data-role="none" id="Voice2_Code1__c" styleClass="areacode"  taborderhint="24" value="{!objActivationService.Voice2_Code1__c}" />
+                                        </td>
+                                        <td class="width-15">$20</td>
+                                    </tr>
+                                    <tr> 
+                                        <td class="width-60">
+                                            <apex:inputField html-data-role="none" id="Voice2_Country2__country" taborderhint="25" value="{!objActivationService.Voice2_Country2__c}" />     
+                                        </td>
+                                        <td class="width-15">
+                                            <apex:inputField html-data-role="none"  id="Voice2_Code2__c" styleClass="areacode"  taborderhint="26" value="{!objActivationService.Voice2_Code2__c}" />
+                                        </td>
+                                        <td class="width-15">$20</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="width-60">
+                                            <apex:inputField html-data-role="none" id="Voice2_Country3__country" taborderhint="27" value="{!objActivationService.Voice2_Country3__c}" />   
+                                        </td>
+                                        <td class="width-15">
+                                            <apex:inputField html-data-role="none" taborderhint="28" styleClass="areacode"  id="Voice2_Code3__c" value="{!objActivationService.Voice2_Code3__c}" />
+                                        </td>
+                                        <td class="width-15">$20</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="width-60">
+                                            <apex:inputField html-data-role="none" id="Voice2_Country4__country" taborderhint="29" value="{!objActivationService.Voice2_Country4__c}" />
+                                        </td>
+                                        <td class="width-15">
+                                            <apex:inputField html-data-role="none" taborderhint="30" styleClass="areacode"  id="Voice2_Code4__c" value="{!objActivationService.Voice2_Code4__c}" />
+                                        </td>
+                                        <td class="width-15">$20</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="width-60">
+                                            <apex:inputField html-data-role="none" id="Voice2_Country5__country" taborderhint="31" value="{!objActivationService.Voice2_Country5__c}" />
+                                        </td>
+                                        <td class="width-15">
+                                            <apex:inputField html-data-role="none" taborderhint="32" styleClass="areacode"  id="Voice2_Code5__c" value="{!objActivationService.Voice2_Code5__c}" />
+                                        </td>
+                                        <td class="width-15">$20</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </apex:outputPanel>
+                            <div style=" text-align:right;" class="right">
+                                <apex:commandLink styleClass="pad-right ui-link" id="voice2clearBtn" value="Clear Form" onclick="voice2ClearValidate(); return false;">
+                                </apex:commandLink>
+                                <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="voice2BackBtn" value="Save" action="{!saveActivationServiceVoice}" onclick="showLoadingDiv();" oncomplete="hideLoadingDiv();" reRender="voice2Id, voice2MainIdButton" >
+                                </apex:commandLink>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="clear" style="text-align:left;">
+            <apex:commandLink styleClass="left ui-link" id="secondVoiceLineHide" value="Cancel Voice Line 2" onclick="showLoadingDiv();" oncomplete="showhidesecondblock('{!boolSecondVoiceLine}');hideLoadingDiv();" action="{!ActivationServiceVoice2Hide}" reRender="secondVoiceLineshow">
+            </apex:commandLink>
+        </div>
+        
+        <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmvoice2" id="clearconfirmvoice2"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmvoice2"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!saveActivationServiceVoice}" onclick="showLoadingDiv();" oncomplete="hideLoadingDiv();" reRender="voice2Id, voice2MainIdButton">
+                <apex:param name="param1" assignTo="{!objActivationService.Voice2_Country1__c}" value="" />
+                <apex:param name="param2" assignTo="{!objActivationService.Voice2_Code1__c}" value="" />
+                <apex:param name="param3" assignTo="{!objActivationService.Voice2_Country2__c}" value="" />
+                <apex:param name="param4" assignTo="{!objActivationService.Voice2_Code2__c}" value="" />
+                <apex:param name="param5" assignTo="{!objActivationService.Voice2_Country3__c}" value="" />
+                <apex:param name="param6" assignTo="{!objActivationService.Voice2_Code3__c}" value="" />
+                <apex:param name="param7" assignTo="{!objActivationService.Voice2_Country4__c}" value="" />
+                <apex:param name="param8" assignTo="{!objActivationService.Voice2_Code4__c}" value="" />
+                <apex:param name="param9" assignTo="{!objActivationService.Voice2_Country5__c}" value="" />
+                <apex:param name="param10" assignTo="{!objActivationService.Voice2_Code5__c}" value="" />
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+        
+    </div> 
+        
+</apex:component>

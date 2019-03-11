@@ -1,0 +1,39 @@
+.THIS ol{
+    list-style-type:decimal;
+    margin:0 0 0 20px;
+}
+
+.THIS .Heading {
+    font-weight:bold;
+    margin:10px 0;
+}
+
+.THIS .Numbered-Underline {
+    font-weight:bold;
+    font-size:80%;
+}
+
+.THIS .Basic-Paragraph,
+.THIS .Bulleted-List---letters--level-1,
+.THIS .Bulleted-List---numbers--level-2,
+.THIS .Bulleted-List---numbers--level-3 {
+    font-weight:normal;
+    font-size:100%;
+    padding-bottom:10px;
+}
+
+.THIS .Bulleted-List---numbers--level-2 {
+    margin-left:20px;
+}
+
+.THIS .Bulleted-List---numbers--level-3 {
+    margin-left:40px;
+}
+
+.THIS span.Bold {
+    font-weight:bold !important;
+}
+
+.THIS span.Underline {
+            text-decoration: underline;
+        }

@@ -1,0 +1,63 @@
+<apex:page standardController="Opportunity" extensions="invoiceit_crmx.CreateOpportunityProductsController">
+  <apex:form >
+  <apex:pageBlock >
+    <apex:pageMessages id="messages" />           
+    <apex:outputField value="{!Opportunity.invoiceit_crmx__CurrencyL__c}" rendered="false"/>
+    <table cellspacing="0" cellpadding="0" border="0" class="list">
+            <thead class="rich-table-thead">
+            <tr class="headerRow">
+                <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Product__c.FieldSets.invoiceit_crmx__Opportunity_Detail_Page}" var="fieldAPI">
+                    <th colspan="1" scope="col" class="headerRow">
+                        <div>
+                            {!fieldAPI.Label}
+                        </div>
+                    </th> 
+                </apex:repeat>
+                <th colspan="1" scope="col" class="headerRow">
+                  <div>
+                  {!$Label.invoiceit_s__Quantity}
+                  </div>
+                </th>
+                <apex:variable value="{!3}" var="rowNum"/>
+                <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Rate_Plan_Charge__c.FieldSets.invoiceit_crmx__Opportunity_Detail_Page}" var="fieldAPI">
+                    <th colspan="1" scope="col" class="headerRow">
+                        <div>
+                            {!fieldAPI.Label}
+                        </div>
+                    </th>
+                  <apex:variable var="rowNum" value="{!rowNum + 1}"/>   
+                </apex:repeat>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!opportunityClass.opportunityProducts}" var="opportunityproduct">
+                <apex:repeat value="{!opportunityproduct.OpportunityRatePlans}" var="opportunityrateplan">
+                    <apex:repeat value="{!opportunityrateplan.OpportunityRatePlanCharges}" var="opportunityrateplancharge">
+                        <tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);}" onmouseover="if (window.hiOn){hiOn(this);}" class="dataRow even odd first">  
+                            <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Product__c.FieldSets.invoiceit_crmx__Opportunity_Detail_Page}" var="fieldAPI">
+                                <td colspan="1" class="dataCell">
+                                    <apex:outputField value="{!opportunityproduct.Opportunityproduct[fieldAPI]}" rendered="{!opportunityrateplancharge.opportunityRatePlanCharge.invoiceit_crmx__Sequence_No__c <= 1}"/>
+                                </td>
+                            </apex:repeat>
+                            <td colspan="1" class="dataCell">
+                                <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Quantity__c}">
+                                    <apex:param value="{0,number,0}" />
+                                </apex:outputField>
+                            </td>
+                            <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Rate_Plan_Charge__c.FieldSets.invoiceit_crmx__Opportunity_Detail_Page}" var="fieldAPI">
+                                <td colspan="1" class="dataCell">
+                                    <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}" rendered="{!fieldAPI != 'Name'}"/>
+                                    <apex:outputLink rendered="{!fieldAPI == 'Name'}" value="/{!opportunityrateplancharge.opportunityrateplancharge.Id}" target="__blank">
+                                        <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}"/>
+                                    </apex:outputLink>
+                                </td>
+                            </apex:repeat>
+                        </tr>   
+                    </apex:repeat>
+                </apex:repeat>
+            </apex:repeat>
+        </tbody>
+    </table>
+ </apex:pageBlock>
+ </apex:form>
+</apex:page>

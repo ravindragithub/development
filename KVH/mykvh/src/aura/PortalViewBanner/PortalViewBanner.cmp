@@ -1,0 +1,70 @@
+<!--
+ - Created by Jai Chaturvedi on 25/04/2017.
+ -->
+
+<aura:component description="PortalViewBanner.
+                            Used for presenting the Portal view options for logged in user
+                            Only contains the selected portal view label"
+                controller="CommunityUtilityClass"
+                implements="forceCommunity:availableForAllPageTypes">
+
+    <aura:attribute name="optionBgColor"
+                    type="String"
+                    description="Stores the selected option back-ground color code.
+                    This is calculated and updated runtime depending upon selected option."/>
+
+    <aura:attribute name="currentOption"
+                    type="String"
+                    description="Holds the current selected option value.
+                    This attribute is updated upon selection change"/>
+
+    <aura:attribute name="optionSize"
+                    type="String"
+                    description="This is the total number of option available for the portal view.
+                    Used for calculation the width of select option which avoids
+                    the spreading of drop down all over the row "/>
+
+    <aura:attribute name="remainingOptions"
+                    type="String[]"
+                    description="Used to store the non-selected remaining options.
+                    This is useful to construt the dropdown design"/>
+
+    <aura:handler name="init"
+                  value="{!this}"
+                  action="{!c.doInit}"/>
+
+
+    <div class="slds">
+        <div class="slds-grid"
+             style="background: #444;">
+
+            <div class="slds-col slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-12">
+                <div class="slds-m-vertical--medium">
+                    <div class="slds-text-title slds-m-left--x-large"
+                         style="color:#fff">
+                        Portal View:
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--11-of-12">
+                <div class="slds-m-vertical--small">
+                    <div class="slds-grid  slds-grid--vertical-stretch">
+                        <div class=" slds-size--1-of-1
+                         slds-medium-size--1-of-1
+                          slds-large-size--3-of-7">
+
+                            <li class=" slds-dropdown-trigger slds-dropdown-trigger--hover">
+                                <p class="slds-context-bar__label-action optionClass selectClass"
+                                   style="{! 'color:#fff;background-color:'+ v.optionBgColor + ' !important;'  + ' width:' +  v.optionSize}">
+                                        {!v.currentOption}
+                                </p>
+                            </li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</aura:component>

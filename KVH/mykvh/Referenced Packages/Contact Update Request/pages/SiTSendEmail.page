@@ -1,0 +1,125 @@
+<apex:page extensions="AcuerdoCUR.SiTSendEmailController" tabStyle="SiT_Settings__tab" standardStylesheets="true"
+		title="Send the contact update request email" showHeader="false" sidebar="false" standardController="Contact" showQuickActionVfHeader="false">
+ 
+ <script type="text/javascript">
+    function closeIt() { window.close(); }
+ </script>
+ 
+  <apex:form >
+
+    <!-- START CLASSIC -->
+    <apex:outputPanel rendered="{! $User.UIThemeDisplayed == 'Theme3' }">
+
+      <apex:outputPanel id="emailOk" rendered="{!IF(isSend==true,true,false)}">
+      	<apex:pageBlock title="Preview">
+      		<apex:pageBlockButtons location="bottom">
+                 <apex:commandButton onclick="closeIt()" value="Close"/>
+            	</apex:pageBlockButtons>
+            	 <apex:pageBlockSection title="Contact update request" columns="1" showHeader="true">
+            	 	Mail has been sent.
+            	 	<script type="text/javascript">
+            	 		closeIt();
+            	 	 </script>
+            	 </apex:pageBlockSection>
+      	</apex:pageBlock>
+      </apex:outputPanel>
+      
+      <apex:outputPanel id="emailPreview" rendered="{!IF(isSend==false,true,false)}">
+      	<apex:pageBlock title="Preview" mode="edit">
+  	        <apex:pageBlockButtons location="both">
+  	          <apex:commandButton action="{!Send}" value="Send" rendered="{!if(IsConfigured==true, true, false)}"/>
+  	            <apex:commandButton onclick="closeIt()" value="Cancel"/>
+  	        </apex:pageBlockButtons>
+              
+              <apex:pageMessages id="msgs"/>
+              
+        			<apex:pageBlockSection title="Contact update request" columns="1" showHeader="true">
+        			      To request updated information from your contact, click on the send button.
+        			      <br />
+        			      <apex:outputLabel value="Last Update Request" for="LastCURequestDate" style="font-weight:bold;" />
+        			      <apex:outputLabel id="LastCURequestDate" value="{!LastRequestDate}"/>
+        			      <br/>
+        			      <apex:outputLabel value="Last Request Save" for="LastCUUpdateDate" style="font-weight:bold;"/>
+        			      <apex:outputLabel id="LastCUUpdateDate" value="{!LastUpdateDate}"/>
+        			</apex:pageBlockSection>
+            
+      	</apex:pageBlock>
+      
+      </apex:outputPanel>
+      
+    </apex:outputPanel>
+    <!-- END CLASSIC -->
+
+    <apex:outputPanel rendered="{! $User.UIThemeDisplayed != 'Theme3' }">
+
+      <apex:slds />
+
+      <!-- REQUIRED SLDS WRAPPER -->
+      <div class="slds-scope">
+
+        <!--<div xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">-->
+
+          <header class="modal-header slds-modal__header">
+            <h2 class="title slds-text-heading_medium slds-hyphenate">Ask Update</h2>
+            <p class="slds-m-top_x-small">To request updated information from your contact, click on the send button.</p>
+          </header>
+          
+            <apex:outputPanel rendered="{!IF(isSend==true,true,false)}" layout="none">
+              <div class="slds-modal__content slds-p-around_medium">
+                Mail has been sent.
+              </div>
+
+              <div class="slds-docked-form-footer">
+                  <apex:commandButton value="Close" action="{!Close}" styleClass="slds-button slds-button_brand"/>
+              </div>
+
+
+            </apex:outputPanel>
+      
+            <apex:outputPanel rendered="{!IF(isSend==false,true,false)}" layout="none">
+
+              <!-- ERROR MESSAGES -->
+              <apex:outputPanel rendered="{!ErrorMessage != null && ErrorMessage != ''}">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                  <span class="slds-assistive-text">error</span>
+                  <span class="slds-icon_container slds-icon-utility-ban slds-m-right_x-small" title="Error occured">
+                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#ban')}"></use>
+                    </svg>
+                  </span>
+                  <h2><apex:outputText value="{!ErrorMessage}" /></h2>
+                  <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close">
+                    <svg class="slds-button__icon" aria-hidden="true">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Close</span>
+                  </button>
+                </div>
+              </apex:outputPanel>
+              <!-- / ERROR MESSAGES -->
+
+              <div class="slds-modal__content slds-p-around_medium">
+                <dl class="slds-list_horizontal slds-wrap">
+                  <dt class="slds-item_label slds-text-color_weak slds-truncate">Last Update Request:</dt>
+                  <dd class="slds-item_detail slds-truncate"> <apex:outputLabel value="{!LastRequestDate}"/></dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Second Label">Last Request Save:</dt>
+                  <dd class="slds-item_detail slds-truncate" title="Description for second label"><apex:outputLabel value="{!LastUpdateDate}"/></dd>
+                </dl>
+              </div>
+
+
+              <div class="slds-docked-form-footer">
+                  <apex:commandButton value="Send" action="{!Send}" styleClass="slds-button slds-button_brand" rendered="{!if(IsConfigured==true, true, false)}"/>
+              </div>
+      
+              
+
+            </apex:outputPanel>
+        <!--</div>    -->
+      </div>
+
+
+    </apex:outputPanel>
+
+  </apex:form>
+</apex:page>

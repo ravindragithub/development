@@ -1,0 +1,15 @@
+<aura:component >
+    <aura:attribute name="onSubmit" type="Aura.Action"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <lightning:icon iconName="action:info" alternativeText="Info" size="small"/>
+    <span style="font-size: 18px;font-weight: bold;padding: 5px;">Please Note</span>
+    <p style=" font-size: 14px;font-weight: bold;line-height: 1.5;padding: 10px;">
+        One of the serial numbers you have entered is already registered in our system. Are you sure you want to submit your product registration?
+        <br/><br/>
+        Select “Cancel” to go back, or “Submit” to have an Airtime Services representative review and contact you.
+    </p>
+    <div class="slds-align_absolute-center">
+        <a href="javascript:void(0)" onclick="{!c.onCancel}">Cancel</a>
+        <lightning:button class="slds-m-left_small custombrandbutton" variant="brand" label="CONTINUE" title="Continue" onclick="{!v.onSubmit}" />
+    </div>
+</aura:component>

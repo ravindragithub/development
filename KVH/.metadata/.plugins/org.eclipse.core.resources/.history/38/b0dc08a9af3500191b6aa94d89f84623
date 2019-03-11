@@ -1,0 +1,30 @@
+<aura:component controller="HTS_ltgsvc_terminals">
+    <aura:attribute name="searchString" type="string" Description="This is the search attribute" />
+    <!-- event publishers -->
+    <aura:registerEvent name="cmpDataUpdated" type="c:HTS_terminals_bubbling_evt" />
+    <aura:registerEvent name="appDataUpdated" type="c:HTS_terminals_application_evt" />
+    <!-- event listeners -->
+    <aura:handler event="c:HTS_terminals_application_evt" action="{!c.handleAppEvent}" />
+
+    <form class="slds-form--horizontal">
+      <p class="slds-m-around--small">
+          <div class="slds-form-element slds-is-required">
+              <label class="slds-form-element__label" for="I2CM">02-2204 System Serial Number</label>
+              <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                  <ui:inputText aura:id="I2CM" class="slds-input" value="{!v.searchString}" required="true" placeholder="Enter I2CM Serial Number...">
+                      <lightning:icon iconName="utility:search" size="x-small" alternativeText="Search" />
+                  </ui:inputText>
+              </div>
+          </div>
+      </p>
+      <input type="text" style="display:none;"/> <!-- kind of a hack, inhibits enter key from scanner -->
+      <p class="slds-m-around--small">
+          <div class="slds-form-element">
+              <!-- two buttons in a line -->
+              <lightning:button variant="brand" label="Reset" iconName="utility:rotate" iconPosition="left" onclick="{! c.handleReset }" />
+              <lightning:button variant="brand" label="Search" iconName="utility:search" iconPosition="left" onclick="{! c.handleLookup }" />
+          </div>
+      </p>
+    </form>
+
+</aura:component>

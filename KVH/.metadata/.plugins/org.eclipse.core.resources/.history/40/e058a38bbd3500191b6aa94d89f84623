@@ -1,0 +1,5 @@
+<apex:page >
+    <flow:interview name="Baan_Button_for_Creation_of_Billing_Accounts" finishLocation="{!URLFOR('/' + $CurrentPage.Parameters.AccountID)}">
+        <apex:param name="AccountID" value="{!$CurrentPage.Parameters.AccountID}" />
+    </flow:interview>
+</apex:page>

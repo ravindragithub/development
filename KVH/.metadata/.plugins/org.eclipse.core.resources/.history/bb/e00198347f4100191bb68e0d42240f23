@@ -1,0 +1,20 @@
+<apex:page showHeader="false" id="SiteTemplate">
+
+<style>
+body {
+    background-color: #f3f3f3;
+}
+</style>
+
+  <apex:stylesheet value="{!$Resource.portal_styles2}"/>
+  <apex:insert name="header">
+    <c:myKVHSiteHeader />
+    
+  </apex:insert>
+  <apex:insert name="body"/>
+  <apex:insert name="footer">
+   
+    <!-- we don't need no footer! <c:SiteFooter /> -->
+    <!-- <site:googleAnalyticsTracking /> Thows NPAPI exception when POSTed -->
+  </apex:insert>
+</apex:page>

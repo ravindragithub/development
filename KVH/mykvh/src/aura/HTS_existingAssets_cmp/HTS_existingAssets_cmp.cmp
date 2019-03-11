@@ -1,0 +1,28 @@
+<aura:component >
+    <aura:attribute name="assetList" type="List" description="This is a List of Assets returned from Salesforce that may or may not be hierarchical"/>
+    <aura:renderIf isTrue="{!v.assetList.length > 0}">
+        <div>
+        <!-- insert wrapped table.... -->
+            <table class="slds-table slds-table--bordered slds-table--striped">
+                <thead>
+                    <tr class="slds-text-title--caps">
+                        <th scope="col"><div class="slds-truncate" title="Name">Name</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Part Number">Part Number</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Description">Description</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.assetList}" var="identifier">
+                        <tr>
+                            <td>{!identifier.Name}</td>
+                            <td>{!identifier.Product2.ProductCode}</td>
+                            <td>{!identifier.Product2.Name}</td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        <!-- end insert wrapped table -->
+        </div> 
+
+    </aura:renderIf>
+</aura:component>

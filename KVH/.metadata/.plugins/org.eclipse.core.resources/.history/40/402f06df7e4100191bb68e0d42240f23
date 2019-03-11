@@ -1,0 +1,25 @@
+<aura:component controller="HTS_ltgsvc_subscriptions" >
+  <aura:attribute name="assetName" type="String" default="" description="The Asset Name to which all of the subscriptions are realted" />
+  <aura:attribute name="subscriptionList" type="HTS_ltgsvc_subscriptions" description="A list of SBQQ Subscriptions returned from the server, typically only one" />
+  <!--PUBLISHER -->
+
+  <!--EVENT LISTENER -->
+  <aura:handler name="change" value="{!v.assetName}" action="{!c.handleAssetNameChange}"/>
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="slds-form-element">
+      <label class="slds-form-element__label" for="asset">All Subscriptions for {!v.assetName}</label>
+      <aura:iteration items="{!v.subscriptionList.subscriptions}" var="sub">
+        <div class="slds-form-element__control slds-m-left_medium">
+          <b>
+            <ui:outputText value="{!sub.SBQQ__Product__r.Name}"/>, 
+            <ui:outputText title="{! 'Start Date: ' + sub.SBQQ__StartDate__c + ' End Date: ' + sub.SBQQ__EndDate__c}" value="{!sub.Name}" />, 
+            <ui:outputText value="{!sub.SBQQ__Contract__r.ContractNumber}" />
+          </b>
+        </div>
+      </aura:iteration>
+    </div>
+
+
+
+</aura:component>

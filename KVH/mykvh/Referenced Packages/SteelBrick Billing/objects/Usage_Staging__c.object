@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>ReadWrite</externalSharingModel>
+    <fields>
+        <fullName>ErrorReason__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Error Reason</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Import_File_Data__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Name+&apos;,&apos;+OrderRatePlanCharge__c+&apos;,&apos;+TEXT(StagingStartDate__c)+&apos;,&apos;+TEXT(StagingEndDate__c)+&apos;,&apos;+TEXT(Quantity__c)</formula>
+        <label>Import File Data</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>OrderRatePlanCharge__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Order Rate Plan Charge</label>
+        <referenceTo>Job_Rate_Plan_Charge__c</referenceTo>
+        <relationshipLabel>Usage Staging</relationshipLabel>
+        <relationshipName>Usage_Staging</relationshipName>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Quantity__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Quantity</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>2</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>StagingEndDate__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Staging End Date</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>StagingStartDate__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Staging Start Date</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Queued</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Processing</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Completed</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Error</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>UsageMediation__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Usage Mediation</label>
+        <length>30</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Usage Staging</label>
+    <nameField>
+        <displayFormat>USN-{0000}</displayFormat>
+        <label>Usage Staging Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Usage Staging</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Cannot_change_status_from_Completed</fullName>
+        <active>true</active>
+        <description>Cannot change the status from Completed to other</description>
+        <errorConditionFormula>ISPICKVAL(PRIORVALUE
+(Status__c),
+&quot;Completed&quot;) &amp;&amp; ISCHANGED(Status__c)</errorConditionFormula>
+        <errorMessage>You cannot change the status of a Completed Usage Staging</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staging_End_Date</fullName>
+        <active>true</active>
+        <description>Staging End Date should be greater than Staging Start Date. 
+Note : Time is not consider as part of this rule</description>
+        <errorConditionFormula>StagingStartDate__c &gt; StagingEndDate__c</errorConditionFormula>
+        <errorDisplayField>StagingEndDate__c</errorDisplayField>
+        <errorMessage>Staging End Date should be greater than Staging Start Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staging_End_Date_Between_Charge_Dates</fullName>
+        <active>true</active>
+        <description>This will make sure Staging End Date will be in between Order Charge Service Activation and Service End Dates
+Note : Time is not consider as part of this rule</description>
+        <errorConditionFormula>If(DATEVALUE(StagingEndDate__c) &lt; OrderRatePlanCharge__r.Service_Activation_Date__c
+||
+OrderRatePlanCharge__r.Service_End_Date__c &lt; DATEVALUE(StagingEndDate__c), true, false)</errorConditionFormula>
+        <errorMessage>Staging End Date should be in between Order Charge Service Activation and Service End Dates (included)</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staging_Start_Date_Between_Charge_Dates</fullName>
+        <active>true</active>
+        <description>This will make sure Staging Start Date will be in between Order Charge Service Activation and Service End Dates
+Note : Time is not consider as part of this rule</description>
+        <errorConditionFormula>If(DATEVALUE(StagingStartDate__c) &lt; OrderRatePlanCharge__r.Service_Activation_Date__c 
+|| 
+OrderRatePlanCharge__r.Service_End_Date__c &lt; DATEVALUE(StagingStartDate__c), true, false)</errorConditionFormula>
+        <errorMessage>Staging Start Date should be in between Order Charge Service Activation and Service End Dates (included)</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staging_Status_for_New_should_be_Queued</fullName>
+        <active>true</active>
+        <description>Staging Status for New should be Queued</description>
+        <errorConditionFormula>ISNEW() &amp;&amp; NOT(ISPICKVAL(Status__c, &quot;Queued&quot;))</errorConditionFormula>
+        <errorMessage>Staging Status should be Queued</errorMessage>
+    </validationRules>
+</CustomObject>

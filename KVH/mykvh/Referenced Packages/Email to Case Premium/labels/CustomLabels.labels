@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Open_List_Button_Label</fullName>
+        <categories>Email to Case Premium</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Open List Button Label</shortDescription>
+        <value>Open List</value>
+    </labels>
+    <labels>
+        <fullName>Private_Comment_Button_Label</fullName>
+        <categories>Email to Case Premium</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Private Comment Button Label</shortDescription>
+        <value>Private Comment</value>
+    </labels>
+    <labels>
+        <fullName>Public_Comment_Button_Label</fullName>
+        <categories>Email to Case Premium</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Public Comment Button Label</shortDescription>
+        <value>Public Comment</value>
+    </labels>
+</CustomLabels>

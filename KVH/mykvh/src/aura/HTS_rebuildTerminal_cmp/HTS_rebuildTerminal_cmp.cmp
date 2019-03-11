@@ -1,0 +1,24 @@
+<aura:component controller="HTS_ltgsvc_rebuildTerminal">
+  <!-- ATTRIBUTES -->
+  <aura:attribute name="identifier" type="String" default="" description="This is a record ID passed into the component" />
+  <aura:attribute name="terminal" type="HTSOSS_hts_terminals" description="This is a subset of the HTSOSS_hts_terminals Apex Class" />
+
+  <aura:attribute name="stateChange" type="String" default="UNKNOWN" description="Supported States: Searching, Verified, Rebuilding, Rebuilt" />
+  <aura:attribute name="statusMessage" type="String" default="UNKNOWN: Status unknown" description="This is a Status message returned from a controller" />
+  <aura:attribute name="assetList" type="List" description="A list of Assets returned from a Controller" />
+  <!-- PUBLISHERS -->
+  <aura:registerEvent name="newState" type="c:HTS_terminals_bubbling_evt" />
+  <!-- LISTENERS -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:handler name="newState" event="c:HTS_terminals_bubbling_evt" action="{!c.handleStateChange}" />
+
+  <form class="slds-form--horizontal">
+    <p class="slds-m-around--small">
+      <div class="slds-form-element">
+          <lightning:button variant="brand" label="Re-build (asynchronous)" iconName="utility:replace" iconPosition="left" onclick="{!c.rebuild}" />
+      </div>
+    </p>
+  </form>
+
+  <c:LogPanel_cmp aura:id="logPanel" />
+</aura:component>

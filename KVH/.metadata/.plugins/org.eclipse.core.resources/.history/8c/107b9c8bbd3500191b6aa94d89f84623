@@ -1,0 +1,39 @@
+<apex:page title="Create T&C's" standardController="Terms_and_Conditions__c" extensions="TCController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    
+    <style>
+
+      .box{
+          width : 20%;
+      }
+      
+  </style>
+        <apex:define name="body"> 
+            <apex:form id="frm" styleClass="page-content">
+                <apex:sectionHeader subtitle="Create New Terms & Conditions" title="Manage Terms & Conditions"/>
+            <apex:pageBlock >
+                <div align="center" style="max-width: 900 px;">
+                <apex:pageMessages ></apex:pageMessages>
+                    <div >
+                   <apex:pageBlockSection columns="2" >
+                       <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Name"></apex:outputLabel>
+                            <apex:inputField value="{!TC.Name__c}"/> 
+                        </apex:pageBlockSectionItem>
+                       <br/><br/>
+                        <apex:pageBlockSectionItem dataStyleClass="box">
+                            <apex:outputLabel value="Body"></apex:outputLabel>
+                            <apex:inputField value="{!TC.Body__c}"/> 
+                        </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                        <div style="padding: 0px 100px 0px 0px;">
+                    <apex:commandLink immediate="true" value="Cancel" action="/apex/adminlandingpage"/>
+                    <apex:commandbutton style="padding: 5px 5px; margin-left: 20px;" styleClass="button lower-case" value="Create" action="{!createRecord}" />
+                            </div>
+                        </div>
+                </div>
+                </apex:pageBlock>
+            
+            </apex:form>
+                
+        </apex:define>
+</apex:page>

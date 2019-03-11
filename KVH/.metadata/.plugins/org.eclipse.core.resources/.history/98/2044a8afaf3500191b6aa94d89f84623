@@ -1,0 +1,176 @@
+.THIS {
+}.THIS .slds-card {
+    border:transparent;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    margin-bottom:20px;
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .go-btn {
+    background-color:#fff;
+    color: #333;
+    border:1px solid #ddd;
+    line-height:normal;
+    margin:0;
+    padding:10px 15px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    border-radius:0px;
+    font-size:85%;
+}
+
+.THIS .go-btn:hover {
+    background-color:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS p {
+    margin-bottom:15px;
+    color:#555;
+}
+.THIS .slds-form-element__label{
+    font-size: .8125rem;
+}
+.THIS .slds-form-element{
+    margin-bottom: 15px;
+}
+.THIS abbr.slds-required {
+    float:right;
+    margin:0;
+}
+.THIS a {
+    color:#1984c7;
+}
+
+.THIS .content-panel {
+    background:#fff;
+    padding:30px;
+}
+
+.THIS .req {
+    color:#cc0000;
+}
+
+.THIS .slds-card__header {
+    padding:30px 0 0 0;
+}
+
+.THIS  button.sfdc_button,
+.THIS a.button,
+.THIS input[type=submit] {
+    padding:5px 20px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    color:#fff;
+    border-radius:0px;
+    font-size:90%;
+    background:#1984c7;
+    border:none;
+    margin:20px 0;
+}
+
+.THIS  button.sfdc_button {
+    width:50%;
+    
+}
+
+@media (max-width: 470px) {
+    .THIS button.sfdc_button {
+        width:100%;
+    }
+}
+  
+.THIS  button:hover {
+  background-color:#3276b1;
+  border-color:#285e8e;
+  cursor:pointer;
+}
+
+.THIS .input{
+    border-radius:0;
+    display:block;
+    width:100%;
+}
+
+.THIS textarea.error, 
+.THIS select[multiple].error, 
+.THIS input[type="text"].error, 
+.THIS input[type="tel"].error, 
+.THIS input[type="password"].error, 
+.THIS input[type="email"].error, 
+.THIS input[type="search"].error, 
+.THIS .select select.error, 
+.THIS select.error {
+    border: 1px solid #cc0000;
+    color: #cc0000;
+    -webkit-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    -moz-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    -o-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+}
+
+.THIS input[type="checkbox"] {
+  appearance: none;
+  border: 1px solid white;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+
+.THIS input[type="checkbox"]:checked {
+  border: 1px solid ;
+}
+
+.THIS input[type="checkbox"]:checked:after {
+  display: block;
+  position: relative;
+  content: '';
+  left: 3px;
+  top: 3px;
+  height: 6px;
+  width: 10px;
+  border-bottom: 4px solid /*#354452*/ white;
+  border-left: 4px solid /*#354452*/ white;
+  transform:rotate(-45deg);
+}
+
+.THIS input[type="checkbox"].disabled {
+  opacity: 0.35;
+}
+
+.THIS input[type="checkbox"] + label {
+  vertical-align: middle;
+}
+
+.THIS .slds-truncate {
+    white-space: normal;
+}
+
+.THIS .slds-spinner {
+    position: fixed;
+}
+
+.THIS .callout {
+    padding:20px;
+    background-color:rgba(25,132,199,.10);
+    margin:30px 0;
+    overflow:auto;
+}
+
+.THIS .lte-header {
+    text-align:center;
+    background-color: transparent;
+}
+
+.THIS .content-panel {
+    background:#fff;
+    padding:30px;
+}

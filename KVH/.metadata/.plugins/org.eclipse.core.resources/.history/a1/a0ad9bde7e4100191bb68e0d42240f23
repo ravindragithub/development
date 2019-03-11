@@ -1,0 +1,86 @@
+<aura:component controller="HTS_ltgsvc_hybrids">
+  <aura:attribute name="state" type="String" description="used to manage the state of the SPA" default="INIT"/>
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  <aura:attribute name="searchString" type="String" description="This is the string entered by the user to search upon" />
+  <aura:attribute name="identifier" type="String" default="" description="This is the record ID of the contract to which the subscriptions will be attached." />
+  <aura:attribute name="kontract" type="Contract" description="This is the Contract to which the primary and secondary Subscriptions will be attached" />
+  <aura:attribute name="primarySub" type="SBQQ__Subscription__c" description="Primary Plan for the Hybrid"/>
+  <aura:attribute name="secondarySub" type="SBQQ__Subscription__c" description="Secondary Plan for the Hybrid"/>
+  <aura:attribute name="terminal" type="Asset" />
+  <aura:attribute name="primaryPlan" type="Product2" />
+  <aura:attribute name="secondaryPlan" type="Product2" />
+  <aura:attribute name="region" type="String" default="CONUS_STANDARD" description="This is the region and configuration template for the terminal" />
+  <aura:attribute name="successURL" type="String" default="/home/home.jsp"/>
+
+  <!--PUBLISHER -->
+  <aura:registerEvent name="cmpDataUpdated" type="c:HTS_hybrids_component_evt" />
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="cmpDataUpdated" event="c:HTS_hybrids_component_evt" action="{!c.handleCmpEvent}"/>
+  <aura:handler name="change" value="{!v.state}" action="{!c.handleStateChange}" />
+  <aura:handler name="validationComplete" event="c:HTS_subscriptions_component_evt" action="{!c.handleValidation}" />
+
+  <!-- MARKUP -->
+  <div aura:id="spinner_div" style="position: static; z-index: 9002;" >
+      <lightning:spinner variant="brand" size="large" alternativeText="Calling Server..."/>
+  </div>
+  
+  <div aura:id="debug_div" >
+    I am Component!<br/> 
+    My status == {!v.statusMessage}<br/>
+    My State == {!v.state}<br/>
+    I was launched from Contract Number {!v.kontract.Id}<br/>
+    My Virtual Terminal Id == {!v.terminal.Name}<br/>
+    My Region == {!v.region}<br/>
+    My High Speed Plan == {!v.primaryPlan}<br/>
+    My Unlimited Plan == {!v.secondaryPlan}<br/>
+    My High Speed Subscription number == {!v.primarySub.Id}<br/>
+    My Unlimited Subscription number == {!v.secondarySub.Id}<br/><br/>
+  </div>
+
+  <div class="slds-page-header">
+    <div class="slds-media">
+      <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-contract" title="Indicates subscription parent contract">
+            <lightning:icon iconName="standard:contract" size="medium" alternativeText="Indicates subscription parent contract"/>
+          </span>
+      </div>
+      <div class="slds-media__body">
+        <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="{!v.kontract.Billing_Account__r.Name}">{!v.kontract.Billing_Account__r.Name}</h1>
+        <p class="slds-text-body_small slds-line-height_reset">Contract Number {!v.kontract.ContractNumber}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1. Search for and validate Asset -->
+  <div aura:id="search_div" >
+    <c:HTS_hybrids_asset_search_cmp aura:id="search"/>
+  </div>
+  <!-- Step 2. Select Region and Hybrid Component Plans -->
+  <div aura:id="region_div">
+    <form class="slds-form_stacked">
+      <p class="slds-p-horizontal_medium">
+        <div class="slds-form-element">
+          <div class="slds-size_3-of-3">
+            {!v.body}<br/>
+          </div>
+        </div>
+      </p>
+    </form>
+  </div>
+  <div aura:id="plans_div" >
+    <c:HTS_hybrids_plans_container /><br/>
+  </div>
+  <!-- Step 3. Create Subscription Records and commit data to SF -->
+  <div aura:id="records_div" class="slds-form-element slds-m-around--small slds-align_absolute-center">
+    <lightning:button variant="brand" label="Create Subscription Records" iconName="utility:record_create" iconPosition="left" onclick="{!c.createSubsRecords}" />
+  </div>
+  <!-- Step 4. POST Two Subscribers (one at a time) to OSS -->
+  <div aura:id="provision_div" class="slds-form-element slds-m-around--small slds-align_absolute-center">
+    <lightning:button variant="brand" label="Go Baby, GO!" iconName="utility:sync" iconPosition="left" onclick="{!c.provisionHybrids}"/>
+  </div>
+
+  <div aura:id="success_div" class="slds-form-element slds-m-around--small slds-align_absolute-center">
+    <ui:outputURL value="{!v.successURL}" label="Return to Contract..."/>
+  </div>
+</aura:component>

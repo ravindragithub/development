@@ -1,0 +1,25 @@
+<apex:component controller="SiteLoginController" id="loginComponent" >
+    <center>
+        <apex:form id="loginForm" forceSSL="true">
+            
+            <apex:outputPanel layout="block">
+                <apex:pageMessages id="error"/>
+                <apex:panelGrid columns="2" > <!--style="margin:1em auto 0 auto;" -->
+                    <!-- <apex:outputLabel value="{!$Label.site.username}" for="username"/> (we want this to say Email) -->
+                    
+                    <apex:outputLabel value="Email:" for="username" style="text-align:right;width:30%" />
+                    <apex:inputText id="username" value="{!username}" style="padding:5px; width:100%; border:1px solid #ddd; border-radius:3px; margin-bottom:20px;" />
+                    
+                    <apex:outputLabel value="{!$Label.site.password}:" for="password" style="text-align:right;width:30%" />
+                    <apex:inputSecret id="password" value="{!password}" style="padding:5px; width:100%; border:1px solid #ddd; border-radius:3px; margin-bottom:20px;" />
+                    
+                    <apex:commandButton action="{!login}" value="{!$Label.site.login_button}" id="loginButton" style="margin:30px; background-color:#78ac49;border-radius:3px; color:#fff;border:none;padding:0 20px;" />
+                    <apex:outputLink style="text-align:center;padding:0px 40px 0px 40px;" value="{!$Page.ForgotPassword}"> {!$Label.site.forgot_your_password_q}</apex:outputLink>
+                    
+                </apex:panelGrid> 
+            </apex:outputPanel>
+            
+        </apex:form>
+    </center>
+    
+</apex:component>

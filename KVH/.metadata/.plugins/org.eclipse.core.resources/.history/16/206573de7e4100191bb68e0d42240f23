@@ -1,0 +1,40 @@
+<aura:component >
+  <aura:attribute name="singleSub" type="SBQQ__Subscription__c" description="A single subscription" />
+  <aura:attribute name="type" type="String" description="The type of subscription, drives Icon Shape" default="custom:custom37" />
+
+  <!-- PUBLISHER -->
+
+  <!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+  <!-- MARKUP -->
+
+  <div class="slds-form slds-form_compound">
+
+    <div class="slds-form-element__group">
+      <div class="slds-form-element__row" style="margin-bottom: 0px;">
+
+              <div class="slds-form-element slds-size_1-of-4">
+              <span class="slds-form-element__icon slds-m-around_xx-small" title="Indicates subscription parent contract">
+                <lightning:icon iconName="{!v.type}" size="x-small" alternativeText="Indicates subscription parent contract"/>
+              </span>
+                <label class="slds-form-element__label" for="productName">Sub #</label>
+                <ui:outputText aura:id="SubscriptionNumber" value="{!v.singleSub.Name}" />
+              </div>
+              <div class="slds-form-element slds-size_1-of-4">
+                <label class="slds-form-element__label" for="productName">Service Name</label>
+                <ui:outputText aura:id="productName" value="{!v.singleSub.SBQQ__Product__r.Name}" />
+              </div>
+              <div class="slds-form-element slds-size_1-of-4">
+                <label class="slds-form-element__label" for="asset">Asset</label>
+                <ui:outputText aura:id="asset" value="{!v.singleSub.Asset__r.Name}" />
+              </div>
+              <div class="slds-form-element slds-size_1-of-4">
+                <label class="slds-form-element__label" for="tid">Traffic Identifier</label>
+                <ui:outputText aura:id="tid" value="{!v.singleSub.Traffic_Identifier__c}" />
+              </div>
+      </div>
+    </div>
+  </div>
+
+</aura:component>

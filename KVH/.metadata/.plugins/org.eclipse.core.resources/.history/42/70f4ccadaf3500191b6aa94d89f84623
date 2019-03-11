@@ -1,0 +1,10 @@
+<aura:component description="SearchBox"
+                implements="forceCommunity:availableForAllPageTypes">
+
+            <div class="slds-size--1-of-1" style="height: 100%;">
+                <div class="slds-p-horizontal--large">
+                    <c:ProductSearchComponent ></c:ProductSearchComponent>
+                </div>
+            </div>
+
+</aura:component>

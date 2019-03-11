@@ -1,0 +1,62 @@
+<apex:page showChat="false" showheader="false" sidebar="false" standardStylesheets="false" cache="false">
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <style>
+        .block {
+            margin:20px 0;
+            overflow: auto;
+            padding:15px 15px 15px 15px;
+            -moz-border-radius: 3px;
+            border-radius:3px;
+            /*background-color: #eeeeee; adding static resource image to block Class */
+            background: #eeeeee url({!URLFOR($Resource.portalArrow)}) no-repeat 15px 50%;
+        }
+    </style>
+    <div class="page-content home">
+        <h1>Welcome to MyKVH</h1> 
+        <p>myKVH Fleet is a comprehensive Fleet monitoring portal. </p>
+        <h2>Please choose an option:</h2>
+        
+        <div class="block">
+            <a href="../idp/login?app=0sp13000000Gmco" target="_blank">
+                <div class="inner-block">
+                    <h4>myKVH Fleet</h4>
+                </div>    
+            </a>
+        </div>
+
+        <div class="block">
+            <a href="../idp/login?app=0sp13000000GmcU" target="_blank">
+                <div class="inner-block">
+                    <h4>myKVH Fleet (Staging)</h4>
+                </div>
+            </a>
+        </div>
+        
+        
+        <div class="block">
+            <a href="../idp/login?app=0sp130000004CGT" target="_blank">
+                <div class="inner-block">
+                    <h4>myKVH Fleet (QA)</h4>
+                </div>
+            </a>
+        </div>
+
+        
+        <div class="block">
+            <a href="../idp/login?app=0sp13000000CaW9" target="_blank">
+                <div class="inner-block">
+                    <h4>myKVH Fleet (Dev)</h4>
+                </div>
+            </a>
+        </div>
+        
+        <div class="block">
+            <a href="../idp/login?app=0sp13000000Gmbv" target="_blank">
+                <div class="inner-block">
+                    <h4>Light UI (Dev) under construction</h4>
+                </div>
+            </a>
+        </div>
+        
+    </div>     
+</apex:page>

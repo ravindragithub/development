@@ -1,0 +1,349 @@
+<apex:page controller="RemoveDocumentController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" sidebar="false" title="Remove Content" >
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        .bottomfields{
+        display: none;
+        } 
+        
+        
+    </style>
+        <apex:define name="body"> 
+            <apex:sectionHeader title="Content Administration" subtitle="Remove Content"/>
+            <apex:form id="frm" styleClass="page-content"> 
+                <div id="load-status" style="display:none;">
+                    <div class="overlay"></div>
+                    <div class="status">                               
+                        <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                        <span id="load-statustext">File deleting in progress...</span>
+                    </div>
+                </div>
+                
+                <apex:actionFunction name="saveRecords" action="{!saveRecords}" reRender="pgb,reloadscriptpanel" oncomplete="reloadpage();"/>
+                
+                <apex:pageBlock id="pgb" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div id="results"></div>
+                    <apex:pageBlockButtons location="bottom">
+                        <input type="button" id="remove-button"  style="float: right;" onclick="deleteFile(); return false;" value="Remove Content"/>             
+                        &nbsp;
+                        <input type="button" id="back-button"  style="float: right;margin-right:10px" onclick="backbuttonclick('{!$CurrentPage.parameters.retURL}')" value="Back"/>             
+                    </apex:pageBlockButtons>
+                    
+                    <apex:pageBlockSection collapsible="false" title="Search Content" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Document/Link Name" ></apex:outputLabel>
+                            <apex:outputPanel >
+                                <input id="filename"/>
+                                <span id="productname" style="display:none"></span>  
+                                <img id="closeicon" style="display:none;" src="https://cdn2.iconfinder.com/data/icons/flat-icons-web/40/Remove-16.png" onclick="showsearchinput();"/>                  
+                                <apex:actionRegion >
+                                    <apex:actionFunction name="fetchProdDocumentObject" action="{!fetchProdDocumentObject}" reRender="proddocsection,scriptpannel,bottomfields" oncomplete="hidestatus();">
+                                        <apex:param value="" assignTo="{!productDocId}" name="prodDocID"/>
+                                    </apex:actionFunction>
+                                    <apex:actionFunction name="blankProd_DocmentObject" action="{!init}" reRender="proddocsection" oncomplete="hidestatus();"/>
+                                </apex:actionRegion>
+                            </apex:outputPanel>    
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    
+                    <apex:outputPanel layout="none" id="proddocsection">
+                        <apex:pageBlockSection collapsible="false" columns="2" title="Content Details">  
+                            <apex:outputField id="Title_Display_Name" value="{!prodDoc.Title_Display_Name__c}"/>
+                            <apex:outputField value="{!prodDoc.Image_URL__c}"/>
+                            <apex:outputField value="{!prodDoc.Sub_Title__c}"/>
+                            <apex:outputField value="{!prodDoc.Production_URL__c}"/>
+                            <apex:outputField value="{!prodDoc.Alternate_Text__c}"/>
+                            <apex:outputField value="{!prodDoc.Hosting_URL__c}" id="hostingurl"/>
+                            <apex:outputField label="File Access" id="isPrivate" value="{!prodDoc.File_Access__c}"/>
+                            <apex:outputField value="{!prodDoc.Marketo_URL__c}"/>
+                            <apex:outputField value="{!prodDoc.Size_Description__c}"/>
+                            <apex:outputField value="{!prodDoc.Site_Core_URL__c}"/>
+                            <apex:outputField id="FileType" value="{!prodDoc.File_Extension__c}"/>
+                            <apex:outputField value="{!prodDoc.Language__c}"/>
+                            <apex:outputField value="{!prodDoc.Insertion_Code__c}"/>                            
+                            <apex:outputField value="{!prodDoc.Hide_for_Partner_Type__c}"/>
+                            <apex:outputField value="{!prodDoc.Revision__c}"/>
+                            <apex:outputField value="{!prodDoc.Active__c}"/>
+                            <apex:outputField value="{!prodDoc.Partner_Portal__c}"/>
+                            <apex:outputField value="{!prodDoc.KVH_com__c}"/>
+                            <apex:outputField value="{!prodDoc.Gated_Document__c}"/>                             
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="2" collapsible="false" title="Additional Pages">
+                            <apex:outputField value="{!prodDoc.Display_HTML_Page__c}"/>
+                            <apex:outputField value="{!prodDoc.Html_Field__c}"/>
+                            <apex:outputField value="{!prodDoc.Display_Terms_and_Conditions_Page__c}"/>
+                            <apex:outputField value="{!prodDoc.Terms_and_Conditions_1__c}"/>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="2" title="Sales Aids Fields" collapsible="false">
+                            <apex:outputField value="{!prodDoc.Sales_Aid__c}"/>
+                            <apex:outputField value="{!prodDoc.File_Description__c}"/>
+                        </apex:pageBlockSection>  
+                    </apex:outputPanel> 
+                </apex:pageBlock>
+                <apex:outputPanel id="bottomfields" styleClass="bottomfields">
+                    <apex:outputField id="AWSfile" value="{!prodDoc.Filename_in_AWS__c}"/>
+                    <apex:outputField id="intDoc" value="{!prodDoc.Internal_Document_Record__c}"/>
+                </apex:outputPanel>
+            </apex:form>
+        </apex:define> 
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    
+    <apex:outputPanel id="scriptpannel">
+        <script>
+        var oldfileName = "{!prodDoc.Name}";
+    console.log("{!prodDoc.File_Description__c}");
+    console.log( $(".cke_editable"));
+    setTimeout(function(){ 
+        $(".cke_editable").append("{!prodDoc.File_Description__c}"),
+            3000});
+    
+    </script>
+</apex:outputPanel>
+
+<apex:outputPanel id="reloadscriptpanel">
+    <script>
+    var isError = '{!isError}';
+    function reloadpage(){               
+        if(isError == false || isError == 'false'){
+            $("#load-status").hide();
+            $("#load-statustext").text("Success!!");
+            $("#load-status").show();
+            window.setTimeout(function(){ 
+            	location.href = '/apex/adminlandingpage'; }, 1000);
+        }
+    }
+    </script>  
+</apex:outputPanel>
+
+<script>
+
+var filetype;
+var docfilename;
+
+var newFileName;
+$( function() {    
+    
+    $( "#filename" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax( {
+                url: "{!$Label.Prod_DocumentSearchPageURL}",         
+                data: {
+                    term: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            } );
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+            var productlink = '<a href="/' + ui.item.data + '" target="_blank">' + ui.item.value + '</a>'; 
+            docfilename = ui.item.data;
+            $('[id*="productname"]').html(productlink);          
+            $('[id*="productname"]').show();
+            $('[id*="filename"]').hide();   
+            $('[id*="closeicon"]').show(); 
+            $('[id*="filename"]').addClass("error"); 
+            
+            $('[id*="filenameerrormsg"]').remove(); 
+            showstatusmessage('Fetching fields of ' + ui.item.value + ' from salesforce');
+            fetchProdDocumentObject(ui.item.data);
+            
+        }
+    });
+    
+} );
+function fetchProductfun(){
+    
+}
+
+function showstatusmessage(msg){
+    $("#load-statustext").text(msg);
+    $("#load-status").show();
+}
+
+function hidestatus(){
+    $("#load-status").hide();
+    $("#load-statustext").text("");
+}
+function showsearchinput(){
+    $('[id*="productname"]').hide();
+    $('[id*="filename"]').show(); 
+    $('[id*="filename"]').val('');
+    $('[id*="closeicon"]').hide();
+    $('[id*="postalviewselectlist"]').show(); 
+    $('[id*="productportalviews"]').hide();  
+    $('[id*="productportalviews"]').html(''); 
+    $("#load-statustext").text("Refreshing...");
+    $("#load-status").show();
+    blankProd_DocmentObject();
+}
+function formvalidation(){
+    $(".errorMsg").remove();
+    $(".error").removeClass("error"); 
+    
+    var isError = false;
+    
+    if( $('[id*="filename"]').val() === undefined || $('[id*="filename"]').val().trim() == ''){
+        isError = true;
+        adderrorMessage($('[id$="filename"]'),'Please select Document');
+    }
+    return isError;
+}
+function adderrorMessage(elm,msg){
+    //alert($(elm).attr("id"));
+    $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+    $(elm).addClass("error");
+}     
+
+function setfiletype(){
+    var fileChooser = document.getElementById('file-chooser');   
+    var file = fileChooser.files[0];
+    var selectfiletype = file.type;
+    //alert(selectfiletype);
+    
+    if(selectfiletype == 'image/jpeg'){
+        filetype = 'Jpg';
+    }else if(selectfiletype == 'application/pdf'){
+        filetype = 'pdf';
+    }else if(selectfiletype  == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || selectfiletype.indexOf(document) > -1 || selectfiletype == 'application/msword'){
+        filetype = 'doc';
+    }else if (selectfiletype == 'video/mp4'){
+        filetype = 'mp4';
+    }else if(selectfiletype == 'image/png'){
+        filetype = 'png';
+    }else{
+        filetype = selectfiletype;
+    }
+    
+    //$('[id$="FileType"]').val(filetype);
+    $('[id$="Title_Display_Name"]').val(file.name);
+    newFileName = file.name;
+    
+}
+
+function backbuttonclick(returl){
+    location.href = returl;
+}
+
+function deleteFile(){
+    
+    if(!formvalidation()){
+        var docfile = $('[id*="AWSfile"]').text();
+        var intDocId = $('[id*="intDoc"]').text();
+        var conLink = $('[id*="conLink"]').text();
+        var checking = confirm('Are you sure you want to delete this content?  This cannot be undone.');
+        if(checking == false){
+            return;
+        }
+        $("#load-statustext").text("Deletion in progress...");
+        $("#load-status").show();
+        
+        var isPrivate = $('[id*="File_Access"]').text();
+        if(conLink != null){
+            saveRecords();
+        }
+        else if(isPrivate == 'Public'){
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.RemoveDocumentController.fetchCredentials}',
+                function(result, event){
+                    if (event.status) {
+                        AWS.config.region = 'us-east-1'; // 1. Enter your region                                      
+                        deleteFileFromAWS(result.Algorithm__c,result.Key__c,result.Bucket__c, docfile);                   
+                    } else if (event.type === 'exception') {
+                        console.log("Error ==>" + event.message + ' ' + event.where);
+                        
+                    } else {
+                        console.log("Messge ==>" + event.message);
+                    }
+                }, 
+                {escape: true}
+            );
+        } else{
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.RemoveDocumentController.deleteContent}',
+                intDocId,
+                function(result, event){
+                    if (event.status) {
+                        saveRecords();                   
+                    } else if (event.type === 'exception') {
+                        console.log("Error ==>" + event.message + ' ' + event.where);
+                        
+                    } else {
+                        console.log("Messge ==>" + event.message);
+                    }
+                }, 
+                {escape: true}
+            );
+            
+        }  
+    }
+}
+
+function deleteFileFromAWS(key,secert,bucketName,FILENAME) {
+    
+    var creds = new AWS.Credentials(key,secert);
+    AWS.config.credentials = creds;
+    
+    var bucket = new AWS.S3({
+        params: {
+            Bucket: bucketName,                
+        }
+    });    
+    
+    var params = {
+        Bucket: bucketName,
+        Key: FILENAME
+    };
+    bucket.deleteObject(params, function (err, data) {
+        if (data) {
+            console.log(data,err);
+            console.log("File deleted successfully");
+            var downloadparams = {Bucket: bucketName, Key: FILENAME,Expires : 315360000};
+            
+            var url = bucket.getSignedUrl('getObject', downloadparams);
+            $('[id*="hostingurl"]').val(url);
+            saveRecords();             
+        }
+        else {
+            console.log("Check if you have sufficient permissions : "+err);
+        }
+    });
+}
+</script>
+</apex:page>

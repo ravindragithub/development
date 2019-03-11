@@ -1,0 +1,7 @@
+<aura:component >
+	 <aura:attribute name="productRegId" type="String" />
+     <b class="slds-text-heading_medium">Product Registration Form</b>
+     <a title="Print Preview" style="float:right" href="{!'./productregistrationprint?prodregId='+v.productRegId}" target="_blank">
+          <lightning:icon iconName="utility:print" alternativeText="Print Preview" size="small"/>
+    </a>
+</aura:component>

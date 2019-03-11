@@ -1,0 +1,37 @@
+<apex:page id="forgotPassword" showHeader="false" controller="LTE_ForgotPassword" title="{!$Label.site.forgot_password}">
+    
+<apex:composition template="{!$Site.Template}">
+    <apex:define name="body">
+        
+        <div class="content-panel">
+            
+            <h1>
+                Forgot your password or need to reset it? 
+            </h1>
+            
+            <p>
+                Enter the email address you signed up with and we will send you the password reset instructions.
+            </p>
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <apex:form id="theForm">
+                        <apex:pageMessages id="error" escape="false"/>
+                        <apex:outputLabel value="Email" for="username"/>
+                        <p>
+                            <apex:inputText required="true" id="username" value="{!username}" size="36"/>
+                        </p>
+                        <p>
+                            <apex:commandButton id="submit" styleClass="button" value="{!$Label.site.submit}" action="{!forgotPassword}"/> 
+                        </p>
+                        <div style="padding-top: 2rem;">
+                            <apex:outputLink value="/s/lte-register/">New to myKVH?</apex:outputLink>
+                        </div>
+                    </apex:form>
+                </div>
+            </div>
+        
+        </div>
+        
+    </apex:define>
+  </apex:composition>
+</apex:page>

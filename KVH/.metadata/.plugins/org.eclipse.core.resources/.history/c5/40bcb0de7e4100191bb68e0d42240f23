@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="This APPLICATION Event is fired when a launch component is requested">
+  <aura:attribute name="identifier" type="String" default="" />
+  <aura:attribute name="request" type="String" default="" />
+</aura:event>

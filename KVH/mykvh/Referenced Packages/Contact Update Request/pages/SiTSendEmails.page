@@ -1,0 +1,123 @@
+<apex:page standardController="Contact" recordSetVar="Contacts" extensions="AcuerdoCUR.SiTSendEmailsController" tabStyle="SiT_Settings__tab" standardStylesheets="true" title="Send the contact update request emails" >
+ 
+
+
+ 
+ 
+  <apex:form >
+    <!-- START CLASSIC -->
+    <apex:outputPanel rendered="{! $User.UIThemeDisplayed == 'Theme3' }">
+
+      <apex:sectionHeader title="Contact Update Request" subtitle="Mass Stay In Touch"/>
+      <apex:pageMessages id="msgs"/>
+
+      <apex:outputPanel id="emailOk" rendered="{!IF(isSend==true,true,false)}">
+      	<apex:pageBlock title="">
+      		<apex:pageBlockButtons location="bottom">
+            <apex:commandButton action="{!doCancel}" value="Close"/>
+          </apex:pageBlockButtons>
+      	  <apex:pageBlockSection title="Contact update request" columns="1" showHeader="true">
+      	 	 <apex:outputPanel layout="none" rendered="{!nrOfContactsSelected == nrOfEmailsSend}">
+      	 		Everything went well, all {!nrOfEmailsSend} of the selected Contacts have been mailed.
+      	 	 </apex:outputPanel>
+
+      	 	<apex:outputPanel layout="none" rendered="{!nrOfContactsSelected != nrOfEmailsSend}">
+      	 		Everything went well, but only {!nrOfEmailsSend} of the {!nrOfContactsSelected} selected Contacts have been mailed. <br/>
+      	 		This difference is due to the fact that some contacts do not have an email filled in.
+      	 	</apex:outputPanel>
+      	 </apex:pageBlockSection>
+      	</apex:pageBlock>
+      </apex:outputPanel>
+      
+      
+      <apex:outputPanel id="emailPreview" rendered="{!IF(isSend==false,true,false)}">
+      	<apex:pageBlock title="">
+	        <apex:pageBlockButtons location="both">
+	          <apex:commandButton action="{!Send}" value="Send" rendered="{!if(IsConfigured==true, true, false)}"/>
+	            <apex:commandButton action="{!doCancel}" value="Cancel"/>
+	        </apex:pageBlockButtons>
+    			<apex:pageBlockSection title="Contact update request" columns="1" showHeader="true">
+    			      Are you sure you want to send out {!nrOfContactsSelected} Contact Update requests to the selected Contacts?
+    			</apex:pageBlockSection>
+      	</apex:pageBlock>
+      
+      </apex:outputPanel>
+
+    </apex:outputPanel>
+    <!-- END CLASSIC -->
+
+
+  <apex:outputPanel rendered="{! $User.UIThemeDisplayed != 'Theme3' }">
+
+      <apex:slds />
+
+      <!-- REQUIRED SLDS WRAPPER -->
+      <div class="slds-scope">
+
+
+        <div class="slds-clearfix">
+          <div class="slds-float_left">
+            <apex:image id="theImage" value="{!$Resource.AcuerdoCUR__Contact_Update_Request_Logo}" width="42" height="42"/>
+          </div>
+        </div>
+
+        <apex:outputPanel rendered="{!IF(isSend==true,true,false)}">
+
+          <apex:outputPanel layout="none" rendered="{!nrOfContactsSelected == nrOfEmailsSend}">
+            <div class="slds-text-heading_medium slds-text-color_default slds-align_absolute-center">Everything went well, all {!nrOfEmailsSend} of the selected Contacts have been mailed.</div>
+           </apex:outputPanel>
+
+          <apex:outputPanel layout="none" rendered="{!nrOfContactsSelected != nrOfEmailsSend}">
+            <div class="slds-text-heading_medium slds-text-color_default slds-align_absolute-center">Everything went well, but only {!nrOfEmailsSend} of the {!nrOfContactsSelected} selected Contacts have been mailed. <br/>
+            This difference is due to the fact that some contacts do not have an email filled in.</div>
+          </apex:outputPanel>
+
+
+           <div class="slds-docked-form-footer">
+              <apex:commandButton action="{!doCancel}" value="Close" styleClass="slds-button slds-button_brand" />
+           </div>
+
+        </apex:outputPanel>
+      
+      
+        <apex:outputPanel rendered="{!IF(isSend==false,true,false)}">
+
+              <!-- ERROR MESSAGES -->
+              <apex:outputPanel rendered="{!ErrorMessage != null && ErrorMessage != ''}">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                  <span class="slds-assistive-text">error</span>
+                  <span class="slds-icon_container slds-icon-utility-ban slds-m-right_x-small" title="Error occured">
+                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#ban')}"></use>
+                    </svg>
+                  </span>
+                  <h2><apex:outputText value="{!ErrorMessage}" /></h2>
+                  <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close">
+                    <svg class="slds-button__icon" aria-hidden="true">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Close</span>
+                  </button>
+                </div>
+              </apex:outputPanel>
+              <!-- / ERROR MESSAGES -->
+
+
+              <apex:outputPanel rendered="{!ErrorMessage == null || ErrorMessage == ''}">
+                <div class="slds-text-heading_medium slds-text-color_default slds-align_absolute-center">Are you sure you want to send out {!nrOfContactsSelected} Contact Update requests to the selected Contacts?</div>
+              </apex:outputPanel>
+
+
+           <div class="slds-docked-form-footer">
+              <apex:commandButton value="Send" action="{!Send}" styleClass="slds-button slds-button_brand" rendered="{!if(IsConfigured==true, true, false)}"/>
+              <apex:commandButton action="{!doCancel}" value="Cancel" styleClass="slds-button slds-button_neutral" />
+           </div>
+        </apex:outputPanel>
+      </div>
+
+
+  </apex:outputPanel>
+
+
+  </apex:form>
+</apex:page>

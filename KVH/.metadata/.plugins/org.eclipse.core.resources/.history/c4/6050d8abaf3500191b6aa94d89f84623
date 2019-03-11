@@ -1,0 +1,29 @@
+<!--
+ - Created by Jai Chaturvedi on 19/04/2017.
+ -->
+
+<aura:component description="NoSearchResults">
+    <div class="slds-box">
+        <div class="slds-text-color--error slds-text-heading--medium slds-m-bottom--xx-large">
+            Unfortunately there are no results matching your query...it happens.
+            Let's try again
+        </div>
+
+        <div class="slds-text-heading--small slds-m-bottom--large">
+            Try these search suggestions:
+        </div>
+
+        <ul class="slds-list--dotted">
+            <li>Check your spelling</li>
+            <li>Try more general words</li>
+            <li>Try different words that mean the same thing</li>
+            <li>Try using our Content Type filters to help refine your search</li>
+            <li>
+                <a href="./contact-us" class="slds-text-color--error">
+                    Contact Us
+                </a>
+                to see if we can help
+            </li>
+        </ul>
+    </div>
+</aura:component>

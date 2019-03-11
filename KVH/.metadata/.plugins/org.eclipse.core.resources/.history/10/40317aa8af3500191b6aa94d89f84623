@@ -1,0 +1,59 @@
+<aura:component controller="HTS_ltgsvc_hybrids">
+  <aura:attribute name="HTSPlans" type="Product2[]"/>
+  <aura:attribute name="primaryPlans" type="Product2[]"/>
+  <aura:attribute name="selectedPrimary" type="Product2"/>
+  <aura:attribute name="secondaryPlans" type="Product2[]"/>
+  <aura:attribute name="selectedSecondary" type="Product2"/>
+
+  <!--PUBLISHER -->
+  <aura:registerEvent name="cmpDataUpdated" type="c:HTS_hybrids_component_evt" />
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="plansChange" value="{!v.HTSPlans}" action="{!c.updatePicklists}"/>
+
+  <!-- Markup -->
+
+
+  <div class="slds-grid slds-grid_pull-padded-medium">
+    <div class="slds-col slds-p-horizontal_medium">
+      <form class="slds-form_stacked">
+        <p class="slds-p-horizontal_medium">
+          <div class="slds-form-element">
+            <div class="slds-select_container">
+              <lightning:select aura:id="primaryPicklist" name="primaryPicklist" 
+                                label="High Speed Plan Component">
+                <option>Choose High Speed Component...</option> 
+                <aura:iteration items="{!v.primaryPlans}" var="plan">
+                  <option value="{!plan.Id}" >{!plan.Name}</option>
+                </aura:iteration>
+              </lightning:select>
+            </div>
+          </div>
+        </p>
+      </form>
+    </div>
+
+    <div class="slds-col slds-p-horizontal_medium">
+      <form class="slds-form_stacked">
+        <p class="slds-p-horizontal_medium">
+          <div class="slds-form-element">
+            <div class="slds-select_container">
+              <lightning:select aura:id="secondaryPicklist" name="secondaryPicklist" 
+                                label="Unlimited Plan Component">
+                <option>Choose Unlimited Component...</option>
+                <aura:iteration items="{!v.secondaryPlans}" var="plan">
+                  <option value="{!plan.Id}" >{!plan.Name}</option>
+                </aura:iteration>
+              </lightning:select>
+            </div>
+          </div>
+        </p>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="slds-form-element slds-m-around--small slds-align_absolute-center">
+    <lightning:button variant="brand" label="Select Plans" iconName="action:update_status" iconPosition="left" onclick="{!c.selectPlans}"/>
+  </div>
+</aura:component>

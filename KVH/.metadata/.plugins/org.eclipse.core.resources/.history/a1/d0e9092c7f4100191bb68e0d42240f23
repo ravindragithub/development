@@ -1,0 +1,16 @@
+<apex:component id="headerComponent">
+    <apex:panelGrid cellpadding="0" cellspacing="0" width="100%" border="0" columns="2" style="text-align: left;" id="theHeader" bgcolor="#cc0000">
+        <apex:image url="{!$Resource.PortalHeader}" style="align: left;" alt="myKVH" width="299" height="60" title="myKVH"/>
+        <apex:panelGrid cellpadding="25%" cellspacing="0" width="100%" border="0" columns="1" style="text-align: right;" id="Links" bgcolor="#cc0000">
+            <apex:panelGroup rendered="false" > <!-- rendered="{!AND(ISPICKVAL($User.UserType,'Guest'), $Site.LoginEnabled)}" -->
+                <!-- Changed apex:outputLink values... removed "/site" prefix and ".apexp" suffix jthom 9/12/14 -->
+                <apex:outputLink value="/SiteLogin" style="color:#ffffff;">{!$Label.site.login_button}</apex:outputLink>
+                <apex:outputText value=" | " style="color:#ffffff;" />
+                <apex:outputLink value="/ForgotPassword" style="color:#ffffff;">{!$Label.site.forgot_your_password_q}</apex:outputLink>
+                <apex:outputText value=" | " rendered="{!$Site.RegistrationEnabled}" style="color:#ffffff;" />
+                <apex:outputLink value="/SiteRegister" rendered="{!$Site.RegistrationEnabled}" style="color:#ffffff;">{!$Label.site.new_user_q}</apex:outputLink>
+            </apex:panelGroup>
+            <apex:outputLink value="{!$Label.Base_URL}/secur/logout.jsp" rendered="{!NOT(ISPICKVAL($User.UserType,'Guest'))}" style="color:#ffffff;padding:10%;">{!$Label.site.logout}</apex:outputLink>
+        </apex:panelGrid>
+    </apex:panelGrid>
+</apex:component>

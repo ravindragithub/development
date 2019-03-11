@@ -1,0 +1,44 @@
+<apex:page showHeader="false" controller="SelfRegRegisterController" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html>
+<head>
+
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+<title>myKVH</title>
+  <apex:stylesheet value="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.util_styles)}"/>
+    
+    
+
+</head> 
+
+
+<body>
+ <apex:stylesheet value="{!$Resource.portal_styles2}"/>
+            <apex:insert name="header">
+                <c:myKVHSiteHeader />
+            </apex:insert>
+<!-- content area -->
+<div id="util-main">
+
+    <h1>Thank you for registering for myKVH!</h1>
+    <p>An email has been sent to you with your temporary password.</p>
+    <apex:form >
+        <apex:commandButton id="loggingin" value="Login" action="{!gotoLogin}" style="background-color:#78ac49;border-radius:3px;color:#fff;min-width: 70px;border:none;padding: 10px;">
+        </apex:commandButton>
+    </apex:form>
+    
+</div>
+<!-- /content area -->
+    
+
+<!-- footer -->
+    <c:SelfRegFooter />
+<!-- /footer -->
+
+</body>
+</html>
+</apex:page>

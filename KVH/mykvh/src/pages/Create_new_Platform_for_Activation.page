@@ -1,0 +1,19 @@
+<apex:page standardController="case">
+   <apex:includeScript value="/xdomain/xdomain.js"/>
+   <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+   <apex:includeScript value="/support/console/30.0/integration.js"/>
+  <script>
+        function CheckCase(){
+            if(sforce.console.isInConsole()) {
+            sforce.console.openPrimaryTab(null, '/apex/Create_new_Platform_for_Activations?isdtp=vw&CaseId={!Case.Id}', true, 'New Platform Activation', openSuccess, 'ConsoleTab');
+            var openSuccess = function openSuccess(result) { };
+            } else {
+            var url = '/apex/Create_new_Platform_for_Activations?CaseId={!Case.Id}';
+            window.open(url,'_blank');
+            }
+        }
+  </script>
+  <apex:form >
+       <apex:commandLink value="Find or Create Platform (opens in new tab)" onclick="CheckCase()"/>
+  </apex:form>
+</apex:page>

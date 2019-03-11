@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>text/plain</contentType>
+    <description>MOCK Response from HTSOSS for
+curl -X GET --header &apos;Accept: application/json&apos; &apos;https://ossdev.minivsat.net/api/1.0/hts/terminals/3373/status&apos;</description>
+</StaticResource>

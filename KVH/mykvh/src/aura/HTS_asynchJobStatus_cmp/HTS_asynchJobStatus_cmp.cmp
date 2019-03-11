@@ -1,0 +1,50 @@
+<aura:component controller="HTS_ltgsvc_asynchJobStatus">
+  <aura:attribute name="VTID" type="String" description="Virtual Terminal Id" />
+  <aura:attribute name="I2CMSerialNumber" type="String" description="I2CM hardware serial number" />
+  <aura:attribute name="asynchTerm" type="HTSOSS_hts_terminals_asynch" description="This is the object returned from the Server" />
+  <!-- Event Publishers -->
+  <aura:registerEvent name="stateChange" type="c:HTS_jobStatus_evt"/>
+  <!-- Event Handlers -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:handler name="stateChange" event="c:HTS_jobStatus_evt" action="{!c.handleStateChange}"/>
+
+  Checking status for Terminal Id {!v.VTID}
+  <div aura:id="component_div" class="slds-is-relative">
+
+    <div aura:id="form_div">
+      <form class="slds-form--horizontal">
+        <input type="text" style="display:none;"/> <!-- kind of a hack, inhibits enter key from scanner -->
+
+        <p class="slds-m-around--small">
+          <div class="slds-form-element slds-is-required">
+            <div class="slds-form-element__control">
+              <ui:outputCheckbox aura:id="jobSuccess" class="indicator" value="{!v.asynchTerm.complete}" />
+              <label class="slds-form-element__label" for="jobComplete">&nbsp;Terminal Creation Job Finished</label>
+            </div>
+          </div>
+        </p>
+
+        <p class="slds-m-around--small">
+          <div class="slds-form-element slds-is-required">
+            <div class="slds-form-element__control">
+              <ui:outputCheckbox aura:id="jobSuccess" class="indicator" value="{!v.asynchTerm.result}" />
+              <label class="slds-form-element__label" for="jobSuccess">&nbsp;Terminal Creation Job Successful</label>
+            </div>
+          </div>
+        </p>
+
+            
+        <p class="slds-m-around--small">
+          <div class="slds-form-element">
+              <lightning:button variant="brand" label="Check" iconName="utility:sync" iconPosition="left" onclick="{! c.manualCheck }" />
+          </div>
+        </p>
+      </form>
+    </div>
+
+    <div aura:id="spinner_div" class="slds-spinner_container slds-hide" style="position: static; z-index: 9002;" >
+      <lightning:spinner variant="brand" size="large" alternativeText="Checking job status..."/>
+    </div>
+
+  </div>
+</aura:component>

@@ -1,0 +1,18 @@
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .middlePanel{
+        padding: 0 .5rem 0 .5rem;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+}
+.THIS .required {
+    color:rgb(194, 57, 52);
+    float:none!important;
+}
+.THIS .popover button{
+    background-color: transparent!Important;
+}

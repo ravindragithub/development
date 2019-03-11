@@ -1,0 +1,99 @@
+<!-- add implements="forceCommunity:availableForAllPageTypes" to surface the component in community builder -->
+<aura:component controller="LTE_LightningLoginFormController" implements="forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <aura:attribute name="usernameLabel" type="String" required="false" default="Username"/>
+    <aura:attribute name="passwordLabel" type="String" required="false" default="Password"/>
+    <aura:attribute name="loginButtonLabel" type="String" required="false" default="Login"/>
+    <aura:attribute name="expid" type="String" required="false" description="The branding experience ID" />        
+    
+    <aura:attribute name="forgotPasswordLabel" type="String" required="false" default="Forgot your password?"/>
+    <aura:attribute name="selfRegisterLabel" type="String" required="false" default="Not a member?"/>
+    <aura:attribute name="forgotPasswordUrl" type="String" required="false" default="/ForgotPassword"/>
+    <aura:attribute name="selfRegisterUrl" type="String" required="false" default="/SelfRegister"/>
+    
+    <aura:attribute name="isUsernamePasswordEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="isSelfRegistrationEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="communityForgotPasswordUrl" type="String" access="private"/>
+    <aura:attribute name="communitySelfRegisterUrl" type="String" access="private"/>
+    
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:dependency resource="c:setStartUrl" type="EVENT"/>
+    <!-- Please uncomment
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT"/>
+    -->
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}"/>
+    <aura:handler event="c:setExpId" action="{!c.setExpId}"/>    
+    <aura:dependency resource="c:setExpId" type="EVENT"/>  
+    
+    <div style="max-width:1100px; margin:0 auto;position:relative;">
+        
+         <aura:if isTrue="{!v.spinner}">
+            <lightning:spinner variant="brand"
+                               size="large"
+                               alternativeText="Loading Page"/>
+        </aura:if>
+        <div class="slds-grid slds-wrap">
+           <div class="slds-col slds-medium-size_1-of-12">
+           </div>
+             
+           <div class="slds-col slds-medium-size_10-of-12 content-panel">
+               <!-- inner panel for login -->
+               <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-medium-size_3-of-12">
+       			</div>
+                <div class="slds-col slds-medium-size_6-of-12">
+                    
+                   <div class="lte-header">
+                       <img src="https://progressive.kvh.com/myKVH_Files/lte/prod_LTE1.png" />
+                       <h1>TracPhone LTE&#8209;1 Activation</h1>
+                       
+                   </div>
+                   
+                <aura:renderIf isTrue="{!v.isUsernamePasswordEnabled}">
+                    <span>
+                        <aura:renderIf isTrue="{!v.showError}">
+                            <div id="error">
+                                <ui:outputRichText value="{!v.errorMessage}"/>
+                            </div>
+                        </aura:renderIf>
+                    </span> 
+                    
+                    <p>
+                        <label>Email</label>
+                        <ui:inputText value="" aura:id="username" keyup="{!c.onKeyUp}" class="input sfdc_usernameinput sfdc" label="{!v.usernameLabel}" labelClass="assistiveText"/>
+                    </p>
+                    
+                    <p>
+                        <label>Password</label>
+                        <ui:inputSecret value="" aura:id="password" keyup="{!c.onKeyUp}" class="input sfdc_passwordinput sfdc" label="{!v.passwordLabel}" labelClass="assistiveText"/>
+                    </p>
+                    
+                    <div id="sfdc_forgot" class="sfdc">
+                        <span><a href="{!if(v.communityForgotPasswordUrl == null, v.forgotPasswordUrl, v.communityForgotPasswordUrl)}">Forgot Password?</a></span>
+                        <aura:renderIf isTrue="{!v.isSelfRegistrationEnabled}">
+                            <span style="float:right" ><a href="{!if(v.communitySelfRegisterUrl == null, v.selfRegisterUrl, v.communitySelfRegisterUrl)}">New to myKVH?</a></span>
+                        </aura:renderIf>                                        
+                    </div>
+                    
+                     <div class="sfdc" style="text-align:center;">
+                        <ui:button aura:id="submitButton" label="{!v.loginButtonLabel}" press="{!c.handleLogin}" class="sfdc_button"/>
+                    </div>
+                    
+                </aura:renderIf>
+                </div>
+                <div class="slds-col slds-medium-size_3-of-12">
+       			</div>
+               </div>
+               <!-- /inner panel -->
+               
+            </div>
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

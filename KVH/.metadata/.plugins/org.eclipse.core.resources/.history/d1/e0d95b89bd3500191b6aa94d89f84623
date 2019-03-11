@@ -1,0 +1,419 @@
+<apex:component controller="Act_Product_Summary_1_Component_Ctrl" allowDML="true" id="productsummary1" >
+    
+    <style>
+      <!--  * {
+        font-family: sans-serif !important;
+        margin: 0;
+        padding: 0;
+        } -->
+        table.review th {
+        background: #f3f3f3;
+        }
+        table.review td, table.review th {
+        border: 1px solid #ccc;
+        padding: 10px 15px;
+        text-align: left;
+        }
+        table.review {
+        border-collapse: collapse;
+        }
+        
+        table.review th h3 {
+        margin: 0;
+        padding: 0;
+        }
+        h3 {
+        font-size: 1.5em;
+        color: #7c7c7c;
+        font-weight: bold;
+        }
+        h2 {
+        font-size: 1.5em;
+        color: #30445b;
+        }
+        table.review td.row-hdr {
+        padding: 3px 15px;
+        }
+        table.collapse-panels td.row-hdr {
+        background: #ddd;
+        text-align: left;
+        font-size: 80%;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #444;
+        text-shadow: none;
+        }
+        table.review td, table.review th {
+        border: 1px solid #ccc;
+        padding: 10px 15px;
+        text-align: left;
+        }
+        table.collapse-panels td {
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        }
+        td.text-left, th.text-left {
+        text-align: left !important;
+        }
+        .text-left {
+        text-align: left;
+        }
+        table.collapse-panels {
+        width: 100%;
+        margin: 0 auto 20px 0;
+        border: 1px solid #ddd;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        border-collapse: separate;
+        line-height: normal;
+        }
+        .collapse-button {
+        font-size: 80% !important;
+        font-weight: normal !important;
+        color: #444 !important;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-family: DINPro-Regular, Arial !important;
+        margin: 0;
+        padding: 5px 20px;
+        }
+    </style>
+    
+  <!--  <p class="pad-bottom">Review each section of the Activation Order, then confirm the order to view final pricing.</p> -->
+    <!-- Subscription -->
+    <h2>Subscription Account</h2>
+    <table class="review collapse-panels">
+        <tbody><tr>
+            <th class="width-25"><h3>Main Contact</h3></th>
+            <th class="width-25" style="display:{!IF(objwrapReviewAllData.lstAuthorizedRepresentatives.size > 0,'table-cell;', 'none;')}"><h3>Authorized Representatives</h3></th>
+            <th class="width-25"><h3>Billing Information</h3></th>
+            <th class="width-25" style="display:{!IF(OR(objwrapReviewAllData.objActivationAccount.Bill_to__c == 'Customer', objwrapReviewAllData.objActivationAccount.Bill_to__c == null),'table-cell;', 'none;')}"><h3>Payment Information</h3></th>
+            </tr>
+            <tr style="display:{!IF(ActivationStatus.System_Page__c != 'complete', 'table-row;', 'none;')}" > <!-- previously Services_Page__c = 'inhibited' -->
+                <td class="row-hdr"> 
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Subscriber_Information'); return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr" style="display:{!IF(objwrapReviewAllData.lstAuthorizedRepresentatives.size > 0,'table-cell;', 'none;')}"> 
+                    <apex:commandLink rendered="{!IF(OR(objwrapReviewAllData.objActivationOrder.Activation_Type__c == 'Airtime Case Activation', objwrapReviewAllData.objActivationOrder.HasMainContactRole__c, AND(objwrapReviewAllData.objActivationAccount.Corporate_Billing_Account__c == null , objwrapReviewAllData.objActivationAccount.Contact__c == $User.ContactId)),true, false)}" styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Authorized_Representatives');return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr"> 
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Billing_Information');return false;" > </apex:commandLink> 
+                </td>
+                <td class="row-hdr" style="display:{!IF(OR(objwrapReviewAllData.objActivationAccount.Bill_to__c == 'Customer', objwrapReviewAllData.objActivationAccount.Bill_to__c == null),'table-cell;', 'none;')}">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Payment_Information');return false;" > </apex:commandLink> 
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left">
+                    <p>
+                        <b> {!objwrapReviewAllData.objActivationMainContact.First_Name__c} {!objwrapReviewAllData.objActivationMainContact.Last_Name__c}</b> <br/>
+                        {!objwrapReviewAllData.objActivationMainContact.Account__c}<br/>
+                        {!objwrapReviewAllData.objActivationMainContact.Email__c}<br/>
+                        {!objwrapReviewAllData.objActivationMainContact.Primary_Phone__c} ({!objwrapReviewAllData.objActivationMainContact.Primary_Phone_Type__c})<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationMainContact.Secondary_Phone__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationMainContact.Secondary_Phone__c} ({!objwrapReviewAllData.objActivationMainContact.Secondary_Phone_Type__c})<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationMainContact.Job_Function__c}<br/>
+                        {!objwrapReviewAllData.objActivationMainContact.Job_Title__c}<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Address__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Address__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Subscriber_Address_Line_2__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Subscriber_Address_Line_2__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.City__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.City__c}<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationAccount.Postal_Zip_Code__c}<br/>
+                        {!objwrapReviewAllData.objActivationAccount.State_Province__c}<br/>
+                        {!objwrapReviewAllData.objActivationAccount.Country_Name__c}
+                    </p>
+                </td>
+                <td class="text-left" style="display:{!IF(objwrapReviewAllData.lstAuthorizedRepresentatives.size > 0,'table-cell;', 'none;')}">
+                    <apex:repeat value="{!objwrapReviewAllData.lstAuthorizedRepresentatives}" var="objActivationAuthorizedRepresentative">
+                        <p>
+                            <b>  {!objActivationAuthorizedRepresentative.First_Name__c} {!objActivationAuthorizedRepresentative.Last_Name__c}</b> <br/>
+                            {!objActivationAuthorizedRepresentative.Account__c}<br/>
+                            {!objActivationAuthorizedRepresentative.Email__c}<br/>
+                            {!objActivationAuthorizedRepresentative.Primary_Phone__c} ({!objActivationAuthorizedRepresentative.Primary_Phone_Type__c})<br/>
+                            <apex:outputPanel rendered="{!IF(objActivationAuthorizedRepresentative.Secondary_Phone__c != '', true, false)}">
+                                {!objActivationAuthorizedRepresentative.Secondary_Phone__c} ({!objActivationAuthorizedRepresentative.Secondary_Phone_Type__c})<br/>
+                            </apex:outputPanel>
+                            {!objActivationAuthorizedRepresentative.Job_Function__c}<br/>
+                            {!objActivationAuthorizedRepresentative.Job_Title__c}<br/>
+                            {!objActivationAuthorizedRepresentative.State__c}<br/>
+                            {!objActivationAuthorizedRepresentative.Country__c}
+                        </p>
+                        <hr/>
+                    </apex:repeat>
+                </td>
+                <td class="text-left">
+                    <p><strong>Billing Representative</strong></p>
+                    <p>
+                        <b>  {!objwrapReviewAllData.objActivationBillingRepresentative.First_Name__c} {!objwrapReviewAllData.objActivationBillingRepresentative.Last_Name__c}</b> <br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Account__c}<br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Email__c}<br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Primary_Phone__c} ({!objwrapReviewAllData.objActivationBillingRepresentative.Primary_Phone_Type__c})<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationBillingRepresentative.Secondary_Phone__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationBillingRepresentative.Secondary_Phone__c} ({!objwrapReviewAllData.objActivationBillingRepresentative.Secondary_Phone_Type__c})<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Job_Function__c}<br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Job_Title__c}<br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.State__c}<br/>
+                        {!objwrapReviewAllData.objActivationBillingRepresentative.Country__c}
+                    </p>
+                    <hr/>
+                    <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{!objwrapReviewAllData.lstInvoiceRecipients}" var="objActivationInvoiceRecipient">
+                        <apex:outputPanel rendered="{!IF(i=1, true, false)}">
+                            <p><strong>Additional Invoice Recipients</strong></p>
+                        </apex:outputPanel>
+                        <p>
+                            <b>  {!objActivationInvoiceRecipient.First_Name__c} {!objActivationInvoiceRecipient.Last_Name__c}</b> <br/>
+                            {!objActivationInvoiceRecipient.Account__c}<br/>
+                            {!objActivationInvoiceRecipient.Email__c}<br/>
+                            {!objActivationInvoiceRecipient.Primary_Phone__c} ({!objActivationInvoiceRecipient.Primary_Phone_Type__c})<br/>
+                            <apex:outputPanel rendered="{!IF(objActivationInvoiceRecipient.Secondary_Phone__c != '', true, false)}">
+                                {!objActivationInvoiceRecipient.Secondary_Phone__c} ({!objActivationInvoiceRecipient.Secondary_Phone_Type__c})<br/>
+                            </apex:outputPanel>
+                            {!objActivationInvoiceRecipient.Job_Function__c}<br/>
+                            {!objActivationInvoiceRecipient.Job_Title__c}<br/>
+                            {!objActivationInvoiceRecipient.State__c}<br/>
+                            {!objActivationInvoiceRecipient.Country__c}
+                        </p>
+                        <hr/>
+                        <apex:variable value="{!i+1}" var="i"/>
+                    </apex:repeat>
+                    <p><strong>Billing Address</strong></p>
+                    <p>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Preferred_Addressee__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Preferred_Addressee__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Billing_Rep_Address__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Billing_Rep_Address__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Billing_Rep_Address_Line_2__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Billing_Rep_Address_Line_2__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationAccount.Billing_City__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationAccount.Billing_City__c}<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationAccount.Billing_Zip_Code__c}<br/>
+                        {!objwrapReviewAllData.objActivationAccount.Billing_State_Province__c}<br/>
+                        {!objwrapReviewAllData.objActivationAccount.Billing_Country_Name__c}
+                    </p>
+                    <hr/>
+                </td>
+                <td class="text-left" style="display:{!IF(OR(objwrapReviewAllData.objActivationAccount.Bill_to__c == 'Customer', objwrapReviewAllData.objActivationAccount.Bill_to__c == null),'table-cell;', 'none;')}">
+                    <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationOrder.Payment_Method__c != 'Entered Credit Card(s)', true, false)}">
+                        <p><strong>{!objwrapReviewAllData.objActivationOrder.Payment_Method__c}</strong></p>
+                    </apex:outputPanel>
+                    <apex:repeat rendered="{!IF(objwrapReviewAllData.objActivationOrder.Payment_Method__c == 'Entered Credit Card(s)', true, false)}" value="{!objwrapReviewAllData.lstPaymentProfiles}" var="objActivationPaymentProfile">
+                        <p><strong>{!IF(objActivationPaymentProfile.Primary_Credit_Card__c, 'Primary', 'Secondary')} Credit Card Billing Information</strong></p>
+                        <p>
+                            <b>  {!objActivationPaymentProfile.First_Name__c} {!objActivationPaymentProfile.Last_Name__c}</b> <br/>
+                            {!objActivationPaymentProfile.Company__c}<br/>
+                            {!objActivationPaymentProfile.Email__c}<br/>
+                            {!objActivationPaymentProfile.Phone__c}<br/>
+                            {!objActivationPaymentProfile.State_Province_Territory__c}<br/>
+                            {!objActivationPaymentProfile.Country__c}
+                        </p>
+                        <p><strong>{!IF(objActivationPaymentProfile.Primary_Credit_Card__c, 'Primary', 'Secondary')} Credit Card Information</strong></p>
+                        <p>
+                            {!objActivationPaymentProfile.Card_Type__c}<br/>
+                            {!objActivationPaymentProfile.Credit_Card_Number__c}<br/>
+                            {!objActivationPaymentProfile.Expiration_Date__c}
+                        </p>
+                         <hr/>
+                    </apex:repeat>
+                </td>
+            </tr>
+        </tbody></table>
+    <br/>
+    
+    <!-- Installation -->
+    <h2>Installation</h2>
+    <table class="collapse-panels review">
+        <tbody>
+            <tr>
+                <th class="width-20"><h3>Installation Type</h3></th>
+                <th class="width-20"><h3>{!IF(CONTAINS(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c, 'Vessel'),'Vessel', 'Vehicle/Platform ')} Details</h3></th>
+                <th class="width-20" style="display:{!IF(CONTAINS(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c, 'Vessel'),'table-cell;', 'none;')}" ><h3>Onboard Contact</h3></th>
+                <th class="width-20"><h3>Antenna System Support Contact</h3></th>
+                <th class="width-20"><h3>Dealer / Distributor Information</h3></th>
+            </tr>
+            <tr style="display:{!IF(ActivationStatus.System_Page__c != 'complete', 'table-row;', 'none;')}">
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Installation_Type');return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Vessel_Details');return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr" style="display:{!IF(CONTAINS(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c, 'Vessel'),'table-cell;', 'none;')}">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Onboard_Contact');return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Antenna_System_Support_Contact');return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('Dealer_Distributor_Info');return false;" ></apex:commandLink> 
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left">
+                    <p>{!objwrapReviewAllData.objActivationPlatform.Vessel_Info__c}</p>
+                </td>
+                <td class="text-left">
+                    <p>
+                        {!objwrapReviewAllData.objActivationPlatform.Name}<br/>
+                        {!objwrapReviewAllData.objActivationPlatform.Flag__c}<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Vessel_Length_ft_m__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationPlatform.Vessel_Length_ft_m__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Industry_Designation__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationPlatform.Industry_Designation__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Platform_Detail__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationPlatform.Platform_Detail__c}<br/>
+                        </apex:outputPanel>
+                       <!-- <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationPlatform.Vessel_Info__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Industry_Designation__c == '', true, false)}">
+                            <strong> Market: </strong>{!objwrapReviewAllData.objActivationPlatform.Market__c}<br/>
+                            <strong>Market Sector:</strong> {!objwrapReviewAllData.objActivationPlatform.Market_Sector__c}<br/>
+                        </apex:outputPanel> -->
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Vehicle_Make_Model__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationPlatform.Vehicle_Make_Model__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(CONTAINS(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c, 'Vessel'), true, false)}">
+                            <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Vessel_IMO__c != '', true, false)}">
+                                <strong> IMO:</strong> {!objwrapReviewAllData.objActivationPlatform.Vessel_IMO__c}<br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Vessel_Radio_Call_Sign__c != '', true, false)}">
+                                <strong>Radio Call Sign:</strong> {!objwrapReviewAllData.objActivationPlatform.Vessel_Radio_Call_Sign__c}<br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.MMSI__c != '', true, false)}">
+                                <strong>MMSI:</strong> {!objwrapReviewAllData.objActivationPlatform.MMSI__c}<br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c != '', true, false)}">
+                                <strong>Chartered boat/yacht : </strong> {!objwrapReviewAllData.objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c}<br/>
+                            </apex:outputPanel>
+                            <br/>
+                            <strong>Vessel operating in Brazil waters : </strong><apex:outputText value="{!IF(objwrapReviewAllData.objActivationOrder.Brazilian_Waters_Vessel__c , 'Yes', 'No' )}"/><br/>
+                            <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationOrder.Brazilian_Waters_Vessel__c, true, false)}">
+                                <strong>Distance between antenna and sea level : </strong> {!objwrapReviewAllData.objActivationPlatform.Distance_between_antenna_and_sea_level__c}<br/>
+                                <strong>Geographical coordinates of the local port and anchoring sites used : </strong> {!objwrapReviewAllData.objActivationPlatform.Geograpical_coordinates_of_port_and_site__c}<br/>
+                                <strong>Minimum Latitude = </strong> {!objwrapReviewAllData.objActivationPlatform.Minimum_Latitude__c}<br/>
+                                <strong>Maximum Latitude = </strong> {!objwrapReviewAllData.objActivationPlatform.Maximum_Latitude__c}<br/>
+                                <strong>Minimum Longitude = </strong> {!objwrapReviewAllData.objActivationPlatform.Minimum_Longitude__c}<br/>
+                                <strong>Maximum Longitude = </strong> {!objwrapReviewAllData.objActivationPlatform.Maximum_Longitude__c}<br/>
+                                <strong>System operates while anchored :  </strong> <apex:outputText value="{!IF(objwrapReviewAllData.objActivationPlatform.Brazilian_system_operates_while_anchored__c , 'Yes', 'No' )}"/> <br/>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </p>
+                </td>
+                <td class="text-left" style="display:{!IF(CONTAINS(objwrapReviewAllData.objActivationPlatform.Vessel_Info__c, 'Vessel'),'table-cell;', 'none;')}">
+                    <p>
+                        <b> {!objwrapReviewAllData.objActivationOnboardContact.First_Name__c} {!objwrapReviewAllData.objActivationOnboardContact.Last_Name__c}</b> <br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Account__c}<br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Email__c}<br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Primary_Phone__c} ({!objwrapReviewAllData.objActivationOnboardContact.Primary_Phone_Type__c})<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationOnboardContact.Secondary_Phone__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationOnboardContact.Secondary_Phone__c} ({!objwrapReviewAllData.objActivationOnboardContact.Secondary_Phone_Type__c})<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Job_Function__c}<br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Job_Title__c}<br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Address_1__c}<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationOnboardContact.Address_2__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationOnboardContact.Address_2__c}<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationOnboardContact.State__c}<br/>
+                        {!objwrapReviewAllData.objActivationOnboardContact.Country__c}
+                    </p>
+                </td>
+                <td class="text-left">
+                    <p>
+                        <b> {!objwrapReviewAllData.objActivationSystemSupportContact.First_Name__c} {!objwrapReviewAllData.objActivationSystemSupportContact.Last_Name__c}</b> <br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Account__c}<br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Email__c}<br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Primary_Phone__c} ({!objwrapReviewAllData.objActivationSystemSupportContact.Primary_Phone_Type__c})<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationSystemSupportContact.Secondary_Phone__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationSystemSupportContact.Secondary_Phone__c} ({!objwrapReviewAllData.objActivationSystemSupportContact.Secondary_Phone_Type__c})<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Job_Function__c}<br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Job_Title__c}<br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Address_1__c}<br/>
+                        <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationSystemSupportContact.Address_2__c != '', true, false)}">
+                            {!objwrapReviewAllData.objActivationSystemSupportContact.Address_2__c}<br/>
+                        </apex:outputPanel>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.State__c}<br/>
+                        {!objwrapReviewAllData.objActivationSystemSupportContact.Country__c}
+                    </p>
+                </td>
+                <td class="text-left width-20">
+                    <apex:outputPanel rendered="{!IF(AND(objwrapReviewAllData.objActivationDealer.Id != null , objwrapReviewAllData.objActivationDealer.Id  != ''), true, false)}">
+                        <p>
+                        <b> {!objwrapReviewAllData.objActivationDealer.Contact_First_Name__c} {!objwrapReviewAllData.objActivationDealer.Contact_Last_Name__c}</b> <br/>
+                        {!objwrapReviewAllData.objActivationDealer.Company__c}<br/>
+                        {!objwrapReviewAllData.objActivationDealer.Contact_Email__c}<br/>
+                        {!objwrapReviewAllData.objActivationDealer.Dealer_Phone__c} ({!objwrapReviewAllData.objActivationDealer.Primary_Phone_Type__c})<br/>
+                        {!objwrapReviewAllData.objActivationDealer.Contact_Phone__c} ({!objwrapReviewAllData.objActivationDealer.Phone_Type__c})<br/>
+                        {!objwrapReviewAllData.objActivationDealer.State__c}<br/>
+                        {!objwrapReviewAllData.objActivationDealer.Country__c}
+                    </p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(ISNULL(objwrapReviewAllData.objActivationDealer.Id), true, false)}">
+                        <p>I don't have a Dealer/Distributor for this system</p>
+                    </apex:outputPanel>
+                    </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    
+    <!-- System -->
+    <h2>System</h2>
+    <table class="collapse-panels review">
+        <tbody><tr>
+            <th class="width-30"><h3>System Hardware</h3></th>
+            <th class="width-30" style="display:{!IF(AND(objwrapReviewAllData.objActivationHardware != null , objwrapReviewAllData.objActivationHardware != '', objwrapReviewAllData.objActivationHardware.Do_Not_Know_Serial_Number__c) ,'table-cell;', 'none;')}"><h3>System Selection</h3></th>
+            <th class="width-30"><h3>System Details</h3></th>
+            </tr>
+            <tr style="display:{!IF(ActivationStatus.System_Page__c != 'complete', 'table-row;', 'none;')}">
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('System_Type'); return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr" style="display:{!IF(AND(objwrapReviewAllData.objActivationHardware != null , objwrapReviewAllData.objActivationHardware != '', objwrapReviewAllData.objActivationHardware.Do_Not_Know_Serial_Number__c) ,'table-cell;', 'none;')}">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('System_Selection'); return false;" ></apex:commandLink> 
+                </td>
+                <td class="row-hdr">
+                    <apex:commandLink styleClass="ui-link" value="Edit" onclick="showLoadingDiv();btnSelectednavigateNext('System_Details'); return false;" ></apex:commandLink> 
+                </td>
+            </tr>
+            <tr>	
+                <td class="text-left" >
+                    <p style="display:{!IF(AND(objwrapReviewAllData.objActivationHardware != null , objwrapReviewAllData.objActivationHardware != '', objwrapReviewAllData.objActivationHardware.Do_Not_Know_Serial_Number__c) ,'table-cell;', 'none;')}">I don't know my serial number</p>
+                    <apex:outputPanel rendered="{!IF(AND(objwrapReviewAllData.objActivationHardware != null , objwrapReviewAllData.objActivationHardware != '', !objwrapReviewAllData.objActivationHardware.Do_Not_Know_Serial_Number__c), true, false)}">
+                        <p>
+                          <strong>Below Decks Serial Number:</strong> {!objwrapReviewAllData.objActivationHardware.Below_Decks_Serial_Number__c}
+                        </p><br/>
+                        <p><strong>{!objwrapReviewAllData.objActivationHardware.System_Name__c}</strong></p>
+                    </apex:outputPanel>
+                </td>
+                <td class="text-left" style="display:{!IF(AND(objwrapReviewAllData.objActivationHardware != null , objwrapReviewAllData.objActivationHardware != '', objwrapReviewAllData.objActivationHardware.Do_Not_Know_Serial_Number__c) ,'table-cell;', 'none;')}">
+                    <p><strong>{!objwrapReviewAllData.objActivationHardware.System_Name__c}</strong></p>
+                </td>
+                <td class="text-left">
+                    <p>{!objwrapReviewAllData.objActivationOrder.Hardware_Purchased_or_Leased__c} Hardware</p>
+                    <apex:outputPanel rendered="{!IF(objwrapReviewAllData.objActivationHardware.System_Detail__c != '', true, false)}">
+                        <hr/>
+                        <p><strong>Additional Details:</strong><br/>"{!objwrapReviewAllData.objActivationHardware.System_Detail__c}"</p>
+                    </apex:outputPanel>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+</apex:component>

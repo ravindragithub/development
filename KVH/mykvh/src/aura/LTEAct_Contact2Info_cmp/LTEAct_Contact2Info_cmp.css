@@ -1,0 +1,52 @@
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+}
+.THIS .checkBoxSideBar{
+    padding: 0 0 .5rem 0;
+}
+.THIS .authRep{
+    display: inline-flex;
+}
+
+.THIS .toggle {
+    display: none;
+}
+.THIS .modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.THIS .modal-content {
+    margin: 15% auto;
+}
+.THIS .modalContent{    
+    background-color: #fefefe;
+    width: 50%;
+    margin: 0 auto;
+    padding: 1rem;
+}
+.THIS .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.THIS .close:hover,
+.THIS .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

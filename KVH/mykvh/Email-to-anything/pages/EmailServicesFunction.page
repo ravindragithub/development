@@ -1,0 +1,1308 @@
+<apex:page standardController="ortoo_e2a__Email_Services_Function__c" extensions="ortoo_e2a.EmailServicesFunctionExtension" id="thePage" tabStyle="Email_Services_Functions__tab">
+    
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+    <link href="{!URLFOR($Resource.sumoselect, 'sumoselect/sumoselect.css')}" rel="stylesheet" media="screen"/>
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__sumoselect, 'sumoselect/jquery.sumoselect.js')}"/>
+    
+    <!-- Multiselect Plugin Resources for IE - Javascript based component -->
+    <link href="{!URLFOR($Resource.MultiselectDropdown, '/MSDList.css')}" rel="stylesheet" media="screen"/>
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__MultiselectDropdown, '/MSDList.js')}"/>
+    
+    <style>
+    /*Sumo select CSS update*/
+    .SumoSelect > .CaptionCont {
+        min-height:5px;
+        height: 9px;
+        width: 160px;
+        border-spacing: 2px;
+        border: 1px solid rgb(169, 169, 169);
+        background: white;
+        display: inline-block;
+        text-align: start;
+        font-family: Arial;
+        font-size: 13.3333330154419px;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: normal;
+        line-height: normal;
+    }
+    .SumoSelect > .CaptionCont > span{
+        margin-top: -2px;
+    }
+    .inputcontrol{
+        width: 160px;
+    }
+    .helpOrb {
+      background-image: url(/img/help/helpOrbs.gif);
+      background-position: 0 0;
+      width: 20px;
+      height: 15px;
+    }
+    
+    </style>
+    
+    
+    <script type="text/javascript">
+  
+$(document).ready(function(){
+                    window.asd = $('.AlternateRecordMultiSelect').SumoSelect({ csvDispCount: 3 });
+                });
+
+function SetSearchInValueForAlternateRecord()
+{
+    var ele=document.getElementById("multiSelectForAlternateRecord");
+    
+         var SelVal = "";
+         var x = 0;
+         var saveIndex = 0;
+        for (x=0;x<ele.length;x++)
+         {
+            if (ele[x].selected)
+            {
+             
+             SelVal = SelVal + ele[x].value;
+             saveIndex = x+1;
+             break;
+            }
+         }
+         for (x=saveIndex;x<ele.length;x++)
+         {
+            if (ele[x].selected)
+            {
+             //alert(InvForm.SelBranch[x].value);
+             SelVal = SelVal + ";" + ele[x].value;
+            }
+         }
+         //alert(SelVal);
+         document.getElementById('thePage:theForm:editPageBlock:alternateThreadId:recordMatching:searchInValueForAlternateRecordidden').value = SelVal;
+}
+function getSearchInValueAlternateRecord()
+{
+    var searchInValue = document.getElementById('thePage:theForm:editPageBlock:alternateThreadId:recordMatching:searchInValueForAlternateRecordidden').value;
+    var searchInList = searchInValue.split(";")
+    var arrayLength = searchInList.length;
+    
+   for (var i = 0; i < arrayLength; i++) {
+        if(searchInList[i].localeCompare("Subject")==0)
+        {
+           $('.AlternateRecordMultiSelect')[0].sumo.selectItem(0);
+        }
+        else if(searchInList[i].localeCompare("Body (Text Only)")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(1);
+        }
+        else if(searchInList[i].localeCompare("Body")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(2);
+        }
+        else if(searchInList[i].localeCompare("Headers")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(3);
+        }
+        else if(searchInList[i].localeCompare("To")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(4);
+        }
+        else if(searchInList[i].localeCompare("From")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(5);
+        }
+        else if(searchInList[i].localeCompare("CC")==0)
+        {
+            $('.AlternateRecordMultiSelect')[0].sumo.selectItem(6);
+        }
+        else if(searchInList[i].localeCompare("Email Service Address")==0)
+		{
+			$('.SelectBox')[0].sumo.selectItem(7);
+		}
+        
+    
+}
+}
+
+function SetSearchInValueinMultiSelectList_local(SelVal , elementId)
+{
+    document.getElementById('thePage:theForm:editPageBlock:alternateThreadId:recordMatching:searchInValueForAlternateRecordidden').value = SelVal;
+}
+
+function openPageForFAR()
+{
+	document.getElementById('loading_image').style.display = 'block';
+	document.getElementById('far_button').disabled = true;
+	console.log('image style change');
+	OpenNewPageForFieldAssignment();
+}
+
+function openPageForAR()
+{
+	document.getElementById('ar_loading_image').style.display = 'block';
+	document.getElementById('ar_button').disabled = true;
+	
+	OpenNewPageForOwner();
+}
+
+</script>
+        <style>
+        span.tooltip
+        {
+                    width: 195px;
+        }
+        span.tooltip:hover
+        {
+            /*background: #ffffff;*/
+            text-decoration: none;
+        } /*BG color is a must for IE6*/
+        span.tooltip span
+        {
+            display: none;
+            padding: 2px 3px;
+            margin-left: 8px;
+            /*width: 195px;*/
+        }
+        span.tooltip:hover span
+        {
+            display: inline;
+            position: absolute;
+            z-index: 444;
+            border: 1px solid orange;
+            background: #fefdb9;
+            color: #000000;
+        }
+        
+    </style>
+    
+    <apex:form id="theForm">
+    	<apex:actionfunction name="OpenNewPageForOwner" action="{!OpenNewPageForOwner}" rerender=""/>
+    	<apex:actionfunction name="OpenNewPageForFieldAssignment" action="{!OpenNewPageForFieldAssignment}" rerender="" status="FARStatus"/>
+    	
+        <apex:sectionHeader title="Email Rule"/>
+        &nbsp;&#171;&nbsp;
+        <apex:outputLink value="{!$CurrentPage.parameters.retURL}">Back to List: E2A Email Rules</apex:outputLink>
+        <br/><br/>
+        <apex:pageBlock id="headerPageBlock" title="Rule Details" rendered="{!EditIsActive == false}">
+            
+            <apex:pageBlockButtons >
+            <apex:commandButton action="{!editRule}" value="Edit"  rendered="{!EditIsAllowed}" />
+            <apex:commandButton value="Clone"  rendered="{!CreateIsAllowed}"  onclick="window.open('/apex/CloneEmailRule?id={!ortoo_e2a__Email_Services_Function__c.Id}&retURL={!$CurrentPage.parameters.retURL}', 'mywindow','height=450,width=650,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');return false;" />
+            </apex:pageBlockButtons>
+             
+            <apex:pageBlockSection columns="2" collapsible="false">
+                <apex:pageBlockSectionItem helpText="{!RulesName_HelpText}">
+                    <apex:outputLabel value="Rule Name"/>
+                    <apex:outputText value="{!emailRule.Name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailService_HelpText}">
+                    <apex:outputLabel value="Email Service"/>
+                    <apex:outputPanel >
+                        <apex:outputPanel rendered="{!emailService != null}">
+                           <apex:outputLink value="/email-admin/services/detailEmailServicesFunction.apexp?id={!emailService.Id}">{!emailService.FunctionName}</apex:outputLink>
+                           &nbsp;<apex:outputText value="[Service not active]" rendered="{!emailService.IsActive==false}" style="color:red;"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!emailService == null}">
+                            <apex:outputText value="-- None --"/>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email Service: Apex Class"/>
+                    <apex:outputText value="{!ApexClassName}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable value="{!EmailServicesAddressList}" var="SA" id="address_list_table">
+                    <apex:column value="{!SA.LocalPart}@{!SA.EmailDomainName}" headerValue="Email Service: Address"/>
+                    <apex:column value="{!SA.IsActive}" headerValue="Active"/>
+                </apex:pageBlockTable>
+                <apex:outputText value="no email addresses exist for this service" rendered="{!AddressesExist == false}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" collapsible="false" title="Target Object Configuration">
+            	
+            	<apex:facet name="header"> Target Object Configuration &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Settings for selecting and setting target object and what actions need to be performed.</span>
+	            	</span> 
+            	</apex:facet>
+            	
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Target Object"/>
+                    <apex:outputText value="{!RelatedObjectLabel}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RecordType_HelpText}">
+                    <apex:outputLabel value="Insert Record Type"/>
+                     <apex:outputPanel >
+                        <apex:outputText value="{!RecordTypeName}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputField value="{!emailRule.ortoo_e2a__Record_Type_Id_Overwrite__c}"/>
+                        <apex:outputText >overwrite allowed <span class="tooltip" style="display:inline">[<u>?</u>]<span >Overwrite this field whenever a new incoming email is matched to existing record.</span></span></apex:outputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ActionIfNoMatchFound_HelpText}">
+                    <apex:outputLabel value="Action if No Match Found"/>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c == 'Go to another e2a Email Service Rule'}" helpText="{!ActionIfNoMatchFoundEmailService_HelpText}">
+                    <apex:outputLabel value="Email Rule"/>
+                    <apex:outputText value="{!ActionIfNoMatchFoundSelectedService}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c != 'Go to another e2a Email Service Rule'}" />
+                <apex:pageBlockSectionItem helpText="{!AllowManualInsert_HelpText}">
+                    <apex:outputLabel value="Allow Manual Insert"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Allow_Manual_Insert__c}"  />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!AllowManualMatch_HelpText}">
+                    <apex:outputLabel value="Allow Manual Match"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Allow_Manual_Match__c}"  />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!AND(UseCentralEmailStorageObject == true , DisableEmailObjectCheckbox = false)}">
+                    <apex:outputLabel value="Use Central Email Storage Object"/>
+                    <apex:outputPanel >
+                        <apex:image value="/img/checkbox_checked.gif" alt="Checked" width="21" height="16" Styleclass="checkImg" title="Checked" rendered="{!UseCentralEmailStorageObject == true}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!UseCentralEmailStorageObject == false}">
+                    <apex:outputLabel value="Use Central Email Storage Object"/>
+                    <apex:outputPanel >
+                        <apex:image value="/img/checkbox_unchecked.gif" alt="Not Checked" width="21" height="16" Styleclass="checkImg" title="Not Checked" rendered="{!UseCentralEmailStorageObject == false}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedEmailMessageObjectName_HelpText}"  rendered="{!UseCentralEmailStorageObject == false}">
+                    <apex:outputLabel value="Custom Email Storage Object"/>
+                    <apex:outputText value="{!emailMsgObjectLabel}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="2" collapsible="false" title="Incoming Email Configuration">
+            	<apex:facet name="header"> Incoming Email Configuration - Post-process &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Post-process, applied only on matching to a target object record, or inserting a new record.</span>
+	            	</span> 
+            	</apex:facet>
+            	
+                <apex:pageBlockSectionItem helpText="Insert Thread ID in the subject of email of incoming email">
+                    <apex:outputLabel value="Insert Thread Id in Email Subject"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Thread_Id_In_Subject__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Insert Thread ID in the body of email of incoming email">
+                    <apex:outputLabel value="Insert Thread Id in Email Body"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Thread_Id_In_Body__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email attachments as childern of target object">
+                    <apex:outputLabel value="Store Email Attachments on Target Object"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Attachments_On_Target_Obj__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email attachments as childern of email storage object">
+                    <apex:outputLabel value="Store Email Attachments on Email Storage Object"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Attachments_On_Storage_Obj__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!StoreAttachmentsInAttachmentObjectOrFilesHelpText}">
+                    <apex:outputLabel value="Store Attachments In"/>
+                    <apex:outputText value="{!LoadStoreAttachmentsInObject}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Automatically copy tags to incoming email when conversational email is found.">
+                    <apex:outputLabel value="Automatically Copy Tags"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Automatically_Copy_Tags__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email as activity on target object.">
+                    <apex:outputLabel value="Store a copy of email as an Activity"/>
+                    <apex:outputField value="{!emailRule.ortoo_e2a__Store_a_copy_of_email_as_an_Activity__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+                
+            <apex:pageBlockSection columns="2" collapsible="false" title="Alternate Thread Id">
+            	<apex:facet name="header"> Alternate Thread Id &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Pre-process, settings that allows you to match inbound emails to existing records via Regex Pattern.</span>
+	            	</span> 
+            	</apex:facet>
+                <apex:pageBlockSectionItem helpText="Alternative record matching is optional and is only used to match inbound email to an existing record if Thread Id of the email doesn't match with any existing record. Specify regular expression to extract a value from selected parts of email. Leave blank if you don't want to use alternate record maching.">
+                    <apex:outputLabel value="Match Regex Pattern"/>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!emailRule.ortoo_e2a__Alternate_Record_Matching_Regex__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Extract a value from selected parts of email, Using Capturing Group at position of Match Capturing Group.">
+                    <apex:outputLabel value="Match Capturing Group"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Alternate_Record_Matching_Group__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Select parts of email on which regular expression should run.">
+                    <apex:outputLabel value="Search In"/>
+                    <apex:outputText value="{!AlternateRecordMatchingSearch_In}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Result of regular expression matched to this field and if they are same then email is attached to that record.">
+                    <apex:outputLabel value="Field to Match"/>
+                    <apex:outputLabel value="{!AlternateMatchingIDFieldLabel}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" collapsible="false" title="Ownership and Actions">
+            	<apex:facet name="header"> Ownership and Actions &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Post-process, applied to assign the default owner and unmatched queue. If no action rules are defined or not applied, these defaults will be used.</span>
+	            	</span> 
+            	</apex:facet>
+                <apex:pageBlockSectionItem helpText="{!AssignedOwner_HelpText}">
+                    <apex:outputLabel value="Default Owner"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!AssignedOwnerType}"/>
+                        :&nbsp;
+                        <apex:outputText value="{!AssignedOwnerName}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!QueueName_HelpText}">
+                    <apex:outputLabel value="Default Unmatched Email Queue"/>
+                    <apex:outputText value="{!QueueName}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageblock id="ownerRuleDetails" title="Action Rules"> 
+	            	<apex:facet name="header"> 
+		            	<table>
+			            	<tr>
+			            		<td width="40%">
+				            		<font style="color:black"><h2>Action Rules - Pre-process</h2> &nbsp;
+					            	<span class="tooltip" style="display:inline">[<u>?</u>]
+					            		<span>Pre-process, called first, before attempting to match to target object.</span>
+					            	</span> 
+					            	</font>
+				            	</td>
+				            	<td width="60%">
+				            		<table>
+				            			<tr>
+				            				<td>
+				            				<button type="button" class="btn" id="ar_button" value="New" onclick="openPageForAR();">New</button>
+				            				<span id="ar_loading_image" style="display:none;float:left;">
+						            		<img src="/img/loading.gif"/>
+						            		</span>
+				            				</td>
+				            			</tr>
+				            		</table>
+				            		
+				            		<!--<input type="submit" value="New" class="btn" onclick="OpenNewPageForOwner();"/>-->
+				            	</td>
+				            </tr>
+			            </table>
+	            	</apex:facet>
+                    
+                    <apex:pageblockTable value="{!PatternRuleDisplayList}" var="item">
+                        <apex:column >
+                            <apex:facet name="header" >Action</apex:facet>
+                               <apex:commandLink action="{!OpenEditPageForOwner}" value="Edit">
+                              <apex:param name="ownerPatternid1" value="{!item.rule.id}"/>
+                                 </apex:commandLink> &nbsp; | &nbsp;   <apex:commandLink action="{!DeleteRulePatternForOwner}" value="Del" rerender="ownerRuleDetails">
+                              <apex:param name="ownerPatternRuleid" value="{!item.rule.id}"/>
+                             </apex:commandLink>
+                         </apex:column>
+                            <apex:column headerValue="Action Type" >
+                                <apex:commandLink action="{!ViewEditPageForOwner}" value="{!item.ActionTypeForOwner}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Assign to Owner" >
+                                <apex:commandLink action="{!ViewEditPageForOwner}" value="{!item.AssignToOwner}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Unmatched Queue" >
+                                <apex:commandLink action="{!ViewEditPageForOwner}" value="{!item.UnmatchedQueue}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Trigger When" >
+                                <apex:commandLink action="{!ViewEditPageForOwner}" value="{!item.rule.ortoo_e2a__Trigger_When__c}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Search In" >
+                                <apex:commandLink action="{!ViewEditPageForOwner}" value="{!item.SearchIn}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Match Pattern" >
+                              <apex:commandLink action="{!ViewEditPageForOwner}" value="{!left(item.rule.ortoo_e2a__Pattern__c,10)}" title="{!item.rule.ortoo_e2a__Pattern__c}">
+                               <apex:param name="ownerPatternid2" value="{!item.rule.id}"/>
+                               </apex:commandLink>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Stop Processing Further Rules" >
+                                <apex:outputField value="{!item.rule.ortoo_e2a__Stop_On_Match__c}"/>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                </apex:pageBlock>
+            <apex:pageBlockSection title="{!RelatedObjectLabel} Object" columns="2" collapsible="false">
+            	<apex:facet name="header"> {!RelatedObjectLabel} Object &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Fixed mappings from incoming email fields to target object.</span>
+	            	</span> 
+            	</apex:facet>
+            	
+                 <apex:pageBlockSectionItem >
+                    <apex:PanelGrid columns="1"><apex:outputText ><font size="2">Field Assignments</font></apex:outputText></apex:PanelGrid>
+                    <apex:PanelGrid columns="2">
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="-- none -- " style="opacity:0;"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1" width="200px"><apex:outputText ><font size="2"><b>Update Record Allowed</b> </font><span class="tooltip" style="display:inline">[<u>?</u>]<span>Overwrite this field whenever a new incoming email is matched to existing record.</span></span></apex:outputText></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!SubjectAssignField_HelpText}">
+                    <apex:outputLabel value="Email Subject - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!SubjectAssignField}" /></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_Subject_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!BodyAssignField_HelpText}">
+                    <apex:outputLabel value="Email Body (Text Only) - Saved In Field"/>
+                    <apex:PanelGrid columns="2">
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!BodyAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_Body_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!HtmlBodyAssignField_HelpText}">
+                    <apex:outputLabel value="Email HTML Body - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!HtmlBodyAssignField}" /></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_Html_Body_Overwrite__c}"/> </apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!HeadersAssignField_HelpText}">
+                    <apex:outputLabel value="Email Headers - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!HeadersAssignField}" /></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_Headers_Overwrite__c}"/> </apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromAddressAssignField_HelpText}">
+                    <apex:outputLabel value="Email From-Address - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!FromAddressAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_From_Address_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromDomainAssignField_HelpText}">
+                    <apex:outputLabel value="Email From Address Domain - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!FromDomainAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_From_Domain_Overwrite__c}"/> </apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From Name - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!FromNameAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_From_Name_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromFirstNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From First Name - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!FromFirstNameAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_From_First_Name_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromLastNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From Last Name - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!FromLastNameAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_From_Last_Name_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!ToAddressAssignField_HelpText}">
+                    <apex:outputLabel value="Email To-Address - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!ToAddressAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_To_Address_Overwrite__c}"/></apex:PanelGrid> 
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!EmailDateAssignField_HelpText}">
+                    <apex:outputLabel value="Email Date - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!EmailDateAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Email_Date_Overwrite__c}"/> </apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailDateAddDays_HelpText}">
+                    <apex:outputLabel value="Date Adjustment Days" style="{!EmailDateAddDaysStyle}"/>
+                    <apex:outputText value="{!EmailDateAddDays}" style="{!EmailDateAddDaysStyle}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ServiceIdAssignField_HelpText}">
+                    <apex:outputLabel value="Service ID - Saved In Field"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!ServiceIdAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Service_ID_Overwrite__c}"/> </apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ServiceIdCode_HelpText}">
+                    <apex:outputLabel value="Service ID Code" style="{!ServiceIdCodeStyle}"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Service_Id_Code__c}" style="{!ServiceIdCodeStyle}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 1"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!RelatedObjectStatusField1}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Object_Status_Field_1_Overwrite__c}"/></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 1" style="{!RelatedObjectStatusStyle1}"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_1__c}" style="{!RelatedObjectStatusStyle1}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 2"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!RelatedObjectStatusField2}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Object_Status_Field_2_Overwrite__c}"/></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 2" style="{!RelatedObjectStatusStyle2}"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_2__c}" style="{!RelatedObjectStatusStyle2}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 3"/>
+                    <apex:PanelGrid columns="2" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!RelatedObjectStatusField3}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Object_Status_Field_3_Overwrite__c}"/></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 3" style="{!RelatedObjectStatusStyle3}"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_3__c}" style="{!RelatedObjectStatusStyle3}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" collapsible="false">
+                <apex:pageBlockSectionItem helpText="{!MatchedContactAssignField_HelpText}">
+                    <apex:outputLabel value="Matched Contact - Saved In Field"/>
+                    <apex:PanelGrid columns="3" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!MatchedContactAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Matched_Contact_Overwrite__c}"/></apex:PanelGrid> 
+                        <apex:PanelGrid columns="1"><apex:outputLabel style="color:red;" value="{!MatchedContactWarningText}"></apex:outputLabel></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ContactMatchType_HelpText}">
+                    <apex:outputLabel value="Type of Contact Match" style="{!ContactMatchTypeStyle}"/>
+                    <apex:outputText value="{!emailRule.ortoo_e2a__Contact_Match_Type__c}" style="{!ContactMatchTypeStyle}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!MatchedAccountAssignField_HelpText}">
+                    <apex:outputLabel value="Match Account from Contact - Saved In Field"/>
+                    <apex:PanelGrid columns="3" >
+                        <apex:PanelGrid columns="1" width="140px"><apex:outputText value="{!MatchedAccountAssignField}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputField value="{!emailRule.ortoo_e2a__Matched_Account_Overwrite__c}"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1"><apex:outputLabel style="color:red;" value="{!MatchedAccountWarningText}"></apex:outputLabel></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+            <apex:pageblock id="PatternRuleDetails" title="Field Assignment Rules">
+            		
+            		<apex:facet name="header"> 
+		            	<table>
+			            	<tr>
+			            		<td width="40%">
+				            		<font style="color:black"><h2>Field Assignment Rules</h2> &nbsp;
+					            	<span class="tooltip" style="display:inline">[<u>?</u>]
+					            		<span>Post-process, map various email fields (such as subject, body, sender etc.) to fields of target object. <br/> You can provide unconditional, conditional or regular expression based mappings between email and target object fields.</span>
+					            	</span> 
+					            	</font>
+				            	</td>
+				            	<td width="60%">
+				            		<!-- <input type="submit" value="New" class="btn" onclick="OpenNewPageForFieldAssignment();"/>-->
+				            		<table>
+				            			<tr>
+				            				<td>
+				            				<button type="button" id="far_button" class="btn" value="New" onclick="openPageForFAR();">New</button>
+				            				<span id="loading_image" style="display:none;float:left;">
+						            		<img src="/img/loading.gif"/>
+						            		</span>
+				            				</td>
+				            			</tr>
+				            		</table>
+				            	</td>
+				            </tr>
+			            </table>
+	            	</apex:facet>
+            		
+                    <apex:pageblockTable value="{!ServicePatternRuleDisplayList}" columnsWidth="2%,4%,3%,3%,3%,6%" var="item">
+                        <apex:column >
+                            <apex:facet name="header" >Action</apex:facet>
+                               <apex:commandLink action="{!OpenEditPageForFieldAssignment}" value="Edit">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink> &nbsp; | &nbsp;   <apex:commandLink action="{!DeleteRuleForFieldAssignment}" value="Del" rerender="PatternRuleDetails">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/> 
+                             </apex:commandLink>&nbsp; &nbsp;
+                         </apex:column>
+                            <apex:column headerValue="Trigger On" >
+                                <apex:commandLink action="{!OpenViewPageForFieldAssignment}" value="{!item.rule.ortoo_e2a__Trigger_On__c}">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink>
+                                
+                            </apex:column> 
+                            <apex:column headerValue="Trigger Type" >
+                                <apex:commandLink action="{!OpenViewPageForFieldAssignment}" value="{!item.fieldAssignmentTriggerType}">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink>
+                            </apex:column>
+
+                            
+                         <apex:column headerValue="Rule Type" >
+                                <apex:commandLink action="{!OpenViewPageForFieldAssignment}" value="{!item.rule.Rule_Type__c }">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink>
+                        </apex:column> 
+                            <apex:column headerValue="Match Pattern" >
+                                <apex:commandLink action="{!OpenViewPageForFieldAssignment}" value="{!item.MatchPattern}">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Action" >
+                                <apex:commandLink action="{!OpenViewPageForFieldAssignment}" value="{!item.Action}">
+                              <apex:param name="fieldPatternid" value="{!item.rule.id}"/>
+                                 </apex:commandLink>
+                            </apex:column>
+                            
+                        </apex:pageBlockTable>
+                        
+                </apex:pageBlock>
+            <br/>
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" for="created_by"/>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!emailRule.CreatedById}"/>,&nbsp;
+                        <apex:outputField value="{!emailRule.CreatedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" for="modified_by"/>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!emailRule.LastModifiedById}"/>,&nbsp;
+                        <apex:outputField value="{!emailRule.LastModifiedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            
+        </apex:pageBlock>
+        <apex:pageBlock id="editPageBlock" title="Edit Rule Details" rendered="{!EditIsActive}">
+        
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!SaveFunctionDetails}" value="Save"/>
+                <apex:commandButton action="{!CancelEdit}" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pagemessages escape="false"/>
+            <apex:pageBlockSection columns="2" id="email_service_block">
+                <apex:pageBlockSectionItem helpText="{!RulesName_HelpText}">
+                    <apex:outputLabel value="Rule Name"/>
+                    <apex:outputPanel >
+                        <apex:inputText value="{!emailRule.Name}" size="30" maxlength="80"/>
+                        <apex:image value="{!$Resource.ortoo_e2a__red_asterisk}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailService_HelpText}">
+                    <apex:outputLabel value="Available Email Services"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Function_Id__c}" size="1">
+                            <apex:actionSupport event="onchange" action="{!loadService}" reRender="email_service_block,email_service_sddress_block" status="EmailServiceStatus"/>
+                           <apex:selectOptions value="{!emailServiceOptions}"/>
+                        </apex:selectList>
+                        &nbsp;&nbsp;
+                        <apex:actionStatus id="EmailServiceStatus" startStyle="color: green;font-weight:bold;" startText="loading, please wait..." stopText=""/>
+                        <apex:outputText value="[Service not active]" rendered="{!emailService != null && emailService.IsActive==false}" style="color:red;"/>
+                        <apex:outputText value="[Apex Class already used in another Email Service. This is not recommended.]" rendered="{!isDuplicateApexClass}" style="color:red;"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email Service: Apex Class"/>
+                    <apex:outputText value="{!ApexClassName}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" id="email_service_sddress_block">
+                <apex:pageBlockTable value="{!EmailServicesAddressList}" var="SA" id="address_list_table">
+                    <apex:column value="{!SA.LocalPart}@{!SA.EmailDomainName}" headerValue="Email Service: Address"/>
+                    <apex:column value="{!SA.IsActive}" headerValue="Active"/>
+                </apex:pageBlockTable>
+                <apex:outputText value="no email addresses exist for this service" rendered="{!AddressesExist == false}"/>
+            </apex:pageBlockSection>
+            
+            <!-- Action functions to call on object change -->
+            <apex:actionfunction name="AFTargetObjectOnchange" action="{!objectChanged}" rerender="editPageBlock" status="TargetObjectStatus"/>
+            <apex:actionfunction name="RerenderFunction" action="{!ResetOldRelatedToObject}" rerender="editPageBlock" status="TargetObjectStatus"/>
+            <!-- Action Functions to call on object change -->
+            <apex:pageBlockSection columns="2" id="object_block" collapsible="false" title="Target Object Configuration">
+            	
+            	<apex:facet name="header"> Target Object Configuration &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Settings for selecting and setting target object and what actions need to be performed.</span>
+	            	</span> 
+            	</apex:facet>
+            
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Target Object"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Object_Key_Prefix__c}" size="1" onchange="JSOnchangefunction()" >
+                            <!-- <apex:actionSupport event="onchange" action="{!objectChanged}" reRender="editPageBlock" status="TargetObjectStatus"/>-->
+                            <apex:selectOptions value="{!ObjectOptions}"/>
+                        </apex:selectList>
+                        &nbsp;
+                        <apex:actionStatus id="TargetObjectStatus" startStyle="color: green;font-weight:bold;" startText="loading, please wait..." stopText=""/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RecordType_HelpText}">
+                    <apex:outputLabel value="Insert Record Type"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Record_Type_Id__c}" id="record_type" size="1" disabled="{!NOT(recordTypeIsEnabled)}"  >
+                            <apex:selectOptions value="{!RecordTypeOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Record_Type_Id_Overwrite__c}"/>
+                        <apex:outputText >overwrite allowed <span class="tooltip" style="display:inline">[<u>?</u>]<span>Overwrite this field whenever a new incoming email is matched to existing record.</span></span></apex:outputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ActionIfNoMatchFound_HelpText}">
+                    <apex:outputLabel value="Action if No Match Found"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c}" size="1"  >
+                        <apex:actionSupport event="onchange" reRender="object_block"/>
+                        <apex:selectOptions value="{!ActionIfNoMatchFoundOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c == 'Go to another e2a Email Service Rule'}" helpText="{!ActionIfNoMatchFoundEmailService_HelpText}">
+                    <apex:outputLabel value="Email Rule"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Action_if_No_Match_Go_To_Service__c}" size="1" >
+                        <apex:selectOptions value="{!ActionIfNoMatchFoundServiceOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!emailRule.ortoo_e2a__Action_if_No_Match_Found__c != 'Go to another e2a Email Service Rule'}" />
+                <apex:pageBlockSectionItem helpText="{!AllowManualInsert_HelpText}">
+                    <apex:outputLabel value="Allow Manual Insert"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Allow_Manual_Insert__c}"  />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!AllowManualMatch_HelpText}">
+                    <apex:outputLabel value="Allow Manual Match"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Allow_Manual_Match__c}"  />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!showCentralEmailCheckboxInEdit}">
+                    <apex:outputLabel value="Use Central Email Storage Object"/>
+                    <apex:outputPanel >
+                        <apex:outputPanel >
+                            <apex:inputCheckbox value="{!UseCentralEmailStorageObject}">
+                                <apex:actionsupport event="onchange" action="{!ChangeSelection}" rerender="editPageBlock" status="Objchange_Status"/>
+                            </apex:inputCheckbox>
+                            <apex:actionStatus id="Objchange_Status" startStyle="color: green;font-weight:bold;" startText="loading, please wait..." stopText=""/>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedEmailMessageObjectName_HelpText}" rendered="{!UseCentralEmailStorageObject == false}">
+                    <apex:outputLabel value="Custom Email Storage Object"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Email_Message_Object_Key_Prefix__c}" id="email_msg_object_prefix" size="1" rendered="{! relatedObjIsCustomObject == true }"  >
+                            <apex:selectOptions value="{!RelatedEmailMessageObjectOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                        <apex:outputText value="{!emailMsgObjectLabel}" rendered="{!relatedObjIsCustomObject == false}"/>
+                    </apex:outputPanel>
+
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="2" collapsible="false" title="Incoming Email Configuration" id="EmailConfig">
+            	<apex:facet name="header"> Incoming Email Configuration - Post-process &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Post-process, applied only on matching to a target object record, or inserting a new record.</span>
+	            	</span> 
+            	</apex:facet>
+                <apex:pageBlockSectionItem helpText="When sending outgoing email, insert Thread ID in the subject of email">
+                    <apex:outputLabel value="Insert Thread Id in Email Subject"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Thread_Id_In_Subject__c}"  />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="When sending outgoing email, insert Thread ID in the body of email">
+                    <apex:outputLabel value="Insert Thread Id in Email Body"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Thread_Id_In_Body__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email attachments as childern of target object">
+                    <apex:outputLabel value="Store Email Attachments on Target Object"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Attachments_On_Target_Obj__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email attachments as childern of email storage object">
+                    <apex:outputLabel value="Store Email Attachments on Email Storage Object"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Attachments_On_Storage_Obj__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!StoreAttachmentsInAttachmentObjectOrFilesHelpText}">
+                    <apex:outputLabel value="Store Attachments In"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Store_Attachments_In__c}" size="1"  >
+                        <apex:selectOptions value="{!storeAttachmentsInOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Automatically copy tags to incoming email when conversational email is found.">
+                    <apex:outputLabel value="Automatically Copy Tags"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Automatically_Copy_Tags__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Store incoming email as activity on target object.">
+                    <apex:outputLabel value="Store a copy of email as an Activity"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Store_a_copy_of_email_as_an_Activity__c}"/>
+                </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            <apex:pageBlockSection id="alternateThreadId" columns="2" collapsible="false" title="Alternate Thread Id">
+            	<apex:facet name="header"> Alternate Thread Id &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Pre-process, settings that allows you to match inbound emails to existing records via Regex Pattern.</span>
+	            	</span> 
+            	</apex:facet>
+            
+                <apex:pageBlockSectionItem helpText="Alternative record matching is optional and is only used to match inbound email to an existing record if Thread Id of the email doesn't match with any existing record. Specify regular expression to extract a value from selected parts of email. Leave blank if you don't want to use alternate record maching." >
+                    <apex:outputLabel value="Match Regex Pattern"/>
+                    <apex:outputPanel >
+                        <apex:inputField value="{!emailRule.ortoo_e2a__Alternate_Record_Matching_Regex__c}" id="altRecordMatchingRegex" StyleClass="inputcontrol"/>
+                        <a title="Regex Builder" onclick="OpenRegexPopup('{!$Component.altRecordMatchingRegex}');"><b>[.*]</b></a>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Extract a value from selected parts of email, Using Capturing Group at position of Match Capturing Group.">
+                    <apex:outputLabel value="Match Capturing Group"/>
+                    <apex:inputField value="{!emailRule.ortoo_e2a__Alternate_Record_Matching_Group__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Select parts of email on which regular expression should run." id="recordMatching">
+                    <apex:outputLabel value="Search In"/>
+                    <apex:outputPanel >
+                    <script type="text/javascript">
+                            $(document).ready(function(){
+                                var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+                                if(isIE == false)
+                                {
+                                window.asd = $('.AlternateRecordMultiSelect').SumoSelect({ csvDispCount: 3 });
+                                 getSearchInValueAlternateRecord();
+                                 }
+                            });
+                            $(document).ready(function(){
+                                var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+                                //alert('alert'+isIE);
+                                if(isIE == true)
+                                {
+                                    //alert('sample');
+                                    var alternateList = new MSDList("multiSelectForAlternateRecord2");
+                                    alternateList.setFilterVisible(false);
+                                    alternateList.render();
+                                    alternateList.unselectAllItems();
+                                    getSearchInValueinMultiSelectList(alternateList ,'thePage:theForm:editPageBlock:alternateThreadId:recordMatching:searchInValueForAlternateRecordidden');
+                                }
+                            });
+                        </script>
+                
+                <apex:outputPanel style="text-align:left" rendered="{!isIE == true}">
+                <div id="dropdown">
+                    <select id="multiSelectForAlternateRecord2" name="multiSelectForAlternateRecord2">
+                       <option value="Subject">Subject</option>
+                       <option value="Body (Text Only)">Body (Text Only)</option>
+                       <option value="Body">Body</option>
+                       <option value="Headers">Headers</option>
+                       <option value="To">To</option>
+                       <option value="From">From</option>
+                       <option value="CC">CC</option>
+                       <option value="Email Service Address">Email Service Address</option>
+                    </select>   
+                </div>
+                </apex:outputPanel>
+                <apex:outputPanel style="text-align:left" rendered="{!isIE == false}">
+                 <select multiple="multiple"  class="AlternateRecordMultiSelect" id="multiSelectForAlternateRecord" name="multiSelectForAlternateRecord" onchange="SetSearchInValueForAlternateRecord();" align="left">
+                       <option value="Subject" align="left">Subject</option>
+                       <option value="Body (Text Only)">Body (Text Only)</option>
+                       <option value="Body" align="left">Body</option>
+                       <option value="Headers" align="left">Headers</option>
+                       <option value="To" align="left">To</option>
+                       <option value="From" align="left">From</option>
+                       <option value="CC" align="left">CC</option>
+                       <option value="Email Service Address">Email Service Address</option>
+                  </select>
+                  </apex:outputPanel>
+                   <apex:inputText value="{!emailRule.ortoo_e2a__NewAlternate_Record_Matching_Search_In__c}" id="searchInValueForAlternateRecordidden" style="display:none;"/>
+                  </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Result of regular expression matched to this field and if they are same then email is attached to that record.">
+                    <apex:outputLabel value="Field to Match"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Alternate_Record_Matching_Field__c}" size="1"  StyleClass="inputcontrol">
+                        <apex:selectOptions value="{!AlternateMatchingIDFieldOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+            
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" collapsible="false" title="{!RelatedObjectLabel} Object - Matching and Ownership Assignment" id="defaultOwnerSection">
+                    <apex:facet name="header"> {!RelatedObjectLabel} Object - Matching and Ownership Assignment &nbsp;
+		            	<span class="tooltip" style="display:inline">[<u>?</u>]
+		            		<span>Post-process, applied to assign the default owner and unmatched queue. If no action rules are defined or not applied, these defaults will be used.</span>
+		            	</span> 
+	            	</apex:facet>
+                    
+                    <apex:pageBlockSectionItem helpText="{!AssignedOwner_HelpText}">
+                        <apex:outputLabel value="Default Owner"/>
+                        <apex:PanelGrid columns="2" id="assigned_owner_panel">
+                                <apex:selectList value="{!emailRule.ortoo_e2a__Assigned_Owner_Type__c}" size="1" id="ownerType" >
+                                <apex:selectOptions value="{!AssignedOwnerTypeOptions}"></apex:selectOptions>
+                                <apex:actionSupport event="onchange" reRender="assigned_owner_panel"/>
+                            </apex:selectList>
+                            <apex:inputField value="{!emailRule.ortoo_e2a__Assigned_Owner__c}" rendered="{!emailRule.ortoo_e2a__Assigned_Owner_Type__c != 'QUEUE'}" id="assignedOwner"  StyleClass="inputcontrol"/>
+                            <apex:selectList value="{!emailRule.ortoo_e2a__Assigned_Queue__c}" size="1" rendered="{!emailRule.ortoo_e2a__Assigned_Owner_Type__c == 'QUEUE'}"  StyleClass="inputcontrol">
+                                <apex:selectOptions value="{!AssignedOwnerQueueOptions}"></apex:selectOptions>
+                            </apex:selectList>
+                            </apex:PanelGrid> 
+                        </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem helpText="{!QueueName_HelpText}">
+                        <apex:outputLabel value="Default Unmatched Email Queue"/>
+                        <apex:outputPanel >
+                            <apex:selectList value="{!emailRule.ortoo_e2a__Queue_Id__c}" id="rejected_email_queue" size="1"  StyleClass="inputcontrol">
+                                <apex:selectOptions value="{!QueueOptions}"></apex:selectOptions>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!RelatedObjectLabel} Object - Field Assignments" columns="2" collapsible="false">
+            	<apex:facet name="header"> {!RelatedObjectLabel} Object &nbsp;
+	            	<span class="tooltip" style="display:inline">[<u>?</u>]
+	            		<span>Fixed mappings from incoming email fields to target object.</span>
+	            	</span> 
+            	</apex:facet>
+            	
+                <apex:pageBlockSectionItem >
+                    <apex:PanelGrid columns="1"><apex:outputText ><font size="2">Field Assignments</font></apex:outputText></apex:PanelGrid>
+                    <apex:PanelGrid columns="2">
+                        <apex:PanelGrid columns="1" width="160px"><apex:outputText value="-- none -- " style="opacity:0;"/></apex:PanelGrid>
+                        <apex:PanelGrid columns="1" width="200px"><apex:outputText ><font size="2"><b>Update Record Allowed</b> </font><span class="tooltip" style="display:inline">[<u>?</u>]<span>Overwrite this field whenever a new incoming email is matched to existing record.</span></span></apex:outputText></apex:PanelGrid>
+                    </apex:PanelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!SubjectAssignField_HelpText}">
+                    <apex:outputLabel value="Email Subject - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Subject_Assign_Field__c}" id="subject_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_Subject_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!BodyAssignField_HelpText}">
+                    <apex:outputLabel value="Email Body (Text Only) - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Body_Assign_Field__c}" id="body_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_Body_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!HtmlBodyAssignField_HelpText}">
+                    <apex:outputLabel value="Email HTML Body - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Html_Body_Assign_field__c}" id="html_body_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_Html_Body_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!HeadersAssignField_HelpText}">
+                    <apex:outputLabel value="Email Headers - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Headers_Assign_Field__c}" id="headers_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_Headers_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromAddressAssignField_HelpText}">
+                    <apex:outputLabel value="Email From-Address - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__From_Address_Assign_Field__c}" id="from_address_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!FromAddressAssignFieldOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_From_Address_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromDomainAssignField_HelpText}">
+                    <apex:outputLabel value="Email From-Address Domain - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__From_Domain_Assign_Field__c}" id="from_domain_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_From_Domain_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From Name - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__From_Name_Assign_Field__c}" id="from_name_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_From_Name_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromFirstNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From First Name - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__From_First_Name_Assign_Field__c}" id="from_first_name_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_From_First_Name_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!FromLastNameAssignField_HelpText}">
+                    <apex:outputLabel value="Email From Last Name - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__From_Last_Name_Assign_Field__c}" id="from_last_name_assign_field" size="1" StyleClass="inputcontrol" >
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_From_Last_Name_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!ToAddressAssignField_HelpText}">
+                    <apex:outputLabel value="Email To-Address - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__To_Address_Assign_Field__c}" id="to_address_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!TextFieldAssignOptions}"></apex:selectOptions>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_To_Address_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!EmailDateAssignField_HelpText}">
+                    <apex:outputLabel value="Email Date - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Email_Date_Assign_Field__c}" id="email_date_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!EmailDateAssignFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="email_date_add_days"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Email_Date_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailDateAddDays_HelpText}">
+                    <apex:outputLabel value="Date Adjustment Days"/>
+                    <apex:inputText value="{!EmailDateAddDays}" id="email_date_add_days" size="4" maxlength="4" disabled="{!EmailDateAddDaysIsDisabled}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ServiceIdAssignField_HelpText}">
+                    <apex:outputLabel value="Service ID - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Service_Id_Assign_Field__c}" id="to_address_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!ServiceIdAssignFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="service_id_code"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Service_ID_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ServiceIdCode_HelpText}">
+                    <apex:outputLabel value="Service ID Code"/>
+                    <apex:inputText value="{!emailRule.ortoo_e2a__Service_Id_Code__c}" id="service_id_code" size="20" maxlength="20" disabled="{!ServiceIdCodeIsDisabled}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 1"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_1__c}" id="related_status_field_1" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!StatusPicklistFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="related_status_value_1"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Object_Status_Field_1_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 1"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_1__c}" id="related_status_value_1" size="1" StyleClass="inputcontrol">
+                        <apex:selectOptions value="{!StatusField1AssignedValueOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 2"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_2__c}" id="related_status_field_2" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!StatusPicklistFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="related_status_value_2"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Object_Status_Field_2_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 2"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_2__c}" id="related_status_value_2" size="1" StyleClass="inputcontrol">
+                        <apex:selectOptions value="{!StatusField2AssignedValueOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusField_HelpText}">
+                    <apex:outputLabel value="Target Object Picklist 3"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_3__c}" id="related_status_field_3" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!StatusPicklistFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="related_status_value_3"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Object_Status_Field_3_Overwrite__c}" title="overwrite allowed" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!RelatedObjectStatusFieldAssignedValue_HelpText}">
+                    <apex:outputLabel value="Value To Save In Picklist 3"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Object_Status_Field_Value_3__c}" id="related_status_value_3" size="1" StyleClass="inputcontrol">
+                        <apex:selectOptions value="{!StatusField3AssignedValueOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" id="lookupsection2" collapsible="false">
+                <apex:pageBlockSectionItem helpText="{!MatchedContactAssignField_HelpText}">
+                    <apex:outputLabel value="Matched Contact - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Matched_Contact_Assign_Field__c}" id="matched_contact_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!ReferenceFieldAssignFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="contact_warning_label"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Matched_Contact_Overwrite__c}" title="overwrite allowed">
+                            <apex:actionSupport event="onchange" reRender="contact_warning_label"/>
+                        </apex:inputCheckbox>
+                        <apex:outputLabel style="color:red;" id="contact_warning_label" value="{!MatchedContactWarningText}"></apex:outputLabel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!ContactMatchType_HelpText}">
+                    <apex:outputLabel value="Type of Contact Match"/>
+                    <apex:selectList value="{!emailRule.ortoo_e2a__Contact_Match_Type__c}" id="contact_match_type" size="1" StyleClass="inputcontrol">
+                        <apex:selectOptions value="{!ContactMatchTypeOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!MatchedAccountAssignField_HelpText}">
+                    <apex:outputLabel value="Match Account from Contact - Saved In Field"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!emailRule.ortoo_e2a__Matched_Account_Assign_Field__c}" id="matched_account_assign_field" size="1" StyleClass="inputcontrol">
+                            <apex:selectOptions value="{!ReferenceFieldAssignFieldOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="account_warning_label"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:inputCheckbox value="{!emailRule.ortoo_e2a__Matched_Account_Overwrite__c}" title="overwrite allowed">
+                            <apex:actionSupport event="onchange" reRender="account_warning_label"/>
+                        </apex:inputCheckbox>
+                        <apex:outputLabel style="color:red;" id="account_warning_label" value="{!MatchedAccountWarningText}"></apex:outputLabel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+            
+            
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        function OpenRegexPopup(name)
+        {
+            var regex = document.getElementById(name).value;
+            var url="/apex/ortoo_e2a__RegexGenerator?namefield=" + name +"&oldregex="+regex;
+            console.log('url'+url);
+            try
+            {
+                //Code for Client Potential DOM Open Redirect
+                if (validateURL(url))
+                {
+                    var newWin=window.open(url, 'Popup','height=600,width=670,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+                    if (window.focus) 
+                    {
+                        newWin.focus();
+                    }
+                    else 
+                    {
+                         throw new InvalidURLException();
+                    }
+                }
+            }
+            catch (e)
+            {
+              if (e instanceof InvalidURLException)
+                 alert(e.message);
+            }
+                
+            return false;
+        }
+     function InvalidURLException()
+     {            
+        this.message = "An attempt was made to open a webpage of foreign domain. No allowed.";
+        this.toString = function()
+        {
+            return this.message
+        };
+      }
+
+    function validateURL(surl)
+    {
+        var url = parseURL(surl);
+        var url_host_name = url.hostname.trim();
+
+        if (url_host_name == '')
+        {
+            return true;
+        }
+        else {
+            if (url_host_name.toUpperCase() == location.hostname.trim().toUpperCase()) 
+            {
+                return true;
+            }
+            else
+                return false;
+        }            
+    }
+
+    function parseURL(url) 
+    {
+        var a = document.createElement('a');
+        a.href = url;
+        return {
+            source: url,
+            protocol: a.protocol.replace(':', ''),
+            hostname: a.hostname,
+            host: a.host,
+            port: a.port,
+            query: a.search,
+            params: (function () {
+                var ret = {},
+                    seg = a.search.replace(/^\?/, '').split('&'),
+                    len = seg.length, i = 0, s;
+                for (; i < len; i++) {
+                    if (!seg[i]) { continue; }
+                    s = seg[i].split('=');
+                    ret[s[0]] = s[1];
+                }
+                return ret;
+            })(),
+            file: (a.pathname.match(/\/([^\/?#]+)$/i) || [, ''])[1],
+            hash: a.hash.replace('#', ''),
+            path: a.pathname.replace(/^([^\/])/, '/$1'),
+            relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
+            segments: a.pathname.replace(/^\//, '').split('/')
+        };
+    } 
+        
+        function JSOnchangefunction()
+        {
+           if (!window.confirm('All settings will reset on object change.\n\nAre you sure?'))
+            {
+                
+                RerenderFunction();
+                 
+            }
+            else
+            {
+                AFTargetObjectOnchange();
+                 
+            }
+        }
+    </script>
+</apex:page>

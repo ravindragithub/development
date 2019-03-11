@@ -1,0 +1,52 @@
+.THIS .slds-truncate{
+    font-size: 75%;
+}
+.THIS .slds-table--bordered{
+    border: 1px solid rgb(216, 221, 230);
+}
+.THIS .header-subsciption{
+    padding: 1% 1% 1% 1%;
+    margin-bottom: 8px;
+    font-size: 14px;
+    background-color: #0070d2!important;
+    color: white;
+    border-radius: 4px;
+}
+.THIS .rowDataClass{
+    font-size: 82%;
+    text-align: left;
+    padding: 4px 4px 4px 4px;
+    overflow-wrap: break-word
+}
+.THIS .subsClass{    
+    border: 1px solid rgba(128, 128, 128, 0.29);
+    table-layout: fixed;
+    width: 100%;
+}
+.THIS .headerCol{
+    border: 1px solid rgba(128, 128, 128, 0.12);
+    background: rgb(240, 248, 252)!important;
+    border-width: 0 0 1px 1px;
+    border-color: #e0e3e5;
+    color: #000;
+    font-size: .9em;
+    font-weight: bold;
+    padding: 5px 2px 4px 5px;
+    text-transform: none;
+    white-space: inherit!important;
+    overflow-wrap: break-word
+}
+.THIS .uiInputSelect {
+    width:100%;
+}
+.THIS tr{
+    border-bottom: 1px solid #dadada;
+    background-color: white;
+}
+.THIS .selectAsset{
+    text-align: center;
+}
+.THIS .underlineAsset{
+    text-decoration: underline!important;
+    font-style: italic;
+}

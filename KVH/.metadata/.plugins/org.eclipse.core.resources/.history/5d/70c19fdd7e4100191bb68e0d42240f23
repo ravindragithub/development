@@ -1,0 +1,136 @@
+<aura:component description="DependentPicklist"
+                controller="PicklistFieldController">
+    
+    <!--init function which is call on component load -->
+    <aura:handler name="init"
+                  value="{!this}"
+                  action="{!c.initialize}" />
+    <!--<aura:handler name="change" value="{!v.selectedControl}" action="{!c.onControllerFieldChange}"/>-->
+
+    
+    <!--Using Attributes-->
+     <aura:attribute name="prepopulateflag" type="string"
+                    default="0" />
+    
+    <aura:attribute name="controllingFieldPreDefault" type="string"
+                    description="defualt value for pre populate" />
+    <aura:attribute name="dependentFieldPreDefault" type="string"
+                    description="defualt value for pre populate for dependent field" />
+    <aura:attribute name="objInfo" type="string"
+                    description="store object Info." />
+    
+    <aura:attribute description="Controlling field"
+                    name="controllingField"
+                    type="String"/>
+    
+    <aura:attribute description="dependentField"
+                    name="dependentField"
+                    type="String"/>
+    
+    <aura:attribute name="depnedentFieldMap"
+                    type="map"
+                    description="store controller(key)--> dependent(values) picklist value as a map." />
+    
+    <aura:attribute name="isDependentDisable"
+                    type="boolean"
+                    default="true"
+                    description="use for, make disbale dependent field." />
+    
+    <aura:attribute name="hasStateValues"
+                    type="boolean"
+                    default="false"
+                    description="use for, make disbale dependent field." />
+    
+    <aura:attribute name="controllingOptions" type="List" />
+    <aura:attribute name="dependentOptions" type="List" default="['Select Options']"/>
+    <aura:attribute name="selectedControl" type="String" />
+    <aura:attribute name="selectedDependent" type="String" />
+    <aura:attribute name="controllingFieldDefault" type="String" default="['Select Options']"/>
+    <aura:attribute name="dependentFieldDefault" type="String" default="['Select Options']"/>
+    <aura:attribute name="disbaleState" type="Boolean" default="false"/>
+    <aura:attribute name="dependentFlag" type="Boolean" default="false"/>
+    <aura:attribute name="showOrOption" type="Boolean" default="false"/>
+    <aura:attribute name="dependentIdDefault" type="String" default="dependentId"/>
+    <aura:attribute name="controllingIdDefault" type="String" default="controllingId"/>
+        
+        <!--Dependent Field-->
+        <aura:if isTrue="{!v.showOrOption}">
+            <div class="slds-grid slds-wrap slds-p-vertical_none">
+            <!--Controller Field-->
+                <div class="slds-size_1-of-1 slds-p-vertical_none" style="border-radius: 0px;">
+                    <lightning:select aura:id="controllingIdDefault"
+                                      onchange="{!c.onControllerFieldChange}"
+                                      name="{!v.controllingIdDefault}"
+                                      required="true"
+                                      messageWhenValueMissing="Please select an option"
+                                      label="Controlling"
+                                      variant="label-hidden"
+                                      value="{!v.selectedControl}">
+                        <aura:iteration items="{!v.controllingOptions}" var="item">
+                            <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <aura:if isTrue="{!v.hasStateValues}">
+                    <div class="slds-size_1-of-1 slds-p-vertical_none" style="border-radius: 0px;">
+                        <lightning:select aura:id="dependentIdDefault"
+                                          disabled="{!v.isDependentDisable}"
+                                          name="Dependent"
+                                          onchange="{!c.onDependentFieldChange}"
+                                          required="true"
+                                          messageWhenValueMissing="Please select an option"
+                                          label="Dependent"
+                                          variant="label-hidden"
+                                          value="{!v.selectedDependent}">
+                            <aura:iteration items="{!v.dependentOptions}" var="item">
+                                <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                        <div class="slds-p-vertical_none slds-p-top_small" style="color:black;font-weight: bold;">
+                            <td class="slds-p-vertical_none" style="width:50%"><hr size="10" style="color:black;" /></td>
+                            <td class="slds-p-vertical_none" style="vertical-align:middle; text-align: center"> OR </td>
+                            <td class="slds-p-vertical_none" style="width:50%"><hr/></td>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+        </aura:if>
+   
+        <aura:if isTrue="{!!v.showOrOption}">
+            <div class="slds-grid slds-wrap slds-p-vertical_none">
+                <!--Controller Field-->
+                <div class="slds-size_1-of-1 slds-p-vertical_none" style="border-radius: 0px;">
+                    <lightning:select aura:id="controllingIdDefault"
+                                      onchange="{!c.onControllerFieldChange}"
+                                      name="{!v.controllingIdDefault}"
+                                      required="true"
+                                      messageWhenValueMissing="Please select an option"
+                                      label="Controlling"
+                                      variant="label-hidden"
+                                      value="{!v.selectedControl}">
+                        <aura:iteration items="{!v.controllingOptions}" var="item">
+                            <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                    
+                </div>
+                <aura:if isTrue="{!v.hasStateValues}">
+                    <div class="slds-size_1-of-1 slds-p-vertical_none" style="border-radius: 0px;">
+                        <lightning:select aura:id="dependentIdDefault"
+                                          disabled="{!v.isDependentDisable}"
+                                          name="Dependent"
+                                          onchange="{!c.onDependentFieldChange}"
+                                          required="true"
+                                          messageWhenValueMissing="Please select an option"
+                                          label="Dependent"
+                                          variant="label-hidden"
+                                          value="{!v.selectedDependent}">
+                            <aura:iteration items="{!v.dependentOptions}" var="item">
+                                <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </aura:if>
+            </div>
+    </aura:if>
+</aura:component>

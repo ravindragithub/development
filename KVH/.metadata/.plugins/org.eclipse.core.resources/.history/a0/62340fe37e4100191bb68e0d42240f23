@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION"
+            description="Used in mykvhheader and mykvhhome, look at event desc.">    
+    <aura:attribute name="kvhUserRole" type="boolean" access="global" default="true"/>
+</aura:event>

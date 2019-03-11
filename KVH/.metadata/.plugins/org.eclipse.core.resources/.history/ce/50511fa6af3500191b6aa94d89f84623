@@ -1,0 +1,11 @@
+.THIS .slds-form-element__control{
+    width : 100%;
+}
+.THIS {
+    width : 100%;
+}
+
+.THIS .slds-select {
+  border-radius: 0;
+
+}

@@ -1,0 +1,5 @@
+.THIS td.section-cat {
+    padding-left:15px;
+    color:#999;
+    border-bottom: 1px solid rgba(31, 131, 173, 0.3);
+}

@@ -1,0 +1,9 @@
+.THIS .err{
+  color: red;
+}
+.THIS .warn{
+  color: yellow;
+}
+.THIS .ok svg{
+  fill: green
+}

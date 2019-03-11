@@ -1,0 +1,53 @@
+<aura:component controller="NewonthePortalController" 
+                description="NewonthePortalComponent"
+                implements="forceCommunity:availableForAllPageTypes"
+                access="global">
+	<ltng:require styles="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <aura:attribute name="LastModifiedDate" type="String" access="global"/>
+    <aura:attribute name="selectedView" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>
+    <aura:attribute name="header" type="String" access="global"/>
+    <aura:attribute name="nodocs" type="String" access="global" default="nodis"/>
+    <aura:attribute name="dispdocs" type="String" access="global" default="nodis"/>
+    <aura:attribute name="dispComp" type="String" access="global" default="display: none;"/>
+    <aura:attribute name="Documentlist" type="Prod_Documents__c[]" access="global"/>
+    <aura:attribute name="contentType" type="string" access="global"/>
+    <aura:handler event="c:PortalViewOptionEvent"
+                  action="{!c.handlePortalViewChange}"
+                  description="Event handler to get the selected portal option.
+                               On handling it will fire the apex class to bring the properties for each option"/>
+    <div  style="{!'padding:20px;' + v.dispComp}">
+                    <h2 class="slds-p-around_medium" style="background: #e3e3e3;color: #666;font-size: 18px;padding: 10px 15px;">{!v.header}</h2>
+                    <div class="content" style="height:298px;background: #fff;">
+                        <div class="{!v.nodocs}">
+                        	<p class="ital">There are no new items at this time.</p>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </div>
+                        <div class="{!'filter-box ' + v.dispdocs}" style="overflow-y: auto;height: 270px;">
+                        <table class="dashboard" style="width: 100%;margin-bottom : 0px;">
+                            <thead>
+                                    <tr>
+                                        <th style="width: 30%; font-weight: bold;">Date </th>
+                                        <th style="width: 160%;">Description </th>
+                                    </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.Documentlist}" var="doc">
+                                    <c:NewonthePortalDoc docId="{!doc.Id}" 
+                                                         ct="{!doc.Associated_Content_Types__c}"
+                                                         cdate="{!doc.Created_Date__c}"
+                                                         dispname="{!doc.Title_Display_Name__c}"
+                                                         tc="{!doc.Display_Terms_and_Conditions_Page__c}"
+                                                         ht="{!doc.Display_HTML_Page__c}">
+                                    </c:NewonthePortalDoc>
+                                </aura:iteration>
+                                </tbody>
+                            </table>
+                        <a href="/s/allnewontheportal" class="button" style="margin-bottom : 0px;margin-top: 4%">View All New</a>
+                    </div>
+                </div>
+        </div>
+
+</aura:component>

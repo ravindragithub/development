@@ -1,0 +1,92 @@
+/**
+ * Created by Jai Chaturvedi on 8/03/2017.
+ */
+.THIS .optionClass{
+    font-size: 12px;
+}
+.THIS .slds-dropdown-trigger{
+        width : 33%;
+    }
+.THIS .selectClass{
+    height: 31px !important ;
+  
+}
+.THIS .portalview{
+ 
+    padding-left:2%;
+    color:#ddd;
+    padding-right:10px;
+    padding-top : 5px;
+    margin:0px;
+    font-size : 13px;
+}
+@media only screen and (max-width: 1000px) {
+    .THIS .portalviewselect{
+ 		padding-top : 5px;
+    	padding-left:2%;
+    }
+    
+}
+@media only screen and (max-width: 768px) {
+    .THIS .slds-dropdown-trigger{
+        width : 100%;
+    }
+    .THIS .hide-narrow{
+        display :none;
+    }
+    .THIS .dropdown-center{
+        text-align : center
+    }
+}
+
+@media only screen and (max-width: 448px) {
+    .THIS .slds-dropdown-trigger{
+        display:block;
+    }
+    .THIS .slds-dropdown-trigger{
+        width : 100%;
+    }
+   .THIS .hide-narrow{
+        display :none;
+    }
+}
+.THIS .sales-aids {
+    float: right;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 13px;
+    padding: 6px 15px;
+}
+.THIS .sales-aids a{
+    color: #ddd;
+    padding: 0px 10px 0 0;
+    text-decoration: none;
+}
+.THIS .sales-aids-inactive {    
+    background-color: dimgrey;
+    float: right;
+    border-radius: 13px;
+    padding: 6px 15px;
+}
+.THIS .sales-aids-inactive a{
+    color: #555;
+    padding: 0px 10px 0 0;
+    text-decoration: none;
+}
+.THIS .slds-dropdown__item:hover{
+    color:#1f83ad;
+    background: #f3f3f3;
+}
+.THIS .slds-dropdown{
+    border-radius: 0rem;
+}
+.THIS .slds-dropdown__list:after {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 100%;
+    right: 15px;
+    border-width: 0 6px 6px 6px;
+    border-style: solid;
+    border-color: #fff transparent;
+}

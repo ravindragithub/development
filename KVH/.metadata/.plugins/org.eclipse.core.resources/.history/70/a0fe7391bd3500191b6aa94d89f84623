@@ -1,0 +1,331 @@
+<apex:page sidebar="false" showHeader="false" standardStyleSheets="false" controller="SubscriberController" action="{!onLoad}" id="thePage">
+<!-- <!doctype html> --> 
+<html>
+<head>
+	<meta charset="UTF-8"/> 
+	<title>Online Activation Order - Subscriber Information</title>
+	
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+	
+	<!-- Load jQuery, use minimized lib-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<!-- Handle jQuery conflicts (e.g. "$") -->
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+	</script>
+	<!-- Load jQuery plug-ins, use minimized libs -->
+	<!-- Library for Modal windows.... -->
+	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+	<!-- Library for jQuery Validator... -->
+	<script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+	<!-- Library for Responsive Tabs...  -->
+<!-- 	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/js/jquery.responsiveTabs.min.js')}" type="text/javascript"></script> -->
+
+</head>
+
+<body>
+	
+	<apex:form id="theForm">
+		
+		
+		<div id="top">
+			<a href="#">Account Settings</a>  |  <a href="index.html">Logout</a>
+		</div>
+
+		<c:Activation_Header />
+		
+		<div id="sidebar">
+			<c:Activation_Status state="{!ActivationStatus}"/>
+		</div>
+	
+		<div id="main">
+			<div class="wrapper">
+				<apex:actionFunction name="GoToTab" action="{!goTab}" rerender="theForm">
+					<apex:param name="firstParam" assignTo="{!selectedTab}" value="" />
+				</apex:actionFunction>
+				<div class="required"><span class="req">*</span> indicates required field</div>
+				
+				<h1>Subscriber Information</h1>
+				
+					<apex:tabPanel switchType="client" value="{!selectedTab}" id="theTabPanel" >
+			<!-- TAB 1 - SUBSCRIBER INFO ---------------------->
+					<div id="tab--1">
+					<apex:tab label="Contact Information" name="tab-1" id="tab-1" onTabEnter="sendSubscriberUpdates('tab-1');" rerender="wrapper" >
+						<h1>Contact Information</h1>
+						
+						<div class="left two-col">
+							<div class="box-content">
+								<p><label>Subscriber/Contact First Name:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Subscriber_Contact_First_Name__c}" tabOrderHint="1" id="Subscriber_Contact_First_Name__c"/></p>
+								<p><label>Subscribing Company:<span class="notes">(if applicable)</span></label>
+									<apex:inputField value="{!newSubscriber.Subscribing_Company__c}" tabOrderHint="3" id="Subscribing_Company__c"/></p>
+								<p><label>Address:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Address__c}" tabOrderHint="5" id="Address__c"/></p>
+								<p><label>Country:<span class="req">*</span></label>
+									<apex:selectList value="{!newSubscriber.Country__c}" multiselect="false" id="Country__c" size="1"  > 
+										<apex:actionSupport event="onchange" action="{!SubscriberCountryChangeHandler}" rerender="State_Province__c"/>
+										<apex:selectOptions value="{!SubscriberCountriesList}"/>
+									</apex:selectList>
+								</p>
+								<p><label>Postal/Zip Code:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Postal_Zip_Code__c}" tabOrderHint="9" id="Postal_Zip_Code__c"/></p>
+								<p><label>Mobile Phone Number:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Subscriber_Mobile_Phone__c}" tabOrderHint="11" id="Subscriber_Mobile_Phone__c"/></p>
+							</div>
+						</div>
+						
+						<div class="right two-col">
+							<div class="box-content">
+								<p><label>Subscriber/Contact Last Name:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Subscriber_Contact_Name__c}" tabOrderHint="2" id="Subscriber_Contact_Name__c"/></p>
+								<p><label>Subscriber Email:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Subscriber_Email__c}" tabOrderHint="4" id="Subscriber_Email__c"/></p> 
+								<p><label>City:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.City__c}" tabOrderHint="6" id="City__c"/></p>
+								<p><label>State/Province:<span class="req">*</span></label>
+									<apex:selectList value="{!newSubscriber.State_Province__c}" multiselect="false" id="State_Province__c" size="1">
+										<apex:actionSupport event="onchange" action="{!SubOrBillingStateChangeHandler}" rerender="State_Province__c"/>
+										<apex:selectOptions value="{!SubscriberStatesList}"/>
+									</apex:selectList>
+								</p>
+								<p><label>Phone Number:<span class="req">*</span></label>
+									<apex:inputField value="{!newSubscriber.Phone_Number__c}" tabOrderHint="10" id="Phone_Number__c"/></p>
+							</div>
+						</div>
+						
+						<div class="button-bar clear">
+<!-- 							<input class="button right" type="submit" value="Submit"/> -->
+							<apex:commandLink styleClass="button right" action="{!goTab}" onclick="sendSubscriberUpdates('tab-2');" value="Next YO" >
+								<apex:param value="tab-2" assignTo="{!selectedTab}" />
+							</apex:commandLink>
+<!-- 							<apex:commandLink styleClass="button right" action="{!goTab}" value="Next" rerender="wrapper"/> -->
+						</div>
+					</apex:tab>
+					</div><!-- tab-1 -->
+						
+			<!-- TAB 2 - Billing Rep ---------------------->
+					
+					<div id="tab--2"> 
+					<apex:tab label="Billing Representation" name="tab-2" id="tab-2" onTabEnter="sendSubscriberUpdates('tab-2');" rerender="wrapper">
+					<apex:outputPanel id="billingStuff">
+					<apex:actionFunction name="copyFields" action="{!copySubscriber}" reRender="billingStuff"/> 
+						<h1>Billing Representation</h1> 
+						<p><apex:inputCheckbox id="useSubscriber" onClick="copyFields();" /> Same as Subscriber Contact Information</p>
+						<div class="left two-col">
+							<div class="box-content" id="billLeft">
+								<p><label>Billing Rep. Name:</label><apex:inputField value="{!newSubscriber.Billing_Rep_First_Name__c}" tabOrderHint="1" id="Billing_Rep_First_Name__c"/></p>
+								<p><label>Billing Rep. Company:<span class="notes">(if applicable)</span></label><apex:inputField value="{!newSubscriber.Billing_Company__c}" tabOrderHint="3" id="Billing_Company__c"/></p>
+								<p><label>Billing Rep. Address:</label><apex:inputField value="{!newSubscriber.Billing_Rep_Address__c}" tabOrderHint="5" id="Billing_Rep_Address__c"/></p>
+								<p><label>Country:</label>
+<!-- 								<apex:inputField value="{!newSubscriber.Billing_Country__c}" tabOrderHint="7" id="billCountry"/> -->
+									<apex:selectList value="{!newSubscriber.Billing_Country__c}" multiselect="false" id="Billing_Country__c" size="1"  > 
+										<apex:actionSupport event="onchange" action="{!BillingCountryChangeHandler}" rerender="Billing_State_Province__c"/>
+										<apex:selectOptions value="{!BillingCountriesList}"/>
+									</apex:selectList>
+								</p>
+								<p><label>Postal/Zip Code:</label><apex:inputField value="{!newSubscriber.Billing_Zip_Code__c}" tabOrderHint="9" id="billZip"/></p>
+								<p><label>Billing Rep. Mobile Phone Number:</label><apex:inputField value="{!newSubscriber.Billing_Mobile_Phone__c}" tabOrderHint="11" id="billMobile"/></p>
+							</div>
+						</div>
+						
+						<div class="right two-col">
+							<div class="box-content">
+								<p><label>Billing Rep. Last Name:</label><apex:inputField value="{!newSubscriber.Billing_Rep_Name__c}" tabOrderHint="2" id="Billing_Rep_Name__c"/></p>
+								<p><label>Billing Rep. Email:</label><apex:inputField value="{!newSubscriber.Billing_Email__c}" tabOrderHint="4" id="Billing_Email__c"/></p>
+								<p><label>City:</label><apex:inputField value="{!newSubscriber.Billing_City__c}" tabOrderHint="6" id="Billing_City__c"/></p>
+<!-- 								<p><label>State/Province:</label><apex:inputField value="{!newSubscriber.Billing_State_Province__c}" tabOrderHint="8" id="billState"/></p> -->
+								<p><label>State/Province:<span class="req">*</span></label>
+									<apex:selectList value="{!newSubscriber.Billing_State_Province__c}" multiselect="false" id="Billing_State_Province__c" size="1">
+										<apex:actionSupport event="onchange" action="{!SubOrBillingStateChangeHandler}" rerender="Billing_State_Province__c"/>
+										<apex:selectOptions value="{!BillingStatesList}"/>
+									</apex:selectList>
+								</p>
+								<p><label>Phone Number:</label><apex:inputField value="{!newSubscriber.Billing_Phone_Number__c}" tabOrderHint="10" id="Billing_Phone_Number__c"/></p>
+							</div>
+						</div>
+						
+						<div class="button-bar clear">
+							<apex:commandLink styleClass="button left" action="{!goTab}" onclick="sendSubscriberUpdates('tab-1');" value="Back YO">
+								<apex:param value="tab-1" assignTo="{!selectedTab}" />
+							</apex:commandLink>
+							<apex:commandLink styleClass="button right" action="{!goTab}" onclick="sendSubscriberUpdates('tab-3');" value="Next YO">
+								<apex:param value="tab-3" assignTo="{!selectedTab}" />
+							</apex:commandLink>
+						</div>
+					</apex:outputPanel>
+					</apex:tab>
+					</div><!-- tab-2 -->
+						
+			<!-- TAB 3 - Payment and Invoicing ---------------------->
+					<div id="tab--3">
+					<apex:tab label="Payment & Invoicing" name="tab-3" id="tab-3" onTabEnter="sendSubscriberUpdates('tab-3');" rerender="wrapper">
+						<h1>Payment &amp; Invoicing</h1>
+						<h2>Payment Method<span class="req">*</span></h2>
+						
+						<div class="box left two-col">
+							<div class="box-hd">
+								<h3><input type="radio" name="payment" value="credit" id="payment_0"/> Credit Card</h3>
+							</div>
+							<div class="box-content">
+								<p> Cards accepted: Mastercard, Visa, American Express, Discover</p>
+								<p><label>Primary Credit Card Number:</label><input type="text"/><label>Exp. Date:</label><input type="text"/></p>
+								<p><label>Secondary Credit Card Number:</label><input type="text"/><label>Exp. Date</label><input type="text"/></p>
+							</div>
+						</div>
+						
+						<div class="box right two-col">
+							<div class="box-hd">
+								<h3><input type="radio" name="payment" value="comm" id="payment_1"/> Commercial Account Terms</h3>
+							</div>
+							<div class="box-content">
+								<p> Subject to credit check and approval; invoice will be sent via email as a PDF attachment; payment terms will be stated on invoice</p>
+							</div>
+						</div>
+						
+						<hr class="clear"/>
+						
+						<h2>Invoice Type</h2>
+						<p>For fleet accounts only. Here's some info about how to decide which invoice type to choose. Or we can put that info in the tooltips.</p>
+						  
+						<p><input type="radio" name="Invoices" value="radio" id="Invoices_0"/> <label>Single Invoices</label><a href="#" class="hasTooltip"><img src="{!URLFOR($Resource.ActivationOrders, 'www/images/info.png')}" width="15" height="15" alt="Learn more"/></a>
+							<span>Choose this option if you want all of your systems billed to one billing address on one invoice, whether you have one system or many.</span></p>
+						<p><input type="radio" name="Invoices" value="radio" id="Invoices_1"/> <label>Individual Invoices per System</label><a href="#" class="hasTooltip"><img src="{!URLFOR($Resource.ActivationOrders, 'www/images/info.png')}" width="15" height="15" alt="Learn more"/></a>
+							<span>Choose this option if you have multiple systems and you want each one to get billed separately to different billing accounts.</span></p>
+						<p><input type="radio" name="Invoices" value="radio" id="Invoices_2"/> <label>Individual Invoices per System and a Fleet Summary Invoice</label><a href="#" class="hasTooltip"><img src="{!URLFOR($Resource.ActivationOrders, 'www/images/info.png')}" width="15" height="15" alt="Learn more"/></a>
+							<span>Choose this option if you want each system to be billed separately, and a single Fleet Summary of each system's usage sent to the Corporate Account. </span></p>
+						
+						<div class="button-bar">
+						
+							<apex:commandLink styleClass="button left" action="{!goTab}" onclick="sendSubscriberUpdates('tab-2');" value="Back YO" >
+								<apex:param value="tab-2" assignTo="{!selectedTab}" />
+							</apex:commandLink>
+							
+							<apex:commandLink styleClass="button right" action="{!ContinueToContactPage}" value="Contacts" rerender="">
+								Save &amp; Continue to System Contacts
+							</apex:commandLink> 
+							<a href="#modal" class="exit right">Save &amp; Finish Later</a>
+							<div class="remodal" data-remodal-id="modal">
+								<p>When you're ready to come back and finish your activation, just log in with the email and temporary password that is in the email we sent you. Check your spam filter if you don't have an email from KVH Activation Group.</p>
+								<a href="index.html" class="button">Bye!</a>
+							</div>
+						</div>
+						</apex:tab>
+					</div><!-- tab-3 -->
+					
+<!-- 				</div>horizontal tab -->
+				</apex:tabPanel>
+			</div><!-- wrapper -->
+		</div><!-- main -->
+	</apex:form>
+	
+
+	<script type="text/javascript" language="JavaScript">
+		j$(document).ready(function() {
+            
+            //setup jQuery validator rules and behaviour
+            j$('[id$=theForm]').validate({debug: true});             
+          
+            j$('[id$=subLast]').rules("add",{
+                required: true,
+                minlength: 5
+            });     
+            
+            j$('[id$=billLast]').rules("add",{
+                required: true,
+                minlength: 5
+            });
+             
+            j$('[id$=subEmail]').rules("add",{
+                required: true,
+                email: true
+            });      
+            
+			/* TODO: verify submit with validation tags on different tabs.
+            /* Customised the messages */
+            j$.validator.messages.required = "You better have entered a value.. or else!"; 
+            j$.validator.messages.email = "This must be a valid Email";                                                
+            
+            //setup responsive tabs...
+			
+			//setup tooltip behaviour 
+			j$('.hasTooltip').hover(function() {
+				var offset = j$(this).offset();
+				j$(this).next('span').fadeIn(200).addClass('showTooltip');
+				j$(this).next('span').css('left', offset.left + 'px');
+			}, function() {
+				j$(this).next('span').fadeOut(200);
+			});
+			
+        });
+	
+		function FillFields(box) {	//copies values from tab 1 to tab 2 when box is checked
+			//NOTE: Field Ids are the same as database API Field names!
+			//alert("Entering FillFields Function with Parameter " + box.id + "Parameter value " + box.checked);
+			if(box.checked == false) { return; }
+			j$('[id$=Billing_Rep_First_Name__c]').val(j$('[id$=Subscriber_Contact_First_Name__c]').val());			//copy subscriber values to billing fields....
+			j$('[id$=Billing_Rep_Name__c]').val(j$('[id$=Subscriber_Contact_Name__c]').val());
+			j$('[id$=Billing_Company__c]').val(j$('[id$=Subscribing_Company__c]').val());	//removed 11/23
+			j$('[id$=Billing_Rep_Address__c]').val(j$('[id$=Address__c]').val());
+			j$('[id$=Billing_State_Province__c]').val(j$('[id$=State_Province__c]').val());
+			j$('[id$=Billing_Country__c]').val(j$('[id$=Country__c]').val());
+			j$('[id$=Billing_Fax_Number__c]').val(j$('[id$=Fax_Number__c]').val());
+			j$('[id$=Billing_Email__c]').val(j$('[id$=Subscriber_Email__c]').val());
+			j$('[id$=Billing_City__c]').val(j$('[id$=City__c]').val());
+			j$('[id$=Billing_Zip_Code__c]').val(j$('[id$=Postal_Zip_Code__c]').val());
+			j$('[id$=Billing_Phone_Number__c]').val(j$('[id$=Phone_Number__c]').val());
+		}
+	</script>
+	<script type="text/javascript" language="JavaScript">
+		window.remodalGlobals = {
+			namespace: "modal",
+			defaults: {
+				hashTracking: true
+			}
+		};
+	</script>
+	<script type="text/javascript" language="JavaScript">
+	
+	function getFormValues(){
+		/* To use correctly, ensure that fields to serialize have Ids that end with "__c" e.g. use API Field Names! */
+		var output = {};
+		var fields = j$("[id$='__c']").serializeArray();					//Some "inputs" and a couple of "selects"
+		j$.each(fields, function() {
+			this.name = this.name.slice(this.name.lastIndexOf(':') + 1);	//index is zero based!
+			//alert(this.name);
+			if (output[this.name] !== undefined) {
+				
+				if(!output[this.name].push) {
+					output[this.name] = [output[this.name]];
+				}
+			output[this.name].push(this.value || '');
+			} else {
+				output[this.name] = this.value || '';
+			}
+		});
+		var JSONstring = JSON.stringify(output);
+		console.log(JSONstring);
+		return JSONstring;
+	}
+	
+	function sendSubscriberUpdates(tabClicked) {
+	    // Invoke server remote action method
+	    var formJSON = getFormValues();
+	    //alert(tabClicked);
+	    SubscriberController.updateSubscriber('{!ActivationStatus.Activation_Order__c}', tabClicked, formJSON, callbackHandler); 
+	}
+	
+	function callbackHandler(result, event) {
+	    if (event.type == 'exception') {
+	        alert('callbackHandler reports exception: ' + event.message); 
+	    } else {
+	    	//alert('Javascript remoting complete!');
+	    }
+	}
+</script>
+</body>
+</html>
+</apex:page>

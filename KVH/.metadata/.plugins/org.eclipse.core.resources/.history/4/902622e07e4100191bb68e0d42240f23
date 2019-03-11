@@ -1,0 +1,115 @@
+<aura:component controller="MultipleBeamEntriesController">
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="caseId" type="string" />
+    <aura:attribute name="ContactId" type="string" />
+    <aura:attribute name="serviceDetail" type="string" />
+    <aura:attribute name="beamregiontype" type="string" />
+    <aura:attribute name="wrapperList" 
+                    type="MultipleBeamEntriesController.DisplayListBeamFlex[]" />
+    <aura:attribute name="UpdatedWrapperList" 
+                    type="MultipleBeamEntriesController.DisplayListBeamFlex[]" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="oselectedProductEvent" event="c:selectedProductEvent" action="{!c.getSearchRecordValue}"/>
+    <div>
+
+        <div class="container">
+            <div class="row slds-grid slds-wrap mainHierarchy" id="updateSub">
+                <div class="slds-col">
+                    <center>
+                        <aura:if isTrue="{! v.beamregiontype == 'beam' }" >
+                            <button class="slds-button slds-button--brand" onclick="{!c.addBeamRegion}" >
+                                Save Beam
+                            </button>
+                            <aura:set attribute="else">
+                                <button class="slds-button slds-button--brand" onclick="{!c.addBeamRegion}" >
+                                    Save Flex Region
+                                </button>
+                            </aura:set>
+                        </aura:if>
+                    </center>
+                    <div class="tbleClass">
+                        <table class="subsClass">
+                            <aura:if isTrue="{! v.beamregiontype == 'beam' }" >
+                                <tr class="slds-text-title_caps">
+                                    <th scope="col" class="headerCol" title="Beam">
+                                        <div class="">Beam</div>
+                                    </th>
+                                    <th scope="col" class="headerCol" title="Beam URL">
+                                        <div class="">Beam URL</div>
+                                    </th>
+                                    <th scope="col" class="headerCol" title="Beam FullName">
+                                        <div class="">Beam FullName</div>
+                                    </th>
+                                    <th scope="col" class="headerCol" title="Action">
+                                        <div class="">Action</div>
+                                    </th>
+                                </tr>
+                                <aura:set attribute="else">
+                                    <tr class="slds-text-title_caps">
+                                        <th scope="col" class="headerCol" title="Beam">
+                                            <div class="">Flex Region</div>
+                                        </th>
+                                        <th scope="col" class="headerCol" title="Beam URL">
+                                            <div class="">Flex Region URL</div>
+                                        </th>
+                                        <th scope="col" class="headerCol" title="Beam FullName">
+                                            <div class="">Flex Region FullName</div>
+                                        </th>
+                                        <th scope="col" class="headerCol" title="Action">
+                                            <div class="">Action</div>
+                                        </th>
+                                    </tr>
+                                </aura:set>
+                            </aura:if>
+                            <tbody>
+                                <aura:iteration items="{!v.wrapperList}" var="beam" indexVar="index">
+                                    <tr class="slds-hint-parent">
+                                        <td data-label="Beam Rec" scope="col">
+                                            <aura:if isTrue="{! beam.recordId != ''}" >
+                                                <div class="rowDataClass">
+                                                    <a href="{!'/'+beam.recordId}" target="_blank">{!beam.recordName}</a>
+                                                </div>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{! v.beamregiontype == 'beam' }" >
+                                                        <div class="rowDataClass"><c:customLookup searchObjective="Beam_List"/></div>
+                                                        <aura:set attribute="else">
+                                                            <div class="rowDataClass"><c:customLookup searchObjective="Flex_List"/></div>  
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                        <td data-label="Beam URL" scope="col">
+                                            <div class="rowDataClass">
+                                                <a href="{!beam.recordURL}" target="_blank">{!beam.recordURL}</a>
+                                            </div>
+                                        </td>
+                                        <td data-label="Beam Full Name" scope="col">
+                                            <div class="rowDataClass">{!beam.recordFullName}</div>
+                                        </td>
+                                        <td data-label="Action" scope="col">
+                                            <div >
+                                                <ui:button press="{!c.AddNewRow}" buttonTitle="{!index}" class="ui-btn">
+                                                    <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#add'}" />
+                                                    <span class="slds-assistive-text">Close</span>
+                                                </ui:button>
+                                                &nbsp;&nbsp;
+                                                <ui:button press="{!c.removeRow}" buttonTitle="{!index}" class="ui-btn">
+                                                    <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#delete'}" />
+                                                    <span class="slds-assistive-text">Close</span>
+                                                </ui:button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,10 @@
+<!--
+ - Created by Jai Chaturvedi on 26/04/2017.
+ -->
+
+<aura:documentation>
+	<aura:description>Documentation for FilterOptions</aura:description>
+	<aura:example name="FilterOptions" ref="FilterOptions" label="FilterOptions">
+		Example for FilterOptions
+	</aura:example>
+</aura:documentation>

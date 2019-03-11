@@ -1,0 +1,18 @@
+<aura:component description="Individual Docs for NewonthePortal">
+    <aura:attribute name="docId" type="String" access="global"/>
+    <aura:attribute name="cdate" type="Date" access="global"/>
+    <aura:attribute name="ct" type="String" access="global"/>
+    <aura:attribute name="dispname" type="String" access="global"/>
+    <aura:attribute name="tc" type="Boolean" access="global"/>
+    <aura:attribute name="ht" type="Boolean" access="global"/>
+    
+    <tr>
+        <td>
+            <ui:outputDate value="{!v.cdate}"/>
+        </td>
+        <td>
+            <span class="doc-type">{!v.ct}</span><br/>
+            <a onclick="{!c.download}">{!v.dispname}</a>
+        </td>
+    </tr>
+</aura:component>

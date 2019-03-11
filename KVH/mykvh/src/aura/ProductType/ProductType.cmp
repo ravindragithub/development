@@ -1,0 +1,26 @@
+<aura:component description="ProductType.
+                             Used to group the products by line and series">
+    
+    <aura:attribute name="prodLineSeries"
+                    type="ProductSearchClass.ProdLineSeries"
+                    description="Holds the single record of ProductSearchClass.ProdLineSeries.
+                                 this record has list of products asscociated"/>
+    
+    <div class="slds-grid slds-wrap slds-grid--pull-padded slds-p-horizontal--small slds-m-bottom--small slds-has-top-magnet">
+        <div class="slds-size--1-of-1">
+            <div class="slds-m-bottom--small">
+                <h3 class="slds-section-title--divider section group tableheader">
+                    {!v.prodLineSeries.prodLineSeries}
+                </h3>
+            </div>
+        </div>
+        <div class="slds-size--1-of-1">
+            <div class="slds-grid slds-wrap slds-m-horizontal--xx-small">
+                <aura:iteration items="{!v.prodLineSeries.productItemList}" var="prodItem" indexVar="index">
+                        <c:Product product="{!prodItem}"/>
+                </aura:iteration>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

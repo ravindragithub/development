@@ -1,0 +1,86 @@
+<aura:component >
+    <aura:attribute name="subscriberInfoFlag" type="boolean" default="false"/>
+    <aura:attribute name="contact1InfoFlag" type="boolean" default="false"/>
+    <aura:attribute name="contact2InfoFlag" type="boolean" default="false"/>
+    <aura:attribute name="onboardRequired" type="boolean" />
+    <aura:attribute name="setCheck" type="string"/>
+    <aura:handler event="c:LTEAct_Object_evt" action="{!c.changeOnboardContact}"/>
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'Same as Subscriber', 'value': 'Subscriber'},
+                                                        {'label': 'Same as Additional Contact 1', 'value': 'Contact1'},
+                                                        {'label': 'Same as Additional Contact 2', 'value': 'Contact2'}
+                                                        ]"/>
+    <aura:attribute name="value" type="String" default="option1"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:attribute name="inhibitTransform" type="boolean"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    <aura:registerEvent name="subBillComponentEvent" type="c:LTEAct_Object_evt"/>
+    <lightning:card title="Onboard Contact">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.onboardRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">         
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <lightning:input label="Same as Subscriber" type="checkbox" 
+                                     checked="{!v.subscriberInfoFlag}" onchange="{!c.changeOnboard}"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <lightning:input label="Same as Additional Contact 1" type="checkbox" 
+                                     checked="{!v.contact1InfoFlag}" onchange="{!c.changeOnboard}"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <lightning:input label="Same as Additional Contact 2" type="checkbox" 
+                                     checked="{!v.contact2InfoFlag}" onchange="{!c.changeOnboard}"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input aura:id="LTEField" name="FName" label="Contact First/Given Name"
+                                     value="{!v.simpleLTEActivation.Onboard_Contact_First_Name__c}"
+                                     required="true" onblur="{!c.onboardValidation}"/>
+                    <lightning:input aura:id="LTEField" name="LName" label="Contact Last/Family Name/Surname"
+                                     value="{!v.simpleLTEActivation.Onboard_Contact_Last_Name__c}"
+                                     required="true" onblur="{!c.onboardValidation}"/>
+                    <lightning:input aura:id="LTEField" name="Name" label="Company Name"
+                                     value="{!v.simpleLTEActivation.Onboard_Company_Name__c}"/>
+                    <lightning:input aura:id="LTEField" label="Email" type="email" 
+                                     value="{!v.simpleLTEActivation.Onboard_Email__c}"
+                                     required="true" onblur="{!c.onboardValidation}"/>          
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">  
+                    <lightning:input aura:id="LTEField" label="Phone" 
+                                     value="{!v.simpleLTEActivation.Onboard_Phone__c}"
+                                     required="true" onblur="{!c.onboardValidation}"/>  
+                    <aura:if isTrue="{!or(or(v.subscriberInfoFlag, v.contact1InfoFlag) , v.contact2InfoFlag ) }">
+                        <lightning:input aura:id="LTEField" label="Country" required="true" 
+                                         value="{!v.simpleLTEActivation.Onboard_Country__c}"
+                                         onblur="{!c.onboardValidation}"/>
+                        <lightning:input aura:id="LTEField" label="State/Province/Territory" required="true" 
+                                         value="{!v.simpleLTEActivation.Onboard_State_Province_Territory__c}"
+                                         onblur="{!c.onboardValidation}"/>
+                        <aura:set attribute="else">                            
+                            <c:Country_Picklist_cmp countryList="{!v.countryList}" stateMap="{!v.stateMap}" 
+                                                    selectedCountry="{!v.selectedCountry}" selectedState="{!v.selectedState}" 
+                                                    componentID="OnboardCountryState"/>                             
+                        </aura:set>
+                    </aura:if>  
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+    {!v.body }
+</aura:component>

@@ -1,0 +1,154 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                controller="CustomHeaderController" access="global">
+    
+    <aura:attribute name="runningUser" type="User" description="Stores the current logged in user's details.
+                                                                This is further used for detecting the type of User, Name etc" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <div class="white-bg pad-inside containerdiv" style="max-width:1000px;margin:auto;background: #fff;padding:2%;">
+        <h1 class="left">Contact KVH</h1>
+        <div style="float:right;">
+            
+            <lightning:button label="Back to Home" class="go-btn button"
+                              variant="brand" onclick="{!c.onBackHome}" />
+            <aura:if isTrue="{!v.runningUser.ContactId != null}">
+                <lightning:button label="Support Center" class="go-btn button"
+                                  variant="brand" onclick="{!c.onServiceCenter}" />
+            </aura:if>
+        </div>
+        <div class="clear"></div>
+        
+        <h2>Airtime Services</h2>
+        
+        <table class="dashboard">
+            <tbody>
+                <tr>
+                    <th class="width-25">Office</th>
+                    <th class="width-25">Support Region</th>
+                    <th class="width-25">Phone Number</th>
+                    <th class="width-25">Hours</th>
+                </tr>
+                <tr>
+                    <td>KVH USA</td>
+                    <td>Global Support</td>
+                    <td>
+                        +1 401 851 3862<br/>
+                        <em><small>International (Land line only)</small></em>
+                        <br/><br/>
+                        +1 866 399 8509<br/>
+                        <em><small>Toll Free USA and Canada Only</small></em>
+                    </td>
+                    <td>Sun 15:30-Fri 17:00 EST</td>
+                </tr>
+                <tr>
+                    <td>KVH Europe</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        +45 45 160 197<br/>
+                        <em><small>Local Access Number To USA</small></em>
+                    </td>
+                    <td>Sun 21:30-Fri 23:00 CET</td>
+                </tr>
+                <tr>
+                    <td>KVH Asia</td>
+                    <td>&nbsp;</td>
+                    <td><span class="phone">+65 31584084</span>
+                        <br/><em><small>Local Access Number To USA</small></em></td>
+                    <td>Mon 04:30-Sat 06:00 SGT</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>mini-VSAT Broadband Technical Support</h2>
+        
+        <table class="dashboard">
+            <tbody>
+                <tr>
+                    <th class="width-25">Office</th>
+                    <th class="width-25">Support Region</th>
+                    <th class="width-25">Phone Number</th>
+                    <th class="width-25">Hours</th>
+                </tr>
+                <tr>
+                    <td>KVH USA</td>
+                    <td>Global Support</td>
+                    <td><span class="phone">+1 401 851 3806</span><br/>
+                        <em><small>International (Land line only)</small></em>
+                        <br/><br/>
+                        <span class="phone">+1 866 701 7103</span><br/>
+                        <em><small>Toll Free USA and Canada Only</small></em></td>
+                    
+                    <td>24x7 365 Days Per Year</td>
+                </tr>
+                <tr>
+                    <td>KVH Europe</td>
+                    <td>Regional Support</td>
+                    <td><span class="phone">+45 45 160 147</span></td>
+                    <td>Mon-Thu, 08:00-16:30 CET<br/>Fri, 08:00-14:00 CET<br/><br/><em><small>After hours, this number forwards<br/> to KVH USA 24/7/365 Support</small></em></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>TracVision, TracPhone, Gyro &amp; Compasses Technical Support</h2>
+        
+        <table class="dashboard">
+            <tbody>
+                <tr>
+                    <th class="width-25">Office</th>
+                    <th class="width-25">Support Region</th>
+                    <th class="width-25">Phone Number</th>
+                    <th class="width-25">Hours</th>
+                </tr>
+                <tr>
+                    <td>KVH USA</td>
+                    <td>Global Support</td>
+                    <td>+1 401 847 3327</td>
+                    <td>Mon-Fri, 09:00-20:00 EST<br/>Sat, 09:00-14:00 EST</td>
+                </tr>
+                <tr>
+                    <td>KVH Europe</td>
+                    <td>Regional Support</td>
+                    <td>+45 45 160 180</td>
+                    <td>Mon-Thu, 08:00-16:30 CET<br/>Fri, 08:00-14:00 CET</td>
+                </tr>
+                <tr>
+                    <td>KVH Asia</td>
+                    <td><em><small>Local Access Number to USA</small></em></td>
+                    <td>+65 315 88198</td>
+                    <td>Mon-Sat, 21:00-08:00 (SGT)<br/>Sat 21:00-Sun 02:00 (SGT)</td>
+                </tr>                      
+            </tbody>
+        </table>
+        
+        <h2>Commbox Technical Support</h2>
+        
+        <table class="dashboard">
+            <tbody>
+                <tr>
+                    <th class="width-25">Office</th>
+                    <th class="width-25">Support Region</th>
+                    <th class="width-25">Phone Number</th>
+                    <th class="width-25">Hours</th>
+                </tr>
+                <tr>
+                    <td>KVH USA</td>
+                    <td>Global Support</td>
+                    <td>
+                        +1 401 851 3806<br/>
+                        <em><small>International (Land line only)</small></em>
+                        <br/><br/>
+                        <span class="phone">+1 866 701 7103</span><br/>
+                        <em><small>Toll Free USA and Canada Only</small></em>
+                    </td>
+                    <td>24x7 365 Days Per Year</td>
+                </tr>
+                <tr>
+                    <td>KVH Norway</td>
+                    <td>Regional Support</td>
+                    <td>+47 33 03 05 34</td>
+                    <td>Mon-Thu, 08:00-16:30 CET<br/>Fri, 08:00-14:00 CET<br/><br/><em><small>Contact KVH USA during off hours when urgent assistance is required</small></em></td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</aura:component>

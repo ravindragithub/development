@@ -1,0 +1,77 @@
+<apex:page standardcontroller="Case" extensions="RequestInstallationSupportController" standardstylesheets="true" cache="false">
+    <apex:form id="form">
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var $j = jQuery.noConflict();
+        
+        $j(document).ready(function()
+        {
+            // $j('.btn').removeClass('btn').addClass('kvhbtn');
+            
+        });
+        
+        function setFocusOnLoad() {}        
+        function goB()
+        {
+            goBack();
+        }
+         
+    </script>
+    <apex:pagemessages />
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+
+        <apex:pageblock rendered="{!firstpage}">
+            <div class="page-content">
+                 <h1>Request Installation Support</h1>
+                            <br></br>
+                            <p>Ensure a successful installation of your KVH satellite communications system by requesting support from a KVH Field Services expert. You will benefit from the expertise and capability of the Field Services team, whether you need installation on a single vessel or a global fleet. The team's services include:</p>
+                            <br></br>
+                            <ul>
+                                <li>Onboard terminal installation</li>
+                                <li>Installation program management and support</li>
+                                <li>Global logistics support</li>
+                                <li>Onboard IT infrastructure integration</li>
+                                <li>Initial onboard training for vessel representative</li>
+                            </ul>
+                    <apex:commandbutton value="Next"  action="{!nextButton}"/><br/><br/>
+            </div>
+            
+            
+        </apex:pageblock>
+    
+        <apex:pageblock rendered="{!IF(firstpage==false,true,false)}">
+            <div class="page-content">
+                <h1>Request Installation Support</h1><br/><br></br>
+                <h2>Please select your vessel or installation platform:</h2><br/>
+                <!--<p><apex:inputfield value="{!srvCase.Platform_Account__c}" style="width:380px; height:20px; padding:5px;"/></p><br/>-->
+                <p><apex:selectList value="{!srvCase.Platform_Asset_Account__c}" styleClass="inputbox" multiselect="false" size="1" required="false">
+                   <apex:selectOptions value="{!accounts}" />
+                </apex:selectList></p>  
+                <br/>
+                <h2>Add New vessel or installation platform:</h2><br/>
+                <p><apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Requested Installation Date:</h2>
+                <p><apex:inputfield value="{!srvCase.Requested_Installation_Date__c}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Port:</h2>
+                <p><apex:inputfield value="{!srvCase.Port__c}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please enter a subject for your Case:</h2>
+                <p><apex:inputfield value="{!srvCase.Subject}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please add any additional details:</h2>
+                <p><apex:inputfield style="width:380px; height:200px; padding:5px;" value="{!srvCase.Description}"/></p>
+                <br/>
+                <apex:outputpanel >
+                        <apex:outputText value="Attach a File:" />
+                        &nbsp;&nbsp;
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        <br/>
+                        <p style="text-align:right;width:390px"><apex:commandButton value="Previous"  styleClass="left" onclick="goB(); return false;"/><apex:commandButton value="Finish"  action="{!CreateCase}"/></p>
+                </apex:outputpanel>
+            </div>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

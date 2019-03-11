@@ -1,0 +1,52 @@
+<aura:component controller="SubscriptionAssigmentLightningController" >
+   <!---Use Salesforce Lightning Design System CSS From Static resources-->   
+   
+    <!--declare attributes--> 
+   <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+   <aura:attribute name="listOfSearchRecords" type="sObject[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="searchObjective" type="String"/>
+    <aura:attribute name="Message" type="String" default="Search Result.."/>
+    <!--declare events hendlers-->  
+    <aura:handler name="oselectedProductEvent" event="c:selectedProductEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    
+    <div class="">
+        <div aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+            <div class="slds-form-element__control">
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+               <c:svgIcon class="slds-input__icon slds-show" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#search'}" />
+               <!-- This markup is for when an record is selected -->
+               <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                  <span class="slds-pill">
+                     <span class="slds-pill__label">
+                       {!v.selectedRecord.Name}  
+                     </span>
+                      <aura:if isTrue="{! and(v.searchObjective !='Beam_List', v.searchObjective !='Flex_List')}">
+                     <button class="slds-button slds-button--icon slds-pill__remove" onclick="{!c.clear}">
+                        <c:svgIcon class="slds-button__icon" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#close'}" />
+                        <span class="slds-assistive-text">Remove</span>
+                     </button>
+                      </aura:if>
+                              
+                              
+                  </span>
+               </div>
+              <div aura:id="lookupField" class="slds-show">
+               <ui:inputText updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input " value="{!v.SearchKeyWord}" placeholder="Search ..."/>
+              </div>   
+            </div>
+         </div>
+         <!--This part is for Display typehead lookup result List-->  
+         <div class="slds-lookup__menu slds" id="lookup-348">
+            <center> <ui:spinner aura:id="spinner"/> </center>
+            <ul class="slds-lookup__list" role="listbox">
+               <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                  <c:customLookupResult oProduct2="{!singleRec}" searchObjective="{!v.searchObjective}"/>
+               </aura:iteration>
+            </ul>
+         </div>
+      </div>
+   </div>
+</aura:component>

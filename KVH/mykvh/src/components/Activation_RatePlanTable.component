@@ -1,0 +1,113 @@
+<apex:component controller="Act_RateplanTable_Component_Ctrl" allowDML="true" id="rateplantable" >
+    <apex:attribute name="selectedRatePlan" description="This is the Rate Plan"
+                    type="String" required="required" assignTo="{!strSelectedRatePlan}"/>
+    <apex:attribute name="planType" description="This is the Rate Plan"
+                    type="String" assignTo="{!strSelectedPlanTypeTab}" />
+    <apex:attribute name="className" description="This is the Rate Plan Class Name"
+                    type="String" />
+    <apex:attribute name="selectedProductBundle" description="This is the selected Plan Bundle Name"
+                    type="String" assignTo="{!strSelectedProductBundle}" />
+    <apex:attribute name="planTypepopupId" description="This is the Rate Plan Popup Id"
+                    type="String" required="required" />
+     <apex:attribute name="SelectedProductName" description="This is the selected product Id"
+                    type="String" assignTo="{!strSelectedProductName}" />
+    <apex:attribute name="currentTab" description="This is the Rate Plan Popup Id"
+                    type="String" />
+    <apex:attribute name="activationServices" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationServiceComp}"/>
+    
+    <style>
+        .collapse-panels h2, .collapse-panels h3 {
+        margin: 0;
+        padding: 0;
+        }
+        h2 {
+        font-size: 1.5em;
+        color: #30445b;
+        }
+        h1, h2, h3, p {
+        padding-bottom: 15px;
+        line-height: normal;
+        }
+    </style>
+   
+    <script> 
+    function selectedProductRatePlan(ProductNameId, ProductFeatureType){
+        j$("#"+ProductNameId).addClass("selected");
+        j$("#"+ProductNameId).find('input').val('Selected');
+         showLoadingDiv(); 
+        if('{!currentTab}' == 'Airtime_Plans'){
+            if('{!activationServices.Activation_Rate_Plan__c}' != '' && ProductFeatureType.indexOf('Flex') >=0 && '{!activationServices.Activation_Rate_Plan__c}' != ProductFeatureType){
+                hideLoadingDiv(); 
+                j$( "#confirmchange" ).find('#selectedProductId').val(ProductNameId);
+                j$( "#confirmchange" ).find('#selectedProductFeatureName').val(ProductFeatureType);
+                j$( "#confirmchange" ).popup( "open" );  
+            }else{
+                updateServiceMethodrate(ProductNameId, ProductFeatureType);
+            }
+        }
+        else if('{!currentTab}' == 'Entertainment_plans')
+            updateServiceMethodEnter(ProductNameId, ProductFeatureType);
+        else if(ProductFeatureType.indexOf('Iridium Backup Plan') >=0)
+            updateServiceMethodopenport(ProductNameId);
+        else if(ProductFeatureType.indexOf('CommBox') >=0) 
+            updateServiceMethodcomm(ProductNameId, ProductFeatureType);
+        
+    }
+    </script> 
+    
+    <apex:actionFunction name="updateServiceMethodrate" action="{!updateActivationServiceValueRate}" oncomplete="btnSelectednavigateNext('Airtime_Plans');" reRender="wrapper">
+        <apex:param name="param1" assignTo="{!strSelectedProductName}" value="" />
+        <apex:param name="param2" assignTo="{!strSelectedRatePlanTemp}" value="" />
+    </apex:actionFunction>
+    
+    <apex:outputPanel id="rateplantableId">
+    <table class="{!IF(className != '',className,'collapse-panels')}" id="{!strSelectedRatePlan}">
+        <thead>
+            <tr>
+                <th width="20%" class="plan-type">
+                    <apex:outputPanel rendered="{!AND(planType != null, planType != '')}">
+                    <h2>{!planType}</h2><br/>
+                    <a href="#{!planTypepopupId}" data-rel="popup" data-position-to="window" data-transition="fade" aria-haspopup="true" aria-owns="{!planTypepopupId}" aria-expanded="false" class="ui-link"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> View terms</a>
+                    </apex:outputPanel>
+                </th>
+                <apex:repeat value="{!lstwrapDynamicRatePlanTables}" var="wrapDynamicRatePlanTableHeader">
+                    <td class="plan-name"><h3>{!wrapDynamicRatePlanTableHeader.strPlanProduct}</h3>
+                        <apex:outputPanel rendered="{!AND(planType != null, planType != '')}">
+                            <input data-role="none;" onclick="selectedProductRatePlan('{!wrapDynamicRatePlanTableHeader.strPlanProductId}','{!wrapDynamicRatePlanTableHeader.strSelectedRatePlan}');" name="{!IF(strSelectedProductName == wrapDynamicRatePlanTableHeader.strPlanProductId,'Selected', 'Select')}" style="cursor: pointer;min-width: 90px !important;" class="{!IF(currentTab == 'commBox_plans', 'commBoxparent productselectedclass' , 'productselectedclass')}" type="button" id="wrapDynamicRatePlanTableHeader.strPlanProductId" value="{!IF(strSelectedProductName == wrapDynamicRatePlanTableHeader.strPlanProductId,'Selected', 'Select')}"/>
+                        </apex:outputPanel>
+                    </td>
+                </apex:repeat>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!objwrapDynamicRatePlanTableMasterColumn}" var="objwrapDynamicRatePlanTableMasterColumnval">
+                <apex:repeat value="{!objwrapDynamicRatePlanTableMasterColumnval.setPlanNames}" var="PlanName">
+                    <tr>
+                        <th width="20%">{!PlanName}</th>
+                        <apex:repeat value="{!lstwrapDynamicRatePlanTables}" var="wrapDynamicRatePlanTableVal">
+                            <td style="max-width:auto; width:{!IF(AND(CONTAINS(planType,'Entertainment'), !CONTAINS(wrapDynamicRatePlanTableVal.strPlanProduct,'Core'), !CONTAINS(wrapDynamicRatePlanTableVal.strPlanProduct,'Bronze')),'20%;','auto;')}" >{!wrapDynamicRatePlanTableVal.mapEachPlan[PlanName]}</td>
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>
+            </apex:repeat>
+        </tbody>
+    </table>
+        <script> 
+        if('{!planType}' != 'CommBox' && '{!planType}' != 'Iridium OpenPort Backup'){
+            j$('#{!strSelectedRatePlan} tr').each(function(i){
+                if('{!planType}' != 'Entertainment' && '{!planType}' != '' && '{!planType}'.indexOf('Metered') == -1 && j$('th',this).html().indexOf('Outgoing VoIP') >=0){
+                    j$(this).find('td').remove();
+                    j$(this).append(j$('<td colspan="'+{!lstwrapDynamicRatePlanTables.size}+'">Outgoing calls and faxes are subject to long distance charges. See the <a href="http://www.kvh.com/~/media/771F2EBB9FE24FA199C7CFF574D5C1F8.aspx" targe="_blank>" class="ui-link">"TracPhone V11<small>IP</small>/V11 &amp; V7<small>IP</small>/V7 – Enhanced Voice Service – Open, Unrestricted and Fixed Plans Long Distance Rate Sheet." (pdf)</a></td>'));
+                }
+                else if(!j$('td:not(:empty)',this).length && '{!planType}' == 'Entertainment'){
+                    j$(this).remove();
+                }
+                j$(this).find('td:empty').html(' - ');
+            });
+        }
+        </script>
+    </apex:outputPanel>
+    
+
+</apex:component>

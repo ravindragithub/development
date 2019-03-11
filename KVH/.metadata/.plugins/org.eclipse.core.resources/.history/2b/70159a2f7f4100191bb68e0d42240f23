@@ -1,0 +1,301 @@
+<apex:page standardController="Account" extensions="PlatformForActivationsControllerEXT" action="{!autoRun}" id="pge">
+    <!-- Updating Gopi---
+        Following code used to auto populate country values automatically from Addressing tool Prowen works
+    --->            
+    
+    <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/28.0/apex.js"/>
+    <apex:includeScript value="/apex/pw_ccpro__CountriesJavaScript?core.apexpages.devmode.url=1" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__CountryCompleteResources, '/javascript/CountryAutoComplete.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__AddressCompleteResources, '/javascript/AddressComplete.js')}" />
+    <apex:includeScript value="{!$Resource.Prowen_Works}"/>
+    
+    <script>
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        function cancelRecord(){
+           var final = confirm("Are you sure you want to cancel?");
+           if (final == true) {
+               var CurrentPageCancelID = '{!caseID}';
+               window.location.href = '/'+CurrentPageCancelID;
+           }
+        }
+        
+        function validatingInitialIMO(){
+            if(document.getElementById("pge:form:IMOSearch:IB:VIMO").value.length>0){
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").checked = false;
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").disabled = true;
+            }else{
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").disabled = false;
+            }
+        }
+        
+        function validatingInitialIMOC(){
+            if(document.getElementById("pge:form:IMOSearch:IB:VIMOC").checked){
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").value = '';
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").disabled = true;
+            }else{
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").disabled = false;
+            }
+        }
+        
+        
+        
+    </script>
+    <!--Above code updated by Gopi-->
+    
+    <apex:form id="form">
+    <div class="page-content" >
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles2)}" />
+        <p><h1>Create New Platform for Airtime Activation</h1></p><br></br>
+        
+        <script>
+            if(document.getElementById("pge:form:IMOSearch:IB:VIMO").value.length>0){
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").checked = false;
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").disabled = true;
+            }else{
+                document.getElementById("pge:form:IMOSearch:IB:VIMOC").disabled = false;
+            }
+            
+            
+             if(document.getElementById("pge:form:IMOSearch:IB:VIMOC").checked){
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").value = '';
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").disabled = true;
+            }else{
+                document.getElementById("pge:form:IMOSearch:IB:VIMO").disabled = false;
+            }
+        
+        </script>
+        
+        
+        <apex:pageBlock id="IMOSearch" rendered="{!showIMOSearch}" title="Vessel IMO# Validation and Search">
+            <apex:pageBlockSection id="IB"> 
+                <apex:inputField label="Enter the Vessel IMO#" value="{!thePlatform.Vessel_IMO__c}" id="VIMO" onkeyup="validatingInitialIMO();"/>
+                <apex:inputCheckbox label="Check the box if the Vessel IMO# is not available" value="{!noIMO}" id="VIMOC" onclick="validatingInitialIMOC();"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel style="color:{!StatusColor};" value="{!IMOStats}" rendered="{! !showPlatformSearch}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!findIMO}" value="Next..." rendered="{!!showPlatformSearch}" rerender="form"/>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="PlatformSearch" rendered="{!showPlatformSearch}" title="Platform Name Search">
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Enter Search Term (2 Character Minimum) and Click [Next...]  "/>
+                    <apex:outputPanel >
+                    <div class="requiredInput"></div>
+                        <div class="requiredBlock">
+                            <apex:inputText value="{!searchTerm}" required="true" size="80" title="Enter the vessel name to search for..."/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel style="color:{!StatusColor};" value="{!IMOStats}" rendered="{!showPlatformSearch}"/>
+                <apex:commandButton action="{!SearchPlatform}" value="Next..." rendered="{!AND(showPlatformSearch, IMOStats<>'Platform not found!')}" rerender="form"/>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!searchRecordType}" value="Create New Platform..." rendered="{!IF(IMOstats="Platform not found!",true,false)}"/>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="PlatformTable" rendered="{!showPlatformTable}" title="Platforms Found">
+            <apex:pageBlockSection >
+                <apex:pageblocktable id="Platforms" value="{!PlatformTable}" var="Platform">
+                    <apex:column headerValue="Select Platform">
+                        <apex:actionSupport action="{!SelectPlatform}" event="onclick" rerender="form">
+                        <input type="radio"/>
+                            <apex:param name="PlatId" value="{!Platform.Id}">
+                            </apex:param>
+                        </apex:actionSupport>
+                    </apex:column>
+                    <apex:column headerValue="Vessel Name">
+                        <span style="{!IF(thePlatform.Id == Platform.Id, 'font-weight:bold; font-style:italic', 'font-weight:normal')}">
+                            <apex:outputField value="{!Platform.Name}" >
+                            </apex:outputField>
+                        </span>
+                    </apex:column>
+                    <apex:column headerValue="Vessel IMO">
+                        <span style="{!IF(thePlatform.Id == Platform.Id, 'font-weight:bold; font-style:italic', 'font-weight:normal')}">
+                            <apex:outputField value="{!Platform.Vessel_IMO__c}">
+                            </apex:outputField>
+                        </span>
+                    </apex:column>
+                    <apex:column headerValue="Parent Account Name">
+                        <span style="{!IF(thePlatform.Id == Platform.Id, 'font-weight:bold; font-style:italic', 'font-weight:normal')}">
+                            <apex:outputField value="{!Platform.Parent.Name}">
+                            </apex:outputField>
+                        </span>
+                    </apex:column>
+                    <apex:column headerValue="Parent CC acct ID">
+                        <span style="{!IF(thePlatform.Id == Platform.Id, 'font-weight:bold; font-style:italic', 'font-weight:normal')}">
+                            <apex:outputField value="{!Platform.Parent.Custom_Call_Acct_ID__c}">
+                            </apex:outputField>
+                        </span>
+                    </apex:column>
+                </apex:pageblocktable>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!searchRecordType}" value="Create New Platform..." reRender="form"/>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="PlatformSelection" rendered="{!showPlatformSelection}" title="Selected Platform">
+            <apex:pageblocktable id="Selection" value="{!SelectedPlatform}" var="Selected">
+                <apex:column headerValue="Vessel Name">
+                    <apex:outputField value="{!Selected.Name}">
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Vessel IMO">
+                    <apex:outputField value="{!Selected.Vessel_IMO__c}">
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Parent Account Name">
+                    <apex:outputField value="{!Selected.Parent.Name}">
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Parent CC acct ID">
+                    <apex:outputField value="{!Selected.Parent.Custom_Call_Acct_ID__c}">
+                    </apex:outputField>
+                </apex:column>
+            </apex:pageblocktable>
+            <apex:commandButton action="{!useSelectedPlatform}" value="Use Selected Platform..." 
+                rendered="{!showPlatformSelection}" disabled="{!SelectedPlatform.size<=0}"/>
+            <apex:commandButton action="{!searchRecordType}" value="Create New Platform..."  
+                rendered="{!showPlatformSelection}"/>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="RecTypeTable" rendered="{!showRecTypeTable}" title="Select Platform Record Type">
+            <apex:pageblocktable id="PlatRecTypes" value="{!PlatformRecTypes}" var="RT">
+                <apex:column headerValue="Select Record Type" width="20%">
+                    <apex:actionSupport action="{!selectRecordType}" event="onclick" rerender="form"> 
+                    <input type="radio"/>
+                        <apex:param name="RecTypeId" value="{!RT.Id}">
+                        </apex:param>
+                    </apex:actionSupport>
+                </apex:column>
+                <apex:column headerValue="Record Type Name" width="80%">
+                    <span style="{!IF(RT.Id == theRecType.Id, 'font-weight:bold; font-style:italic', 'font-weight:normal')}">
+                        <apex:outputField value="{!RT.Name}">
+                        </apex:outputField>
+                    </span>
+                </apex:column>
+            </apex:pageblocktable> 
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="RecTypeSelection" rendered="{!showRecTypeSelection}" title="Selected Platform Record Type">
+            <apex:pageblocktable id="theRecType" value="{!theRecType}" var="theRT">
+                <apex:column headerValue="Record Type Name">
+                    <apex:outputField value="{!theRT.Name}">
+                    </apex:outputField>
+                </apex:column>
+            </apex:pageblocktable>
+            <apex:commandButton action="{!useSelectedRecordType}" value="Next..." reRender="form"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+        </apex:pageBlock>
+        
+        <apex:PageBlock id="Demo" title="Demo/Test/Monitor" 
+                rendered="{!IF(theRecType.Name = 'Demo/Test/Monitor' && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection >
+                <apex:inputField required="true" label="Parent Account" value="{!thePlatform.ParentId}"/>
+                <apex:inputField required="true" label="Demo/Test/Monitor Name" value="{!thePlatform.Name}"/>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+        </apex:PageBlock>
+        <apex:PageBlock id="CommercialVehicle" title="Commercial/MIL/GOV Vehicle"
+                rendered="{!IF(theRecType.Name = 'Commercial/MIL/GOV Vehicle' && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection columns="1" id="CMG">
+                <apex:inputField required="true" label="Parent Account" value="{!thePlatform.ParentId}"/>
+                <apex:inputField required="true" label="Vehicle Account Name" value="{!thePlatform.Name}"/>
+                <apex:inputField required="true" label="Market" value="{!thePlatform.Market__c}"/>
+                <apex:inputField required="true" label="Market Sector" value="{!thePlatform.Market_Sector__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Industry_Designation__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Platform_Detail__c}"/>
+                <!-- <apex:inputField required="true" value="{!thePlatform.Flag__c}" id="flg"/> -->
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+            <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}"
+                OnComplete(); 
+            </script>
+        </apex:PageBlock>
+        <apex:PageBlock id="Auto12Volt" title="Leisure Auto/12 Volt"
+                rendered="{!IF(theRecType.Name = 'Leisure Auto/12 Volt' && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection columns="1" id="LAV">
+                <apex:inputField required="true" label="Parent Account" value="{!thePlatform.ParentId}"/>
+                <apex:inputField required="true" label="Vehicle Account Name" value="{!thePlatform.Name}"/>
+                <apex:inputField required="true" label="Market" value="{!thePlatform.Market__c}"/>
+                <apex:inputField required="true" label="Market Sector" value="{!thePlatform.Market_Sector__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Industry_Designation__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Platform_Detail__c}"/>
+                <!-- <apex:inputField required="true" value="{!thePlatform.Flag__c}" id="flg"/> -->
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+            <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}"
+                OnComplete(); 
+            </script>
+        </apex:PageBlock>
+        <apex:PageBlock id="RV" title="Leisure RV"
+                rendered="{!IF(theRecType.Name = 'Leisure RV' && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection columns="1" id="LRV">
+                <apex:inputField required="true" label="Vehicle Account Name" value="{!thePlatform.ParentId}"/>
+                <apex:inputField required="true" label="Vehicle Account Name" value="{!thePlatform.Name}"/>
+                <apex:inputField required="true" label="Market" value="{!thePlatform.Market__c}"/>
+                <apex:inputField required="true" label="Market Sector" value="{!thePlatform.Market_Sector__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Industry_Designation__c}"/>
+                <apex:inputField required="true" value="{!thePlatform.Platform_Detail__c}"/>
+                <!-- <apex:inputField required="true" value="{!thePlatform.Flag__c}" id="flg"/> -->
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+            <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}"
+                OnComplete(); 
+            </script>
+        </apex:PageBlock>
+        <apex:PageBlock id="Leisure" title="Leisure Vessel"
+                rendered="{!IF( OR(theRecType.Name = 'Leisure Vessel', theRecType.Name = 'Media Leisure Vessel' ) && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection columns="1" id="LIS">
+                    <apex:inputField required="true" label="Parent Account" value="{!thePlatform.ParentId}"/> 
+                    <apex:inputField required="true" label="Vessel Account Name" value="{!thePlatform.Name}"/>
+                    <apex:outputField value="{!thePlatform.Vessel_IMO__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Market__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Market_Sector__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Industry_Designation__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Platform_Detail__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Confirm_if_boat_yacht_is_chartered__c}"/>
+                    <apex:inputField value="{!thePlatform.Vessel_Radio_Call_Sign__c}"/>
+                    <apex:inputField value="{!thePlatform.MMSI__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Flag__c}" id="flg"/>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+            <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}"
+                OnComplete(); 
+            </script>
+        </apex:PageBlock>
+        <!-- Prototype Page Block for Platform creation.... -->
+        <apex:PageBlock id="CommercialPlatform" title="Commercial/MIL/GOV Maritime Vessel/Platform"
+                rendered="{!IF( OR (theRecType.Name = 'Commercial/MIL/GOV Maritime Vessel/Platform', theRecType.Name = 'Media - Commercial/MIL/GOV maritime Vessel/Platform' )
+                                 && showCreatePlatform = true, 'true', 'false')}">
+            <apex:pageBlockSection columns="1" id="pbscp">
+                    <apex:inputField required="true" label="Parent Account" value="{!thePlatform.ParentId}"/> 
+                    <apex:inputField required="true" label="Vessel Account Name" value="{!thePlatform.Name}"/>
+                    <apex:outputField value="{!thePlatform.Vessel_IMO__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Market__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Market_Sector__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Industry_Designation__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Platform_Detail__c}"/>
+                    <apex:inputField value="{!thePlatform.Vessel_Radio_Call_Sign__c}"/>
+                    <apex:inputField value="{!thePlatform.MMSI__c}"/>
+                    <apex:inputField required="true" value="{!thePlatform.Flag__c}" id="flg"/>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!Finish}" value="Finish"/>
+            <apex:commandButton value="Cancel" onclick="cancelRecord();" reRender="Final"/>
+            <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}"
+                OnComplete(); 
+            </script>
+        </apex:PageBlock>
+    </div>
+    </apex:form> 
+</apex:page>

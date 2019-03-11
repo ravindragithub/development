@@ -1,0 +1,42 @@
+<apex:page controller="BIG_CreateContactAccountController" label="Create Account and Contact" showHeader="true" sidebar="true" title="Create Account and Contact">
+<h1>Create Account and Contact</h1>
+<apex:messages />
+<apex:outputLink value="{!AccountLink}" rendered="{!AccountCreated}" style="text-align:center;font-weight:bold;">The Created Account</apex:outputLink>
+<!-- Version 1 by Black Iron Group
+     Version 2 modified by John Thompson to add a "Try Again" button
+     and correspoding handler in the pages controller 
+     Version 2.1 10/26/2012 added pageMessages escape="false" to accomodate DupeBlocker-->
+<apex:form >
+<apex:Pageblock title="Indirect Customer Information" mode="edit">
+<apex:pageMessages escape="false" />
+        <apex:pageBlockButtons >
+                <apex:commandButton action="{!submit}" value="Save" disabled="{!AccountCreated}"/>
+                <!-- Version 2 added the "Try Again button and a corresponding 
+                     handler in the referenced controller -->
+                <apex:commandButton action="{!tryagain}" value="Try Again"/>
+                <apex:commandButton action="{!reset}" value="Reset"/>
+            </apex:pageBlockButtons>
+
+    <apex:pageBlockSection columns="1">
+        
+        
+        <apex:inputField value="{!Contact.FirstName}" label="First Name"/>
+        <apex:inputField value="{!Contact.LastName}" label="Last Name"/>
+        <apex:inputField value="{!Contact.Job_Function__c}" label="Job Function"/>
+        <apex:inputField value="{!Contact.Phone}" label="Phone"/>
+        <apex:inputField value="{!Contact.MobilePhone}" label="Mobile Phone"/>
+        <apex:inputField value="{!Contact.Email}" label="Email"/>
+        <apex:inputField value="{!Contact.MailingStreet}" label="Street"/>
+        <apex:inputField value="{!Contact.MailingCity}" label="City"/>
+        <apex:inputField value="{!Contact.MailingState}" label="State"/>
+        <apex:inputField value="{!Contact.MailingCountry}" label="Country"/>
+        <apex:inputField value="{!Contact.MailingPostalCode}" label="Postal Code"/>
+        
+    </apex:pageBlockSection>
+    
+    
+
+</apex:Pageblock>
+</apex:form>
+
+</apex:page>

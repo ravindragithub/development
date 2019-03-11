@@ -1,0 +1,58 @@
+<apex:component controller="Act_Individual_Plan_Table_Controller" allowDML="true" id="rateplantable" >
+    <apex:attribute name="lstIndividualBundles" description="This is the Rate Plan"
+                    type="String[]" required="required" assignTo="{!stIndividualBundles}"/>
+    <apex:attribute name="planType" description="This is the Rate Plan"
+                    type="String" />
+    <apex:attribute name="planTypepopupId" description="This is the Rate Plan Popup Id"
+                    type="String" required="required" />
+    <apex:attribute name="currentTab" description="This is the Rate Plan Popup Id"
+                    type="String" />
+    <apex:attribute name="activationServices" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <script>
+    j$(function() {
+        j$('input[type=radio].radiovld').each(function(){
+            if(j$(this).val() == "true"){
+                j$(this).prop('checked', true);
+            }
+        });
+    });
+    </script>
+    
+    <table class="collapse-panels1" id="EnterTable">
+        <thead>
+            <tr>
+                <td class="row-hdr"></td>
+                <td class="row-hdr">{!planType}</td>
+                <td class="row-hdr">Description</td>
+                <td class="row-hdr text-center" style="display :{!IF(OR(currentTab == 'Operation', currentTab == 'EnterTraining'), 'table-cell;', 'none;')}">One-time Activation Fee</td>
+                <td class="row-hdr text-center">$/Month</td>
+            </tr>
+        </thead> 
+        <tbody>
+            <apex:repeat value="{!lstwrapDynamicRatePlanTableMaster}" var="objlstwrapDynamicRatePlanTableMasters">
+                <tr>
+                    <td colspan="{!IF(OR(currentTab == 'Operation', currentTab == 'EnterTraining'), '5', '4')}" class="plan-name text-left selectedheadername"><h3>{!objlstwrapDynamicRatePlanTableMasters.strFeatureName}</h3></td>
+                </tr>
+                <apex:repeat value="{!objlstwrapDynamicRatePlanTableMasters.lstwrapDynamicRatePlanTable}" var="objwrapDynamicRatePlanTableMasterColumnval">
+                    <tr>
+                        <td class="width-5" >
+                            <apex:inputCheckbox rendered="{!!CONTAINS(objlstwrapDynamicRatePlanTableMasters.strFeatureName,'CHARTlink')}" html-data-role="none" label="chk" id="inputCheckboxId" styleClass="selectedproduct" value="{!objwrapDynamicRatePlanTableMasterColumnval.boolIsSelectedProduct}"></apex:inputCheckbox>
+                            <apex:outputPanel rendered="{!CONTAINS(objlstwrapDynamicRatePlanTableMasters.strFeatureName,'CHARTlink')}">
+                                <input type="radio" name="{!objlstwrapDynamicRatePlanTableMasters.strFeatureName}" class="radiovld" data-role="none" value="{!objwrapDynamicRatePlanTableMasterColumnval.boolIsSelectedProduct}"/>
+                            </apex:outputPanel>
+                            <apex:inputHidden html-data-role="none" value="{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductId}" html-class="selectedproductId"/>
+                            <apex:inputHidden html-data-role="none" value="{!objlstwrapDynamicRatePlanTableMasters.strMainProductName}" html-class="selectedproductHeader"/>
+                            <apex:inputHidden html-data-role="none" value="{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductName}" html-class="selectedproductName"/>
+                        </td>
+                        <td class="width-20 text-left"><h4>{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductName}</h4></td>
+                        <td class="text-left">{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductDescription}</td>
+                        <td class="width-15" style="display :{!IF(OR(currentTab == 'Operation', currentTab == 'EnterTraining'), 'table-cell;', 'none;')}">{!objwrapDynamicRatePlanTableMasterColumnval.strPlanProductPrice}</td>
+                        <td class="width-15">{!objwrapDynamicRatePlanTableMasterColumnval.strSelectedActivationFee}</td>
+                    </tr>
+                </apex:repeat>
+            </apex:repeat>
+        </tbody>
+    </table>
+</apex:component>

@@ -1,0 +1,206 @@
+<apex:component controller="Act_Entertainment_Programming_Ctrl" allowDML="true" id="Entertainment_Comp_Id">
+    
+    <apex:attribute name="EntertainmentActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <script> 
+    
+    function enterValidate(param){
+        var Isvalidparent = false ;
+        var Isvalid;
+        var currentcomp  = document.getElementById(param);
+        //console.log(currentcomp);
+        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+        j$(currentcomp).find(".productselectedclass").each(function(){
+            if(j$(this).val() == 'Selected'){
+                Isvalidparent = true;
+            }
+        });
+        
+        if(j$(currentcomp).find("[Id$='Media_Server_Serial_Number__c']").length >0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("[Id$='Media_Server_Serial_Number__c']").valid();
+            else
+                Isvalid = j$(currentcomp).find("[Id$='Media_Server_Serial_Number__c']").valid() && Isvalid;
+        }
+        if(j$(currentcomp).find("input[type=radio][name$=mediaserverradio]").length >0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("input[type=radio][name$=mediaserverradio]").valid();
+            else
+                Isvalid = j$(currentcomp).find("input[type=radio][name$=mediaserverradio]").valid() && Isvalid;
+        }
+        
+        var strHeadersIdsTraining = '';
+        j$(currentcomp).find('input[type=checkbox].selectedproduct:checked , input[type=radio].radiovld:checked').each(function(){
+            var varId = j$(this).closest('td').find('input[type=hidden].selectedproductId').val();
+            var varHeader = j$(this).closest('td').find('input[type=hidden].selectedproductHeader').val();
+            var varName = j$(this).closest('td').find('input[type=hidden].selectedproductName').val();
+            if(varHeader.toUpperCase().indexOf('TRAINING') >= 0){
+                strHeadersIdsTraining = strHeadersIdsTraining == '' ? (varName +'<-->'+ varId) : (strHeadersIdsTraining +' ; \n '+ (varName +'<-->'+ varId));
+            }
+        });
+        //console.log(strHeadersIdsTraining);
+        
+        var strMediaViewOptionId = '';
+        var strMediaViewOptionValue = '';
+        j$(currentcomp).find('input[type=radio].mediaserverradio:checked').each(function(){
+            var varId = j$(this).closest('td').find('input[type=hidden].selectedproductId').val();
+            var varName = j$(this).closest('td').find('input[type=hidden].selectedproductName').val();
+            if(varId != null && varId != ''){
+            strMediaViewOptionId = varId;
+            }
+            if(varName != null && varName != ''){
+            strMediaViewOptionValue = varName;
+            }
+        });
+        // console.log(strMediaViewOptionId);
+        // console.log(strMediaViewOptionValue);
+        
+        if(!Isvalidparent){
+            var msg = 'Please Select your Plan';
+            showgenericpopup(msg);
+        }
+        
+        if(!Isvalid){
+            var errordiv = currenttabtoshowerror();
+            j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+            var html = "";
+            if(j$(currentcomp).find("[Id$='Media_Server_Serial_Number__c']").hasClass("error") && j$(currentcomp).find("[Id$='Media_Server_Serial_Number__c']").valid() == false){
+                html += "<li>Media Server Serial Number Required</li>";
+            }
+            if(j$(currentcomp).find("input[type=radio][name$=mediaserverradio]").hasClass("error") && j$(currentcomp).find("input[type=radio][name$=mediaserverradio]").valid() == false){
+                html += "<li>Select Number of Device Licenses</li>";
+            }
+            j$(currentcomp).find('.error-box').find('.bullets').html(html);
+            j$(currentcomp).find('.error-box').show();
+        }
+        
+        if(Isvalidparent && Isvalid){
+            showLoadingDiv();
+            var settopboxinputoptionnumber = j$(currentcomp).find('.settopboxinputoptionnumber').val();
+            updateServiceMethodEnterSave(true,strHeadersIdsTraining,strMediaViewOptionId,strMediaViewOptionValue,settopboxinputoptionnumber);
+        }
+    }
+    
+    function enterClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmEntertainment]');
+        var instmodel = j$('[data-remodal-id=clearconfirmEntertainment]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmEntertainment").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmEntertainment]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmEntertainment]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    </script>
+    
+    <apex:actionFunction name="updateServiceMethodEnterSave" action="{!updateActivationServiceValueEnter}" oncomplete="btnSelectednavigateNext('IP_MobileCast');" reRender="EntertainmentId,EnterIndId,EntertainmentMainIdButton"> <!-- btnSelectednavigateNext('IP_MobileCast');-->
+        <apex:param name="param11" assignTo="{!objActivationService.Entertainment_Programming_Selected__c}" value="" />
+        <apex:param name="param12" assignTo="{!objActivationService.Training_Packages__c}" value="" />
+        <apex:param name="param13" assignTo="{!objActivationService.Viewing_Option_Product__c}" value="" />
+        <apex:param name="param14" assignTo="{!objActivationService.Viewing_Options__c}" value="" />
+        <apex:param name="param15" assignTo="{!objActivationHardware.Below_Decks_Serial_Number__c}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="updateServiceMethodEnter" action="{!updateActivationServiceValueEnter}" oncomplete="hideLoadingDiv();" reRender="EntertainmentId, EntertainmentMainIdButton">
+        <apex:param name="param4" assignTo="{!objActivationService.Entertainment_Programming_Product__c}" value="" />
+    </apex:actionFunction> 
+    
+    <apex:outputPanel id="EntertainmentMainId">
+        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                Entertainment, News, and Training Packages
+                <apex:outputPanel id="EntertainmentMainIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!objActivationService.Entertainment_Programming_Selected__c == false}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" >
+                            Add 
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!objActivationService.Entertainment_Programming_Selected__c == true}">
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link">
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <p class="collapse-p">KVH’s IP-MobileCast content delivery service provides an economical and reliable way to bring world news, movies, sports, music, and even news from home onboard.</p>
+                 
+            </h2> 
+            <div aria-hidden="true">
+                <apex:outputPanel id="EntertainmentId">
+                    <div class="panel-contents"> 
+                        <h2>Entertainment and News Packages</h2>
+                        
+                        <c:Activation_RatePlanTable className="collapse-panels" currentTab="Entertainment_plans" SelectedProductName="{!objActivationService.Entertainment_Programming_Product__c}" selectedProductBundle="{!strPlanName}" selectedRatePlan="{!strFeatureIds}" planType="Entertainment"  activationServices="{!objActivationService}" planTypepopupId="Entertainment_and_News_Packages"/> 
+                        <p class="notes pad-bottom">*Unlimited onboard viewing for 1 year; DVD quality</p>
+                        
+                      <!--   <a href="#ipmc-terms" data-rel="popup" data-position-to="window" data-transition="fade" class="right ui-link" aria-haspopup="true" aria-owns="ipmc-terms" aria-expanded="false"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> View terms</a>
+                       <h2>Training Package</h2> -->
+                        <c:Activation_Individual_Plan_Table currentTab="EnterTraining" id="EnterIndId" lstIndividualBundles="{!setIndividualBundles}" activationServices="{!objActivationService}" planTypepopupId="ipmc-terms" planType="Channel" rendered="{!IF(OR(IF(AND(OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),objActivationPlatform.Market__c != '', CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL')), true, false),IF(AND(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'),objActivationPlatform.Market__c != '', NOT(CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL'))),true,false)),true,false)}"/>
+                        <br/>
+                        <c:Activation_Media_Server_Viewing MediaServerActivationService="{!objActivationService}" id="MediaserverId"/>
+
+                        <div style="width:40%; text-align:right;" class="right">
+                            <apex:commandLink styleClass="pad-right ui-link" id="contractclearBtn" value="Clear Form" onclick="enterClearValidate('{!$Component.EntertainmentId}'); return false;">
+                            </apex:commandLink>
+                            <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="contractBackBtn" value="Save" reRender="MediaserverId" onclick="enterValidate('{!$Component.EntertainmentId}'); return false;">
+                                <apex:param value="IP_MobileCast" assignTo="{!selectedTab}" /> 
+                            </apex:commandLink>
+                        </div>
+                        
+                        <div class="clear"></div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </div>
+        
+    </apex:outputPanel>
+    
+    <!-- /popup contents --> 
+    <div data-role="popup" id="ipmc-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">IP-MobileCast Terms</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <strong>General Terms</strong>
+            <ul class="pad-left pad-top terms">
+                <li>Entertainment content prices are per month for ships carrying up to 50 people. For larger       crews, contact KVH.</li>
+                <li>Certain packages, channels, pricing, and offers are subject to change and may not be available or may vary for certain markets and vessel types. Additional restrictions may apply. Contact KVH’s Sales Team for details.</li>
+                <li>All prices are in $USD and do not include any taxes or fees that may apply.</li>
+                <li>12-month minimum subscription is required for all Entertainment Packages and Channels.</li>
+                <li>12-month minimum subscription is required for TRAININGlink – Videotel Basic Training Package.</li>
+                <li>All Packages &amp; Channels are subject to the KVH Airtime Services End User Agreement.</li>
+            </ul>
+            <strong class="pad-top">Notes</strong>
+            <ul class="pad-left pad-top terms">
+                <li>KVH Media Server is required for all Entertainment Packages (Bronze, Silver, Gold, and Platinum) and for TRAININGlink – Videotel Basic Training Package.</li>
+                <li>KVH Media Server is not required for Independent Entertainment Channels, Special Event Channel, CHARTlink, FORECASTlink, and TRAININGlink for Videotel VOD/NVOD G2 Updates.</li>
+                <li>The only Entertainment programming offered with the TracPhone V3/V3<small>IP</small> is the Bronze Package, NEWSlink Print Channel, and in some cases, the Special Event Channel.</li>
+                <li>Media Server content may be viewed on TVs using optional IP-MobileCast Set-top Boxes, and personal devices including smartphones, tablets, and PCs. Personal devices require device licenses; fees apply.</li>
+                <li>Some older TracPhone V-series systems require the KVH IP-MobileCast Media Server to receive any content; contact KVH’s Sales Team for a review of your system’s suitability for receiving IP-MobileCast content.</li>
+            </ul>
+        </div>
+    </div>
+    <!-- /popup contents --> 
+    
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmEntertainment" id="clearconfirmEntertainment"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmEntertainment"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!updateActivationServiceValueEnter}" onclick="showLoadingDiv();" oncomplete="btnSelectednavigateNext('IP_MobileCast');" reRender="EntertainmentId, EnterIndId, EntertainmentMainIdButton,MediaserverId">
+                <apex:param name="param5" assignTo="{!objActivationService.Entertainment_Programming_Selected__c}" value="false" />
+                <apex:param name="param6" assignTo="{!objActivationService.Entertainment_Programming_Product__c}" value="" />
+                <apex:param name="param7" assignTo="{!objActivationService.Training_Packages__c}" value="" />
+                <apex:param name="param8" assignTo="{!objActivationService.Media_Server_Serial_Number__c}" value="" />
+                <apex:param name="param9" assignTo="{!objActivationService.Viewing_Option_Product__c}" value="" />
+                <apex:param name="param10" assignTo="{!objActivationService.Viewing_Options__c}" value="" />
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+    
+</apex:component>

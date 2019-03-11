@@ -1,0 +1,28 @@
+<aura:component >
+    <aura:attribute type="string" name="displayDetail"  />
+    <aura:attribute type="object" name="childWrap" />
+    <aura:attribute name="onclickSave" type="Aura.Action"/>
+    <td data-label="Installation Name" onclick="{!c.showAccountSection}" class="slds-hint-child">
+        <div class="slds-truncate" title="Installation Name">
+            <img src="{!$Resource.vessel_img}"/>&nbsp;
+            {!v.childWrap.platformAccount.Installation__r.Name}
+        </div>
+    </td>
+    <td data-label="Account Number" onclick="{!c.showAccountSection}" class="slds-hint-child">
+        <div class="slds-truncate" title="Account Number">
+            {!v.childWrap.customerAccount.Billing_Account_ID__c}
+        </div>
+    </td>  
+    <aura:if isTrue="{!v.displayDetail == v.childWrap.customerAccount.Id}">
+        <td data-label="Action">            
+            <lightning:button variant="Neutral" label="Activate LTE Dome >" value ="{!v.childWrap.customerAccount.Account__c}"
+                              name="{!v.childWrap.platformAccount.Installation__c}" ariaLabel="{!v.childWrap.customerAccount.Id}"
+                              ariaDescribedBy="{!v.childWrap.customerAccount.Corporate_CC_Account_Name__c}"
+                              onclick="{!v.onclickSave}"  class="go-btn"/>
+        </td>
+        <aura:set attribute="else">
+            <td data-label="Action" onclick="{!c.showAccountSection}">
+            </td>
+        </aura:set>
+    </aura:if>
+</aura:component>

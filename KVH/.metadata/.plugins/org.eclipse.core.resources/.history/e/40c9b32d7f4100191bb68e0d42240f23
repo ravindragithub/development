@@ -1,0 +1,7 @@
+<apex:page controller="CMS_Link_ctrlEXT" action="{!autoRun}"> 
+	<apex:sectionHeader title="Auto-Running Apex Code"/> 
+	<apex:outputPanel >
+		You tried calling Apex Code from a button.  If you see this page, something went wrong.  You should have 
+		been logged into the CMS.
+	</apex:outputPanel>
+</apex:page>

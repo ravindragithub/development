@@ -1,0 +1,300 @@
+<apex:page title="Add Content Link" standardController="Prod_Documents__c" extensions="UploadDocumentsController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        
+        
+    </style>
+        <apex:define name="body">  
+            <apex:sectionHeader title="Content Administration" subtitle="Add Content Link"/>
+            
+            <div id="load-status" style="display:none;">
+                <div class="overlay"></div>
+                <div class="status">                               
+                    <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                    <span id="load-statustext">File uploading in progress...</span>
+                </div>
+            </div>                
+            
+            <apex:form id="frm" >
+                <apex:actionFunction name="saveRecords" action="{!saveAllRecords}" oncomplete="goToTool('{!pdid}');"/>
+                <apex:actionFunction name="createpd" action="{!createPD}" oncomplete="uploadfiles('{!pdid}');"/>
+                <apex:pageBlock >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div id="results"></div>
+                    <apex:pageBlockSection columns="1" collapsible="false" title="Add Link to New Content">
+                        <apex:pageBlockSectionItem dataTitle="Content Link">
+                            <apex:outputLabel value="Link to New Content"></apex:outputLabel>
+                            <apex:inputField style="width: 80%;" id="ConLink" value="{!prodDoc.Content_Link__c}"/> 
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Content Product/Market/Sector Relationships" collapsible="false" id="fileinformation" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Market"></apex:outputLabel>
+                            <apex:inputField id="Market__c" value="{!marketSector.Market__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Sector"></apex:outputLabel>
+                            <apex:inputField id="Sector__c" value="{!marketSector.Sector__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Line"></apex:outputLabel>
+                            <apex:inputField id="Product_Line__c" value="{!marketSector.Product__r.Product_Line1__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Series"></apex:outputLabel>
+                            <apex:inputField id="Product_Series__c" value="{!marketSector.Product__r.Product_Series__c}"/>
+                            </apex:pageBlockSectionItem>
+                                
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value=""></apex:outputLabel>
+                                <input type="button" value="Search Products" onclick="fetchProductclick();" /> 
+                                </apex:pageBlockSectionItem>
+                        
+                    </apex:pageBlockSection>
+                    <apex:actionRegion >
+                        <apex:pageBlockSection columns="1" collapsible="false">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Product(s)" ></apex:outputLabel>
+                                
+                                <apex:outputPanel layout="none">
+                                    <apex:outputPanel id="productoptions" layout="none">
+                                        <c:MultiselectPicklist leftlistid="AvailableProducts" rightlistid="SelectedProducts" addEvent="productAdded" removeEvent="productRemoved" width="300px" leftLabel="Available Products" rightLabel="Selected Products" showsortingbuttons="false" leftsideOptions="{!productleftOptions}" rightsideOptions="{!productrightOptions}" size="5"></c:MultiselectPicklist>
+                                    </apex:outputPanel>
+                                    <apex:actionFunction name="fetchProductsaction" action="{!fetchProducts}" oncomplete="hidestatus();" reRender="productoptions,portalviewselectlist">
+                                        <apex:param value="" assignTo="{!market}" name="parm1"/>
+                                        <apex:param value="" assignTo="{!sector}" name="parm2"/>
+                                        <apex:param value="" assignTo="{!productline}" name="parm3"/>
+                                        <apex:param value="" assignTo="{!productseries}" name="parm4"/>
+                                    </apex:actionFunction>
+                                    <apex:actionFunction name="fetchProductPortalviewsFun" action="{!fetchPortalViews}" oncomplete="hidestatus();"  reRender="portalviewselectlist"/>
+                                    
+                                </apex:outputPanel>        
+                                
+                            </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="1" collapsible="false">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Portal View" />
+                                <apex:outputPanel >
+                                    <apex:outputPanel id="portalviewselectlist" >
+                                        <c:MultiselectPicklist leftlistid="AvailablePortals" rightlistid="SelectedPortals" width="300px" leftLabel="Available Portals" rightLabel="Selected Portals" showsortingbuttons="false" leftsideOptions="{!leftOptions}" rightsideOptions="{!rightOptions}" size="5"></c:MultiselectPicklist>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="productportalviews" style="display:none;" ></apex:outputPanel>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
+                    </apex:actionRegion>
+                    <apex:pageBlockSection collapsible="false" title="Content Types">
+                 <apex:pageBlockTable title="Content Types and Sub Types" value="{!wrappers}" var="wrapper" id="wtable">
+                     <apex:column headerValue="Content Type">
+                         <apex:inputField value="{!wrapper.ct.Content_Main_Type__c}"/>
+                     </apex:column>
+                     <apex:column headerValue="Sub Type">
+                         <apex:inputField value="{!wrapper.ct.Content_Sub_Type__c}"/>
+                     </apex:column>
+                     <apex:column headerValue="Tool Kits">
+                         <apex:inputField value="{!wrapper.ct.Sales_Tool_Kit_s__c}"/>
+                     </apex:column>
+                     <apex:column headerValue=" ">
+                         <apex:commandButton value="Delete" action="{!delWrapper}" style="padding: 1px;" rerender="wtable">
+                             <apex:param name="toDelIdent" value="{!wrapper.ident}" assignTo="{!toDelIdent}"/> 
+                         </apex:commandButton>
+                     </apex:column>
+                 </apex:pageBlockTable>
+                        <br/>
+                 <apex:commandButton value="Add Row" action="{!addRow}" style="padding: 1px;" rerender="wtable">
+                     <apex:param name="addCount" value="1" assignTo="{!addCount}"/>
+                 </apex:commandButton>	
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" >
+                        
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Content Information">
+                        <apex:inputField style="width: 100%;" id="Title_Display_Name" value="{!prodDoc.Title_Display_Name__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Image_URL__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Sub_Title__c}"/>
+                        <br/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Alternate_Text__c}"/>
+                        <br/>
+                        <br/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Marketo_URL__c}"/>
+                        <apex:inputField style="width: 100%;" id="size" value="{!prodDoc.Size_Description__c}"/>
+                        <apex:inputField style="width: 100%;" value="{!prodDoc.Site_Core_URL__c}"/>
+                        <br/>
+                        <apex:inputField value="{!prodDoc.Language__c}"/>
+                        <apex:inputField value="{!prodDoc.Hide_for_Partner_Type__c}"/>
+                        <apex:inputField style="width: 100%; height: 100px;" value="{!prodDoc.Insertion_Code__c}"/>
+                        <apex:inputField value="{!prodDoc.Revision__c}"/>
+                        <apex:inputField value="{!prodDoc.Active__c}"/>
+                        <apex:inputField value="{!prodDoc.Partner_Portal__c}"/>
+                        <apex:inputField value="{!prodDoc.KVH_com__c}"/>
+                        <apex:inputField value="{!prodDoc.Gated_Document__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Additional Pages">
+                        <apex:inputField value="{!prodDoc.Display_HTML_Page__c}"/>
+                        <apex:inputField value="{!prodDoc.Display_Terms_and_Conditions_Page__c}"/>
+                        <apex:inputField value="{!prodDoc.Html_Field__c}"/>
+                        <apex:inputField value="{!prodDoc.Terms_and_Conditions_1__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Sales Aid Fields">
+                        <apex:inputField value="{!prodDoc.Sales_Aid__c}"/>
+                        <br/>
+                        <apex:inputField value="{!prodDoc.File_Description__c}"/>
+                    </apex:pageBlockSection>   
+                    <apex:pageBlockButtons location="bottom">
+                        <input type="button" id="upload-button"  style="float: right;" onclick="createdoc(false); return false;" value="Add Content"/>             
+                        <input type="button" id="lib-button"  style="float: right;margin-right:10px" onclick="createdoc(true); return false;" value="Add Content and Attach Thumbnail"/>
+                        <input type="button" id="back-button"  style="float: right;margin-right:10px" onclick="backbuttonclick()" value="Back"/>             
+                    </apex:pageBlockButtons>
+                    <apex:actionRegion >
+                        <apex:inputHidden value="{!prodDocLib.Name}" id="Prod_Doc_Lib_Name"/>
+                        <apex:inputHidden value="{!prodDoc.Name}" id="Prod_Doc_Name"/>
+                        <apex:inputHidden value="{!prodDoc.Hosting_URL__c}" id="hostingurl" />
+                        <apex:actionFunction name="gotorecord" action="{!gotonew}"/>
+                        <apex:actionFunction name="updateDoc" action="{!updateDoc}" oncomplete="saveRecords();"/>
+                    </apex:actionRegion>
+                    
+                </apex:pageBlock>
+            </apex:form> 
+        </apex:define> 
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    
+    
+    <script>
+    var travel;
+    var filetype;
+    
+    function uploadfiles(docId){
+        var pdid = docId;
+        saveRecords();
+    }
+    
+    function goToTool(docId){
+        $("#load-statustext").text("Success!!");
+        $("#load-status").show();
+        if(travel){
+            window.setTimeout(function(){ 
+            location.href = '/apex/ThumbnailforPortal?Id=' + docId; }, 1000);
+        } else {
+            window.setTimeout(function(){ 
+                location.href = '/apex/adminlandingpage'; }, 1000);
+        }
+        
+    }
+    function formvalidation(){
+        $(".errorMsg").remove();
+        $(".error").removeClass("error"); 
+        var isError = false;
+        if($('[id$="Title_Display_Name"]').val() == '' || $('[id$="Title_Display_Name"]').val() == null){
+            isError = true;
+            adderrorMessage($('[id$="Title_Display_Name"]'),'Please enter a title for this content link.');
+            }
+        if($('[id$="SelectedProducts"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedProducts"]'),'Please select at least one product.');
+            }
+        if($('[id$="SelectedProducts"]').find("option").length > 0 && $('[id$="SelectedPortals"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedPortals"]'),'Portal view is required for product.');
+        }
+        if($('[id$="ConLink"]').val() == null || $('[id$="ConLink"]').val() == ''){
+            isError = true;
+            adderrorMessage($('[id$="ConLink"]'),'Please enter a Content Link.');
+            }
+        return isError;
+    }
+    function showstatusmessage(msg){
+        $("#load-statustext").text(msg);
+        $("#load-status").show();
+    }
+    
+    function productAdded(){
+        
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function productRemoved(){
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function fetchProductclick(){
+        console.log('123');
+        $("#load-statustext").text("Fetching products...");
+        $("#load-status").show();
+        var market = $('[id*="Market__c"]').val();
+        var Sector = $('[id*="Sector__c"]').val();
+        var Product_Line = $('[id*="Product_Line__c"]').val();
+        var Product_Series = $('[id*="Product_Series__c"]').val();
+        console.log(market + ' # ' + Sector + ' # ' + Product_Line + ' # ' + Product_Series);
+        fetchProductsaction(market,Sector,Product_Line,Product_Series);
+    }
+    
+    function hidestatus(){
+        $("#load-status").hide();
+        $("#load-statustext").text("");
+    }
+    
+    function createdoc(tool){
+        travel = tool;
+        if(!formvalidation()){
+            $("#load-statustext").text("Adding Content...");
+            $("#load-status").show();
+            createpd();
+        }
+    }
+    
+    function adderrorMessage(elm,msg){
+        $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+        $(elm).addClass("error");
+        var offset = $(elm).offset();
+        offset.left -= 20;
+        offset.top -= 20;
+        $('html, body').animate({
+            scrollTop: offset.top,
+            scrollLeft: offset.left
+        });
+    }     
+    
+    function backbuttonclick(){
+        window.history.back();
+    }
+    </script>
+</apex:page>

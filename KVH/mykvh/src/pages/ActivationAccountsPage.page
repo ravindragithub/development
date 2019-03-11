@@ -1,0 +1,453 @@
+<apex:page showHeader="false" Controller="ActivationAccountsController" sidebar="false" standardStylesheets="false" applyHtmlTag="false" cache="false" applyBodyTag="false" action="{!validatePopupOnload}" docType="html-5.0" >
+    <apex:form id="frm" >
+        <apex:actionFunction name="createNewActOrder" action="{!createNewActOrder}" rerender="Rerenderall">
+            <apex:param name="accountId" assignTo="{!idAccount}" value="" />
+            <apex:param name="idCorporateAccount" assignTo="{!idCorporateAccount}" value="" />
+            <apex:param name="idCCAccount" value="" />
+            <apex:param name="accountType" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="createNewActOrderDealer" action="{!createNewActOrderConditionType}" rerender="Rerenderall">
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="validateRedirectionOnloadJS" action="{!validateRedirectionOnload}" rerender="Rerenderall">
+            <apex:param name="strAcceptOrDeny" value="" />
+        </apex:actionFunction>
+    </apex:form>
+    
+    <html>
+        <apex:outputPanel id="Rerenderall">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+                </script>
+                <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+                </script>
+                <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+                </script>
+                <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+                <link rel="stylesheet" href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" />
+                <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+                <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/> 
+                <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+                <script type="text/javascript">
+                var j$ = jQuery.noConflict();
+                </script>
+                <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+                
+                <title>Activation Accounts</title>
+                
+                <style>
+                    body {
+                    background-color: #fff;
+                    }
+                    .dealerblock{
+                    font-size: 1em;
+                    line-height: 1.3;
+                    font-family: sans-serif;
+                    }
+                    
+                    .tooltip .tooltiptext {
+                    font-size: 15px;
+                    visibility: hidden;
+                    width: 600px;
+                    background-color: #fff !important;
+                    color: #444 !important;
+                    text-align: left !important;
+                    border-radius: 3px !important;
+                    padding: 5px !important;
+                    position: absolute;
+                    z-index: 1;
+                    }
+                    .ui-collapsible{
+                    padding: 0em 1em;
+                    }
+                    .ui-focus, .ui-btn:focus{ 
+                    -moz-box-shadow: none !important; -webkit-box-shadow: none !important; box-shadow: none !important; 
+                    }
+                    .wrapper {
+                    width: 75%;
+                    margin: 20px auto;
+                    float: none;
+                    overflow: visible;
+                    padding: 0 0 100px 0;
+                    }
+                    .ui-bar-b {
+                    background-color: #444;
+                    border: none;
+                    }
+                    .ui-bar, .ui-body {
+                    position: relative;
+                    padding: .4em 1em;
+                    overflow: hidden;
+                    display: block;
+                    clear: both;
+                    }
+                    .ui-btn {
+                    background-color: #ededed;
+                    border-color: #ddd;
+                    color: #333;
+                    text-shadow: 0 1px 0 #f3f3f3;
+                    }
+                    .my-tooltip-btn{
+                    background: inherit !important;
+                    border: inherit !important;
+                    color: #fff;
+                    text-shadow: 0 1px 0 #111;
+                    }
+                    .accounts td.head {
+                    background: #f3f3f3;
+                    text-align: left;
+                    text-transform: uppercase;
+                    text-shadow: none;
+                    font-weight: bold;
+                    font-size: 95%;
+                    padding: 3px;
+                    color: #777;
+                    }
+                    .accounts td {
+                    padding: 7px;
+                    border-bottom: 1px solid #ddd;
+                    }
+                    .accounts p {
+                    padding: 5px 20px;
+                    margin: 0;
+                    }
+                    table.accounts {
+                    width: 97%;
+                    border-collapse: collapse;
+                    margin: 10px;
+                    }
+                    
+                    table {
+                    display: table;
+                    border-collapse: separate;
+                    border-spacing: 2px;
+                    border-color: grey;
+                    }
+                    .ui-link{
+                    text-decoration: none;
+                    }
+                    .ui-bar h1 {
+                    font-size: 1.5em;
+                    display: inline-block;
+                    }
+                    
+                    .pending {
+                    color: #e2a41e;
+                    background: #f8e6c1;
+                    padding: 5px;
+                    border-radius: 3px;
+                    margin-left: 10px;
+                    text-transform: uppercase;
+                    font-size: 75%;
+                    letter-spacing: .05em;
+                    }
+                    
+                    .pending::before {
+                    content: "\25F7 ";
+                    font-size: initial;
+                    padding-right: 5px;
+                    text-shadow: 1px 1px 1px #fff;
+                    margin: 0;
+                    }
+                    .loadingStatus {
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    list-style: none;
+                    z-index: 9999;
+                    }
+                    
+                    .loadingStatus .img {
+                    width: 32px;
+                    margin: 0 auto;
+                    }
+                    .loadingBox {
+                    display: none;
+                    background: #000000;
+                    opacity: 0.45;
+                    filter: alpha(opacity=45);
+                    position: fixed;
+                    top: 0px;
+                    left: 0px;
+                    min-width: 100%;
+                    min-height: 100%;
+                    z-index: 9999;
+                    }
+                    .button {
+                    color: #fff !important;
+                    padding: 7px 27px 8px;
+                    margin: 15px 0;
+                    text-align: center;
+                    text-decoration: none;
+                    font-weight: bold;
+                    display: -moz-inline-stack;
+                    display: inline-block;
+                    zoom: 1;
+                    _overflow: hidden;
+                    -webkit-border-radius: 3px;
+                    -moz-border-radius: 3px;
+                    border-radius: 3px;
+                    background: #6699cc;
+                    border: 0;
+                    text-shadow: none !important;
+                    }
+                    .width-90 {
+                    width: 90%;
+                    margin: 0 auto;
+                    }
+                    .pad-right {
+                    margin-right: 20px;
+                    }
+                    .pad-left {
+                    margin-left: 20px;
+                    }
+                    .left {
+                    float: left;
+                    }
+                    .three-col {
+                    width: 33%;
+                    }
+                    .pad-bottom {
+                    margin-bottom: 20px;
+                    }
+                    .pad-top {
+                    margin-top: 20px;
+                    }
+                    .right {
+                    float: right;
+                    }
+                    .two-thirds-col {
+                    width: 67%;
+                    }
+                    h2 {
+                    font-size: 1.5em;
+                    color: #30445b;
+                    }
+                    h1, h2, h3, p {
+                    padding-bottom: 15px;
+                    line-height: normal;
+                    }
+                </style>
+            </head>
+            
+            <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+                
+                <apex:outputPanel layout="none" rendered="{!boolIsShowData}"> <!-- rendered="{!boolIsShowData}" -->
+                    
+                    <div data-role="page" id="pageone" data-url="pageone" tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                        <!-- header -->
+                        <c:Activation_Header />
+                        <!-- /header -->
+                        <div>
+                            <div data-role="main" class="ui-content wrapper" >
+                                <apex:pageMessages id="showmsg2" rendered="{!boolIsShowMsg}" ></apex:pageMessages> 
+                                <apex:outputPanel rendered="{!AND (!boolIsShowCustomers, !boolIsShowCorporates, !boolIsShowMsg) }">
+                                    <apex:pageMessages id="showmsg" rendered="{!!boolIsShowMsg}"  ></apex:pageMessages> 
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!OR (boolIsShowCustomers, boolIsShowCorporates) }">
+                                    <!--<h1 class="left">Airtime Services Home</h1>-->
+                                    <a href="{!$Site.Prefix +'/home/home.jsp'}" target="_top" class="right ui-link">Return to myKVH Home</a>
+                                    <div class="clear"></div>
+                                    <apex:outputPanel layout="none" rendered="{!boolIsShowBehalfButton}">
+                                        <div class ="dealerblock">
+                                            <div class="three-col left">
+                                                <a class="button ui-link defaultclick" onclick="createNewActOrderDealer();" href="#" role="button">Active System on Behalf of a Customer</a>
+                                            </div>
+                                            <!-- <div class="two-thirds-col right pad-top pad-bottom">
+<p>Dealers can activate a system on behalf of a customer here and check the status in the Partner Portal. And more description needed.</p>
+</div>-->
+                                        </div>
+                                        <hr class="clear"/>
+                                    </apex:outputPanel>
+                                    <div>
+                                        <h2 class="title left"> Accounts 
+                                            <span class="fontTip"></span>
+                                            <span class="tooltip"><a data-rel="popup" data-transition="pop" class="fontTip my-tooltip-btn ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext" title="Learn more" aria-haspopup="true" aria-owns="popupInfo" aria-expanded="false">Learn more</a>
+                                                <span class="tooltiptext">
+                                                    <p>
+                                                        <div style="font-size: large;font-weight:bold">
+                                                            Account Types:
+                                                    </div><br/>
+                                                    <div> A <span style="font-weight:bold">Corporate Account</span> is a billing account that groups together related vessel/vehicle Subscriber Accounts. This is typically for a fleet of vessels or for commercial accounts with multiple vessels that share the same or similar billing structure.</div>
+                                                    <br/><div>A <span style="font-weight:bold">Subscriber Account</span> is a billing account for services (data rate plan, VoIP charges, IP-MobileCast content, warranty, and other charges), typically for an individual vessel/vehicle.</div>
+                                                </p>
+                                            </span>
+                                        </span>
+                                    </h2>
+                                </div>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{!boolIsShowCorporates}" >
+                                <div class="ui-bar ui-bar-b" style="height: 50px;">
+                                    <h1 class="ui-title" style="vertical-align: -webkit-baseline-middle">Corporate Accounts </h1>
+                                    <div style="display: none;" id="popupInfo-placeholder"><!-- placeholder for popupInfo --></div>
+                                    <a href="#" data-role="button" data-mini="true" class="ui-btn-right ui-link ui-btn ui-btn-b ui-icon-plus ui-btn-icon-left ui-shadow ui-corner-all ui-mini defaultclick" data-icon="plus" data-theme="b" onclick="createNewActOrder('{!idAccount}', '', '', 'corporate');" role="button">Create New Corporate Account</a>
+                                </div>
+                                <apex:pageMessages id="showmsg1" rendered="{!!boolIsShowCorporates}"></apex:pageMessages>
+                                <apex:repeat value="{!mapCorporateMapCustomerAccounts}" var="CorporateAccounts">
+                                    <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+                                        <h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+                                            <a href="#" class=""><apex:outputText value="{!IF(CONTAINS(mapBillingCorporateAccounts[CorporateAccounts].Billing_Account_ID__c, 'Pending'),'',mapBillingCorporateAccounts[CorporateAccounts].Billing_Account_ID__c)}"/>  {!mapBillingCorporateAccounts[CorporateAccounts].Name} <span style="display:{!IF(CONTAINS(mapBillingCorporateAccounts[CorporateAccounts].Billing_Account_ID__c, 'Pending'),'inline;','none;')}" class="pending">Pending</span><a href="#" data-role="button" data-mini="true" data-key="{!mapBillingCorporateAccounts[CorporateAccounts].Id}" class="ui-btn-right ui-link ui-btn ui-icon-plus ui-btn-icon-left ui-shadow ui-corner-all ui-mini defaultclick" data-icon="plus" onclick="createNewActOrder('{!mapBillingCorporateAccounts[CorporateAccounts].Account__c}', '{!mapBillingCorporateAccounts[CorporateAccounts].Id}', '{!mapBillingCorporateAccounts[CorporateAccounts].Billing_Account_ID__c}', 'customer');" role="button">Activate New System</a>
+                                            </a>
+                                        </h3>
+                                        <div style="display:{!IF(CONTAINS(mapBillingCorporateAccounts[CorporateAccounts].Billing_Account_ID__c, 'Pending'),'inline;','none;')}" aria-hidden="false">
+                                            <p>Pending approval by KVH Airtime Services - Please allow up to two business days for account processing. New activations can be submitted, but will not be finalized until the new corporate account has been approved.</p>
+                                            <p>For questions or more information, contact <a href="mailto:satelliteservices@kvh.com?Subject=Inquiry about Corporate Account Setup" class="ui-link">KVH Airtime Services</a>.</p>
+                                        </div>
+                                        <div aria-hidden="true">
+                                            <apex:variable value="{!1}" var="renderhead"/> 
+                                            <apex:outputPanel rendered="true">
+                                                <table class="accounts">
+                                                    <tbody>
+                                                        <apex:repeat value="{!mapCorporateMapCustomerAccounts[CorporateAccounts]}" var="CustomerAccounts">
+                                                            <apex:outputPanel rendered="{!IF(renderhead ==1,true,false)}">
+                                                                <tr>
+                                                                    <td class="head" colspan="3">
+                                                                        Subscription Account
+                                                                        <p class="right">Billing Account Id</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </apex:outputPanel>
+                                                            <tr>
+                                                                <td> 
+                                                                    <p class="left"><apex:outputText value="{!mapCorporateMapCustomerAccounts[CorporateAccounts][CustomerAccounts].Name}" /></p> 
+                                                                    <p class="right"><apex:outputText value="{!IF(mapCorporateMapCustomerAccounts[CorporateAccounts][CustomerAccounts].Billing_Account_ID__c == null, 'Pending', mapCorporateMapCustomerAccounts[CorporateAccounts][CustomerAccounts].Billing_Account_ID__c)}" /></p>
+                                                                </td>
+                                                            </tr>
+                                                            <apex:variable value="{!renderhead+1}" var="renderhead"/> 
+                                                        </apex:repeat>
+                                                    </tbody>
+                                                </table> 
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="false">
+                                                <a href="#popupInfosub" data-rel="popup" data-transition="pop" class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext no-bg" title="Learn more" aria-haspopup="true" aria-owns="popupInfo" aria-expanded="false">Learn more</a>
+                                                <div style="display: none;" id="popupInfo-placeholder"><!-- placeholder for popupInfo --></div>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div>
+                                </apex:repeat>
+                                <br/>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{!boolIsShowCustomers}"> 
+                                <div class="ui-bar ui-bar-b" style="height: 50px;">
+                                    <h1>Subscription Account<!--<a href="#popupInfosub" data-rel="popup" data-transition="pop" class="my-tooltip-btn ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext" title="Learn more" aria-haspopup="true" aria-owns="popupInfo" aria-expanded="false">Learn more</a>--></h1>
+                                    <div style="display: none;" id="popupInfo-placeholder"></div>
+                                    <span>
+                                        <a href="#" data-role="button" data-mini="true" class="ui-btn-right ui-link ui-btn ui-btn-b ui-icon-plus ui-btn-icon-left ui-shadow ui-corner-all ui-mini defaultclick" data-icon="plus" data-theme="b" onclick="createNewActOrder('{!idAccount}', '', '', 'customer');" role="button">Activate New System</a>
+                                    </span>
+                                </div>
+                                
+                                <apex:outputPanel rendered="true">
+                                    <table class="accounts">
+                                        <tbody>
+                                            <apex:repeat value="{!mapBillingCustomerAccounts}" var="CustomerAccounts">
+                                                <tr>
+                                                    <td> 
+                                                        <p class="left"><apex:outputText value="{!mapBillingCustomerAccounts[CustomerAccounts].Name}" /></p> 
+                                                        <p class="right"><apex:outputText value="{!IF(mapBillingCustomerAccounts[CustomerAccounts].Billing_Account_ID__c == null, 'Pending', mapBillingCustomerAccounts[CustomerAccounts].Billing_Account_ID__c)}" /></p>
+                                                    </td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                    </table> 
+                                </apex:outputPanel>
+                            </apex:outputPanel>  
+                        </div>
+                        <!-- <a class="left" style="padding-left:180px;color:gray;font-weight: normal;">@{!YEAR(TODAY())} KVH Industries, Inc.All Rights Reserved</a>                     
+<a href="#" class="right ui-link" style="padding-right:180px">Help</a>
+<a href="#" class="right ui-link" style="padding-right:5px">FAQs | </a>
+<a href="#" class="right ui-link" style="padding-right:5px">Other Links | </a> -->               
+                    </div>
+                    <div class="ui-popup-screen ui-overlay-inherit ui-screen-hidden" id="popupInfo-screen"></div>
+                    <div class="ui-popup-container pop ui-popup-hidden ui-popup-truncate" id="popupInfo-popup">
+                        <div data-role="popup" id="popupInfo" class="ui-content ui-popup ui-body-a ui-overlay-shadow ui-corner-all" data-theme="a" style="max-width:750px;">
+                            <p>
+                                <div style="font-size: large;font-weight:bold">
+                                    Account Types:
+                            </div><br/>
+                            <div> A <span style="font-weight:bold">Corporate Account</span> is a billing account that groups together related vessel/vehicle Subscriber Accounts. This is typically for a fleet of vessels or for commercial accounts with multiple vessels that share the same or similar billing structure.</div>
+                            <br/><div>A <span style="font-weight:bold">Subscriber Account</span> is a billing account for services (data rate plan, VoIP charges, IP-MobileCast content, warranty, and other charges), typically for an individual vessel/vehicle.</div>
+                        </p>
+                    </div>
+                </div>
+                <div class="ui-screen-hidden ui-popup-screen ui-overlay-inherit" id="popupInfo-screen"></div>
+                <div class="ui-popup-container ui-popup-hidden ui-popup-truncate" id="popupInfo-popup">
+                    <div data-role="popup" id="popupInfosub" class="ui-content ui-popup ui-body-a ui-overlay-shadow ui-corner-all" data-theme="a" style="max-width:350px;">
+                        <p> <div style="font-size: large;font-weight:bold">
+                        Account Types:
+                        </div><br/>
+                        <div> A <span style="font-weight:bold">Corporate Account</span> is a billing account that groups together related vessel/vehicle Subscriber Accounts. This is typically for a fleet of vessels or for commercial accounts with multiple vessels that share the same or similar billing structure.</div>
+                        <br/><div>A <span style="font-weight:bold">Subscriber Account</span> is a billing account for services (data rate plan, VoIP charges, IP-MobileCast content, warranty, and other charges), typically for an individual vessel/vehicle.</div>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </apex:outputPanel>
+    
+    <apex:outputPanel layout="none" rendered="{!!boolIsShowData}">  <!-- rendered="{!!boolIsShowData}" -->  
+        <!-- /popup Show Buttons contents -->
+        
+        <div data-role="popup"  data-dismissible="false" id="showchoice" data-history="false" style="min-width:500px !important; max-width:800px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                <h1 class="ui-title" role="heading" aria-level="1">Customer Proprietary Information (CPI)</h1>
+            </div>
+            <div role="main" class="ui-content width-90 ">
+                <br/>
+                <p>In the course of providing Airtime Services to you, KVH will obtain certain usage-related information about the quantity and type of the telecommunication services that you use and the manner of your use, which is referred to as customer proprietary information or CPI. CPI relates to the type, quantity, destination, browsing history, technical configuration, location, and amount of use of the telecommunications and interconnected VoIP services you purchase from us, as well as related billing information. KVH does not sell, trade or share your CPI with anyone outside of the KVH family of companies and its service providers used for the provision of your service, unless required by law (example: a court order).</p>
+                <p>By checking “Accept,” you agree that KVH, and its service providers for the provision of your service, may use your CPI to make you aware of services that are different from the services you currently purchase from us and may better meet all of your communications and content delivery needs, for example, a discount or a promotion on a new or different service from KVH.   The protection of your information is important to us, and you have a right, and we have a duty, under US federal law and the laws of other jurisdictions, to protect the confidentiality of your CPI. At any time you may change, deny or withdraw your approval for KVH to use your CPI by sending an email to us at <a href="mailto:privacy@kvh.com">privacy@kvh.com</a>.  Denying KVH’s use of your CPI will not eliminate other types of marketing communications from KVH or KVH’s use of your CPI to offer additional services of the types you already purchase from KVH, nor will it affect the provision of any telecommunications services we provide to you.</p>
+                <div class="center">
+                    <button data-role="none" class="button pad-right remodal-cancel defaultclick" tabindex="1" id="confirmButton" onclick="validateRedirectionOnloadScript('Accept');">Accept</button> 
+                    <button data-role="none" class="button pad-left remodal-cancel defaultclick" tabindex="1" id="confirmButton" onclick="validateRedirectionOnloadScript('Denied');">Denied</button>
+                </div>
+            </div>
+            <div class="center">
+            </div>
+        </div>
+        <!-- /popup Show Buttons contents -->
+        <script>
+        j$(function() {
+            j$( "#showchoice" ).popup( "open" ); 
+        });
+        </script>
+    </apex:outputPanel>
+    
+    <script>
+    j$('html').removeClass('ui-loading');
+    j$('.actions').click(function(){
+        j$('#actions').slideToggle();
+    });
+    
+    j$('.defaultclick').click(function(){
+        j$('html').addClass('ui-loading');
+    });
+    
+    j$(document).ready(function() {
+        j$('.ui-collapsible').collapsible({
+            defaultOpen: '',
+            speed: 300
+        });
+    });
+    
+    function validateRedirectionOnloadScript(param){
+        //console.log('-----'+param);
+        j$( "#showchoice" ).popup( "close" );  
+        validateRedirectionOnloadJS(param);
+    }
+    
+    </script>
+    
+    <div class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1>
+    </div>
+    
+</body>
+</apex:outputPanel>
+
+</html>
+
+</apex:page>

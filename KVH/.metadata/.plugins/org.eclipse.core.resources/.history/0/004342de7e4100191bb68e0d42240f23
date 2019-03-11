@@ -1,0 +1,82 @@
+<aura:component controller="HTS_ltgsvc_contract_controls">
+  <aura:attribute name="state" type="String" description="used to manage the state of the SPA" default="INIT"/>
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  <aura:attribute name="identifier" type="String" default="" description="This is the record ID of the contract to which the subscriptions are attached." />
+  <aura:attribute name="subscriptions" type="SBQQ__Subscription__c[]" description="This is the list of ALL Subscriptions related to the Contract" />
+  <aura:attribute name="hybridPair" type="SBQQ__Subscription__c[]" description="This is the list of Hybrid Pair Subscriptions related to the Contract" />
+  <aura:attribute name="relatedSubs" type="SBQQ__Subscription__c[]" description="This is the list of non-hybrid Subscriptions related to the Contract" />
+  <aura:attribute name="terminatedSubs" type="SBQQ__Subscription__c[]" description="This is the list of terminated Subscriptions related to the Contract" />
+  <aura:attribute name="kontract" type="Contract" description="This is the Contract to which the primary and secondary Subscriptions will be attached" />
+  <aura:attribute name="successURL" type="String" default="/home/home.jsp"/>
+
+<!-- PUBLISHER -->
+
+<!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="refresh" event="c:HTS_hybrids_component_evt" action="{!c.handleCmpEvent}" />
+  <aura:handler name="change" value="{!v.subscriptions}" action="{!c.handleSubscriptionsChange}" />
+  <aura:handler name="termination" event="c:HTS_hybrids_component_evt" action="{!c.handleCmpEvent}" />
+<!-- MARKUP -->
+  <div aura:id="debug_div" >
+    I am Component!<br/> 
+    My status == {!v.statusMessage}<br/>
+    My State == {!v.state}<br/>
+    I was launched from Contract Number {!v.kontract.ContractNumber}<br/>
+    I have {!v.subscriptions.length} subscriptions
+  </div>
+  <div class="slds-page-header">
+    <div class="slds-media">
+      <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-contract" title="Indicates subscription parent contract">
+            <lightning:icon iconName="standard:contract" size="medium" alternativeText="Indicates subscription parent contract"/>
+          </span>
+      </div>
+      <div class="slds-media__body">
+        <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="{!v.kontract.Billing_Account__r.Name}">{!v.kontract.Billing_Account__r.Name}</h1>
+        <p class="slds-text-body_small slds-line-height_reset">
+          Contract Number {!v.kontract.ContractNumber}&nbsp;&nbsp;
+          <ui:outputURL value="{!v.successURL}" label=" Return to Contract..."/>
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- hybrid pairs -->
+  <div class="slds-box slds-box_x-small slds-m-around_x-small slds-theme_default">
+    <c:HTS_hybrid_subs_control_cmp hybridPair="{!v.hybridPair}"/>
+  </div>
+  <!-- related subscriptions -->
+  <div>
+    <aura:iteration items="{!v.relatedSubs}" var="sub">
+      <div class="slds-box slds-box_x-small slds-m-around_x-small">
+        <c:HTS_hybrid_control_single_sub singleSub="{!sub}" /> 
+      </div>
+    </aura:iteration>
+  </div>
+  <!-- terminated subs -->
+  <div class="slds-card slds-theme_error">
+    <div class="slds-card__header ">
+      <header class="slds-media slds-media_center slds-has-flexi-truncate ">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container" title="description of icon when needed">
+            <lightning:icon iconName="custom:custom61" size="small" alternativeText="Indicates subscription"/>
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h2>
+              <span class="slds-text-heading_small">Terminated Subscriptions</span>
+          </h2>
+        </div>
+      </header>
+    </div>
+    <div class="slds-card__body slds-card__body_inner ">
+      <aura:iteration items="{!v.terminatedSubs}" var="sub">
+        <div class="slds-box slds-box_x-small slds-m-around_x-small slds-theme_default">
+          <div class="slds-theme_alert-texture">
+          <c:HTS_hybrid_control_single_sub singleSub="{!sub}" /> 
+          </div>
+        </div>
+      </aura:iteration>
+    </div>
+  </div>
+
+</aura:component>

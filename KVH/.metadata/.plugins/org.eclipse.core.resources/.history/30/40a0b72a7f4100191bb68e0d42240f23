@@ -1,0 +1,59 @@
+<apex:component controller="InstallationTypeController">
+    <style>
+        .two-col {
+        width: 48%;
+        margin-bottom: 10px !important;
+        }
+    </style>
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Subscribers And Activation Contacts picklist generating"
+                   type="string" required="required" assignTo="{!ActivationOrderId}"/>
+    <apex:attribute name="pageStatus" description="This is the status of the component's parent container"
+                   type="Activation_Status__c" required="required" assignTo="{!ActivationStatus}"/>
+    <apex:attribute name="ActPlatform" description="This is the ID of the Activation Platform"
+                   type="Activation_Platform__c" required="required" assignTo="{!objActivationPlatform}"/>
+    <apex:attribute name="ActOrder" description="This is the ID of the component's parent container"
+                   type="Activation_Order__c" required="required" assignTo="{!objActivationOrder}"/>
+    <hr class="pad-top"/>
+    <div class="left two-col">
+        <label>Will the vessel be operating within the territorial waters of Brazil <br/>(within 200 nm)?</label><br/>
+        <div class="req-field" style="padding-left:10px;">
+            <apex:selectRadio value="{!objActivationOrder.Brazilian_Waters_Vessel__c}" layout="pageDirection" html-data-role="none" id="Brazilian_Waters_Vessel__c" tabIndex="11" onchange="showLoadingDiv();BrazilianWatersVessel();">
+                <apex:selectOption itemValue="false" itemLabel="No" html-data-role="none" />
+                <apex:selectOption itemValue="true" itemLabel="Yes" html-data-role="none"/>
+            </apex:selectRadio>
+        </div>
+    </div>
+     <div class="right two-col">
+        <div class="notes">
+            <p>For vessels operating in Brazil territorial waters, the vessel system activation requires annotation of technical responsibility (ART), and prior licensing with ANATEL, to be obtained by KVH upon the payment of the ART (currently in an amount of approximately BRL 70) and of the Installation Inspection Fee (currently in the amount of BRL 3,352.00). Subscriber will reimburse the amounts paid by KVH in equivalent USD, which will be included in the invoice(s) that follow ANATEL’s licensing, at KVH’s criteria. The issuance of the Station Operation Permit by ANATEL is expected to occur approximately 30 days counted from the delivery of this Activation Order to KVH, duly completed and executed by the Subscriber.</p>
+        </div>
+    </div>
+    <apex:outputPanel rendered="{!objActivationOrder.Brazilian_Waters_Vessel__c}">
+       
+        <div class="clear pad-top"></div>
+        <div class="left two-col">
+            <p><label>Distance between the geometric center of the installed antenna and the sea level:</label><apex:inputField id="Distance_between_antenna_and_sea_level__c" value="{!objActivationPlatform.Distance_between_antenna_and_sea_level__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="12"/></p>  
+        </div>
+        <div class="right two-col">
+            <p><label>Geographical coordinates of the local port and anchoring sites used:</label><apex:inputField id="Geograpical_coordinates_of_port_and_site__c" value="{!objActivationPlatform.Geograpical_coordinates_of_port_and_site__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="13"/></p>
+        </div>
+        <div class="clear"></div>
+        <div class="left two-col">
+            <p class="left" style="width:47%;"><lable>Minimum Latitude:</lable><apex:inputField id="Minimum_Latitude__c" value="{!objActivationPlatform.Minimum_Latitude__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="14"/></p>
+            <p class="right" style="width:47%;"><lable>Maximum Latitude:</lable><apex:inputField id="Maximum_Latitude__c" value="{!objActivationPlatform.Maximum_Latitude__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="15"/></p>
+        </div>
+        <div class="right two-col">
+            <p class="left" style="width:47%;"><lable>Minimum Longitude:</lable><apex:inputField id="Minimum_Longitude__c" value="{!objActivationPlatform.Minimum_Longitude__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="16"/></p>
+            <p class="right" style="width:47%;"><lable>Maximum Longitude:</lable><apex:inputField id="Maximum_Longitude__c" value="{!objActivationPlatform.Maximum_Longitude__c}" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" html-tabIndex="17"/></p>
+        </div>
+        <div class="left two-col">
+            <p>           
+                <label for="Brazilian_system_operates_while_anchored__c">Will the system operate while anchored?</label>
+                <apex:selectRadio id="Brazilian_system_operates_while_anchored__c" value="{!objActivationPlatform.Brazilian_system_operates_while_anchored__c}" layout="pageDirection" styleClass="{!IF(isSkipValidation,'','req-field')}" html-data-role="none" tabindex="18">
+                    <apex:selectOption itemValue="false" itemLabel="No" html-data-role="none" />
+                    <apex:selectOption itemValue="true" itemLabel="Yes" html-data-role="none"/>
+                </apex:selectRadio>
+            </p>
+        </div>
+    </apex:outputPanel>  
+</apex:component>

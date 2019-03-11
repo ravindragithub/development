@@ -1,0 +1,677 @@
+<apex:component controller="Act_Payment_Component_Controller" allowDML="true" id="payment" >
+   
+   <apex:attribute name="id" description="This is the ID of the component's parent container"
+                   type="string" required="required" assignTo="{!parentContainer}"/>
+   <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                   type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+   
+   <apex:outputPanel id="paymentblock" rendered="{!lstActivationSubscriber.size>0}">
+       <style>
+           .kvh-radio-padding > tbody > tr > td { 
+           padding-bottom: 5px;
+           }
+           .kvh-padding {
+           padding-left: 2%;
+           }
+           .kvh-radiodependent{
+           display:none;
+           }
+           .kvh-paymentblock > tbody > tr > th{
+           font-weight: bold;
+           padding: 10px;
+           width: 40%;
+           }
+           .kvh-emailtable > tbody > tr > th{
+           font-weight: bold;
+           padding: 5px;
+           width: 25%;
+           }
+           .kvh-emailtable > tbody > tr > td{
+           font:inherit;
+           width: 75%;
+           }
+           .kvh-emailtable {
+           margin-left: 5%;
+           margin-right: 5%;
+           }
+           .upload-box { 
+           border:1px solid #ccc; padding:10px; border-radius:3px; margin:20px 0; font-weight:bold; 
+           }
+            .error-box1
+            { border:1px solid #cc0000; width:47%; color:#cc0000; border-radius:3px; margin-bottom:20px; }
+           .error-box1 h1
+            { background:#cc0000; color:#fff !important; font-size:1em !important; padding:5px; margin-bottom:10px; font-weight:bold; }
+            
+            .error-box1 li
+            { margin-left:20px; } 
+            
+       </style>
+       
+       <script>
+       j$( document ).ready(function() {
+           
+           /* Radio onchange handler - Start */
+           j$( "input[name=creditcarddetails]" ).change(function() {
+               var currentselected = j$(this).val();
+               j$('.kvh-radiodependent').hide();
+               if(j$(this).hasClass('creditcarddetail')){
+                   if('{!$CurrentPage.parameters.conActID}' != '' || ('{!strErrorCode}' != '' || {!!boolIsShowPrimary} )){
+                       j$('#showsecondarycreditcard').show();
+                   }else{
+                       j$('#showsecondarycreditcard').hide();
+                   }
+               }
+               j$(this).parent().next('.kvh-radiodependent').toggle('slow');
+               if(j$(this).attr('id') == 'existingcreditterms'){
+                   showLoadingDiv();
+                   updateSubscriberRecord('Payment_Information', 'true', currentselected);
+               }else{
+                   updateSubscriberRecordonly('false', currentselected);
+               }
+               
+           });
+           /* Radio onchange handler - End */
+           if({!lstActivationSubscriber[0].Existing_Credit_Terms__c} && '{!lstActivationOrder[0].Payment_Method__c}' == 'Existing Credit Terms'){
+               j$('#existingcreditterms').attr('checked','checked');
+               j$('.kvh-radiodependent').hide();
+           }
+           if('{!lstActivationOrder[0].Payment_Method__c}' == 'Requested Commercial Terms'){
+               j$('#creditapplication').attr('checked','checked');
+               j$('.kvh-radiodependent').hide();
+               j$('#creditapplication').parent().next('.kvh-radiodependent').toggle('slow');
+           }
+           if(('{!$CurrentPage.parameters.conActID}' != '' || {!boolIsShowPrimary} || ('{!strErrorCode}' != '' )) && '{!lstActivationOrder[0].Payment_Method__c}' == 'Entered Credit Card(s)'){
+               j$('#creditcarddetails').attr('checked','checked');
+               j$('.kvh-radiodependent').hide();
+               j$('#creditcarddetails').parent().next('.kvh-radiodependent').toggle('slow');
+           }
+           
+           if('{!$CurrentPage.parameters.conActID}' != '' || ('{!strErrorCode}' != '' )){
+               j$('#showsecondarycreditcard').show();
+           }else{
+               j$('#showsecondarycreditcard').hide();
+           }
+           j$('span:has(span.req), p:has(span.req), div:has(span.req)').children('input[type=text], select').addClass('requiredRedMarkFld');
+           
+       });
+       
+       var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+       
+       /* To remove duplidate popup window initialized -Start */
+       function removeduplicatepopup(popupID){
+           while(j$(popupID).length >1){
+               j$(popupID).last().remove();
+           }
+           while(j$('.remodal-wrapper').find(popupID).length >1){
+               j$('.remodal-wrapper').find(popupID).last().remove();
+           }
+       }
+       /* To remove duplidate popup window initialized -End */
+       
+       /* payment Error Popup -Start */
+       function paymentMessages(){
+           if({!boolPopup}){
+               var ErrorCode = '{!strErrorCode}';
+               removeduplicatepopup('[data-remodal-id=paymentinfo]');
+               var instmodel = j$('[data-remodal-id=paymentinfo]').remodal(options);
+               var setcontent = "Error Code : "+ ErrorCode + "<br/> Error Message : {!strErrorMsg}" ;
+               j$("#kvh-remodelcontentmessagepaymentinfo").html(setcontent);
+               instmodel.open();
+               j$('[data-remodal-id=paymentinfo]').find('.remodal-close').hide();
+               j$('[data-remodal-id=paymentinfo]').css('width', '620px').find('div:first').css('width', '100%');
+           }else{
+               showLoadingDiv();
+               updateSubscriberRecord('Payment_Information', '', '');
+           }
+       }
+       /* payment Error Popup -End */
+       /* Credit Application Download -Start */
+       function downloadcreditapplication(){
+           location.href= "http://kvh.com/~/media/4BA2D47436C0428397B56CC742EB783C.aspx";
+       }
+       /* Credit Application Download -End */
+       
+       /* Activation Corporate button -Start */
+       function buttonfunctionCorporate(param,param1){
+           var showmodel = false;
+           var msg = '';
+           var errordiv1 = currenttabtoshowerror1();
+           j$('.kvh-show-errormsg-here1').empty();
+           j$('.kvh-show-errormsg-here1').append(errordiv1);
+           if('{!lstActivationSubscriber[0].Bill_to__c}' == '' || '{!lstActivationSubscriber[0].Bill_to__c}' == null){
+               showmodel = true;
+               msg = 'Please select Payment Preference';
+           }else if ('{!lstActivationSubscriber[0].Bill_to__c}' == 'Corporate'){
+               if(!j$('input[name=creditcarddetails]:checked').val()){
+                   showmodel = true;
+                   msg = 'Please select Payment Method';
+               }else if(j$('input[name=creditcarddetails]:checked').hasClass('creditapplication') && ('{!objOrderAttachment}' == '' || '{!objOrderAttachment}' == null)){
+                   showmodel = true;
+                   msg = 'Please Upload Credit Application';
+               }else if(j$('input[name=creditcarddetails]:checked').hasClass('creditcarddetail') && '{!objPaymentProfilePrimary}' == ''){
+                   showmodel = true;
+                   msg = 'Please Add Credit Card Details';
+               }
+           }
+           if(showmodel){
+               if(param1) Exit();
+               else {j$('.error-box1').find('.bullets').html(msg);
+                     j$('.error-box1').show();}//showgenericpopup(msg);
+           }else{
+               if(param1) Exit();
+               else validateSubmit();
+           }
+       }
+       /* Activation Corporate button -End */
+       function currenttabtoshowerror1(){
+                    var errordiv1= "<div class='error-box1' id='globalErrorBOX' style='display:none !important'>"; 
+                    errordiv1 += "<h1><img src='/resource/cautionImage' height='20' width='20' />";
+                    errordiv1 += "Please correct the errors indicated below and try again. </h1> <ul class='bullets'></ul> </div>";
+                    return errordiv1;
+                }
+       /* Activation Subscriber button -Start */
+       function buttonfunctionSubscriber(param,param1){
+           var showmodel = false;
+           var msg = '';
+           var errordiv1 = currenttabtoshowerror1();
+           j$('.kvh-show-errormsg-here1').empty();
+           j$('.kvh-show-errormsg-here1').append(errordiv1);
+           if(!j$('input[name=creditcarddetails]:checked').val()){
+               showmodel = true;
+               msg = 'Please select Payment Method';
+           }else if(j$('input[name=creditcarddetails]:checked').hasClass('creditapplication') && ('{!objOrderAttachment}' == '' || '{!objOrderAttachment}' == null)){
+               showmodel = true;
+               msg = 'Please Upload Credit Application';
+           }else if(j$('input[name=creditcarddetails]:checked').hasClass('creditcarddetail') && '{!objPaymentProfilePrimary}' == ''){
+               showmodel = true;
+               msg = 'Please Add Credit Card Details';
+           }
+           if(showmodel){
+               j$('.error-box1').find('.bullets').html(msg);
+               j$('.error-box1').show();
+               //showgenericpopup(msg);
+           }else{
+               if(param1){
+               showLoadingDiv();
+               validateActivationPaymentNextToInstallation('{!parentContainer}');}
+               else
+                   buttonfunctionCorporate(param);
+           }
+       }
+       /* Activation Subscriber button -Start */
+       
+       /* Generic popup window -Start */
+       function showgenericpopup(msg){
+           var setcontent = msg;
+           removeduplicatepopup('[data-remodal-id=paymentinfo]');
+           var instmodel = j$('[data-remodal-id=paymentinfo]').remodal(options);
+           j$("#kvh-remodelcontentmessagepaymentinfo").html(setcontent);
+           instmodel.open();
+           j$('[data-remodal-id=paymentinfo]').find('.remodal-close').hide();
+           j$('[data-remodal-id=paymentinfo]').css('width', '330px').find('div:first').css('width', '100%');
+       }
+       /* Generic popup window -End */
+       
+       /* Email attachment functions -Start */
+       function showEmailpopup(){
+           removeduplicatepopup('[data-remodal-id=emailblock]');
+           var instmodel = j$('[data-remodal-id=emailblock]').remodal(options);
+           instmodel.open();
+           j$('[data-remodal-id=emailblock]').find('.remodal-close').hide();
+           j$('[data-remodal-id=emailblock]').css('width', '620px').find('div:first').css('width', '100%');
+       }
+       
+       var maxStringSize = 6000000;    //Maximum String size is 6,000,000 characters
+       var maxFileSize = 4350000;      //After Base64 Encoding, this is the max file size
+       var chunkSize = 950000;         //Maximum Javascript Remoting message size is 1,000,000 characters
+       var attachment;
+       var attachmentName;
+       var attachmentType;
+       var fileSize;
+       var positionIndex;
+       var doneUploading;
+       
+       function validateEmailAttachment(){
+           // console.log(j$('input[id$="EmailAttachmentId"]').val());
+           if(j$('input[id$="EmailAttachmentId"]').val() == '' || j$('input[id$="EmailAttachmentId"]').val() == null){
+               j$('.emailattachclass').show(); 
+           }else{
+               j$('.emailattachclass').hide();
+               j$('[data-remodal-id=emailblock]').find('.remodal-close').click();
+               var file = j$('#EmailAttachmentId')[0].files[0]; // document.getElementById('EmailAttachmentId').files[0];
+               // console.log(file);
+               if(file != undefined) {
+                   if(file.size <= maxFileSize) {
+                       attachmentName = file.name;
+                       attachmentType = file.type;
+                       var fileReader = new FileReader();
+                       fileReader.onloadend = function(e) {
+                           if (fileReader.result) fileReader.content = fileReader.result;
+                           attachment = window.btoa(fileReader.content);  //Base 64 encode the file before sending it
+                           positionIndex=0;
+                           fileSize = attachment.length;
+                           // console.log("Total Attachment Length: " + fileSize);
+                           doneUploading = false;
+                           if(fileSize < maxStringSize){
+                               uploadAttachment(null);
+                           } else {
+                               alert("Base 64 Encoded file is too large.  Maximum size is " + maxStringSize + " your file is " + fileSize + ".");
+                           }
+                       }
+                       
+                       fileReader.onerror = function(e) {
+                           alert("There was an error reading the file.  Please try again.");
+                       }
+                       fileReader.onabort = function(e) {
+                           alert("There was an error reading the file.  Please try again.");
+                       }
+                       
+                       fileReader.readAsBinaryString(file);  //Read the body of the file
+                       
+                   } else {
+                       alert("File must be under 4.3 MB in size.  Your file is too large.  Please try again.");
+                   }
+               } else {
+                   alert("You must choose a file before trying to upload it");
+               }
+           }
+       }
+       
+
+      
+       
+       //Method to send a file controller
+       function uploadAttachment(fileId) {
+           var attachmentBody = "";
+           if(fileSize <= positionIndex + chunkSize) {
+               attachmentBody = attachment.substring(positionIndex);
+               doneUploading = true;
+           } else {
+               attachmentBody = attachment.substring(positionIndex, positionIndex + chunkSize);
+           }
+           // alert("Uploading " + attachmentBody.length + " chars of " + fileSize);
+           //alert("Uploading " + attachmentName + " File of Type" + attachmentType);
+           showLoadingDiv();
+           uploadattachment(attachmentName, attachmentType, attachmentBody); //, j$('input[id$="kvh-subject"]').val(), j$('textarea[id$="kvh-description"]').val()
+       }
+       /* Email attachment functions -End */
+       
+       function validateSubmit(){
+           removeduplicatepopup('[data-remodal-id=submitinfo]');
+           var instmodel = j$('[data-remodal-id=submitinfo]').remodal(options);
+           instmodel.open();
+           j$('[data-remodal-id=submitinfo]').find('.remodal-close').hide();
+           j$('[data-remodal-id=submitinfo]').css('width', '460px').find('div:first').css('width', '100%');
+       }
+       
+       function submitConfirm(){
+           j$('[data-remodal-id=submitinfo]').find('.remodal-close').click();
+           showLoadingDiv();
+           orderupdate('Payment_Information');
+       }
+       
+       function submitConfirmmsg(){
+           removeduplicatepopup('[data-remodal-id=confirmsubmitinfo]');
+           var instmodel = j$('[data-remodal-id=confirmsubmitinfo]').remodal(options);
+           instmodel.open();
+           j$('[data-remodal-id=confirmsubmitinfo]').find('.remodal-close').hide();
+           j$('[data-remodal-id=confirmsubmitinfo]').css('width', '310px').find('div:first').css('width', '100%');
+       }
+       
+       function submitConfirminfo(){
+           j$('[data-remodal-id=confirmsubmitinfo]').find('.remodal-close').click();
+           showLoadingDiv();
+           accountsListViewMethod();
+       }
+       j$(document).on('closed', '[data-remodal-id=confirmsubmitinfo]', function (e) {
+           submitConfirminfo()
+       });
+       </script>
+       
+       <apex:actionFunction name="updateSubscriberRecord" action="{!updateSubscriber}" reRender="theForm" oncomplete="hideLoadingDiv();">
+           <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+           <apex:param name="existingcreditterms" value="" />
+           <apex:param name="selectedType" value="" />
+       </apex:actionFunction>
+       <apex:actionFunction name="updateSubscriberRecordonly" action="{!updateSubscriberonly}" id="onlythis" reRender="paymentmethod" oncomplete="hideLoadingDiv();">
+           <apex:param name="existingcreditterms" value="" />
+           <apex:param name="selectedType" value="" />
+       </apex:actionFunction>
+       <apex:actionFunction name="statusupdatenext" action="{!goToTab}" onbeforedomupdate="showLoadingDiv();" oncomplete="hideLoadingDiv();" reRender="theForm" immediate="true" >
+           <apex:param name="param2" assignTo="{!selectedTab}" value="" />
+       </apex:actionFunction>
+       <apex:actionFunction name="orderupdate" action="{!orderStatusUpdate}" oncomplete="hideLoadingDiv();submitConfirmmsg();" reRender="theForm" immediate="true" >
+           <apex:param name="param3" assignTo="{!selectedTab}" value="" />
+       </apex:actionFunction>
+       <apex:actionFunction name="accountsListViewMethod" action="{!accountsListView}" reRender="theForm" oncomplete="hideLoadingDiv();">
+       </apex:actionFunction>
+       <apex:actionFunction name="callFromPaymentTab" action="{!testcallouts}" rerender="paymentblock" onbeforedomupdate="showLoadingDiv();" oncomplete="hideLoadingDiv();paymentMessages();">
+           <apex:param name="param4" assignTo="{!selectedTab}" value="" />
+       </apex:actionFunction>
+       
+       <apex:actionFunction name="uploadattachment" action="{!uploadCreditAttachment}" rerender="theForm" immediate="true" oncomplete="hideLoadingDiv();showgenericpopup('Credit Application Successfully Uploaded');statusupdatenext('Payment_Information');">
+           <apex:param name="strAttachmentName" assignTo="{!strAttachmentName}" value="" />
+           <apex:param name="strAttachmentType" assignTo="{!strAttachmentType}" value="" />
+           <apex:param name="strAttachmentBody" assignTo="{!strAttachmentBody}" value="" />
+       </apex:actionFunction>
+       
+       <h2 class="mainTitle">Payment Information</h2>
+       <div class="kvh-show-errormsg-here1" style="padding-top:10px;"></div>
+       <apex:outputPanel rendered="{!parentContainer =='ActivationPayment'}">
+           <h3>Payment Preference</h3>
+           <p style="font-weight: bold;font-size: initial">How will invoices be paid?</p>
+           <div style="padding-left: 5px;">
+               <apex:selectRadio value="{!lstActivationSubscriber[0].Bill_to__c}" layout="pageDirection" Id="BillTo" styleClass="kvh-radio-padding" onchange="showLoadingDiv();updateSubscriberRecord('Payment_Information', '', '');" tabIndex="1" html-data-role="none">
+                   <apex:selectOption itemLabel="For the account in total, based on the Corporate Summary invoice" itemValue="Corporate" html-data-role="none"/>
+                   <apex:selectOption itemLabel="Separately, for each individual Subscription Account invoice" itemValue="Customer" html-data-role="none"/>
+               </apex:selectRadio>
+           </div>
+       </apex:outputPanel>
+       <apex:outputPanel rendered="{!OR(AND(lstActivationSubscriber[0].Bill_to__c == 'Corporate',parentContainer == 'ActivationPayment'), AND(lstActivationSubscriber[0].Bill_to__c != 'Corporate' ,parentContainer != 'ActivationPayment'))}">
+           <apex:outputPanel rendered="{!parentContainer =='ActivationPayment'}" id="paymentmethod"> <div class="button-bar" style="padding-bottom: 15px;"></div> </apex:outputPanel>
+           <h3>Payment Method</h3>
+           <div style="padding-left: 5px;">
+               <p>
+                   <input type="radio" style="display: inline;" name="creditcarddetails" id="existingcreditterms" value="Existing Credit Terms" data-role="none"/> 
+                   <label for="existingcreditterms">Existing Credit Terms </label>
+               </p>
+               <div class="clear"></div>
+               <p>
+                   <input type="radio" style="display: inline;" class="creditapplication" name="creditcarddetails" value="Requested Commercial Terms" id="creditapplication" data-role="none"/> 
+                   <label for="creditapplication">Request Commercial Terms </label>
+                   <br/><span class="notes kvh-padding">Note: Subject to credit check and approval; allow an additional 72 hours to process.</span>
+               </p>
+               <div class="left two-col kvh-padding kvh-radiodependent" style="margin-top: -1%; margin-bottom: 0px;width: 50%;">
+                   <apex:commandLink styleClass="button left" value="Download Credit Application PDF" rendered="{!OR(objOrderAttachment.Id == '',objOrderAttachment.Id == null)}" onclick="downloadcreditapplication(); return false;"  immediate="true">
+                   </apex:commandLink>
+                   <apex:outputPanel layout="none" rendered="{!IF(AND(objOrderAttachment.Id != '',objOrderAttachment.Id != null),true,false)}">
+                       <apex:outputLink value="{!URLFOR($Action.Attachment.Download, objOrderAttachment.Id)}" styleClass="button left" style="display:{!IF(AND(objOrderAttachment.Id != '',objOrderAttachment.Id != null),'block;','none;')}" target="_blank">View/Modify Credit Application</apex:outputLink>
+                   </apex:outputPanel>
+                   <apex:commandLink styleClass="button right" value="{!IF(AND(objOrderAttachment.Id != '',objOrderAttachment.Id != null),'Re-upload Credit Application','Upload Credit Application')}" onclick="showEmailpopup(); return false;">
+                   </apex:commandLink>
+               </div>
+               <div class="clear"></div>
+               <p>
+                   <input type="radio" class="creditcarddetail" style="display: inline;" name="creditcarddetails" value="Entered Credit Card(s)" id="creditcarddetails" data-role="none"/>
+                   <label for="creditcarddetails">Enter credit card information to establish a single credit card to pay the entire account. </label>
+                   <br/><!--<span class="notes kvh-padding" style = "{!if(lstActivationSubscriber[0].Bill_to__c == 'Customer','display:none;', '')}">Note: You will have the option to enter a credit card for each future activation.</span> -->
+               </p>
+               <div style="margin-bottom: 5px; padding-left: 2%;" class="clear kvh-radiodependent">
+                   
+                   <apex:outputPanel rendered="{!boolIsShowPrimary}"> 
+                       <p style="font-weight: bold;font-size: initial">Primary Credit Card Information</p>
+                       <div class="left two-col">
+                           <div class="box-content">
+                               <div class="box">
+                                   <table class="kvh-paymentblock" style="width: 100%;">
+                                       <tr>
+                                           <th> Name on Card:
+                                           </th>
+                                           <td>{!objPaymentProfilePrimary.First_Name__c}   {!objPaymentProfilePrimary.Last_Name__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th>Card Number:
+                                           </th>
+                                           <td> {!objPaymentProfilePrimary.Credit_Card_Number__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th>Card Type:
+                                           </th>
+                                           <td>{!objPaymentProfilePrimary.Card_Type__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th> Expiration Date:
+                                           </th>
+                                           <td> {!objPaymentProfilePrimary.Expiration_Date__c}
+                                           </td>
+                                       </tr>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="clear" style="padding-left:3%;">
+                           <apex:commandLink styleClass="button left" style="margin-top: -3%;" value="+ Add Secondary Credit Card" rendered="{!!boolIsShowSecondary}" reRender="payment" id="addsecondarycard" onclick="j$(this).toggle('slow'); j$('#showsecondarycreditcard').toggle('slow');" ><!-- onclick="validateError('{!parentContainer}'); return false; action="{!testcallouts}" -->
+                           </apex:commandLink>
+                       </div>
+                       <div class="clear"> </div>
+                   </apex:outputPanel>
+                   
+                   <apex:outputPanel rendered="{!boolIsShowSecondary}"> 
+                       <p style="font-weight: bold;font-size: initial">Secondary Credit Card Information</p>
+                       <div class="left two-col">
+                           <div class="box-content">
+                               <div class="box">
+                                   <table class="kvh-paymentblock" style="width: 100%;">
+                                       <tr>
+                                           <th> Name on Card:
+                                           </th>
+                                           <td>{!objPaymentProfileSecondary.First_Name__c}   {!objPaymentProfileSecondary.Last_Name__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th>Card Number:
+                                           </th>
+                                           <td> {!objPaymentProfileSecondary.Credit_Card_Number__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th>Card Type:
+                                           </th>
+                                           <td>{!objPaymentProfileSecondary.Card_Type__c}
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <th> Expiration Date:
+                                           </th>
+                                           <td> {!objPaymentProfileSecondary.Expiration_Date__c}
+                                           </td>
+                                       </tr>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+                       <div Class="clear"> </div>
+                   </apex:outputPanel>
+                   
+                   <apex:outputPanel rendered="{!OR(!boolIsShowPrimary,!boolIsShowSecondary)}" id="cardpaymentblock"> 
+                       <div id="showsecondarycreditcard" style="padding-right: 10px;display:{!IF(AND(boolIsShowPrimary ,!boolIsShowSecondary), 'none;', 'block;')}">
+                           <div>
+                               <p style="font-weight: bold;font-size: initial">
+                                   {!IF(!boolIsShowPrimary,'Primary','Secondary')} Credit Card Billing Information                               
+                               </p>
+                               <!--** div contain error msg contents -Start **-->
+                               <div class="kvh-show-errormsg-here">
+                               </div>
+                               <!--** div contain error msg contents -End **-->
+                               
+                               <c:Activation_Billing_picklist pageOrderID="{!ActivationOrderId}" id="paymentpicklist"  />
+                               <div class="left two-col" style="margin-bottom: 0px;">
+                                   <div class="box-content">
+                                       <p>
+                                           <label>First/Given Name:<span class="req"></span></label>
+                                           <apex:inputField id="firstname" styleClass="firstname1"  value="{!objPaymentProfile.First_Name__c}" html-tabIndex="1" html-data-role="none"/>
+                                       </p>
+                                       
+                                       <p><label>Company Name:</label>
+                                           <apex:inputField id="ree" value="{!objPaymentProfile.Company__c}" html-tabIndex="3" html-data-role="none"/>
+                                       </p>
+                                       <p><label>Email:<span class="req"></span></label>
+                                           <apex:inputField value="{!objPaymentProfile.Email__c}" html-tabIndex="5" id="email" styleClass="email" html-data-role="none"/>
+                                       </p>
+                                       <p>
+                                           <label>City:<span class="req"></span></label>
+                                           <apex:inputField value="{!objPaymentProfile.City__c}" html-tabIndex="7" id="city" html-data-role="none"/>
+                                       </p>
+                                       <p class="Country"><label>Country: </label><span class="req"></span>
+                                           <apex:selectList id="country" tabindex="9" value="{!objPaymentProfile.Country__c}" multiselect="false"  size="1" html-data-role="none">
+                                               <apex:actionSupport action="{!componentCountryChangeHandler}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();" />
+                                               <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                                           </apex:selectList>
+                                       </p>
+                                   </div>
+                               </div>
+                               <div class="right two-col" style="margin-bottom: 0px;">
+                                   <div class="box-content">
+                                       <p>
+                                           <label>Last/Family Name/Surname:<span class="req"></span></label>
+                                           <apex:inputField value="{!objPaymentProfile.Last_Name__c}" html-tabIndex="2" id="lastname" html-data-role="none"/>
+                                       </p>
+                                       <label>Primary Phone:<span class="req"></span></label>
+                                       <apex:inputField id="ppnumber" value="{!objPaymentProfile.Phone__c}" html-tabIndex="4" styleClass="frm-phone-required" html-data-role="none"/>
+                                       <!-- </div> -->
+                                       <div class="clear" style="padding-bottom:20px;"></div>
+                                       <p><label>Address: <span class="req"></span></label>
+                                           <apex:inputField value="{!objPaymentProfile.Address__c}" html-tabIndex="6" id="address1" html-data-role="none"/>
+                                       </p>
+                                      <p><label>Postal/Zip Code: <span class="req"></span></label>
+                                           <apex:inputField value="{!objPaymentProfile.Postal_Zip_Code__c}" html-tabIndex="8" id="postalcode" html-data-role="none"/>
+                                       </p> 
+                                       
+                                       <p class="state"><label>State/Province/Territory: </label>
+                                           <apex:selectList id="State_Province__c" tabindex="10" value="{!objPaymentProfile.State_Province_Territory__c}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}" html-data-role="none">
+                                               <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="statecon" >
+                                                   <apex:param value="{!objPaymentProfile.State_Province_Territory__c}" assignTo="{!dummy}"/> 
+                                               </apex:actionSupport>
+                                               <apex:selectOptions value="{!StatesList}" html-data-role="none"/>
+                                           </apex:selectList>
+                                       </p>
+                                   </div>
+                               </div>
+                               <div class="clear">
+                                   <p style="font-weight: bold;font-size: initial">
+                                       <apex:outputtext value="{!IF(!boolIsShowPrimary,'Primary Credit Card Information','Secondary Credit Card Information')}"> </apex:outputtext>
+                                   </p>
+                                   <div class="demo-container">
+                                       <div class="card-wrapper"></div>
+                                       <div class="left two-col">
+                                           <div class="box-content">
+                                               <p>
+                                                   <span class="left" style="width:35%;">
+                                                       <label>Credit Card Type:</label>
+                                                       <apex:inputField id="creditcardtype" value="{!objPaymentProfile.Card_Type__c}" html-tabIndex="11" html-data-role="none"/>
+                                                   </span>
+                                                   <span class="right" style="width:60%;">
+                                                       <label>Credit Card Number:<span class="req"></span></label>
+                                                       <apex:inputText id="creditcardnumber"  value="{!strCreditCardNumber}" tabIndex="12" html-data-role="none" />
+                                                   </span>
+                                               </p>
+                                           </div>
+                                       </div>
+                                       <div class="right two-col">
+                                           <div class="box-content">
+                                               <p>
+                                                   <span class="left" style="width:35%;">
+                                                       <label>Expiration Date:<span class="req"></span></label>
+                                                       <span style="display:block;">
+                                                           <apex:selectList id="strMonth" style="width:40%;margin-right: 10px;"  tabindex="13" styleClass="requiredRedMarkFld" value="{!strMonth}" multiselect="false" size="1" html-data-role="none">
+                                                               <apex:selectOptions value="{!lstMonths}" html-data-role="none"/>
+                                                           </apex:selectList>
+                                                           <apex:selectList id="strYear" style="width:50%" tabindex="14" styleClass="requiredRedMarkFld" value="{!strYear}" multiselect="false" size="1" html-data-role="none">
+                                                               <apex:selectOptions value="{!lstYears}" html-data-role="none"/>
+                                                           </apex:selectList>
+                                                       </span>
+                                                       <!-- <apex:inputText id="expirationdate" html-placeholder="mm/yyyy" value="{!strCreditCardExDate}" tabIndex="3"/> -->
+                                                   </span>
+                                                   <span class="right" style="width:45%;">
+                                                       <label>CVV Number:<span class="req"></span></label>
+                                                       <apex:inputText id="cvvnumber" value="{!strCreditCardCVV}" tabIndex="15" html-data-role="none"/>
+                                                   </span> 
+                                               </p>
+                                           </div>
+                                       </div>
+                                   </div> 
+                               </div>
+                           </div>
+                           
+                           
+                           <div class="clear" style="margin-left:1%;margin-right:3%;" >
+                               <apex:commandLink styleClass="button left" style="margin-top: -1%;" value="{!IF(!boolIsShowPrimary, 'Save Credit Card', 'Save Secondary Credit Card')}" rendered="{!AND(OR(!boolIsShowPrimary,!boolIsShowSecondary),parentContainer !='ActivationPayment')}" reRender="cardpaymentblock" onclick="validateError('{!parentContainer}',true); return false;" ><!-- onclick="validateError('{!parentContainer}'); return false; action="{!testcallouts}" -->
+                               </apex:commandLink>
+                               <apex:commandLink styleClass="button left" style="margin-top: -1%;" value="{!IF(!boolIsShowPrimary, 'Save Credit Card', 'Save Secondary Credit Card')}" rendered="{!AND(OR(!boolIsShowPrimary,!boolIsShowSecondary),parentContainer =='ActivationPayment')}" reRender="cardpaymentblock" onclick="validateError('{!parentContainer}',false); return false;" >
+                               </apex:commandLink>
+                               <apex:commandLink styleClass="button right" style="margin-top: -1%;" value="Cancel" reRender="addsecondarycard" rendered="{!AND(boolIsShowPrimary, !boolIsShowSecondary)}" onclick="j$('[Id$=addsecondarycard]').toggle('slow');j$('#showsecondarycreditcard').toggle('slow');" ><!-- onclick="validateError('{!parentContainer}'); return false; action="{!testcallouts}" -->
+                               </apex:commandLink>
+                           </div>
+                       </div>
+                   </apex:outputPanel>
+                   <div class="clear"></div>
+               </div>
+               
+           </div>
+       </apex:outputPanel>
+       <div class="button-bar">
+           <apex:commandLink styleClass="button left" value="< Back" onclick="validateActivationPaymentBack(); return false;" immediate="true">
+           </apex:commandLink>
+           <apex:commandLink styleClass="button right" rendered="{!parentContainer =='ActivationPayment'}" value="Submit" onclick="buttonfunctionCorporate(this); return false;">
+           </apex:commandLink>
+           <apex:commandLink styleClass="button validateSkipButton" rendered="{!AND(parentContainer !='ActivationPayment',isSkipValidation)}" onclick="validateActivationPaymentNextToInstallation(); return false;" value="Skip to Installation" >
+           </apex:commandLink>
+           <apex:commandLink styleClass="button right" rendered="{!parentContainer !='ActivationPayment'}" onclick="buttonfunctionSubscriber(this,true); return false;" value="Continue to Installation >" >
+           </apex:commandLink>
+       </div>
+       <apex:commandLink styleClass="clear right" rendered="{!parentContainer =='ActivationPayment'}" value="Save & Exit" onclick="buttonfunctionCorporate(this,true); return false;"/>
+       <apex:commandLink styleClass="clear right" rendered="{!parentContainer !='ActivationPayment'}" value="Save & Exit" onclick="buttonfunctionSubscriber(this,false);return false;"/> 
+       <!-- ** remodal popup Start ** -->
+       <div class="remodal" data-remodal-id="paymentinfo" id="paymentinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+           <div style="display: inherit; width:100%;" >
+               <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+               <span id="kvh-remodelcontentmessagepaymentinfo" style="padding-left:10px;"></span>
+           </div>
+           <div style="text-align:center;">
+               <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >OK</a>
+           </div>
+       </div>
+       <!-- ** remodal popup End ** -->
+       
+       <!-- ** remodal Email popup Start ** -->
+       <div class="remodal" data-remodal-id="emailblock" id="emailblock" data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }'>
+        <apex:outputPanel id="emailblockrerender" styleClass="wrapper center">
+               <h1 style="text-align: center;">
+                   Upload Credit Application
+               </h1>
+               <div style="text-align: center;">
+                   <div class="emailattachclass" style="display:none;color: #cc0000;text-align:center;">Please choose the attachment
+                   </div>
+                   <input type="File" name="file" id="EmailAttachmentId" class="upload-box"/>
+               </div>
+               <p>
+                   <apex:commandLink styleClass="button" id="sendEmailbutton" value="Upload" reRender="emailblockrerender" onclick="validateEmailAttachment(); return false;">
+                   </apex:commandLink>
+                   <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="pad-left remodal-cancel" style="text-decoration: none;cursor:pointer;" >Cancel</a>
+               </p>
+           </apex:outputPanel>
+       </div> 
+       <!-- ** remodal Email popup End ** -->
+       
+       <!-- ** remodal submit popup Start ** -->
+       <div class="remodal" data-remodal-id="submitinfo" id="submitinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+           <div style="display: inherit; width:100%;" >
+               <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+               <span id="kvh-remodelcontentmessagesubmitinfo" style="padding-left:30px;">Are you sure you want to submit this order?</span>
+           </div>
+           <div style="text-align:center;">
+               <apex:commandLink styleClass="button" id="submitorder" value="Yes" reRender="submitorder" onclick="submitConfirm(); return false;">
+               </apex:commandLink>
+               <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="button remodal-cancel" style="text-decoration: underline;cursor:pointer;" >Cancel</a>
+           </div>
+       </div>
+       <!-- ** remodal submit popup End ** -->
+       
+       <!-- ** remodal submit popup Start ** -->
+       <div class="remodal" data-remodal-id="confirmsubmitinfo" id="confirmsubmitinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+           <div style="display: inherit; width:100%;" >
+               <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+               <span id="kvh-remodelcontentmessagesubmitinfo" >Order Successfully Submitted</span>
+           </div>
+           <div style="text-align:center;">
+               <a id="submitConfirminfobuttonremodel" onclick="submitConfirminfo(); return false;" style="text-decoration: underline;cursor:pointer;" >Ok</a>
+               <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="button remodal-cancel" style="display:none;text-decoration: underline;cursor:pointer;" >Cancel</a>
+           </div>
+       </div>
+       <!-- ** remodal submit popup End ** -->
+       
+   </apex:outputPanel>
+</apex:component>

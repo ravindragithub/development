@@ -1,0 +1,22 @@
+.THIS .cancelbutton{
+    margin-top : 0px !important;
+     margin-bottom : 0px !important;
+    border: 1px solid #1f83ad !important;
+    background: #fff !important;
+    color: #1f83ad !important;
+    text-shadow: none !important;
+}
+.THIS .continuebutton{
+    margin-bottom : 0px !important;
+     margin-top : 0px !important;
+}
+.THIS .cancelbutton .label{
+     color: #1f83ad !important;
+}
+.THIS .cancelbutton .label:hover, .THIS .cancelbutton:hover{
+   text-shadow: none !important;
+    color: #1f83ad !important;
+}
+.THIS a{
+    color: #1f83ad;
+}

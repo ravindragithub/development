@@ -1,0 +1,3 @@
+.THIS .comm-layout-column:not(:empty){
+    padding:0;
+}

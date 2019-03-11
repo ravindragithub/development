@@ -1,0 +1,58 @@
+<aura:component description="Document. Used to show single document result record">
+    
+    <aura:attribute name="document"
+                    type="ProductSearchClass.DocumentResult" 
+                    description="Used to store the single ProductSearchClass.DocumentResult record"/>
+    
+    <aura:attribute name="bool" type="boolean" default="false"/>
+    <aura:registerEvent name="showsalesAidspopup" type="c:showsalesAidspopup" description="show sales aids popup" />
+    
+        <div class="slds-grid slds-wrap slds-grid--vertical-align-center">
+            <table style="margin-bottom:0; margin-top:0;">
+                <tr class="textleft">
+                    <td class="slds-col aligncenter" style="padding: 10px 5px; width: 10%;">
+                        <aura:if isTrue="{!equals(v.document.logoId, 'NoIcon')}">
+                            <lightning:icon iconName="{!'doctype:'+v.document.lightningIcon}"
+                                            alternativeText="File"
+                                            size="medium"/>
+                            
+                            <aura:set attribute="else">
+                                <img src="{!v.document.logoId}"
+                                     style="height:75px;"/>
+                            </aura:set>
+                        </aura:if>
+                    </td>
+                    <td class="slds-col slds-p-vertical_medium wrappable" style="padding: 10px 5px; width: 35%;font-size:85%;">
+                        <h3 title="{!v.document.ct.Product_Document__r.Title_Display_Name__c}">
+                            <a onclick="{!c.download}">{!v.document.ct.Product_Document__r.Title_Display_Name__c}</a>
+                        </h3>
+                        <div class="slds-tile__detail slds-text-body--small uiOutputRichText">
+                            <ui:outputRichText value="{!v.document.ct.Product_Document__r.Sub_Title__c}"/>
+                        </div>
+                    </td>
+                    <td class="slds-col" style="padding: 10px 5px; width: 15%;">
+                        {!v.document.ct.Product_Document__r.Created_Date__c}
+                    </td>
+                    <td class="slds-col" style="padding: 10px 5px; width: 10%;">
+                        {!v.document.ct.Product_Document__r.Language__c}
+                    </td>
+                    <td class="slds-col" style="padding: 10px 5px; width: 10%;">
+                        {!v.document.ct.Product_Document__r.Revision__c}
+                    </td>
+                    <td class="slds-col" style="padding: 10px 5px; width: 10%;">
+                        {!v.document.ct.Product_Document__r.Size_Description__c}
+                    </td>
+                    <aura:if isTrue="{!v.bool}">
+                        <td class="slds-col" style="padding: 10px 5px; width: 10%;">
+                            {!v.document.ct.Product_Document__r.Associated_ProductIds__c}
+                        </td>
+                    </aura:if>
+                    <td class="slds-col" style="padding: 10px 5px; width: 10%;">
+                        <aura:if isTrue="{!v.document.ct.Product_Document__r.Sales_Aid__c}">
+                            <a href="javascript:void(0)" class="button" data-id="{!v.document.ct.Product_Document__c}" onclick="{!c.showpopup}">ORDER</a>
+                        </aura:if>
+                    </td>
+                </tr>
+            </table>
+        </div>    
+</aura:component>

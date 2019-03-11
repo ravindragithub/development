@@ -1,0 +1,18 @@
+<apex:page showHeader="false">
+    <img id="liveagent_button_online_573K0000000Cavk" style="display:none;border:0px none;cursor:pointer;width:100%;background:#000;" onclick="liveagent.startChat('573K0000000Cavk')" src="https://mykvh-kvhcommunity.cs9.force.com/myKVHCustomerPortal/resource/1539768363000/liveagent_online" />
+    <img id="liveagent_button_offline_573K0000000Cavk" style="display:none;border:0px none;width:100%;background:#7e7e7e;" src="https://mykvh-kvhcommunity.cs9.force.com/myKVHCustomerPortal/resource/1539768399000/liveagent_offline" />
+    <script type="text/javascript">
+        if (!window._laq) { window._laq = []; }
+        window._laq.push(function(){liveagent.showWhenOnline('573K0000000Cavk', document.getElementById('liveagent_button_online_573K0000000Cavk'));
+        liveagent.showWhenOffline('573K0000000Cavk', document.getElementById('liveagent_button_offline_573K0000000Cavk'));
+        });
+    </script>
+
+
+    <script type='text/javascript' src='https://c.la3-c1cs-phx.salesforceliveagent.com/content/g/js/44.0/deployment.js'></script>
+    <script type='text/javascript'>
+        liveagent.init('https://d.la3-c1cs-phx.salesforceliveagent.com/chat', '572K00000008OZq', '00DK000000WfR79');
+    </script>
+
+
+</apex:page>

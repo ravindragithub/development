@@ -1,0 +1,81 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" 
+                controller="myKVHEventPortalController" >
+    
+    <aura:attribute name="newsHeader" type="String" access="global"/>    
+    <aura:attribute name="selectedportalview" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>  
+    <aura:attribute name="showpopup" type="String" default="slds-hide"/>
+    <aura:attribute name="eventlist" type="EventPortalComponentController.EventWrapper[]" />
+    <aura:attribute name="toptwoeventlist" type="EventPortalComponentController.EventWrapper[]" />
+    <aura:attribute name="availableCheck" type="String" access="global" default="slds-hide"/>
+    <aura:attribute name="shownoeventimg" type="boolean" access="global" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="filter-box">
+        <aura:iteration items="{!v.toptwoeventlist}" var="event">
+            <div class="newsRow" >
+                <b style="font-size:14px"><aura:unescapedHtml value="{!event.EventTitle}"/></b>
+                <p><aura:unescapedHtml value="{!event.fromdate}"/> - <aura:unescapedHtml value="{!event.todate}"/></p>
+                <p><aura:unescapedHtml value="{!event.LocationName}"/></p>
+                <p><aura:unescapedHtml value="{!event.address1}"/></p>
+                <p><aura:unescapedHtml value="{!event.address2}"/></p>
+                <p><aura:unescapedHtml value="{!event.LocationRoom}"/></p>
+                <p><aura:unescapedHtml value="{!event.city}"/>&nbsp;<aura:unescapedHtml value="{!event.state}"/></p>
+                <aura:if isTrue="{!!empty(event.zip)}">
+                    <p><aura:unescapedHtml value="{!event.country}"/>,&nbsp;<aura:unescapedHtml value="{!event.zip}"/></p>
+                </aura:if>
+                <aura:if isTrue="{!event.zip == ''}">
+                    <p><aura:unescapedHtml value="{!event.country}"/></p>
+                </aura:if>                         
+            </div>
+        </aura:iteration>
+    </div>    
+    <aura:if isTrue="{!v.shownoeventimg}">
+        <div style="text-align:center;">                            
+            <img style="padding:10px" src="{!  '/resource/icons/noevent.jpg'}"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.eventlist.length > 0}">
+        <lightning:button variant="Neutral" label="More"
+                          onclick="{! c.openpopup }" class="go-btn width-auto"/>
+    </aura:if>
+    <div class="{!v.showpopup}" style="height: 640px;">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.closepopup}">
+                        <lightning:icon iconName="utility:close"/>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">KVH Events</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">                    
+                    <aura:iteration items="{!v.eventlist}" var="event">
+                        <div class="newstab">
+                            <b style="font-size:14px"><aura:unescapedHtml value="{!event.EventTitle}"/></b>
+                            <p><aura:unescapedHtml value="{!event.fromdate}"/> - <aura:unescapedHtml value="{!event.todate}"/></p>
+                            <p><aura:unescapedHtml value="{!event.LocationName}"/></p>
+                            <p><aura:unescapedHtml value="{!event.address1}"/></p>
+                            <p><aura:unescapedHtml value="{!event.address2}"/></p>
+                            <p><aura:unescapedHtml value="{!event.LocationRoom}"/></p>
+                            <p><aura:unescapedHtml value="{!event.city}"/>&nbsp;<aura:unescapedHtml value="{!event.state}"/></p>
+                            <aura:if isTrue="{!!empty(event.zip)}">
+                                <p><aura:unescapedHtml value="{!event.country}"/>,&nbsp;<aura:unescapedHtml value="{!event.zip}"/></p>
+                            </aura:if>
+                            <aura:if isTrue="{!event.zip == ''}">
+                                <p><aura:unescapedHtml value="{!event.country}"/></p>
+                            </aura:if>                         
+                        </div>
+                    </aura:iteration>
+                    
+                    
+                </div>
+                <footer class="slds-modal__footer">          
+                    <lightning:button variant="Neutral" label="Close"
+                                      onclick="{!c.closepopup}" class="go-btn"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+</aura:component>

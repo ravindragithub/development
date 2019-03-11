@@ -1,0 +1,924 @@
+<apex:page controller="FLAGS.SetupWizCtrl" id="pg" tabStyle="Setup_Wizard__tab" title="Case Flags Setup Wizard" sidebar="none">
+<apex:slds />
+<apex:stylesheet value="{!$Resource.FLAGS__CaseFlagsStyle}"/>
+
+<apex:includeScript value="/soap/ajax/22.0/connection.js"/>
+<apex:stylesheet value="{!URLFOR($Resource.FLAGS__CaseFlagsResources,'jquery/jquery-ui-1-11-4.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.FLAGS__CaseFlagsResources, 'jquery/jquery-1-12-0.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.FLAGS__CaseFlagsResources, 'jquery/jquery-ui-1-11-4.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.FLAGS__CaseFlagsResources, 'tagsinput/bootstrap-tagsinput.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.FLAGS__CaseFlagsResources, 'tagsinput/bootstrap-tagsinput.js')}"/>
+
+<c:Header title="Setup Wizard"/>
+<div class="slds-scope">
+<apex:form id="frm" >
+    <apex:actionStatus id="quickStatus">
+        <apex:facet name="start">
+            <apex:outputPanel >
+                <div class="slds-backdrop slds-backdrop_open" style="display:flex;">
+                    <div class="slds-align_absolute-center">
+                        <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                        <div><div class="slds-text-heading_large" style="font-weight:700;">Saving</div></div>
+                    </div>
+                </div>
+            </apex:outputPanel>
+        </apex:facet>
+    </apex:actionStatus>
+
+    <div id="instructions-nav" class="slds-tabs_default">
+        <ul class="slds-tabs_default__nav" role="tablist">
+            <li class="slds-tabs_default__item slds-is-active slds-has-focus" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-introduction" id="tab-introduction__item">Introduction</a></li>            
+            <li class="slds-tabs_default__item" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-salesforce-setup" id="tab-salesforce-setup__item">Salesforce Setup</a></li>
+            <li class="slds-tabs_default__item" role="presentation"  onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-general-setup" id="tab-general-setup__item">General Setup</a></li>
+            <li class="slds-tabs_default__item" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-flag-icons-and-default-hours" id="tab-flag-icons-and-default-hours__item">Flag Icons and Default Hours</a></li>
+            <li class="slds-tabs_default__item" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-event-rules" id="tab-event-rules__item">Event Rules</a></li>
+            <li class="slds-tabs_default__item" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-case-flags-history-tracking" id="tab-case-flags-history-tracking__item">Case Flags History Tracking</a></li>
+            <li class="slds-tabs_default__item" role="presentation" onclick="switchTabsInNav(this,'instructions-nav')"><a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-optional-settings" id="tab-optional-settings__item">Optional Settings</a></li>
+        </ul>
+    
+        <apex:pageMessages showDetail="false" />
+        <apex:actionFunction action="{!refreshPage}" name="refreshPage" reRender="flagSection1, flagSection2, flagSection3, flagSection4"/>
+        <apex:actionFunction action="{!radioChange}" name="radioChange" rerender="dummyPanel"/>
+        <apex:outputPanel id="dummyPanel"/>
+        <div id="tab-introduction" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-introduction_item">
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-box ">
+                    <div style="margin:10px;">
+                        Case Flags is a purpose-built add-on for Salesforce that helps you monitor your organization’s response times with cases, at a glance, via color coded flags. Case Flags allows you to quickly view cases requiring responses to customers. 
+                        <ul class="slds-list_dotted" style="margin-top:0.5rem">
+                            <li>Eliminate case neglect</li>
+                            <li>Avoid SLA violations</li>
+                            <li>Measure &quot;Initial Response&quot; (even in business hours)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <iframe style="z-index:0;" width="350" height="208" src="https://www.youtube.com/embed/__6vmZpf87c?wmode=opaque" frameborder="0"></iframe><br/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="tab-general-setup" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-general-setup_item">
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-box">
+                    <apex:outputPanel id="generalSection" >
+                        <div class="slds-form-element slds-m-left_large">
+                            <div class="slds-form-element_control">
+                                <div class="slds-form-element_label bold ">API Users</div>
+                                Enter a comma separated list of User IDs which should not clear the case flag when adding a comment. Typically, this would be for application context users who perform automated tasks. Be sure to include the Automated Case User in Support Settings or for Email to Case Premium, your Email Service Routing Address Context User(s).
+                                <br/>
+                                <apex:outputPanel id="exclude">
+                                    <apex:inputTextarea styleClass="tags" value="{!fp.FLAGS__ExcludedUsers__c}" html-data-role="tagsinput"/>
+                                </apex:outputPanel>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <apex:outputPanel id="formatRadio">
+                            <apex:actionFunction name="setFormatSelectionTo24" action="{!setFormatSelectionTo24}" rerender="businessHoursMessage,jobNotFoundMessage"/>
+                            <apex:actionFunction name="setFormatSelectionToBusiness" action="{!setFormatSelectionToBusiness}" rerender="businessHoursMessage,jobNotFoundMessage"/>
+                            <div class="slds-m-left_large bold" >Hours</div>
+                            <apex:outputPanel >
+                                <div>
+<!--                                     <apex:selectRadio value="{!formatSelection}" onchange="radioChange();">
+                                        <apex:selectOption itemValue="24" itemLabel="Standard Hours" id="standardHours"/>
+                                        <apex:selectOption itemLabel="Business Hours" itemValue="Business" id="businessHours"/>
+                                    </apex:selectRadio> -->
+                                    <fieldset class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-radio">
+                                                <input type="radio" id="standardHours" name="hoursRadio" value="24" />
+                                                <label class="slds-radio__label" for="standardHours" onclick="document.getElementById(this.htmlFor).checked=true;setFormatSelectionTo24();">
+                                                    <span class="slds-radio_faux"/>
+                                                    <span class="slds-form-element__label">Standard Hours</span>
+                                                </label>
+                                            </span>
+                                            <span class="slds-radio">
+                                                <input type="radio" id="businessHours" name="hoursRadio" value="Business" />
+                                                <label class="slds-radio__label" for="businessHours" onclick="document.getElementById(this.htmlFor).checked=true;setFormatSelectionToBusiness();">
+                                                    <span class="slds-radio_faux"/>
+                                                    <span class="slds-form-element__label">Business Hours</span>
+                                                </label>
+                                            </span>
+                                            <apex:outputPanel id="businessHoursMessage">
+                                                <div id="formatSelectionHidden" style="visibility:none" value="{!formatSelection}"/>
+                                                <apex:outputText rendered="{!IF(formatSelection == 'Business',TRUE,FALSE)}">
+
+                                                    <div class="slds-m-horizontal_large">
+                                                        Case Flags will exclude time elapsed outside of your company’s normal hours of operation. For example, if your company’s business hours are 8am to 6pm Mon-Fri, and a customer submits a case comment at 5pm on Friday, Case Flags will count 1 hour. Then at 6pm it will stop counting time until Monday at 8am when it will resume.&nbsp;<apex:outputLink value="/01m" target="_blank">See your company&#39;s business hours.</apex:outputLink>
+                                                    </div>  
+                                                   </apex:outputText>
+                                               </apex:outputPanel>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <apex:outputPanel id="jobNotFoundMessage">
+                                <apex:outputPanel style="color:red;" rendered="{!jobNotFound}" >Job not found, reselect Business Hours to reschedule Business Hours Job</apex:outputPanel></apex:outputPanel>
+
+                            </apex:outputPanel>
+
+                            <br/>
+                            <apex:outputPanel layout="block">
+                                <span class="slds-checkbox">
+                                    <apex:inputCheckbox value="{!fp.FLAGS__Organization_Wide__c}" id="organizationWide">
+                                        <apex:actionSupport event="onchange" action="{!organizationWideChange}" rerender=""/>
+                                    </apex:inputCheckbox>
+                                    <apex:outputLabel styleClass="slds-checkbox__label" for="organizationWide">
+                                        <span class="slds-checkbox_faux"/>
+                                        <apex:outputText styleClass="slds-m-left_x-small bold" value="Organization Wide"/>
+                                    </apex:outputLabel>
+                                </span>
+                                <br/>
+                                <div class="slds-m-horizontal_large">When enabled, all cases in the organization will be processed by Case Flags. If this option is disabled, you can set up workflow or an Apex trigger to set the "Enable Case Flags" checkbox field to true, based on criteria, for cases that should be processed.</div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <br/>
+                        <div rendered="{!fp.UseFuture__c || BizHoursCount > 1}" >
+                            <span class="slds-checkbox">
+                                <apex:inputField id="useFuture" value="{!fp.FLAGS__UseFuture__c}"/>
+                                <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.useFuture}">
+                                    <span class="slds-checkbox_faux"/>
+                                    <apex:outputText styleClass="slds-m-left_x-small bold" value="Use Jobs to Set Case Hours"/>
+                                </apex:outputLabel>
+                            </span>
+                            <div class="slds-m-horizontal_large">Apex Future methods will be used to set the custom Business Hours lookup on new cases. It is only necessary to enable this if your organization actively uses multiple sets of business hours and you have escalation rules that switch cases to non-default hours. Note that these jobs will count against certain Salesforce resource usage limits.</div>
+                        </div>
+                           <br/>
+                        <span class="slds-checkbox">
+                            <apex:inputField id="insertTriggerErrorComments" value="{!fp.FLAGS__InsertTriggerErrorComments__c}"/>
+                            <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.insertTriggerErrorComments}">
+                                <span class="slds-checkbox_faux"/>
+                                <apex:outputText styleClass="slds-m-left_x-small bold" value="Add Error Comments"/>
+                            </apex:outputLabel>
+                        </span>
+                        <div class="slds-m-horizontal_large">A private comment can be added to the case if a trigger cannot update flag fields, usually due to validation rules error.</div>
+                    </apex:outputPanel>
+                    <br/>
+                    <apex:commandButton styleClass="slds-button slds-button_brand slds-m-top_small" action="{!save}" rerender="quickStatus" status="quickStatus" value="Quick Save"/>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-salesforce-setup" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-salesforce-setup_item"> 
+            <div class="slds-p-horizontal_medium">     
+                <div class="slds-box">
+                    <apex:outputPanel id="SFDCSetup" >
+                        <div class="slds-text-longform instruction_row">   
+                            <div class="instruction_text_container">
+                                <span class="slds-text-heading_medium"><strong>Page Layout</strong></span>
+                                <p style="margin-left:10px; margin-top:0.5rem;">
+                                    In order to see the flag on the case page, you must add the field to your page layout(s).
+                                    <p/>
+                                    <ol>
+                                        <li> Go to Setup > Customize > Cases > Page Layouts. <a target="_blank" href="/ui/setup/layout/PageLayouts?type=Case&setupid=CaseLayouts">(click here to go there now)</a><br/></li>
+                                        <li> Choose &quot;Edit&quot; next to the layout(s) you want to update. <br/></li>
+                                        <li> Locate the &quot;Flag{!addBH}&quot; field and drag it onto your layout. <br/></li>
+                                        <li> Optional: Locate the Initial Response and Initial Response{!addBusiness} Hours fields, and drag them onto your layout(s).</li>
+                                    </ol>
+                                    Optional: Two custom buttons are available to manually clear and set the flag.
+                                    <p/>
+
+                                    <ol>
+                                        <li>While still on the case page layout, click &quot;Buttons&quot; on the left, then drag and drop the &quot;Clear Flag&quot; and &quot;Set Flag&quot; buttons to the &quot;Custom Buttons&quot; area of the page layout.  <br/></li>
+                                        <li>Click &quot;Save&quot;.<br/></li>
+                                        <li>To grant profiles the ability to manually Clear a flag via a custom button on the case page, <a href="/_ui/perms/ui/profile/ApexPageProfilePermissionEdit/e?apex_id={!ClearFlagPageId}&apex_name=FlagClear&apex_namespace=FLAGS&save_button=has_save_button&setupid=ApexPages" target="_blank">click here and move desired profiles to the Enabled box.</a> <br/></li>
+                                        <li>To grant profiles the ability to manually Set a flag via a custom button, <a href="/_ui/perms/ui/profile/ApexPageProfilePermissionEdit/e?apex_id={!SetFlagPageId}&apex_name=FlagNow&apex_namespace=FLAGS&save_button=has_save_button&setupid=ApexPages" target="_blank">click here and move desired profiles to the Enabled box.</a></li>
+                                    </ol>
+                                </p>
+                                <br/>
+                                <span class="slds-text-heading_medium"><strong>List Views</strong></span>
+
+                                <p style="margin-left:10px;margin-top:0.5rem">
+                                    The flag field can also be added to your case list views.
+                                    <ol>
+                                        <li> While displaying a case view, click &quot;Edit&quot; above the header bar to enter the view setup tool. <br/></li>
+                                        <li> In the &quot;Available Fields&quot; box, select the &quot;Flag{!addBH}&quot; item and click the &quot;Add&quot; arrow. Position the field using the arrows to the right of the &quot;Selected Fields&quot; box.<br/></li>
+                                        <li> Click &quot;Save&quot;.<br/></li>
+                                    </ol>
+                                    Optional: Two custom buttons are available to clear and set the flags on multiple cases from list views. (Note: All users will have access to set and clear flags via these buttons.)
+                                    <br/>                                
+                                    <ol style="margin-top:0.5rem">
+                                        <li><a target="_blank" href="/ui/setup/layout/ListLayouts?type=Case&setupid=CaseSearchLayouts">Click here to open Case Search Layouts.</a><br/></li>
+                                        <li>Edit Cases List View or Search Results and then move &quot;Set Flags&quot; and &quot;Clear Flags&quot; into the &quot;Selected Buttons&quot; panel.</li>
+                                    </ol>
+                                </p>
+                            </div>
+                            <div class="instruction_img_container">
+                                <apex:image value="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/case-detail.png') }" style="float:right;margin-top:0px;clear:right;"/>
+                                <apex:image value="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/list-view.png') }" style="float:right;margin-top:25px;clear:right;"/>
+                            </div>
+
+                        </div>
+                        
+                    </apex:outputPanel>
+                    <div class="slds-button-group">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-flag-icons-and-default-hours" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-flag-icons-and-default-hours_item">
+            <div class="slds-p-horizontal_medium">        
+                <div class="slds-box">
+                    <div class="instruction_row">
+                        <div class="instruction_text_container">
+                            <p style="margin-left:10px;">
+                                Choose the flag icons and when to set them.
+                            </p>
+                            <table class="slds-table" style="max-width:400px;">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        Flag 1
+                                    </td>
+                                    <apex:outputPanel id="list2">
+                                        <td>
+                                            <apex:outputPanel id="flagSection1">
+                                                    <apex:image value="/servlet/servlet.FileDownload?file={!fp.FLAGS__Offset1Image__c}" style="margin-right:5px;"/>
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td> 
+                                            After <apex:inputField value="{!fp.FLAGS__TimeOffset1__c}" style="border-radius: 3px; border: 1px solid #d8dde6; padding-left:2px; margin-left:5px;margin-right:5px;width:40px;"/>Hours    
+                                        </td>
+                                        <td>    
+                                            <apex:selectList styleClass="slds-select" multiselect="false" size="1" onchange="refreshPage();" style="padding-left:4px;margin-left:20px;" value="{!fp.FLAGS__Offset1Image__c}">
+                                                <apex:selectOptions value="{!FlagImageOptions}"/>
+                                            </apex:selectList>
+
+                                            <apex:inputField value="{!fp.FLAGS__Offset1Image__c}" rendered="false"/>
+                                        </td>
+                                    </apex:outputPanel>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Flag 2
+                                    </td>
+                                    <apex:outputPanel id="list3">
+                                        <td>
+                                            <apex:outputPanel id="flagSection2">
+                                                <apex:image value="/servlet/servlet.FileDownload?file={!fp.FLAGS__Offset2Image__c}" style="margin-right:5px;"/>
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td> 
+                                            After <apex:inputField value="{!fp.FLAGS__TimeOffset2__c}" style="border-radius: 3px; border: 1px solid #d8dde6; padding-left:2px; margin-left:5px;margin-right:5px;width:40px;"/>Hours
+                                        </td>
+                                        <td>        
+                                            <apex:selectList styleClass="slds-select" multiselect="false" size="1" onchange="refreshPage();" style="padding-left:4px;margin-left:20px;" value="{!fp.FLAGS__Offset2Image__c}">
+                                                <apex:selectOptions value="{!FlagImageOptions}"/>
+                                            </apex:selectList>
+
+                                            <apex:inputField value="{!fp.FLAGS__Offset2Image__c}" rendered="false"/>
+                                        </td>
+                                    </apex:outputPanel>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Flag 3
+                                    </td>
+                                    <apex:outputPanel id="list4">
+                                        <td>
+                                            <apex:outputPanel id="flagSection3">
+                                                <apex:image value="/servlet/servlet.FileDownload?file={!fp.FLAGS__Offset3Image__c}" style="margin-right:5px;"/>
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td> 
+                                            After <apex:inputField value="{!fp.FLAGS__TimeOffset3__c}" style="border-radius: 3px; border: 1px solid #d8dde6; padding-left:2px; margin-left:5px;margin-right:5px;width:40px;"/>Hours 
+                                        </td>
+                                        <td>       
+                                            <apex:selectList styleClass="slds-select" multiselect="false" size="1" onchange="refreshPage();" style="padding-left:4px;margin-left:20px;" value="{!fp.FLAGS__Offset3Image__c}">
+                                                <apex:selectOptions value="{!FlagImageOptions}"/>
+                                            </apex:selectList>
+                                            <apex:inputField value="{!fp.FLAGS__Offset3Image__c}" rendered="false"/>
+                                        </td>
+                                    </apex:outputPanel>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Flag 4
+                                    </td>
+                                    <apex:outputPanel id="list5">
+                                        <td>
+                                            <apex:outputPanel id="flagSection4">
+                                                <apex:image value="/servlet/servlet.FileDownload?file={!fp.FLAGS__Offset4Image__c}" style="margin-right:5px;"/>
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td> 
+                                            After <apex:inputField value="{!fp.FLAGS__TimeOffset4__c}" style="border-radius: 3px; border: 1px solid #d8dde6; padding-left:2px; margin-left:5px;margin-right:5px;width:40px;"/>Hours
+                                        </td>
+                                        <td>        
+                                            <apex:selectList styleClass="slds-select" multiselect="false" size="1" onchange="refreshPage();" style="padding-left:4px;margin-left:20px;" value="{!fp.FLAGS__Offset4Image__c}">
+                                                <apex:selectOptions value="{!FlagImageOptions}"/>
+                                            </apex:selectList>
+                                        </td>
+                                        <apex:inputField value="{!fp.FLAGS__Offset4Image__c}" rendered="false"/>
+                                    </apex:outputPanel>
+                                    <apex:outputLabel value="" />
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <p style="margin-left:10px;">
+                                You may also add custom icons by uploading them to the Case Flags Documents folder in the Documents tab. Image files should be either GIF or PNG and 16x16. After uploading graphic files to Documents, you must refresh this page to be able to select them. <a href="/015?fcf={!ImageFolderId}" target="_blank">Click here to add custom icons</a>.
+                            </p>
+                            <apex:commandButton styleClass="slds-button slds-button_brand slds-m-top_small" action="{!save}" rerender="quickStatus" status="quickStatus" value="Quick Save"/>
+                        </div>
+                        <div class="instruction_img_container">
+                            <apex:outputPanel >
+                                <apex:image value="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/flag-example.png') }" />
+                            </apex:outputPanel>
+                        </div> 
+                    </div>
+                </div>
+                
+            </div>           
+        </div>
+
+        <div id="tab-event-rules" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-event-rules_item">
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-box">
+                    <apex:outputPanel id="pbsEventRules" >
+                        <div class="instruction_row">
+                            <div class="instruction_text_container">
+
+                                <div >
+                                    <h3 class="slds-section__title">&nbsp;Case Open / Close</h3>
+                                    <div class="slds-m-left_small slds-section slds-is-open">
+                                        <apex:outputPanel styleClass="seeMore">
+                                            <span class="slds-checkbox">
+                                                <apex:inputCheckbox id="setOnCCreate" value="{!fp.FLAGS__SetOnCaseCreate__c}"/> 
+                                                <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.setOnCCreate}">
+                                                    <span class="slds-checkbox_faux"></span>
+                                                    <apex:outputText styleClass="slds-m-left_x-small bold" value="Set Flag on Case Creation"/>
+                                                </apex:outputLabel> <br/>
+                                            </span>
+                                            <div class="slds-m-left_large">
+                                                Select if you want the case flag to automatically be set when a new case is created. <br/>
+                                                <div style="width:60px;"><u>See Logic</u><span>Case is created.</span></div>
+                                            </div>
+
+                                            <br/>
+                                            <span class="slds-checkbox">
+                                                <apex:inputCheckbox id="clearOnCClose" value="{!fp.FLAGS__ClearOnCaseClose__c}"/> 
+                                                <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.clearOnCClose}">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <apex:outputText styleClass="slds-m-left_x-small bold" value="Clear Flag on Case Close"/>
+                                                </apex:outputLabel> <br/>
+                                            </span>
+                                            <div class="slds-m-left_large">
+                                                Select if you want the case flag to automatically clear when the case has been closed.<br/>
+                                                <div style="width:60px;"><u>See Logic</u><span>Case is updated to have a closed status.</span></div>
+                                            </div>
+                                            <br/>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+
+                                <div >
+                                    <h3 class="slds-section__title">&nbsp;Email to Case</h3>
+                                    <div class="slds-m-left_small slds-section slds-is-open">
+                                        <apex:outputPanel styleClass="seeMore">
+                                            <span class="slds-checkbox">
+                                                <apex:inputField id="setOnInbound" value="{!fp.FLAGS__AllowWriteAfterEmail__c}"/> 
+                                                <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.setOnInbound}">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <apex:outputText styleClass="slds-m-left_x-small bold" value="Set Flag on Inbound Email"/>
+                                                </apex:outputLabel>
+                                            </span>
+                                            <div class="slds-m-left_large">
+                                                Select if you want the case flag to automatically be set after a customer has sent an email to the case.<br/>
+                                                <div style="width:60px;"><u>See Logic</u><span>Inbound equals True<br/>Email domain not equal to company domain (if supplied)</span></div>
+                                            </div>
+                                            <br/>
+                                            <span class="slds-checkbox">
+                                                <apex:inputField id="clearOnOutbond" value="{!fp.FLAGS__AllowClearAfterEmail__c}"/> 
+                                                <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.clearOnOutbond}">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <apex:outputText styleClass="slds-m-left_x-small bold" value="Clear Flag on Outbound Email"/>
+                                                </apex:outputLabel> <br/>
+                                            </span>
+                                            <div class="slds-m-left_large">
+                                                Select if you want the case flag to automatically clear after a user has sent an email to the customer.<br/>
+                                                <div style="width:60px;"><u>See Logic</u><span>Inbound equals False<br/>Email domain equals company domain (if supplied)</span></div>
+                                            </div>
+                                            <br/>
+                                            <div class="slds-m-horizontal_large">
+                                                <apex:outputLabel styleClass="bold" value="Company Domain" for="{!$Component.companyDomain}"/>
+                                                <div>Enter the domain from which your company's email is sent. This is used to distinguish between emails from your users and those from customers when setting or clearing the flag. <!-- For a complete description of the behavior, refer to the Event Rules section below. --></div>
+                                                <span class="slds-form-element__control" style="display:inline !important;"><apex:inputField styleClass="slds-input" id="companyDomain" value="{!fp.FLAGS__CompanyDomain__c}" style="width:220px;"/></span>
+                                            </div>                                            
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                                <div id="pbsiWebPortal">
+                                    <h3 class="slds-section__title">&nbsp;Communities &amp; Portals</h3>
+                                        <div class="slds-m-left_small slds-section slds-is-open">
+                                            <apex:outputPanel styleClass="seeMore">
+                                                <span class="slds-checkbox">
+                                                    <apex:inputField id="setOnCustComment" value="{!fp.FLAGS__AllowWriteAfterComment__c}" onchange="updateExamineCommentCompanyDomain();"/> 
+                                                    <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.setOnCustComment}">
+                                                        <span class="slds-checkbox_faux"/>
+                                                        <apex:outputText styleClass="slds-m-left_x-small bold" value="Set Flag on Customer or Partner Comment"/>
+                                                    </apex:outputLabel> <br/>
+                                                    <div class="slds-m-left_large">
+                                                        Select if you are using either the Customer / Partner Communities or Portals or the Self Service Portal, and would like the flag set on cases when an external user adds a comment.<br/>
+                                                        <div style="width:80px;"><u>See Logic</u><span>Public equals True<br/>UserType not equal to &quot;Standard&quot; OR Self-service user equals true OR user is listed in API User list above</span></div>
+                                                    </div>
+                                                    <br/>
+                                                </span>
+                                                <span id="examineCommentCompanyDomainWrapper" class="slds-checkbox" style="padding-left: 32px; display:block;">
+                                                    <apex:inputField id="examineCommentCompanyDomain" value="{!fp.FLAGS__ExamineCommentCompanyDomain__c}"/> 
+                                                    <apex:outputLabel styleClass="slds-checkbox__label" for="{!$Component.examineCommentCompanyDomain}">
+                                                        <span class="slds-checkbox_faux"/>
+                                                        <apex:outputText styleClass="slds-m-left_x-small bold" value="Exclude Comments with Company Domain"/>
+                                                    </apex:outputLabel> <br/>
+                                                    <div class="slds-m-left_large">
+                                                        Select if Case Flags is being used in conjunction with Email to Case Premium.<br/>
+                                                        <div style="width:60px;"><u>See Logic</u><span>Description contains &quot;From: &lt;{!IF(fp.CompanyDomain__c <> '', 'someone@' & fp.CompanyDomain__c, 'someone@company-domain-set-above.com')}&gt;&quot;</span></div>
+                                                    </div>
+                                                </span>
+                                                <br/>
+                                                <span class="slds-checkbox">
+                                                    <apex:inputField id="clearOnUserComment" value="{!fp.FLAGS__AllowClearAfterComment__c}"/> 
+                                                    <apex:outputLabel styleClass="slds-checkbox__label" for="clearOnUserComment">
+                                                        <span class="slds-checkbox_faux"/>
+                                                        <apex:outputText styleClass="slds-m-left_x-small bold" value="Clear Flag on User Comment"/>
+                                                    </apex:outputLabel> <br/>
+                                                    <div class="slds-m-left_large">
+                                                        Select if you are using either the Customer / Partner Communities or Portals or the Self Service Portal, and would like the flag cleared when an internal user adds a comment.<br/>
+                                                        <div style="width:80px;"><u>See Logic</u><span>Public equals True<br/>UserType equals &quot;Standard&quot; OR Self-service user equals False<br/> CreatedBy Does Not Equal API User(s)</span></div>
+                                                        
+                                                    </div>
+                                                </span>
+                                                <br/><br/>
+                                                <span class="slds-checkbox">                                                
+                                                    <apex:inputField id="setOnEAttachment" value="{!fp.FLAGS__AllowWriteAfterAttachment__c}"/>
+                                                    <apex:outputLabel styleClass="slds-checkbox__label" for="setOnEAttachment">
+                                                        <span class="slds-checkbox_faux"/>
+                                                        <apex:outputText styleClass="slds-m-left_x-small bold" value="Set Flag on Case Attachment"/>
+                                                    </apex:outputLabel> <br/>
+                                                    <div class="slds-m-left_large">
+                                                        Select if you want the case flag to automatically be set when an attachment is added to a case by an external user. <br/>
+                                                        <div style="width:80px;"><u>See Logic</u><span>Attachment added to case AND attachment owner UserType not equal to &quot;Standard&quot;.</span></div>
+                                                        <br/>
+                                                    </div>
+                                                </span>
+                                                <br/>
+                                                    <span class="slds-checkbox">
+                                                        <apex:inputField id="setOnFile" value="{!fp.FLAGS__AllowWriteAfterFile__c}"/>
+                                                        <apex:outputLabel styleClass="slds-checkbox__label" for="setOnFile">
+                                                            <span class="slds-checkbox_faux"/>
+                                                            <apex:outputText styleClass="slds-m-left_x-small bold" value="Set Flag on Case File"/>
+                                                        </apex:outputLabel> <br/>
+                                                        <div class="slds-m-left_large">
+                                                            Select if you want the case flag to automatically be set when a file is added to a case by an external user. <br/>
+                                                            <div style="width:80px;"><u>See Logic</u><span>File added to case AND running user&apos;s UserType not equal to &quot;Standard&quot;.</span></div>
+                                                            <br/>
+                                                        </div>
+                                                    </span>
+                                                </apex:outputPanel>
+                                        </div>
+                                </div>
+                                <div >
+                                    <h3 class="slds-section__title">&nbsp;Activities</h3>
+                                    <div class="slds-m-left_small slds-section slds-is-open">
+                                        <apex:outputPanel styleClass="seeMore"> 
+                                            <span class="slds-checkbox">
+                                                <apex:inputField styleClass="slds-form-element__label" id="clearOnActivity" value="{!fp.FLAGS__AllowClearAfterActivity__c}" onchange="updateActivityTypeSelection();"/>
+                                                <apex:outputLabel styleClass="slds-checkbox__label" for="clearOnActivity">
+                                                    <span class="slds-checkbox_faux"/>
+                                                     <apex:outputText styleClass="slds-m-left_x-small bold" value="Clear Flag on Activity/Task"/>
+                                                </apex:outputLabel> 
+                                            </span><br/>
+                                            <div class="slds-m-left_large">
+                                                Select if your users log calls by adding activities and the flag should be cleared when a completed activity (task) is added. <br/>
+                                                Be sure that the Type field on the Task object is visible to all profiles.<br/>
+                                                <div style="width:60px;"><u>See Logic</u><span>Activity Status is set to Closed = True (defined on the Type Picklist Field Value)<br/>Activity Type = '[Specified Type]'</span></div><br/>
+                                            </div>
+                                            <span id="activityTypeWrapper" class="slds-checkbox" style="padding-left: 32px; display:block;">
+                                                <div class="slds-m-left_large">
+                                                    <apex:outputLabel for="activityType"><strong>Activity Type</strong></apex:outputLabel><br/>
+                                                    <apex:selectList styleClass="slds-select" id="activityType" value="{!fp.FLAGS__EnabledActivityType__c}" size="1" style="max-width:200px">
+                                                    Select the activity type which should clear the flag when completed if clear flag on activity/task is enabled. <br/>
+                                                        <apex:selectOptions value="{!activityTypeOptions}"/>
+                                                    </apex:selectList>
+                                                </div>
+                                            </span>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+
+                                <apex:commandButton styleClass="slds-button slds-button_brand slds-m-around_medium" action="{!save}" rerender="quickStatus" status="quickStatus" value="Quick Save"/>
+                            </div>
+                            
+                            <div class="instruction_img_container">
+                                <apex:outputPanel >
+                                    <apex:image value="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/flag-diagram.png') }" style="float:right;"/>
+                                </apex:outputPanel>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-case-flags-history-tracking" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-case-flags-history-tracking_item">
+            <div class="slds-m-horizontal_medium">
+                <div class="slds-box">
+                    <apex:outputPanel id="pbsHist">
+                        <apex:outputPanel id="pbsHist1Column">
+                            <div class="slds-text-longform" >
+                                <apex:outputLabel value=""/>
+                                <apex:outputPanel >
+                                    Case Flags History Tracking enables you to report on your performance handling
+                                    cases. For example, you can determine which users respond to customers
+                                    the fastest (and the slowest).<br/>
+                                </apex:outputPanel>
+                            </div>
+                            <div class="slds-m-left_large">
+                                <ul>
+                                <apex:outputPanel id="pbsiEnableHistory">
+                                    <li >
+                                        <span class="slds-checkbox">
+                                        <apex:inputField id="enableHistory" value="{!fp.FLAGS__Enable_History__c}" onchange="checkDisableHistoryCBs();"/>
+                                            <apex:outputLabel styleClass="slds-checkbox__label" for="enableHistory">
+                                                <span class="slds-checkbox_faux"/>
+                                                <span class="slds-m-horizontal_x-small"><strong> Enable Case Flags History</strong></span>
+                                            </apex:outputLabel>
+                                        </span>
+                                    </li>
+                                </apex:outputPanel>
+                                <div class="slds-m-left_large">
+                                    <apex:outputPanel id="pbsiTrackClear">
+                                        <li styleClass="historySettingIndent">
+                                            <span class="slds-checkbox">
+                                            <apex:inputField styleClass="slds-checkbox__label" id="trackClear" value="{!fp.FLAGS__Track_Flag_Clear__c}" html-disabled="{!IF(fp.FLAGS__Enable_History__c,true,false)}"/>
+                                                <apex:outputLabel styleClass="slds-checkbox__label" id="lblTrackClear" for="trackClear">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <span class="slds-m-horizontal_x-small"><strong> Track Case Flag Clear</strong></span>
+                                                </apex:outputLabel>
+                                            </span>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="pbsiTrackSet">
+                                        <li styleClass="historySettingIndent">
+                                            <span class="slds-checkbox">
+                                            <apex:inputField styleClass="slds-checkbox__label" id="trackSet" value="{!fp.FLAGS__Track_Flag_Set__c}"/>
+                                                <apex:outputLabel styleClass="slds-checkbox__label" id="lblTrackSet" for="trackSet">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <span class="slds-m-horizontal_x-small"><strong> Track Case Flag Set</strong></span>
+                                                </apex:outputLabel>
+                                            </span>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="pbsiTrackOwner">
+                                        <li styleClass="historySettingIndent">
+                                            <span class="slds-checkbox">
+                                            <apex:inputField styleClass="slds-checkbox__label" id="trackOwner" value="{!fp.FLAGS__Track_Case_Ownership__c}"/>
+                                                <apex:outputLabel styleClass="slds-checkbox__label" id="lblTrackOwner" for="trackOwner">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <span class="slds-m-horizontal_x-small"><strong> Track Case Ownership Changes</strong></span>
+                                                </apex:outputLabel>
+                                            </span>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="pbsiTrackStatus">
+                                        <li styleClass="historySettingIndent">
+                                            <span class="slds-checkbox">
+                                            <apex:inputField styleClass="slds-checkbox__label" id="trackStatus" value="{!fp.FLAGS__Track_Case_Status__c}"/>
+                                                <apex:outputLabel styleClass="slds-checkbox__label" id="lblTrackStatus" for="trackStatus">
+                                                    <span class="slds-checkbox_faux"/>
+                                                    <span class="slds-m-horizontal_x-small"><strong> Track Case Status Changes</strong></span>
+                                                </apex:outputLabel>
+                                            </span>
+                                        </li>
+                                    </apex:outputPanel>
+                                </div>
+                                </ul>
+                            </div>
+                            <br/>
+                            <div >
+                                <!-- indents the output panel below -->
+                                <apex:outputLabel value=""/>
+                                <apex:outputPanel >
+                                    In order for Case Flags History Tracking records to be created for Users, their profile must have permissions on the object enabled.
+                                    <span id="sel-sec">
+                                        <div class="slds-m-around_large">
+                                            <dt>Click <a href="/{!LEFT(sysAdminProfId,15)}" target="_blank">here</a> or go to Administrator <i>Setup</i> | <i>Manage Users</i> | <i>Profiles</i> | <i>System Administrator</i>, then select which User Interface that matches what you see in your org.</dt>
+                                            <br/>
+                                            <ul>
+                                                <li id="std-sec-li" onclick="selectStandardUI();">
+                                                    <input id="std-sec-radio" type="radio" name="profileUI"/> <span>Standard Profile User Interface</span>
+                                                    <img id="std-sec-image" src="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/Standard_Profile_User_Interface.png') }"></img>
+                                                </li>
+                                                <li id="e-sec-li" onclick="selectEnhancedUI();">
+                                                    <input id="e-sec-radio" type="radio" name="profileUI"/> <span>Enhanced Profile User Interface</span>
+                                                    <img id="e-sec-image" src="{!URLFOR($Resource.Case_Flags_Assets,'case-flags-assets/Enhanced_Profile_User_Interface.png') }"></img>
+                                                </li>
+                                            </ul>
+                                            <br/>
+                                        <apex:outputPanel >
+                                            <dl id="std-sec">
+                                                <dt>Setting Object and Field Level Security with the Standard Profile User Interface.</dt>
+                                                1. Go to Setup > Customize > Administration Setup > Manage Users > Profiles. <a target="_blank" href="{!profilesPage}">(click here to go there now)</a><br/>
+                                                2. Find the Profile you would like to enable History Tracking for and click on the name.<br/>
+                                                3. Click &quot;Edit&quot; at the top of the profile detail page.<br/>
+                                                4. Locate the section titled &quot;Custom Object Permissions&quot; and find Case Flags History Tracking within it. Make sure the &quot;Read&quot; and &quot;Create&quot; options are checked and click &quot;Save&quot;.<br/>
+                                                5. Locate the section title &quot;Custom Field-Level Security&quot; and find Case Flags History Tracking within it. Click &quot;View&quot; next to it.<br/>
+                                                6. Check the &quot;Edit Access&quot; option for each field and click &quot;Save&quot;.
+                                            </dl>
+                                            <dl id="e-sec">
+                                                <dt>Setting Object and Field Level Security with the Enhanced Profile User Interface.</dt>
+                                                1. Go to Setup > Customize > Administration Setup > Manage Users > Profiles. <a target="_blank" href="{!profilesPage}">(click here to go there now)</a><br/>
+                                                2. Find the Profile you would like to enable History Tracking for and click on the name.<br/>
+                                                3. Locate the section title &quot;Apps&quot; and click on &quot;Object Settings&quot; within it. <br/>
+                                                4. Find &quot;Case Flags History Tracking&quot; in the list and click on it.<br/>
+                                                5. Click &quot;Edit&quot; at the top of the page.<br/>
+                                                6. Locate the section titled &quot;Object Permissions&quot; and make sure the &quot;Read&quot; and &quot;Create&quot; options are checked.<br/>
+                                                7. Locate the section titled &quot;Field Permissions&quot; and check the &quot;Edit Access&quot; option for each field and click &quot;Save&quot;.
+                                            </dl>
+                                        </apex:outputPanel>
+                                        </div>
+                                    </span>
+                                </apex:outputPanel>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    <apex:commandButton styleClass="slds-button slds-button_brand" action="{!save}" rerender="quickStatus" status="quickStatus" value="Quick Save"/>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-optional-settings" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-optional-settings_item">
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-box ">
+                    <apex:outputPanel id="pbsALF" >
+                        <div class="slds-section slds-is-open slds-text-longform">
+                            <h3 class="slds-section__title"> &nbsp;Account Level Flags (Optional) </h3>
+                            <p >
+                                Account Level Flags allow you to override the default hours specified
+                                on an account-by-account basis. Account Level Flags can be set
+                                individually or en masse. Account Level Flags need not be specified for
+                                every account; the default hours specified above will be used automatically
+                                in the absence of Account Level Flags. See our <a href="http://ic.force.com/cfash" target="_blank">frequently asked
+                                questions (FAQ) on Account Level Flags</a>.
+                            </p>
+                            
+                            <span class="slds-text-heading" style="font-weight:700;"> Account Fields </span>
+                            <p >
+                            To get started, add the Case Flags Age 1, Case Flags Age 2, Case Flags Age 3, and Case Flags Age 4
+                            custom fields to your account page layout(s). Use the properties available
+                            in Field Level Security (EE and UE only) and Page Layouts to ensure that only
+                            the desired profiles can view and edit the values on these fields.
+                            </p>
+                            
+                            <span class="slds-text-heading" style="font-weight:700;"> Configuration</span>
+                            <p >
+                            To configure for individual accounts, simply edit
+                            the values in the Case Flags Age fields directly.
+                            <p/>
+                            To configure account level flags en masse, or to configure sets of hours
+                            based on Account criteria, use one of the following approaches:
+                            <ul>
+                            <li>Enhanced List Views with Inline Editing allow for mass editing 200
+                            records at a time. Carefully review <a href="https://help.salesforce.com/HTViewHelpDoc?id=inline_editing_in_a_list.htm&language=en_US" target="_blank">this Salesforce Help article</a>,
+                            paying specific attention to considerations if you use Record Types. Configure a
+                            list view with the desired criteria, record type filter (if applicable),
+                            and include the Case Flags Age X fields.</li>
+                            <li>Reporting and DataLoader will allow for mass editing an unlimited
+                            quantity of records. You can simply run an update operation on accounts
+                            matching criteria to set the desired hour values. Consult your Salesforce
+                            administrator, consulting partner or Internet Creations professional
+                            services for assistance with setting account level flags.</li>
+                            <li>DemandTools and other data manipulation tools will also make quick work
+                            of setting account level flags.</li>
+                            </ul>
+                            </p>
+                        </div>
+                    </apex:outputPanel>
+
+                <apex:outputPanel id="pbsCLF">
+                    <h3 class="slds-section__title"> &nbsp;Class Level Flags (Optional) </h3>      
+                    <apex:outputPanel >
+                        <div class="slds-section slds-is-open">
+                        Case Level Flags allow you to override the default hours specified on a Case with the use of Workflow Rules and Triggers.  Refer to <a href="http://kb.internetcreations.com/?kb=000001893" target="_blank">our knowledge base</a> for additional assistance.
+                        <p/>
+                        For further assistance, please contact your Salesforce administrator, Salesforce implementation partner, or your Internet Creations account executive to inquire about professional services.
+                        </div>
+                    </apex:outputPanel>
+
+                </apex:outputPanel>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-m-top_medium" style="display:flex; justify-content: center;">
+            <div>
+                <button id='previous-button' class='slds-button slds-button_neutral' style='display:none;' onclick="switchTabsInNav(getActiveTab('instructions-nav').previousElementSibling,'instructions-nav'); return false;">Back</button>
+                <button id='next-button' class='slds-button slds-button_brand' onclick="switchTabsInNav(getActiveTab('instructions-nav').nextElementSibling,'instructions-nav'); return false;">Next - App Setup</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TAB NAVIGATION -->
+    <script src="{!$Resource.TabNavigation}" type="text/javascript"></script>
+    <script>
+        $(document).ready(function(){
+            if($("#formatSelectionHidden").attr("value") == "24")
+                $("#standardHours").attr('checked',true);
+            else
+                $("#businessHours").attr('checked',true);
+        });
+        function updateButtons() {
+            var listItem = getActiveTab();
+            var hasNext = listItem.nextElementSibling !== null;
+            var hasPrev = listItem.previousElementSibling !== null;
+
+            var nextButton = document.getElementById('next-button');
+            var prevButton = document.getElementById('previous-button')
+            var buttonsContainer = nextButton.parentElement;
+
+            if(hasNext && hasPrev) {
+                buttonsContainer.classList.add('slds-button-group');
+                buttonsContainer.setAttribute('role','group');
+            }
+            else {
+                buttonsContainer.classList.remove('slds-button-group');
+                buttonsContainer.removeAttribute('role');
+            }
+
+            buttonsContainer.classList.add('slds-button-group');
+            buttonsContainer.setAttribute('role','group');
+
+            nextButton.style.display = hasNext ? 'block' : 'none';
+            prevButton.style.display = hasPrev ? 'block' : 'none'
+
+            nextButton.innerHTML = hasNext ? 'Next - ' + listItem.nextElementSibling.querySelector('a.slds-tabs_default__link').innerHTML : '';
+            prevButton.innerHTML = hasPrev ? 'Previous - ' + listItem.previousElementSibling.querySelector('a.slds-tabs_default__link').innerHTML : '';
+        }
+        LDSTabsOnSwitch = updateButtons;
+    </script>
+</apex:form>
+</div>
+<script>
+    var tagsElem = ".tags",
+        autoElem = ".bootstrap-tagsinput input[type='text']";
+
+    $(tagsElem).tagsinput({itemValue: "id",itemText: "name"});
+    $(autoElem).autocomplete({
+        minLength: 2,
+        delay: 500,
+        source: function(request, response) {
+            var users = [];
+            var queryTerm = $.trim(request.term);
+            if (queryTerm.length < 2)
+                $(autoElem).autocomplete("close");
+            else {
+                sforce.connection.sessionId = "{!$Api.Session_Id}";
+                var records = sforce.connection.query("SELECT Id,Name FROM User WHERE IsActive = true AND UserType = 'Standard' AND Name LIKE '%"+queryTerm+"%' ORDER BY Name ASC LIMIT 10").getArray("records");
+                for (var i = 0;i < records.length;i++)
+                    users.push({label: records[i].Name,value: records[i].Id});
+                
+                if ((queryTerm.length == 15 || queryTerm.length == 18) && queryTerm.indexOf('005') == 0) {
+                    try {
+                        records = sforce.connection.query("SELECT Id,Name FROM User WHERE IsActive = true AND UserType = 'Standard' AND Id = '"+queryTerm+"' LIMIT 1").getArray("records");
+                        if (records.length == 1)
+                            users.push({label: records[0].Name,value: records[0].Id});
+                    } catch(e) {}
+                }
+            }
+            response(users);
+        },
+        focus: function(event, ui) {
+            return false;
+        },
+        select: function(event, ui) {
+            $(tagsElem).tagsinput('add', { "id": ui.item.value, "name": ui.item.label});
+            event.target.value = '';
+            $(autoElem).autocomplete("close");
+            return false;
+        }
+    });
+
+    function preventEnter(e) {
+        var keyCode = window.event ? window.event.keyCode : e.which;
+        console.log(keyCode);
+        if (keyCode == 13) {
+            e.preventDefault();
+        }
+    }
+
+    $(autoElem).keypress(preventEnter);
+
+    <apex:repeat value="{!excludedUsers}" var="u">
+        $(tagsElem).tagsinput('add', { "id": "{!u.Id}", "name": "{!u.Name}"});
+    </apex:repeat>
+</script>
+<script>
+    function selectStandardUI() {
+        
+/*        document.getElementById('std-sec-image').style.display='none';
+        document.getElementById('e-sec-image').style.display='none';*/
+        document.getElementById('std-sec').style.display='inline';
+        document.getElementById('e-sec').style.display='none';
+        document.getElementById('std-sec-li').style.backgroundColor="#f97e35";
+        document.getElementById('e-sec-li').style.backgroundColor="";
+        document.getElementById('std-sec-radio').checked=true;
+    }
+    function selectEnhancedUI() {
+/*        document.getElementById('std-sec-image').style.display='none';
+        document.getElementById('e-sec-image').style.display='none';*/
+        document.getElementById('std-sec').style.display='none';
+        document.getElementById('e-sec').style.display='inline';
+        document.getElementById('std-sec-li').style.backgroundColor="";
+        document.getElementById('e-sec-li').style.backgroundColor="#f97e35";
+        document.getElementById('e-sec-radio').checked=true;
+    }
+
+    function checkDisableHistoryCBs() {
+        if($("input[id*='enableHistory'").prop("checked")==true){
+            $("input[id*='trackClear']").prop("disabled",false);
+            $("input[id*='trackSet']").prop("disabled",false);
+            $("input[id*='trackOwner']").prop("disabled",false);
+            $("input[id*='trackStatus']").prop("disabled",false);
+        } else if($("input[id*='enableHistory'").prop("checked") == false){
+            $("input[id*='trackClear']").prop("disabled",true);
+            $("input[id*='trackSet']").prop("disabled",true);
+            $("input[id*='trackOwner']").prop("disabled",true);
+            $("input[id*='trackStatus']").prop("disabled",true);
+        }
+    }
+    checkDisableHistoryCBs();
+
+    //elements by CSS style
+    function getElementsByClassName(className) {
+        var hasClassName = new RegExp("(?:^|\\s)" + className + "(?:$|\\s)");
+        var allElements = document.getElementsByTagName("*");
+        var results = [];
+    
+        var element;
+        for (var i = 0; (element = allElements[i]) != null; i++) {
+            var elementClass = element.className;
+            if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(elementClass))
+                results.push(element);
+        }
+    
+        return results;
+    }
+
+    function updateExamineCommentCompanyDomain() {
+        var comment = document.getElementById('pg:frm:setOnCustComment');
+        var wrapper = document.getElementById('examineCommentCompanyDomainWrapper');
+        var checkbox = wrapper.getElementsByTagName('input')[0];
+        
+        if(comment.checked) {
+            wrapper.className = wrapper.className.replace(' disabled', '');
+            checkbox.disabled = false;
+        }
+        else {
+            wrapper.className += ' disabled';
+            checkbox.disabled = true;
+        }
+    }
+    updateExamineCommentCompanyDomain();
+    
+    function updateActivityTypeSelection() {
+        var comment = document.getElementById('pg:frm:clearOnActivity'),
+            wrapper = document.getElementById('activityTypeWrapper'),
+            checkbox = wrapper.getElementsByTagName('select')[0];
+
+        if(comment.checked) {
+            wrapper.className = wrapper.className.replace(' disabled', '');
+            checkbox.disabled = false;
+        }
+        else {
+            wrapper.className += ' disabled';
+            checkbox.disabled = true;
+        }
+    }
+    updateActivityTypeSelection();
+    
+    try {
+        var headers = document.querySelectorAll('.pbSubheader');
+        for(var i = 0; i < headers.length; ++i)
+             headers[i].addEventListener('click', function(evt) { 
+                 var header = evt.target;
+                 if(header.nodeName == 'IMG')
+                     return;
+                 else if(header.nodeName == 'H3')
+                     header = header.parentNode;
+                     
+                 header.querySelector('img').click();
+             });
+    }
+    catch(e) {} //IE < 9
+    </script>
+</apex:page>

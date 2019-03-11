@@ -1,0 +1,34 @@
+<apex:page standardController="Case" extensions="myKVHAddComment" standardStylesheets="false" showheader="false">
+<apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <c:spinner ></c:spinner>
+    <apex:form >
+        <style>
+        body {
+        background:#f3f3f3;
+        }
+        </style>
+    <div  class="partner_portal">
+    <h1>Add a Comment</h1>
+    <h2 class="pad-top">Case : {!Case.CaseNumber}</h2>     
+    <h3>Case Details</h3>
+        <p><strong>Subject:</strong> {!Case.Subject}</p>
+        <p><strong>Description:</strong> {!Case.Description}<br></br>
+        <apex:inputTextarea value="{!body}" style="font-family: arial;" styleClass="width-70" label="New Case Comment" id="newComment"/>
+        </p>
+        <div class="button-bar">
+            <apex:commandButton styleClass="button pad-right" style="align:center" action="{!goback}" value="Cancel"/>   
+            <apex:commandButton styleClass="button button-blue" style="align:center" onclick="submitclick('saveComment()'); return false;" value="Save"/>
+            <apex:actionFunction name="saveComment" action="{!saveComment}"/>
+        </div>
+          
+    </div>
+    </apex:form>
+    <script>
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+    </script>
+</apex:page>

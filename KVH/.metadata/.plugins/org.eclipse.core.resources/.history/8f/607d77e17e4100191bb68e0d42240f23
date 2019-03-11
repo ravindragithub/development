@@ -1,0 +1,443 @@
+<aura:component controller="Update_AssetSubscriptionController">
+    <aura:attribute name="assetId" type="string" />
+    <aura:attribute name="caseId" type="string" />
+    <aura:attribute name="caseNumber" type="string" />
+    <aura:attribute name="assetName" type="string" />
+    <aura:attribute name="showSubscription" type="boolean" default="false"/>
+    <aura:attribute name="noAssetSubscription" type="boolean" default="false"/>
+    <aura:attribute name="UpdateSubscription" type="boolean" default=""/>
+    <aura:attribute name="replacementAssets" type="boolean" default=""/>
+    <aura:attribute name="replacedAssets" type="boolean" default="false"/>
+    <aura:attribute name="showChangeSubscription" type="boolean" default="false"/>
+    <aura:attribute name="subscriptionUpdated" type="boolean" default="false"/>
+    <aura:attribute name="noSubscriptionAlert" type="boolean" default="false"/>
+    <aura:attribute name="readonlySubscriptionList" type="boolean" default="false"/>
+    <aura:attribute name="ServicePartner" type="string" />
+    <aura:attribute name="messageCaseAssetMove" type="string" />
+    <aura:attribute name="alertMessage" type="string" />
+    <aura:attribute name="replacedAsset" type="Asset"/>
+    <aura:attribute name="replacementAsset" type="Asset"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="ReplacementType" type="string"/>
+    <aura:attribute name="selectedServicePartner" type="string"/>
+    
+    <aura:attribute name="HTSReady" type="string"/>
+    <aura:attribute name="HTSAntennaConversionKit" type="string"/>
+    <aura:attribute name="antennaAsset" type="Asset"/>
+    <aura:attribute name="HTSMessage" type="string"/>
+    
+    <aura:attribute name="replacedby" type="string"/>
+    <aura:attribute name="listAssetIdInHierarchy" type="String[]"/>
+    <aura:attribute name="listSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="oldListSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="warrantyType" type="string[]"/>
+    <aura:attribute name="warrStartDate" type="Date" />
+    <aura:attribute name="warrType" type="string" />
+    <aura:attribute name="warrEndDate" type="Date" />
+    <aura:attribute name="warrMonth" type="Integer" />
+    
+    <aura:handler name="oselectedProductEvent" event="c:selectedProductEvent" action="{!c.getServicePartner }"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:handler event="c:AssetMovementModal_evt" action="{!c.closeModal}" />
+    <aura:handler name="cmpEvnt" event="c:Update_AssetSubscription_Evt" action="{!c.handleComponentEvent}"/>
+    <aura:registerEvent name="appEvent" type="c:AssetMovementModal_evt"/>
+    <div>
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinner" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+                <div class="textloading">
+                    Loading,Please wait.....
+                </div>
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.showChangeSubscription}">
+            <c:UpdateSubscriptionListView_cmp assetId="{!v.assetId}" caseId="{!v.caseId}" />
+            <aura:set attribute="else">
+                
+                <div class="slds">
+                    
+                    <div class="slds-page-header">
+                        
+                        <div class="slds-grid">
+                            <div class="slds-col slds-has-flexi-truncate">
+                                <div class="slds-media__body">
+                                    <aura:if isTrue="{! v.UpdateSubscription}" >
+                                        <h1 class="headerClass" title="Subscription"><b>Subscription</b></h1>
+                                        <p class="slds-text-body_small slds-line-height_reset">Update Subscriptions using Asset Hierarchy.</p>
+                                        <aura:set attribute="else">
+                                            <h1 class="headerClass" title="Asset Hierarchy"><b>Asset Hierarchy</b></h1>
+                                            <p class="slds-text-body_small slds-line-height_reset">Select the Asset to be replaced or removed. If adding an asset, select the asset that will be the parent to the asset added.</p>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="container">
+                        <!-- Subscription Update Page : Asset Hierarchy Section Starts -->
+                        <aura:if isTrue="{! v.UpdateSubscription}" >
+                            <div class="row slds-grid slds-wrap mainHierarchy" id="updateSub">
+                                <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 mainHierarchy">
+                                    <aura:if isTrue="{! !empty(v.replacedAsset.Id) }">
+                                        <div class="header-subsciption2">
+                                            <h1>Removed Asset Hierarchy</h1>
+                                        </div> 
+                                        <c:AssetHirerachy_cmp assetId="{!v.replacedAsset.Id}" mode="readonly" />
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 mainHierarchy">
+                                    <div class="header-subsciption2">
+                                        <h1>Revised Asset Hierarchy</h1>
+                                    </div> 
+                                    <c:AssetHirerachy_cmp assetId="{!v.assetId}"  mode="readonlyMaster" assetName="{!v.assetName}"/>
+                                </div>
+                            </div>
+                        </aura:if>
+                        <!-- Subscription Update Page : Asset Hierarchy Section End-->
+                        
+                        <!-- Asset Replacement Page : Asset Hierarchy Section Starts -->
+                        <aura:if isTrue="{! v.replacementAssets}" >
+                            <div class="row slds-grid slds-wrap mainHierarchy">
+                                <c:AssetHirerachy_cmp assetId="{!v.assetId}" mode="editable" assetName="{!v.assetName}"/>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{! v.replacedAssets}" >
+                            <div class="row slds-grid slds-wrap mainHierarchy">
+                                <c:AssetHirerachy_cmp assetId="{!v.assetId}" mode="readonly" assetName="{!v.assetName}"/>
+                            </div>
+                        </aura:if>
+                        <!-- Asset Replacement Page : Asset Hierarchy Section Starts -->
+                        
+                        <!-- Button Group Section Starts-->
+                        <div class="row buttongrp">
+                            <aura:if isTrue="{! v.UpdateSubscription}" >
+                                <button class="slds-button slds-button--brand" onclick="{!c.updateSubscription}" >
+                                    Update Subscriptions
+                                </button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.removeSubscriptionMove}" >
+                                    Reverse Subscriptions Update
+                                </button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.toggleAssetHierarchy}" >
+                                    Return to Update Asset
+                                </button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.returnToCase}" >
+                                    Return to Case
+                                </button>
+                            </aura:if>
+                            <aura:if isTrue="{! v.replacementAssets}" >
+                                <button class="slds-button slds-button--brand" onclick="{!c.returnToCase}" >
+                                    Return to Case
+                                </button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.toggleUpdateSubscription}" >
+                                    Update Subscriptions
+                                </button>
+                            </aura:if>
+                            <aura:if isTrue="{! v.replacedAssets}" >
+                                <button class="slds-button slds-button--brand" onclick="{!c.SubmitAssetMove}" >
+                                    Submit Asset Move
+                                </button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.cancelTransaction}" >
+                                    Return to case
+                                </button>
+                                <aura:if isTrue="{! v.ReplacementType == 'Replace'}" >
+                                    <button class="slds-button slds-button--brand" onclick="{!c.ReverseAssetMove}" >
+                                        Cancel Transaction
+                                    </button>
+                                </aura:if>
+                            </aura:if>
+                        </div>
+                        <!-- Button Group Section Ends-->
+                        
+                        <!-- Subscription Update Page: Subscription List Section Starts-->
+                        <div class="row slds-grid slds-wrap">
+                            <aura:if isTrue="{! v.UpdateSubscription}" >
+                                
+                                <!-- Subscription Update Page : Read-only page -->
+                                <aura:if isTrue="{! v.readonlySubscriptionList}" >
+                                    <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList" >
+                                        <aura:if isTrue="{! !empty(v.replacedAsset.Id) }">
+                                            <c:Update_AssetSubscription_cmp assetId="{!v.replacedAsset.Id}" mode="" headerTitle="Subscriptions on Original Asset" listAssetIdInHierarchy="{!v.listAssetIdInHierarchy}"/>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList">
+                                        <c:Update_AssetSubscription_cmp mode="" assetId="{!v.assetId}" headerTitle="Subscriptions on Replacement Asset"/>
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <!-- Subscription Update Page : Read-only page -->
+                                        <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList" >
+                                            <aura:if isTrue="{! !empty(v.replacedAsset.Id) }">
+                                                <c:Update_AssetSubscription_cmp assetId="{!v.replacedAsset.Id}" mode="editable" headerTitle="Subscriptions on Original Asset" listAssetIdInHierarchy="{!v.listAssetIdInHierarchy}"/>
+                                            </aura:if>
+                                        </div>
+                                        <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList">
+                                            <c:Update_AssetSubscription_cmp mode="" assetId="{!v.assetId}" headerTitle="Subscriptions on Replacement Asset"/>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:if>
+                            
+                        </div>
+                        <!-- Subscription Update Page: Subscription List Section End-->
+                        
+                        <!-- Asset Replacement Page : Case Asset Movement Section Starts-->
+                        <aura:if isTrue="{! v.replacementAssets}" >
+                            <div class="row ">
+                                <div class="slds-page-header">
+                                    <h1 class="headerClass" title="Case Asset Moves"><b>Case Asset Moves</b></h1>
+                                </div>
+                                <aura:if isTrue="{! v.showSubscription}">
+                                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                                        <span class="slds-assistive-text">error</span>
+                                        <span class="slds-icon_container slds-icon-utility-ban slds-m-right_x-small" title="Description of icon when needed">
+                                            <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#ban'}" />
+                                        </span>
+                                        <h2>{!v.messageCaseAssetMove}
+                                        </h2>
+                                    </div>
+                                </aura:if>
+                                <div>
+                                    <c:CaseAssetMoveList_cmp caseId="{!v.caseId}" assetId="{!v.assetId}"/>
+                                </div>
+                                
+                            </div>
+                        </aura:if>
+                        <!-- Asset Replacement Page: Case Asset Movement Section Starts-->
+                        
+                        <!-- Subscription Update Page : Replacement Subscription List Starts-->
+                        <aura:if isTrue="{! v.replacedAssets}" >
+                            <div class="slds-page-header">
+                                <aura:if isTrue="{!v.ReplacementType == 'Add'}">
+                                    <h1 class="headerClass" title="Replacement Assets"><b>Assets Added</b></h1>
+                                    <aura:set attribute="else">
+                                        <h1 class="headerClass" title="Replacement Assets"><b>Replacement Assets</b></h1>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <div class="row slds-grid slds-wrap">
+                                <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList">
+                                    <div class="firstPanel">
+                                        Case Name : {!v.caseNumber}
+                                    </div>
+                                    
+                                    <aura:if isTrue="{!v.ReplacementType == 'Add'}">
+                                        <div class="header-subsciption">
+                                            <h1 title="Parent Asset">Parent Asset</h1>
+                                        </div>
+                                        <div class="firstPanel">
+                                            Parent Asset : {!v.replacedAsset.Name}
+                                            <br></br>
+                                            Parent Product : {!v.replacedAsset.Item_Description__c}
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="header-subsciption">
+                                                <h1 title="Parent Asset">Replaced Values</h1>
+                                            </div>
+                                            <div class="firstPanel">
+                                                Replaced Asset : {!v.replacedAsset.Name}
+                                                <br></br>
+                                                Replaced Product : {!v.replacedAsset.Item_Description__c}
+                                                
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                    <div class="firstPanel">
+                                        Warranty Type : {!v.replacedAsset.Warranty_Type__c}
+                                        <br></br>
+                                        Warranty Start Date : {!v.replacedAsset.Warranty_Start_Date__c }
+                                        <br></br>
+                                        System Asset Warranty : {!v.replacedAsset.System_Asset_Warranty__c}
+                                        <br></br>
+                                        System Warranty Start Date: {!v.replacedAsset.System_Warranty_Start_Date__c}
+                                        <br></br>
+                                        Product Registration : {!v.replacedAsset.Product_Registration__r.Name}
+                                    </div>
+                                    <div class="firstPanel">
+                                        Replaced by : <br></br>
+                                        <ui:inputSelect class="slds-input" aura:id="InputSelectDynamic" change="{!c.onSelectChange}">
+                                            <ui:inputSelectOption text="None" label="None" />
+                                            <ui:inputSelectOption text="KVH Service Repair" label="KVH Service Repair" />
+                                            <ui:inputSelectOption text="Customer" label="Customer" />
+                                            <ui:inputSelectOption text="Service Partner" label="Service Partner" />
+                                        </ui:inputSelect>
+                                    </div>
+                                    <aura:if isTrue="{! !empty(v.replacedAsset)}" > 
+                                        <aura:if isTrue="{!v.ReplacementType == 'Add'}">
+                                            <c:Update_AssetSubscription_cmp mode="" assetId="{!v.replacedAsset.Id}" headerTitle="Parent Asset Subscriptions"/>
+                                            <aura:set attribute="else">
+                                                <c:Update_AssetSubscription_cmp mode="" assetId="{!v.replacedAsset.Id}" headerTitle="Subscriptions on Original Asset"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--2-of-4 subList">
+                                    <div class="firstPanel">
+                                        Asset Account : {!v.replacedAsset.Account_Name__c}
+                                    </div>
+                                    <aura:if isTrue="{!v.ReplacementType == 'Add'}">
+                                        <div class="header-subsciption">
+                                            <h1 title="Child Asset">Child Asset</h1>
+                                        </div>                               
+                                        <div class="firstPanel">
+                                            Child Asset : {!v.replacementAsset.Name}
+                                            <br></br>
+                                            Child Product : {!v.replacementAsset.Product2.Name}
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="header-subsciption">
+                                                <h1 title="Child Asset">Replacement Values</h1>
+                                            </div>                               
+                                            <div class="firstPanel">
+                                                Replacement Asset : {!v.replacementAsset.Name}
+                                                <br></br>
+                                                Replacement Product : {!v.replacementAsset.Product2.Name}
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                    <div class="firstPanel">
+                                        Warranty Type : {!v.replacementAsset.Warranty_Type__c}
+                                        <br></br>
+                                        Warranty Start Date : {!v.replacementAsset.Warranty_Start_Date__c }
+                                        <br></br>
+                                        System Asset Warranty : {!v.replacementAsset.System_Asset_Warranty__c}
+                                        <br></br>
+                                        System Warranty Start Date: {!v.replacementAsset.System_Warranty_Start_Date__c}
+                                        <br></br>
+                                        Product Registration : {!v.replacementAsset.Product_Registration__r.Name}
+                                    </div>
+                                    
+                                    <div class="firstPanel" aura:id="disableServicePartner">
+                                        Service Partner : 
+                                        <div aura:id="lookupField" class="slds-show">
+                                            <ui:inputText class="slds-lookup__search-input slds-input " placeholder="Search ..." disabled="true"/>
+                                        </div> 
+                                    </div>
+                                    <div class="firstPanel hideSP" aura:id="enableServicePartner">
+                                        Service Partner : 
+                                        <c:customLookup searchObjective="Asset Replacement"/>
+                                    </div>
+                                    <aura:if isTrue="{! !empty(v.replacementAsset)}" > 
+                                        <aura:if isTrue="{!v.ReplacementType == 'Add'}">
+                                            <c:Update_AssetSubscription_cmp mode="" assetId="{!v.replacementAsset.Id}" headerTitle="Child Asset Subscriptions"/>
+                                            
+                                            <aura:set attribute="else">
+                                                <c:Update_AssetSubscription_cmp mode="" assetId="{!v.replacementAsset.Id}" headerTitle="Subscriptions on Replacement Asset"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:if>
+                                    
+                                </div>
+                            </div>
+                        </aura:if>
+                        <!-- Subscription Update Page : Replacement Subscription List Ends-->
+                        
+                        
+                    </div>
+                </div>
+                <!--Warranty modal-->
+                <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal  slds-modal--small slds-fade-in-hide">
+                    <div class="slds-modal__container">
+                        
+                        <div class="slds-modal__content slds-p-around--small">
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeAlert}">
+                                    <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#close'}" />
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header43" class="slds-text-heading--medium">{!v.alertMessage}</h2>
+                            </div>
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                    <lightning:select name="mySelect" label="Warranty Type"  aura:id="warrantyType" value="{!v.warrType}" onchange="{!c.onChangeWarrantType}">
+                                        <aura:iteration items="{!v.warrantyType}" var="level">
+                                            <option text="{!level.key}" value="{!level.key}" selected="{! (level.key == v.replacedAsset.Warranty_Type__c)}"/>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+                            </div>
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size--1-of-2">
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="Warranty Start Date">Warranty Start Date</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="date" id="dateField" class="slds-input sDate" value="{!v.warrStartDate}" onchange="{!c.onChangeWarrantType}"/> 
+                                            <!--ui:inputDate aura:id="dateField" label="Warranty Start Date"
+                                                      class="slds-input sDate"
+                                                      labelClass="slds-form-element__label"
+                                                      value="{!v.warrStartDate}"
+                                                      displayDatePicker="true"/-->
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size--1-of-2">
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="Warranty End Date">Warranty End Date</label>
+                                        <div class="slds-form-element__control">
+                                            <aura:if isTrue="{! !empty(v.warrEndDate)}" > 
+                                                <input type="date" id="edateField" disabled="true" class="slds-input eDate" value="{!v.warrEndDate}" /> 
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button--brand" onclick="{!c.FinalSubmitAssetMove}" >OK</button>
+                            <button class="slds-button slds-button--brand" onclick="{!c.closeAlert}" >Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop " aura:id="Modalbackdrop"></div>
+                <!--End of Warranyt modal-->
+                <!--HTS Modal Popup -->
+                <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="HTSModalbox" class="slds-modal  slds-modal--small slds-fade-in-hide">
+                    <div class="slds-modal__container">
+                        
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <h1 class="alertPopUp"><center>{!v.HTSMessage}</center></h1>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <aura:if isTrue="{! (v.HTSReady == 'ready' || v.HTSReady == 'not ready' ) }" >
+                                <button class="slds-button slds-button--brand" onclick="{!c.continueAssetMoveHTS}" >Continue</button>
+                                <button class="slds-button slds-button--brand" onclick="{!c.ReverseAssetMoveHTS}" >Search Another Asset</button>
+                                <aura:set attribute="else">
+                                    <button class="slds-button slds-button--brand" onclick="{!c.returnToCase}" >Return to Case</button>
+                                    <button class="slds-button slds-button--brand" onclick="{!c.ReverseAssetMoveHTS}" >Search Another Asset</button>
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop " aura:id="HTSModalbackdrop"></div>
+                <!--End of HTS Modal popup -->
+                
+                <!--Modal to alert  -->
+                <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="alertModalbox" class="slds-modal  slds-modal--small slds-fade-in-hide">
+                    <div class="slds-modal__container">
+                        
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <h1 class="alertModalPopUp"><center>{!v.HTSMessage}</center></h1>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button--brand" onclick="{!c.reversealertAssetMoveHelper}" >OK</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop " aura:id="alertModalbackdrop"></div>
+                <!--End of HTS Modal popup -->
+            </aura:set>
+        </aura:if>
+    </div>
+    
+</aura:component>

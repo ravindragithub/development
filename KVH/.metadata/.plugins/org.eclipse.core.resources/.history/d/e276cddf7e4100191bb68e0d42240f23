@@ -1,0 +1,13 @@
+<aura:documentation>
+	<aura:description>Documentation</aura:description>
+	<aura:example name="ExampleName" ref="exampleComponentName" label="Label">
+    States:
+    <ul>
+      <li>INIT      - Component is ready to search</li>
+      <li>ASSETS - Component is displaying the Asset Hierarchy creation div</li>
+      <li>POST     - Component is displaying the POST device to OSS div</li>
+      <li>SUCCESS - Component is displaying the Success div</li>
+      <li>ERROR     - Component error</li>
+    </ul>
+	</aura:example>
+</aura:documentation>

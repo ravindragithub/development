@@ -1,0 +1,46 @@
+<apex:page controller="myKVH_SupportCenterExportController" readOnly="true" contentType="application/vnd.ms-excel#myKVHCasesExport _{!NOW()}.xls"
+           action="{!loaddata}">
+    
+    <html>
+        <head>
+            <style type="text/css">
+                th {
+                border:1pt solid #d4d4d4;
+                font-weight:bold;
+                }        
+                td {
+                border:1pt solid #d4d4d4;
+                font-weight:100;
+                text-align:center;
+                }        
+            </style>             
+        </head>
+        
+        <body>        
+            <table >
+                <tr class="">
+                    <th align="center">CaseNumber</th>
+                    <th align="center">Case Type</th>
+                    <th align="center">Subject</th>
+                    <th align="center">Platform/Vessel</th>
+                    <th align="center">Product</th>
+                    <th align="center">Serial Number</th>
+                    <th align="center">Date Opened</th>
+                    <th align="center">Status</th>
+                </tr>        
+                <apex:repeat value="{!lstOfCases}" var="item">
+                    <tr align="middle" >
+                        <td>{!item.CaseNumber}</td>
+                        <td>{!item.RecordType.Name}</td>
+                        <td>{!item.Status}</td>
+                        <td>{!item.Platform_Name__c}</td>
+                        <td>{!item.Product_Group__c}</td>
+                        <td>{!item.Asset_Name__c}</td>
+                        <td>{!item.CreatedDate}</td>
+                        <td>{!item.Status}</td>
+                    </tr>
+                </apex:repeat>
+            </table>  
+        </body>  
+    </html>
+</apex:page>

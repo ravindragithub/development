@@ -1,0 +1,42 @@
+.THIS  button.sfdc_button,
+.THIS a.button,
+.THIS .submitbtn {
+    padding:5px 20px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    color:#fff;
+    border-radius:0px;
+    font-size:90%;
+    background:#1984c7;
+    border:none;   
+}
+.THIS .submitbtn {
+    margin-top : 20px;
+}
+
+.THIS  button.sfdc_button {
+    width:20%;
+    
+}
+
+.THIS  button:hover {
+  background-color:#3276b1;
+  border-color:#285e8e;
+  cursor:pointer;
+}
+
+.THIS .input{
+    border-radius:0;
+    display:block;
+    width:100%;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    margin-bottom:20px;
+}
+.THIS input[type="text"]{
+    padding: 0px 5px 0px 5px;
+}

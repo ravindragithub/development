@@ -1,0 +1,116 @@
+<!-- add implements="forceCommunity:availableForAllPageTypes" to surface the component in community builder -->
+<aura:component controller="myKVH_LightningLoginFormController" 
+                implements="forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <aura:attribute name="usernameLabel" type="String" required="false" default="Username"/>
+    <aura:attribute name="passwordLabel" type="String" required="false" default="Password"/>
+    <aura:attribute name="loginButtonLabel" type="String" required="false" default="Sign In" />
+    <aura:attribute name="expid" type="String" required="false" description="The branding experience ID" />        
+    
+    <aura:attribute name="forgotPasswordLabel" type="String" required="false" default="Forgot your password?"/>
+    <aura:attribute name="selfRegisterLabel" type="String" required="false" default="Not a member?"/>
+    <aura:attribute name="forgotPasswordUrl" type="String" required="false" default="/ForgotPassword"/>
+    <aura:attribute name="selfRegisterUrl" type="String" required="false" default="/SelfRegister"/>
+    
+    <aura:attribute name="isUsernamePasswordEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="isSelfRegistrationEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="communityForgotPasswordUrl" type="String" access="private"/>
+    <aura:attribute name="communitySelfRegisterUrl" type="String" access="private"/>
+    
+    <aura:attribute name="destination" type="String" required="false" default=""/>
+    <aura:attribute name="serialNumber" type="String" required="false" default=""/>
+    
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:dependency resource="c:setStartUrl" type="EVENT"/>
+    <!-- Please uncomment
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT"/>
+    -->
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}"/>
+    <aura:handler event="c:setExpId" action="{!c.setExpId}"/>    
+    <aura:dependency resource="c:setExpId" type="EVENT"/>  
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <aura:attribute name="maxheight" type="String" />
+    <div style="{!'background-color:#000e17; background-image:url(/resource/BGmyKVHCustomerPortalLogin); background-position: middle bottom;background-repeat:no-repeat;background-size: cover;min-height:' + v.maxheight + 'px'}">
+        <div class="page-content">
+         <aura:if isTrue="{!v.spinner}">
+            <lightning:spinner variant="brand"
+                               size="large"
+                               alternativeText="Loading Page"/>
+        </aura:if>
+        
+        <div class="slds-grid slds-wrap">
+           <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 hide">
+           </div>
+             
+           <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-p-around_large" style="background-color:rgba(7,25,52,.7);border:1px solid #1984C7;">
+               <!-- inner panel for login -->
+               <h1 class="center">Welcome to myKVH</h1>
+               <h3 class="center">Please Sign In</h3>
+               		
+               <aura:renderIf isTrue="{!v.isUsernamePasswordEnabled}">
+                    <span>
+                        <aura:renderIf isTrue="{!v.showError}">
+                            <div id="error">
+                                <ui:outputRichText value="{!v.errorMessage}"/>
+                            </div>
+                        </aura:renderIf>
+                    </span> 
+                    
+                    <p>
+                        <label>Email</label>
+                        <ui:inputText value="" aura:id="username" keyup="{!c.onKeyUp}" class="input sfdc_usernameinput sfdc" label="{!v.usernameLabel}" labelClass="assistiveText"/>
+                    </p>
+                    
+                    <p>
+                        <label>Password</label>
+                        <ui:inputSecret value="" aura:id="password" keyup="{!c.onKeyUp}" class="input sfdc_passwordinput sfdc" label="{!v.passwordLabel}" labelClass="assistiveText"/>
+                    </p>
+                    
+                   <div id="sfdc_forgot" class="sfdc">
+                       <span><a href="{!if(v.communityForgotPasswordUrl == null, v.forgotPasswordUrl, v.communityForgotPasswordUrl) + '?de=lte-activate-form&amp;sn=' + v.serialNumber}">Forgot Password?</a></span>
+                       
+                       
+						<aura:renderIf isTrue="{!v.isSelfRegistrationEnabled}">
+                            <span style="float:right" ><a href="{!if(v.communitySelfRegisterUrl == null, v.selfRegisterUrl, v.communitySelfRegisterUrl)}">New to myKVH?</a></span>
+                        </aura:renderIf>     
+                                   
+                   </div>
+                   
+                   <p class="notes center">By signing in to your account, you agree to our<br /> <a href="https://www.kvh.com/Legal/Privacy.aspx" target="_blank">Privacy Policy</a> and <a href="https://www.kvh.com/Legal/Terms-of-Use.aspx" target="_blank">Site Terms of Use</a></p>
+                    
+                     <div class="sfdc center">
+                        <ui:button aura:id="submitButton" label="{!v.loginButtonLabel}" press="{!c.handleLogin}" class="sfdc_button"/>
+                    </div>
+                    <div class="sfdc center notes slds-p-right_medium slds-p-left_medium">
+                        Our website does not support Internet Explorer. We recommend the latest version of Chrome, Firefox, Edge or Safari.
+                    </div>
+                </aura:renderIf>
+               <!-- /inner panel -->
+               
+            </div>
+            
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-p-around_large myKVH-login-ad">
+                <h2 class="center">The new myKVH Customer Portal is here!</h2>
+                <img src="/resource/CustomerPortalLoginScreenshot" />
+                <h3>You can:</h3>
+                <ul>
+                    <li>Access the mini-VSAT Manager and LTE Manager</li>
+                    <li>Create a hardware or service case</li>
+                    <li>Get info on any KVH product</li>
+                    <li>View tutorials and help videos for your product</li>
+                    <li>Activate/register a new product</li>
+                    <li>Access your registered products information</li>
+                </ul>
+           </div>
+            
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 hide">
+            </div>
+        </div>
+    </div>
+    </div>
+    {!v.body }
+</aura:component>

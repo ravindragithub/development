@@ -1,0 +1,184 @@
+<apex:page controller="CreateKVHIndirectContact" tabStyle="Account" sidebar="false" title="CreateKVHIndirectContact" id="pge">
+    <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/28.0/apex.js"/>
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    
+    <apex:includeScript value="/apex/pw_ccpro__CountriesJavaScript?core.apexpages.devmode.url=1" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__CountryCompleteResources, '/javascript/CountryAutoComplete.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__AddressCompleteResources, '/javascript/AddressComplete.js')}" />
+    <script type="text/javascript">
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+            function OnComplete() {
+            ProvenWorks.AutoComplete.Init();
+            ProvenWorks.AddressComplete.Init();
+        }
+    </script>
+    <script>
+        function validateEmail(){
+            validateEmailFunction();
+        }
+        
+        function passSelectedContactID(contactID,accountID){
+          var r = confirm("Are you sure you want to assign existing contact to case?");
+          if (r == true) {
+             assignContact(contactID,accountID);
+          }
+        }
+        
+        
+        function confirmationOnContactAndAccount(){
+          var r = confirm("Are you sure you want to create new Account & Contact?");
+          if (r == true) {
+             newContactAndAccount();
+          }
+        }
+        
+        function assignContactToCase(){
+          var r = confirm("Are you sure you want assign new Account & Contact to Case?");
+          if (r == true) {
+             NewContactToCase();
+          }
+        }
+        
+        function NewCaseCreation(conID,conName,accID,accName){
+          var r = confirm("Are you sure you want to Create New Case?");
+          var accountID   = accID;
+          var accountName = accName;
+          var contactID   = conID;
+          var contactname = conName;
+          
+          
+          if (r == true) {
+            if (sforce.console.isInConsole()) { 
+                var url = '/500/e?retURL=%2F500%2Fo&RecordType={!defaultRTID}&ent=Case&cas3_lkid='+contactID+'&cas3='+contactname+'&cas4_lkid='+accountID+'&cas4='+accountName; 
+                srcUp(url);
+            }else{
+                var url = '/500/e?retURL=%2F500%2Fo&RecordType={!defaultRTID}&ent=Case&cas3_lkid='+contactID+'&cas3='+contactname+'&cas4_lkid='+accountID+'&cas4='+accountName;
+                window.open(url,'_blank'); 
+            } 
+          }
+        }
+        
+    </script>
+    <apex:form id="frm">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:actionFunction name="validateEmailFunction" action="{!checkEmail}" reRender="frm" status="zeroStatus"/>
+        <apex:actionFunction name="newContactAndAccount" action="{!createNewContactAndAccountConfirmation}" rerender="frm"/>
+        <apex:actionFunction name="NewContactToCase" action="{!ContactToCase}" rerender="frm"/>
+        
+        <apex:actionFunction name="assignContact" action="{!existingContactUpdate}" reRender="resultPanel" status="foundDataStatus">
+            <apex:param name="firstParam" assignTo="{!enteredText1}" value="" />
+            <apex:param name="secondParam" assignTo="{!enteredText2}" value="" />
+        </apex:actionFunction>
+        
+        <apex:pageBlock rendered="{!zeroBlock}" title="Search For Contacts">
+            <apex:pageBlockSection >
+                <apex:inputtext value="{!emailAddress}" label="Email ID"/>
+                <apex:inputtext value="{!phone}" label="Phone"/>
+                <apex:inputtext value="{!mobile}" label="Mobile"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:outputPanel rendered="{!newContact}">
+                    <input type="button" value="Search Again" onClick="window.location.href=window.location.href" class="btn"/>
+                </apex:outputPanel>
+                <apex:commandButton value="Search" action="{!search}" reRender="frm" status="zeroStatus" rendered="{!searchButton}"/>
+                <apex:commandButton value="Create new Indirect Account & Contact" action="{!CreateNewContact}" reRender="frm" status="zeroStatus" rendered="{!newContact}"/>
+                <apex:actionStatus id="zeroStatus" stopText="">
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                   
+                        </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock rendered="{!foundData}">
+           <apex:pageblocktable value="{!contactDetails}" var="CD">
+               <apex:column headerValue="Contact Name">
+                   <apex:commandLink value="{!CD.Name}" action="{!ContactLinkRedirect}">
+                       <apex:param name="contactID" value="{!CD.ID}"/>
+                   </apex:commandLink>
+               </apex:column>
+               <apex:column value="{!CD.Name}" headerValue="Contact Name:"/>
+               <apex:column value="{!CD.Email}" headerValue="Contact Email:"/>
+               <apex:column value="{!CD.Phone}" headerValue="Contact Phone:"/>
+               <apex:column value="{!CD.Account.Name}" headerValue="Contact Account Name:"/>
+               <apex:column value="{!CD.MobilePhone}" headerValue="Contact Mobile:"/>
+               <apex:column headerValue="Assign Contact To Case">
+                   <apex:commandLink value="Add Contact To Case" onclick="passSelectedContactID('{!CD.ID}','{!CD.AccountID}'); return false;"/>
+                   <apex:actionStatus id="foundDataStatus" stopText="">
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                   
+                        </apex:facet>
+                </apex:actionStatus>
+               </apex:column>
+           </apex:pageblocktable>
+           <apex:pageBlockButtons location="bottom">
+               <apex:commandButton value="Create New Account And Contact" onclick="confirmationOnContactAndAccount(); return false;"/>
+           </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock rendered="{!firstBlock}" id="fb">
+            <apex:pageBlockSection columns="1" title="Contact Details" id="pbs">
+                <apex:inputField value="{!con.FirstName}" label="Contact First Name:"/>
+                <apex:inputField value="{!con.LastName}" label="Contact Last Name:"/>
+                <apex:inputField value="{!con.Phone}" label="Account Phone:"/>
+                <apex:inputField value="{!con.Phone}" label="Contact Phone:"/>
+                <apex:inputField value="{!con.MobilePhone}" label="Contact MobilePhone:"/>
+                <apex:inputField value="{!con.Email}" label="Contact Email:"/>
+                <apex:inputField value="{!con.Job_Function__c}" label="Job Function:"/>
+                <apex:inputField value="{!con.MailingStreet}" label="Street Address:"/>
+                <apex:inputField value="{!con.MailingCity}" label="City:" id="conCity"/>
+                <apex:inputField value="{!con.MailingCountry}" label="Country:" id="conCountry" onblur="OnComplete();" required="true"/>
+                <apex:inputField value="{!con.MailingState}" label="State:" id="constate" onblur="OnComplete();" /> <!-- required="true" removed see case 416575 --> 
+                <apex:inputField value="{!con.MailingPostalCode}" label="Zipcode/Postal code:"/>
+                <apex:inputField value="{!acc.Market__c}" label="Market:"/>
+                <apex:inputField value="{!acc.Market_Sector__c}" label="Market Sector:"/>
+                <apex:inputField value="{!acc.Industry_Designation__c}" label="Platform Type:"/>
+                <apex:inputField value="{!acc.Platform_Detail__c}" label="Platform Detail:"/>
+                <apex:inputField value="{!acc.Product_Interest__c}" label="Product Interest:"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!CreateAccountContact}" reRender="frm" status="searchData"/>
+                <apex:actionStatus id="searchData" stopText="">
+                    <apex:facet name="start" >
+                      <img src="/img/loading.gif" />                   
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            <script>
+                OnComplete();     
+            </script>
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock rendered="{!secondBlock}">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Assign Contact To Case" onclick="assignContactToCase(); return false;" rendered="{!defaultContactcaseButton}"/>
+                <apex:commandButton value="Create New Case" onclick="NewCaseCreation('{!populateCon.ID}','{!populateCon.Name}','{!populateAcc.ID}','{!populateAcc.Name}'); return false;" rendered="{!NOT(defaultContactcaseButton)}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Account Name" for="account__name"/>
+                    <apex:commandLink value="{!acc.Name}" action="{!AccountLinkRedirect}" id="account__name">
+                       <apex:param name="accountID" value="{!acc.ID}"/>
+                    </apex:commandLink> 
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!acc.Market__c}" label="Market"/>
+                <apex:outputField value="{!acc.Market_Sector__c}" label="Market Sector"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:outputField value="{!con.FirstName}" label="Contact First Name"/>
+                <apex:outputField value="{!con.LastName}" label="Contact Last Name"/>
+                <apex:outputField value="{!con.Job_Function__c}" label="Job Function:"/>
+                <apex:outputField value="{!con.MailingStreet}" label="Street Address:"/>
+                <apex:outputField value="{!con.MailingCity}" label="City:"/>
+                <apex:outputField value="{!con.MailingPostalCode}" label="Zipcode/Postal code:"/>
+                <apex:outputField value="{!con.MailingCountry}" label="Country:"/>
+                <apex:outputField value="{!con.MailingState}" label="State:"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

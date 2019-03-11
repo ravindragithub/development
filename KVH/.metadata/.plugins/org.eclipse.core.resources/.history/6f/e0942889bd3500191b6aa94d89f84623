@@ -1,0 +1,157 @@
+<apex:component controller="Activation_Corporate_Company"  allowDML="true">
+    <script>
+     function returntoActivationAccountsPage(){
+                window.top.location = '/apex/ActivationAccountsPage';
+            }
+    <!-- function to add CSS to Dependent Picklist Start -->
+        function dependentPicklist(dependent_field_div_id,dependent_field_class, tabindex){
+        var MutationObserver = window.WebKitMutationObserver || window.MutationObserver || window.MozMutationObserver;
+        var observer = new MutationObserver(function(mutations) {
+            // If the dependent_field_class was removed from the list – re-assign it
+            if(!j$("#"+dependent_field_div_id+" select").first().hasClass(dependent_field_class)){
+                j$("#"+dependent_field_div_id+" select").first().attr("tabindex",tabindex);
+                j$("#"+dependent_field_div_id+" select").first().addClass(dependent_field_class);
+                
+                j$("#"+dependent_field_div_id).each(function(){
+                    j$(this).find('option:first').text('--Select--');
+                });
+            }
+        });
+        var dependentlst = document.querySelector('#'+dependent_field_div_id);
+        observer.observe(dependentlst, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });               
+    }
+    <!-- function to add CSS to Dependent Picklist End -->
+        </script>
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation (Subscriber) Billing detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    
+    <h2 class="mainTitle">Company Information</h2>
+   
+    <!--** div contain error msg contents -Start **-->
+    <div class="kvh-show-errormsg-here">
+    </div>
+    <!--** div contain error msg contents -End **-->   
+    
+    <div class="validator">
+        <div class="left two-col">
+            <div class="box-content">
+                <p><label>Company Name:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Subscribing_Company__c}" html-tabIndex="1" styleClass="company" id="company" html-data-role="none"/></p>
+               <!-- <div class="phone-types" >
+                    <label>Market:</label><span class="req"></span>
+                    <apex:inputField value="{!newSubscriber.Market__c}" html-tabIndex="3" id="mkt" styleClass="mkt"/>
+                </div>
+                <div class="clear" style="padding-bottom:20px;"></div> -->
+                <p><label>Primary Phone Number:</label><span class="req"></span>
+                    <apex:inputField value="{!newSubscriber.Phone_Number__c}" html-tabIndex="5" id="ppnumber" styleClass="ppnumber" html-data-role="none"/></p>
+                    
+                <p><label>Address 1:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Address__c}" html-tabIndex="7" styleClass="address1" id="address1" html-data-role="none"/></p>
+                <p><label>City:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.City__c}" html-tabIndex="9" styleClass="city" id="city" html-data-role="none"/></p>
+                 <p><label>Country: </label><span class="req"></span>
+                    <apex:actionRegion >
+                        <apex:selectList value="{!newSubscriber.Country__c}" multiselect="false" id="country" size="1"  tabIndex="11" styleClass="country " html-data-role="none"> 
+                            <apex:actionSupport event="onchange" action="{!componentCountryChangeHandler}" rerender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();"/>
+                            <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                        </apex:selectList>
+                    </apex:actionRegion>
+                </p>
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                <p><label>Company Website:<!--<span class="notes">This email address will receive billing invoices</span> --></label>
+                    <apex:inputField value="{!newSubscriber.Website__c}" html-tabIndex="2" html-data-role="none"/></p>
+               <!-- <div class="phone-types" >
+                    <label>Market Sector:</label><span class="req"></span>
+                    <span id="companymarketsector"><apex:inputField value="{!newSubscriber.Market_Sector__c}" id="msec" html-tabIndexorder="4" styleClass="msec"/>
+                    </span> 
+                    <script>
+//dependentPicklist('companymarketsector','notrequiredRedMarkFld' ,'4');
+                    </script>
+                </div> 
+                <div class="clear" style="padding-bottom:20px;"></div>-->
+                 <p><label>Secondary Phone Number:</label>
+                    <apex:inputField value="{!newSubscriber.Secondary_Phone__c}" html-tabIndex="6" id="Sphone" html-data-role="none"/></p>
+                <p><label>Address 2:</label>
+                    <apex:inputField value="{!newSubscriber.Subscriber_Address_Line_2__c}" html-tabIndex="8" html-data-role="none"/></p>
+                  <p><label>Postal/Zip Code:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Postal_Zip_Code__c}" html-tabIndex="10" styleClass="postalcode" id="postalcode" html-data-role="none"/></p>
+                 <p> 
+                    <label>State/Province/Territory:</label>
+                    <apex:selectList value="{!newSubscriber.State_Province__c}" multiselect="false" id="State_Province__c" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}"  tabIndex="12" html-data-role="none">
+                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="State_Province__c">
+                            <apex:param value="{!newSubscriber.State_Province__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesList}" html-data-role="none"/>
+                    </apex:selectList>  
+                </p>
+            </div>
+        </div>
+        <div class="button-bar clear">
+            <apex:commandLink styleClass="button left" value="< Back to Accounts" onclick="showLoadingDiv();" oncomplete="returntoActivationAccountsPage();">
+            </apex:commandLink>
+            <apex:commandLink styleClass="button right" onclick="validateError('{!parentContainer}',false,'Activation_CorporateCompany'); return false;" value="Next >"> 
+            </apex:commandLink>
+        </div>
+        <apex:commandLink styleClass="clear right"  value="Save & Exit" onclick="validateError('{!parentContainer}',true,'Activation_CorporateCompany'); return false;"/>
+    </div> 
+    
+    <apex:actionFunction name="callSubscriberSave" action="{!Save}" rerender="Act_subscriber" oncomplete="hideLoadingDiv();">
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    
+     <!-- ** remodal popup Start ** -->
+      
+    
+    <div data-role="popup" id="ActCorpActCompany" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <apex:commandLink styleClass="button remodal-cancel" value="Yes" action="{!saveandExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();"/>
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                            </div>
+                        </div>  
+       <!-- ** remodal popup End ** -->
+                            
+           <script type="text/javascript" language="JavaScript">
+            
+           
+                 var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+       
+       /* To remove duplidate popup window initialized -Start */
+       function removeduplicatepopup(popupID){
+           while(j$(popupID).length >1){
+               j$(popupID).last().remove();
+           }
+           while(j$('.remodal-wrapper').find(popupID).length >1){
+               j$('.remodal-wrapper').find(popupID).last().remove();
+           }
+       }
+       /* To remove duplidate popup window initialized -End */
+       
+
+       /* Activation Corporate button -Start */
+       function ExitActCompany(param){
+          j$( "#ActCorpActCompany" ).popup( "open" );
+       }
+       /* Activation Corporate button -End */
+       
+      
+    </script>
+          
+</apex:component>

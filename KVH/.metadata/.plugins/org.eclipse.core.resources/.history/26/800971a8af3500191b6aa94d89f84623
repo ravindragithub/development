@@ -1,0 +1,10 @@
+<aura:event type="COMPONENT" description="Event template" >
+  <aura:attribute name="stateChange" type="String" default="UNKNOWN" />
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  <aura:attribute name="terminal" type="Asset" />
+  <aura:attribute name="primaryPlan" type="Product2" />
+  <aura:attribute name="secondaryPlan" type="Product2" />
+  <aura:attribute name="kontract" type="Contract" description="This is the Contract to which the primary and secondary Subscriptions will be attached" />
+  <aura:attribute name="newRegion" type="String" />
+  <aura:attribute name="jobId" type="String" />
+</aura:event>

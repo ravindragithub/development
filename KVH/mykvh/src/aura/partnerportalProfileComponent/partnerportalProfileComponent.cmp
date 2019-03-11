@@ -1,0 +1,35 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="MyProfileController">
+	
+    <aura:attribute name="userdetail"
+                    type="MyProfileController.ProfileWrapper"
+                    description="User Details"/>
+    
+    <aura:attribute name="showspinner"
+                    type="String"
+                    description="show/hide spinner" default="slds-show"/>
+    
+    <aura:attribute name="showview" type="Boolean" description="show profile view section." default="true" />
+    <aura:attribute name="showedit" type="Boolean" description="show profile edit section." default="false" />
+    <aura:attribute name="showThankyou" type="Boolean" description="show profile thankyou section." default="false" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:handler event="c:profileeditClickEvent"
+                  action="{!c.showhideEditSection}"
+                  description="hide or show the edit component."/>
+    
+    <aura:handler event="c:profileSpinnerEvent"
+                  action="{!c.showhideSpinner}"
+                  description="hide or show the edit component."/>
+   
+     
+<div class="slds">   
+     <aura:renderIf isTrue="{!or(v.showview,v.showThankyou)}">
+         <c:profileview userdetail="{!v.userdetail}" showThankyou="{!v.showThankyou}" ></c:profileview>       
+     </aura:renderIf> 
+    <aura:renderIf isTrue="{!v.showedit}">
+        <c:profileedit ></c:profileedit>
+    </aura:renderIf>    
+    <lightning:spinner variant="brand" aura:id="mySpinner" size="large" class="{!v.showspinner}" />
+</div>
+</aura:component>

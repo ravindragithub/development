@@ -1,0 +1,114 @@
+<apex:page controller="myKVH_Edit_User_Case" standardStylesheets="false" cache="false" sidebar="false" tabStyle="myKVH_Users__tab">
+
+	<head>
+		<apex:stylesheet value="{!URLFOR($Resource.myKVH_Users2)}" />
+	</head>
+
+<!-- The VF page starts here! -->
+
+	<apex:Form id="theForm">
+		<c:LoadingBox />
+		<apex:inputHidden id="caseMessage" value="{!caseMessage}" />
+		<apex:outputPanel id="error" rendered="{! !hasUserId}">
+			<h2>User details not available....</h2>
+		</apex:outputPanel>
+		
+		<apex:outputPanel rendered="{!hasUserId}">
+			
+			<div class="box-content">
+				<div class="center"><h1>Request User changes</h1></div>
+				<apex:outputPanel id="input" layout="block" styleClass="center" rendered="{! !success}">
+				<apex:actionFunction name="validate" action="{!validateComment}" reRender="buttons"/>
+				Please use the Form below to tell what changes you would like to make for:
+				<br/>
+				<div align="center" draggable="false">
+				<apex:dataTable value="{!SFContact}" var="ContUser" rules="all" cellpadding="2%" id="table" styleClass="myKVHtablesorter">
+					<!-- Columns start here... -->
+					<apex:column > <!-- style="text-align:right" headerClass="clsRight" --> 
+						<apex:facet name="header">First<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="firstName" value="{!ContUser.FirstName}"/>&nbsp;<br/>
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Last<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="lastName" value="{!ContUser.LastName}"/>&nbsp;<br/>
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Email:&nbsp;</apex:facet>
+						<apex:outputText id="tableEmail" value="{!ContUser.Email}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Fleet or Vessel:&nbsp;</apex:facet>
+						<apex:outputText id="tableAcctName" value="{!ContUser.Account.Name}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Phone:&nbsp;</apex:facet>
+						<apex:outputText id="tablePhone" value="{!ContUser.Phone}"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">Mobile:&nbsp;</apex:facet>
+						<apex:outputText id="tableMobile" value="{!ContUser.MobilePhone}"/>&nbsp;
+					</apex:column>
+				</apex:dataTable>
+				</div>
+				<br/>
+				
+				
+					<apex:inputTextArea id="commentArea" value="{!UserChangeRequest}" onKeyUp="showSubmit(this.value);"/> 
+					<br/>
+					
+					<br/>
+					<apex:outputPanel id="buttons" layout="block" styleClass="center" >
+					<apex:commandButton id="cancel" value="Cancel" action="{!Cancel}" rerender="theForm" 
+						styleClass="button" style="float: left; line-height: initial; margin: 10px;" />
+					<apex:commandButton id="submit" value="Submit" action="{!Submit}" styleClass="button" rerender="theForm" 
+						style="float: right; line-height: initial; margin: 10px;" status="loadStatus"/>
+				</apex:outputPanel>
+				<br/>
+				</apex:outputPanel>
+				<apex:outputPanel id="output" layout="block" styleClass="center" rendered="{!success}">
+				<br/>
+				{!caseMessage}
+				<br/>
+				
+					<apex:outputLink id="gotoCase" value="./my_Case_View?id={!submittedCase.Id}" styleClass="button" 
+						style="float: left; line-height: initial; margin: 10px;">
+						View Case
+					</apex:outputLink>
+					<apex:outputLink id="gotoManageUsers" value="./Manage_myKVH_users" styleClass="button" 
+						style="float: right; line-height: initial; margin: 10px;">
+						Manage Users
+					</apex:outputLink>
+				</apex:outputPanel>
+			</div>
+		</apex:outputPanel>
+	</apex:Form>
+
+	<script>
+	function getApexElementByID(tagname, eid) {
+			var tags = document.getElementsByTagName(tagname); //get a bunch of tags.
+			var regex = new RegExp(":" + eid + "$");
+			for (var i=0; i < tags.length; i++) {
+				if (tags[i].getAttribute("id") != null) {
+					var idVal = tags[i].getAttribute("id");
+					var pos = idVal.search(regex);
+					if (pos != -1) return tags[i];
+				}
+			}
+			return null;
+		}
+		
+	function showSubmit(comment) {
+		if (comment){
+			//alert(comment);
+			getApexElementByID('input','submit').disabled = false;
+		} else {
+			getApexElementByID('input','submit').disabled = true;
+		}
+	}
+	</script>
+	<script>
+		// This kind of works like a JQuery document.ready() function...
+		// It disables the submit button on load
+		showSubmit('');
+	</script>
+</apex:page>

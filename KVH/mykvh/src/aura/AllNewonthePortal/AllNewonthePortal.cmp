@@ -1,0 +1,61 @@
+<aura:component controller="NewonthePortalController" 
+                description="AllNewonthePortalComponent"
+                implements="forceCommunity:availableForAllPageTypes"
+                access="global">
+	<ltng:require styles="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <aura:attribute name="LastModifiedDate" type="String" access="global"/>
+    <aura:attribute name="selectedView" type="String" access="global"/>
+    <aura:attribute name="serviceName" type="String" access="global"/>
+    <aura:attribute name="sortField" type="String" access="global"/>
+    <aura:attribute name="sortAsc" type="Boolean" access="global"/>
+    
+    <aura:attribute name="Documentlist" type="Prod_Doc_Library__c[]" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.handlePortalViewChange}" />
+    <aura:handler event="c:PortalViewOptionEvent"
+                  action="{!c.handlePortalViewChange}"
+                  description="Event handler to get the selected portal option.
+								On handling it will fire the apex class to bring the properties for each option"/>
+    <div class="slds-p-horizontal--small" style="margin-top:0;">
+        <div style="background:#fff; padding:20px; max-width:1000px;margin:0 auto;">
+            
+            <nav role="navigation" aria-label="Breadcrumbs">
+                <ol class="slds-breadcrumb slds-list--horizontal"  style="float: left;">
+                    <li class="slds-breadcrumb__item slds-text-title--caps">
+                        <a style="color: #1f83ad;" href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}">
+                            HOME
+                        </a>
+                    </li>
+                    <li class="slds-breadcrumb__item slds-text-title--caps">
+                        <a href="#" style="color:#999;font-family:sans-serif">
+                            New on the Portal
+                        </a>
+                    </li>
+                </ol>
+            </nav> 
+            
+            <a class="button" href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}" style="float: right;" >BACK</a> 
+            <div style="clear:both;"></div>
+            
+            <h1>New on the Portal</h1>
+            <table class="dashboard" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="slds-is-sortable" scope="col" style="width: 25%; font-weight: bold;">Date <i class="fa fa-sort" aria-hidden="true" onclick="{!c.sortByDate}" style="color:#999;"></i></th>
+                        <th class="slds-is-sortable" scope="col" style="width: 160%;">Description <i class="fa fa-sort" aria-hidden="true" onclick="{!c.sortByName}" style="color:#999;"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.Documentlist}" var="doc">
+                        <c:NewonthePortalDoc docId="{!doc.Id}" 
+                                             ct="{!doc.Associated_Content_Types__c}"
+                                             cdate="{!doc.Created_Date__c}"
+                                             dispname="{!doc.Title_Display_Name__c}"
+                                             tc="{!doc.Display_Terms_and_Conditions_Page__c}"
+                                             ht="{!doc.Display_HTML_Page__c}">
+                        </c:NewonthePortalDoc>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</aura:component>

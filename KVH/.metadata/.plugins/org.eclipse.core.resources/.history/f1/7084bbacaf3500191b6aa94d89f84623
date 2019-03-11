@@ -1,0 +1,45 @@
+<aura:component description="Simple Pick List component to handle any Picklist in the 'Picklist Values Set'" controller="Utilities">
+    
+    <aura:handler name="init"
+                  value="{!this}"
+                  action="{!c.initialize}" />
+	
+    <aura:attribute name="objName"
+                    description="store object Name."
+                    type="String"/>
+    
+    <aura:attribute name="fieldName"
+                    description="Field name"
+                    type="String"/>
+	
+    <aura:attribute name="pickListName"
+                    description="pick List Name."
+                    type="String"
+                    default="pickListName"/>
+	
+    <aura:attribute name="pickListLabel"
+                    description="pick List Label."
+                    type="String"
+                    default="pickListLabel"/>
+	
+    <aura:attribute name="pickListId"
+                    description="pick List Label."
+                    type="String"
+                    default="pickListId"/>
+    
+    <aura:attribute name="fieldDefault" type="String" default=""/>
+    
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:attribute name="pickListOptions" type="List" />
+    
+    <lightning:select aura:id="{!v.pickListId}"
+                      onchange="{!c.onFieldChange}"
+                      name="{!v.pickListName}"
+                      label="{!v.pickListLabel}"
+                      variant="label-hidden"
+                      value="{!v.selectedValue}">
+        <aura:iteration items="{!v.pickListOptions}" var="item">
+            <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+        </aura:iteration>
+    </lightning:select>
+</aura:component>

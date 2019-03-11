@@ -1,0 +1,62 @@
+/**
+ * Created by Jai Chaturvedi on 13/03/2017.
+ */
+.THIS.slds-show-custom {
+          display: flex;
+}
+
+.THIS.slds-hide-custom {
+          display: none ;
+}
+.THIS .app-button {
+    margin-bottom:15px;
+    background:#fff;
+    box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+    
+}
+
+.THIS .app-button .heading {
+    background-color:#1f83ad;
+    overflow: hidden;
+}
+
+.THIS .app-button .heading h4 {
+    color:#fff;
+    letter-spacing: .04em;
+    display:inline-block;
+    padding:10px;
+    margin:0;  
+}
+
+.THIS .app-button p {
+    padding: 10px;
+    margin:0;
+}
+
+.THIS .app-button a {
+    display:inline-block;
+    margin:0;
+    padding:0;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-decoration: none;
+    font-size:85%;
+    color:#fff;
+    line-height: 39px;
+   
+}
+.THIS .bg-15 {
+    background: rgba(0,0,0,.15);
+}
+.THIS .right {
+    float: right;
+    width : 20%;
+}
+.THIS .left {
+    float: left;
+    width : 80%;
+}
+
+.THIS .center {
+    text-align: center;
+}

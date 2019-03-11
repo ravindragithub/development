@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT"
+            description="QuickLinkEvent">
+    <aura:attribute name="quickaction" type="String"/>
+    <aura:attribute name="salestoolkit" type="Boolean"/>
+    <aura:attribute name="contenttypes" type="String[]"/>
+</aura:event>

@@ -1,0 +1,42 @@
+<aura:component controller="HTS_ltgsvc_diagnostics">
+  <aura:attribute name="diagnostics" type="HTS_ltgsvc_diagnostics" description="Results of the Service-Side validation" />
+  <aura:attribute name="statusMessage" type="string" description="Status message returned from server" default="Initializing..." />
+  <aura:attribute name="vtid" type="string" default="Initializing..." description="This is the Virtual Terminal Id input" />
+  <aura:attribute name="diagResults" type="Object[]" description="This is a object created from the list of validationResults returned by the controller"/>
+
+  <aura:attribute name="validationResults" type="List" description="This is the list of Validation Results from the Server. All should start with OK:"
+                  default="['Initializing...']" />
+  <!--PUBLISHER -->
+  <aura:registerEvent name="validationComplete" type="c:HTS_subscriptions_component_evt" />
+
+  <!--EVENT LISTENER -->
+  <aura:handler name="change" value="{!v.vtid}" action="{!c.getSubscriptions}"/>
+  <aura:handler event="c:HTS_subscriptions_application_evt" action="{!c.getSubscriptions}"/>
+
+  <p>Validating: <ui:outputText value="{!v.vtid}"/>...</p>
+  <p><ui:outputText value="{!v.statusMessage}"/></p>
+  <aura:iteration items="{!v.diagnostics.activeSubscriptions}" var="subs">
+    <p>
+      Traffic Identifier: <ui:outputText value="{!subs.subscriber_id}"/> 
+      is <ui:outputText value="{!subs.status}"/> 
+      on <ui:outputText value="{!subs.subscriber_plan_id}"/>
+    </p>
+  </aura:iteration>
+  
+  <aura:iteration items="{!v.diagResults}" var="tests">
+    <aura:if isTrue="{!tests.class == 'RED'}">
+        <p>
+          <lightning:icon iconName="utility:clear" size="x-small" variant="error"/>&nbsp;
+          <ui:outputText class="err" value="{!tests.item}"/>
+        </p>
+        <aura:set attribute="else">
+          <p>
+            <lightning:icon class="ok" iconName="utility:success" size="x-small" />&nbsp;
+            <ui:outputText value="{!tests.item}"/>
+          </p>
+        </aura:set>
+    </aura:if>
+    
+
+  </aura:iteration>
+</aura:component>

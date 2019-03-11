@@ -1,0 +1,54 @@
+<aura:component controller="HTS_ltgsvc_region_selector">
+  <aura:attribute name="options" type="List" />
+  <aura:attribute name="selectedRegion" type="String" default="CONUS_STANDARD"/>
+  <aura:attribute name="configTemplates" type="HTS_Terminal_Template__c[]" description="This is the list of Shaping Policies returned from Salesforce" />
+  <aura:attribute name="enabledTerminal" type="HTSOSS_hts_terminals" description="This represents the Terminal being updated" />
+  <aura:attribute name="termId" type="String" description="This is the VTID of the terminal" />
+  <aura:attribute name="actionRequired" type="String" description="This is the results of the terminal region vs the selected region comparison" default="Evaluating..." />
+<!-- PUBLISHER -->
+  <aura:registerEvent name="cmpDataUpdated" type="c:HTS_hybrids_component_evt" />
+<!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="change" value="{!v.selectedRegion}" action="{!c.handleRegionChange}"/>
+<!-- MARKUP -->
+
+
+  <div class="slds-grid slds-grid_pull-padded-medium">
+
+    <div class="slds-col slds-p-horizontal_medium slds-size_1-of-3">
+      <div class="slds-form-element">
+        <div class="slds-form-element__control">
+          <div class="slds-select_container">
+            <lightning:select aura:id="regionPicker" name="regionPicker" label="Select Region" value="{!v.selectedRegion}">
+              <aura:iteration items="{!v.options}" var="region">
+                <option value="{!region.value}" label="{!region.label}" disabled="{!region.disabled}" selected="{!region.selected}"/>
+              </aura:iteration>
+            </lightning:select>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="slds-col slds-p-horizontal_medium slds-size_1-of-3">
+      <div class="slds-form-element">
+        <div class="slds-form-element__static">
+          <div class="slds-form-element__label"> Current Configuration </div>
+          <div class="slds-form-element__control"> {!v.enabledTerminal.template_id} </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slds-col slds-p-horizontal_medium slds-size_1-of-3">
+      <div class="slds-form-element">
+        <div class="slds-form-element__static">
+          <div class="slds-form-element__label"> Action required </div>
+          <div class="slds-form-element__control">
+            {!v.body}
+          </div>
+        </div>
+      </div>
+      <c:HTS_terminals_asynch_monitor />
+    </div>
+
+  </div>
+</aura:component>

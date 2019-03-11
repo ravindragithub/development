@@ -1,0 +1,117 @@
+<apex:page controller="ortoo_e2a.TemporaryAttachmentController" sidebar="false" showHeader="false" tabStyle="ortoo_e2a__User_Settings__c">
+
+    <script>
+      function notifyParent()
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        winMain.attachRefresh();
+      }
+      
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+    </script>
+
+    <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+        <tr>
+            <td><h1 style="color:white;vertical-align:middle">Attachments</h1></td>
+            <td width="100%">&nbsp;</td>
+        </tr>
+    </table>
+    <apex:form id="attachment_dialog_related">
+        <table>
+            <tr>
+                <td class="spacercolumn"></td>
+                <td class="labelcolumn"><apex:outputLabel value="Location"/></td>
+                <td><apex:selectList value="{!AttachmentSearchSelection}" size="1">
+                        <apex:selectOptions value="{!AttachmentSearchOptions}"></apex:selectOptions>
+                        <apex:actionSupport event="onchange" action="{!SearchSelectionPage}"/>
+                    </apex:selectList></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <apex:pageBlock title="{!RelatedObjectSelectionName}" id="file_table">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Attach" action="{!AttachRelatedObjects}" oncomplete="notifyParent()" rendered="{!relatedObjectSelectedId=='Attachments'}"  reRender="ro_attach_list, attachment_list"/>
+                <apex:commandButton value="Attach" action="{!AttachFiles}" oncomplete="notifyParent()" rendered="{!relatedObjectSelectedId=='Files'}" reRender="ro_file_list, attachment_list"/>
+                <apex:commandButton value="Click to Complete!" onclick="closeWindow()"/>
+            </apex:pageBlockButtons>
+            
+            <apex:outputPanel layout="block" id="attachments_options">
+                <apex:outputText value="Search In:"/>&nbsp;&nbsp;
+                <apex:selectList value="{!relatedObjectSelectedId}" size="1">
+                    <apex:selectOptions value="{!RelatedAttachmentsOptions}"/>
+                    <apex:actionSupport event="onchange" action="{!FileFolderReselect}" reRender="attachments_options,file_table,no_files_msg"/>
+                </apex:selectList>
+                
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!relatedObjectSelectedId!='Files'}"  >
+            	
+                <apex:pageBlockTable value="{!RelatedObjectAttachmentsList}"  rendered="{!relatedObjectSelectedId=='Attachments'}"  var="RO" id="ro_attach_list">
+                    <apex:column >
+                        <apex:inputCheckbox value="{!RO.Selected}"/>
+                    </apex:column>
+                    <apex:column value="{!RO.Attachment.Name}"/>
+                    <apex:column value="{!RO.Attachment.BodyLength}"/>
+                </apex:pageBlockTable>
+                <apex:outputText value="no attachments" rendered="{!RelatedAttachmentsDoNotExist}"/>
+            </apex:outputPanel>
+            
+            <apex:outputPanel layout="block" rendered="{!relatedObjectSelectedId=='Files'}"  >
+                <apex:pageBlockTable value="{!RelatedFilesList}"   var="DO" id="ro_file_list">
+                    <apex:column >
+                        <apex:inputCheckbox value="{!DO.Selected}"/>
+                    </apex:column>
+                    <apex:column value="{!DO.SObj['Title']}">
+                        <apex:facet name="header">
+                            <apex:outputLabel value="File Name" rendered="{!RelatedFilesExist}"/>
+                        </apex:facet>
+                    </apex:column>
+                    <apex:column value="{!DO.SObj['ContentSize']}">
+                        <apex:facet name="header">
+                            <apex:outputLabel value="Body Length" rendered="{!RelatedFilesExist}"/>
+                        </apex:facet>
+                    </apex:column>                
+                </apex:pageBlockTable>
+                <apex:outputPanel id="no_files_msg">
+                    <apex:outputText value="no files" rendered="{!RelatedFilesDoNotExist}"/>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+            <apex:outputPanel layout="block" rendered="{!AttachmentSearchSelection == 'RELATED_OBJECT_EMAIL'}"  style="float:right;">
+            	<apex:commandLink value="Previous" action="{!getPreviousRecord}" rendered="{!offSetLimit > 0}" reRender="attachments_options,file_table,no_files_msg"/> &nbsp;
+            	<apex:commandLink value="Next" action="{!getNextRecord}" rendered="{!AND(relatedObjectSelectedId!='Files' ,NOT(RelatedAttachmentsDoNotExist) )}" reRender="attachments_options,file_table,no_files_msg"/>
+            	<apex:commandLink value="Next" action="{!getNextRecord}" rendered="{!AND(relatedObjectSelectedId=='Files' ,NOT(RelatedFilesDoNotExist) )}" reRender="attachments_options,file_table,no_files_msg"/>
+            	
+            </apex:outputPanel>
+            
+        </apex:pageBlock>
+        <apex:pageBlock title="Attachments" id="attachment_list">
+            <apex:pageBlockTable value="{!EmailAttachmentsList}" var="AT">
+                <apex:column value="{!AT.Name}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="File" rendered="{!EmailAttachmentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!AT.Size}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Size" rendered="{!EmailAttachmentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="no attachments" rendered="{!EmailAttachmentsDoNotExist}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

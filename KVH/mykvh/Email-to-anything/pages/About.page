@@ -1,0 +1,44 @@
+<apex:page controller="ortoo_e2a.AboutController">
+<apex:includeScript value="/support/console/33.0/integration.js"/>
+<script type="text/javascript">
+    window.onload = function() 
+    {
+        setTitle();             
+    }
+    
+    function setTitle()
+    {
+       console.log('setting title');
+       if (sforce.console.isInConsole())
+       {       
+        sforce.console.setTabTitle('e2a About');
+       } 
+    }
+</script>
+  <apex:form id="theForm">
+        <apex:sectionHeader title="Ortoo : Email-to-anything" subtitle="About"/>
+        <apex:pageBlock title="About Email-to-anything" id="pageView">
+            <!--  <apex:pageBlockSection title="Frequently Asked Questions" columns="1" collapsible="false">
+                <br/>
+                For a list of Frequently Asked Questions, please visit the Ortoo FAQ page:
+                <apex:outputLink value="http://www.ortoomail.com/FAQ.html" target="_blank">http://www.ortoomail.com/FAQ.html</apex:outputLink>
+            </apex:pageBlockSection> -->
+            <apex:pageBlockSection title="Information" columns="1" collapsible="false">
+                <br/>
+                For further information about app, including help and support, please visit the App Exchange:
+                <apex:outputLink value="https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003HuI9EAK" target="_blank">Ortoo Email-to-anything on AppExchange</apex:outputLink>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="User Guide" columns="1" collapsible="false">
+                <br/>
+                Click on the link below for the latest Ortoo Email-to-anything User Guide:
+                <apex:outputLink value="http://e2ahelp.ortooapps.com/introduction-e2a-quick-start-guide" target="_blank">Ortoo Email-to-anything Quick Start Guide</apex:outputLink>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Version" columns="1" collapsible="false">
+                <br/>
+                {!PackageVersion}
+                <br/><br/>
+                {!CopyrightNotice}
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

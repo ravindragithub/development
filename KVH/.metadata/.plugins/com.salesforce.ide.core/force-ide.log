@@ -1,0 +1,556 @@
+ WARN [2019-02-21 12:39:34,569] (ComponentResource.java:loadFromFile:430) - File 'src/package.xml' does not exist
+ERROR [2019-02-21 12:54:12,943] (ProjectCreateWizard.java:performFinish:105) - Unable to create project.
+java.lang.reflect.InvocationTargetException
+	at org.eclipse.jface.operation.ModalContext.runInCurrentThread(ModalContext.java:451)
+	at org.eclipse.jface.operation.ModalContext.run(ModalContext.java:356)
+	at org.eclipse.jface.dialogs.ProgressMonitorDialog.run(ProgressMonitorDialog.java:474)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateOperation.create(ProjectCreateOperation.java:72)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateWizard.createProject(ProjectCreateWizard.java:129)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateWizard.performFinish(ProjectCreateWizard.java:103)
+	at org.eclipse.jface.wizard.WizardDialog.finishPressed(WizardDialog.java:775)
+	at org.eclipse.jface.wizard.WizardDialog.buttonPressed(WizardDialog.java:414)
+	at org.eclipse.jface.dialogs.Dialog.lambda$0(Dialog.java:622)
+	at org.eclipse.swt.events.SelectionListener$1.widgetSelected(SelectionListener.java:84)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:252)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.ui.actions.NewProjectAction.run(NewProjectAction.java:118)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at com.sforce.ws.parser.MXParser.fillBuf(MXParser.java:2937)
+	at com.sforce.ws.parser.MXParser.more(MXParser.java:3014)
+	at com.sforce.ws.parser.MXParser.nextImpl(MXParser.java:1397)
+	at com.sforce.ws.parser.MXParser.next(MXParser.java:1111)
+	at com.sforce.ws.parser.MXParser.nextText(MXParser.java:1076)
+	at com.sforce.ws.parser.XmlInputStream.nextText(XmlInputStream.java:149)
+	at com.sforce.ws.bind.TypeMapper.readString(TypeMapper.java:465)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:658)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.soap.metadata.RetrieveResult.setZipFile(RetrieveResult.java:269)
+	at com.sforce.soap.metadata.RetrieveResult.loadFields(RetrieveResult.java:316)
+	at com.sforce.soap.metadata.RetrieveResult.load(RetrieveResult.java:302)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:674)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.setResult(CheckRetrieveStatusResponse_element.java:37)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.loadFields(CheckRetrieveStatusResponse_element.java:68)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.load(CheckRetrieveStatusResponse_element.java:62)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:674)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.ws.transport.SoapConnection.bind(SoapConnection.java:180)
+	at com.sforce.ws.transport.SoapConnection.receive(SoapConnection.java:154)
+	at com.sforce.ws.transport.SoapConnection.send(SoapConnection.java:99)
+	at com.sforce.soap.metadata.MetadataConnection.checkRetrieveStatus(MetadataConnection.java:271)
+	at com.salesforce.ide.core.remote.MetadataStubExt.checkRetrieveStatus(MetadataStubExt.java:202)
+	at com.salesforce.ide.core.remote.MetadataStubExt$$FastClassByCGLIB$$9404e285.invoke(<generated>)
+	at net.sf.cglib.proxy.MethodProxy.invoke(MethodProxy.java:149)
+	at org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint(Cglib2AopProxy.java:700)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:77)
+	at com.salesforce.ide.core.internal.aspects.MetadataOperationsRetryAspect.metadataOperationsRetry(MetadataOperationsRetryAspect.java:32)
+	at sun.reflect.GeneratedMethodAccessor74.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+ERROR [2019-02-21 13:36:51,160] (ProjectCreateWizard.java:performFinish:105) - Unable to create project.
+java.lang.reflect.InvocationTargetException
+	at org.eclipse.jface.operation.ModalContext.runInCurrentThread(ModalContext.java:451)
+	at org.eclipse.jface.operation.ModalContext.run(ModalContext.java:356)
+	at org.eclipse.jface.dialogs.ProgressMonitorDialog.run(ProgressMonitorDialog.java:474)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateOperation.create(ProjectCreateOperation.java:72)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateWizard.createProject(ProjectCreateWizard.java:129)
+	at com.salesforce.ide.ui.wizards.project.ProjectCreateWizard.performFinish(ProjectCreateWizard.java:103)
+	at org.eclipse.jface.wizard.WizardDialog.finishPressed(WizardDialog.java:775)
+	at org.eclipse.jface.wizard.WizardDialog.buttonPressed(WizardDialog.java:414)
+	at org.eclipse.jface.dialogs.Dialog.lambda$0(Dialog.java:622)
+	at org.eclipse.swt.events.SelectionListener$1.widgetSelected(SelectionListener.java:84)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:252)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.ui.actions.NewProjectAction.run(NewProjectAction.java:118)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at com.sforce.ws.parser.MXParser.fillBuf(MXParser.java:2937)
+	at com.sforce.ws.parser.MXParser.more(MXParser.java:3014)
+	at com.sforce.ws.parser.MXParser.nextImpl(MXParser.java:1397)
+	at com.sforce.ws.parser.MXParser.next(MXParser.java:1111)
+	at com.sforce.ws.parser.MXParser.nextText(MXParser.java:1076)
+	at com.sforce.ws.parser.XmlInputStream.nextText(XmlInputStream.java:149)
+	at com.sforce.ws.bind.TypeMapper.readString(TypeMapper.java:465)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:658)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.soap.metadata.RetrieveResult.setZipFile(RetrieveResult.java:269)
+	at com.sforce.soap.metadata.RetrieveResult.loadFields(RetrieveResult.java:316)
+	at com.sforce.soap.metadata.RetrieveResult.load(RetrieveResult.java:302)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:674)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.setResult(CheckRetrieveStatusResponse_element.java:37)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.loadFields(CheckRetrieveStatusResponse_element.java:68)
+	at com.sforce.soap.metadata.CheckRetrieveStatusResponse_element.load(CheckRetrieveStatusResponse_element.java:62)
+	at com.sforce.ws.bind.TypeMapper.readSingle(TypeMapper.java:674)
+	at com.sforce.ws.bind.TypeMapper.readObject(TypeMapper.java:548)
+	at com.sforce.ws.transport.SoapConnection.bind(SoapConnection.java:180)
+	at com.sforce.ws.transport.SoapConnection.receive(SoapConnection.java:154)
+	at com.sforce.ws.transport.SoapConnection.send(SoapConnection.java:99)
+	at com.sforce.soap.metadata.MetadataConnection.checkRetrieveStatus(MetadataConnection.java:271)
+	at com.salesforce.ide.core.remote.MetadataStubExt.checkRetrieveStatus(MetadataStubExt.java:202)
+	at com.salesforce.ide.core.remote.MetadataStubExt$$FastClassByCGLIB$$9404e285.invoke(<generated>)
+	at net.sf.cglib.proxy.MethodProxy.invoke(MethodProxy.java:149)
+	at org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint(Cglib2AopProxy.java:700)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:77)
+	at com.salesforce.ide.core.internal.aspects.MetadataOperationsRetryAspect.metadataOperationsRetry(MetadataOperationsRetryAspect.java:32)
+	at sun.reflect.GeneratedMethodAccessor74.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+ERROR [2019-02-22 11:12:29,424] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-02-22 11:39:31,075] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ WARN [2019-02-22 11:39:31,079] (BaseRetryAspect.java:isExceptionRetryable:226) - General evaluation deemed exception not retry-able:
+ IOException: Premature EOF
+ERROR [2019-02-22 11:39:31,081] (PackageRetrieveService.java:retrieveWork:861) - Unable to retrieve components: IOException: Premature EOF
+ WARN [2019-02-25 15:14:13,843] (ComponentResource.java:loadFromFile:430) - File 'src/package.xml' does not exist
+ WARN [2019-02-25 15:14:16,257] (BaseBuilder.java:checkSkipBuilder:86) - Skipping build - user credentials not found
+ WARN [2019-02-25 15:18:31,164] (ProjectAddEvaluator.java:visit:86) - Unable to add skip builder flag to added project 'P/RemoteSystemsTempFiles': Project 'RemoteSystemsTempFiles' is not open. Cause:
+ (1) Project 'RemoteSystemsTempFiles' is not open.
+    Root Exception: Project 'RemoteSystemsTempFiles' is not open.
+ WARN [2019-02-25 15:18:31,165] (ProjectAddEvaluator.java:visit:101) - Unable to add skip builder flag to added project 'P/RemoteSystemsTempFiles': Project 'RemoteSystemsTempFiles' is not open. Cause:
+ (1) Project 'RemoteSystemsTempFiles' is not open.
+    Root Exception: Project 'RemoteSystemsTempFiles' is not open.
+ WARN [2019-02-25 16:43:55,396] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ WARN [2019-02-25 16:43:55,399] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ERROR [2019-02-25 16:43:55,434] (RefreshResourceHandler.java:fetchRemoteComponents:120) - Unable to refresh resource(s)
+java.net.UnknownHostException: test.salesforce.com
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at sun.security.ssl.SSLSocketImpl.connect(Unknown Source)
+	at sun.net.NetworkClient.doConnect(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.<init>(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.New(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(Unknown Source)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(Unknown Source)
+	at com.sforce.ws.transport.JdkHttpTransport.connectRaw(JdkHttpTransport.java:136)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:100)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:95)
+	at com.sforce.ws.transport.JdkHttpTransport.connect(JdkHttpTransport.java:91)
+	at com.sforce.ws.transport.SoapConnection.send(SoapConnection.java:95)
+	at com.sforce.soap.partner.wsc.PartnerConnection.login(PartnerConnection.java:1065)
+	at com.salesforce.ide.core.remote.Connection.login(Connection.java:254)
+	at com.salesforce.ide.core.remote.Connection$$FastClassByCGLIB$$8e61a81d.invoke(<generated>)
+	at net.sf.cglib.proxy.MethodProxy.invoke(MethodProxy.java:149)
+	at org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint(Cglib2AopProxy.java:700)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:77)
+	at com.salesforce.ide.core.internal.aspects.LoginRetryAspect.loginRetry(LoginRetryAspect.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:627)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:616)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:64)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:50)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:90)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept(Cglib2AopProxy.java:635)
+	at com.salesforce.ide.core.remote.Connection$$EnhancerByCGLIB$$ec0b0d0a.login(<generated>)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getNewConnection(ConnectionFactory.java:82)
+	at com.salesforce.ide.core.factories.ConnectionFactory.storeConnection(ConnectionFactory.java:167)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:134)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:157)
+	at com.salesforce.ide.core.services.PackageRetrieveService.retrieveSelective(PackageRetrieveService.java:388)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.handleSourceComponentFileRefresh(RefreshResourceActionController.java:433)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.refreshResources(RefreshResourceActionController.java:141)
+	at com.salesforce.ide.ui.handlers.RefreshResourceHandler$1.execute(RefreshResourceHandler.java:87)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2322)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+ WARN [2019-02-25 16:46:55,424] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 16:46:55,428] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 16:46:55,480] (RefreshResourceHandler.java:fetchRemoteComponents:116) - Unable to refresh resource(s): Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 16:47:15,775] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 16:47:15,778] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 16:47:15,827] (RefreshResourceHandler.java:fetchRemoteComponents:116) - Unable to refresh resource(s): Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 17:23:01,405] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 17:23:01,410] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ LoginFault: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 17:23:01,413] (ProjectController.java:getRemotePackageNames:862) - Unable to get project packages for project 'kvh_bkup': Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 17:23:01,470] (ProjectOrganizationPage.java:prepareNextPage:263) - Unable to login: Invalid username, password, security token; or user locked out.
+ WARN [2019-02-25 17:24:21,675] (Utils.java:loadDocument:807) - Unable to load document: D:\KVH\.metadata\.plugins\com.salesforce.ide.core\packageCache.xml (The system cannot find the file specified)
+ WARN [2019-03-01 16:09:43,200] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ WARN [2019-03-01 16:09:43,211] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ERROR [2019-03-01 16:09:43,305] (RefreshResourceHandler.java:fetchRemoteComponents:120) - Unable to refresh resource(s)
+java.net.UnknownHostException: test.salesforce.com
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at sun.security.ssl.SSLSocketImpl.connect(Unknown Source)
+	at sun.net.NetworkClient.doConnect(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.<init>(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.New(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(Unknown Source)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(Unknown Source)
+	at com.sforce.ws.transport.JdkHttpTransport.connectRaw(JdkHttpTransport.java:136)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:100)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:95)
+	at com.sforce.ws.transport.JdkHttpTransport.connect(JdkHttpTransport.java:91)
+	at com.sforce.ws.transport.SoapConnection.send(SoapConnection.java:95)
+	at com.sforce.soap.partner.wsc.PartnerConnection.login(PartnerConnection.java:1065)
+	at com.salesforce.ide.core.remote.Connection.login(Connection.java:254)
+	at com.salesforce.ide.core.remote.Connection.relogin(Connection.java:448)
+	at com.salesforce.ide.core.remote.Connection$$FastClassByCGLIB$$8e61a81d.invoke(<generated>)
+	at net.sf.cglib.proxy.MethodProxy.invoke(MethodProxy.java:149)
+	at org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint(Cglib2AopProxy.java:700)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:77)
+	at com.salesforce.ide.core.internal.aspects.LoginRetryAspect.loginRetry(LoginRetryAspect.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:627)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:616)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:64)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:50)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:90)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept(Cglib2AopProxy.java:635)
+	at com.salesforce.ide.core.remote.Connection$$EnhancerByCGLIB$$ec0b0d0a.relogin(<generated>)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:142)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:157)
+	at com.salesforce.ide.core.services.PackageRetrieveService.retrieveSelective(PackageRetrieveService.java:388)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.handleSourceComponentFileRefresh(RefreshResourceActionController.java:433)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.refreshResources(RefreshResourceActionController.java:141)
+	at com.salesforce.ide.ui.handlers.RefreshResourceHandler$1.execute(RefreshResourceHandler.java:87)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2322)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+ WARN [2019-03-01 16:10:04,934] (BaseRetryAspect.java:isLoginExceptionRetryable:124) - Login evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ WARN [2019-03-01 16:10:04,937] (BaseRetryAspect.java:isConnectionExceptionRetryable:159) - Connection evaluation deemed exception not retry-able:
+ UnknownHostException: test.salesforce.com
+ERROR [2019-03-01 16:10:05,043] (RefreshResourceHandler.java:fetchRemoteComponents:120) - Unable to refresh resource(s)
+java.net.UnknownHostException: test.salesforce.com
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at sun.security.ssl.SSLSocketImpl.connect(Unknown Source)
+	at sun.net.NetworkClient.doConnect(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.http.HttpClient.openServer(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.<init>(Unknown Source)
+	at sun.net.www.protocol.https.HttpsClient.New(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream0(Unknown Source)
+	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(Unknown Source)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(Unknown Source)
+	at com.sforce.ws.transport.JdkHttpTransport.connectRaw(JdkHttpTransport.java:136)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:100)
+	at com.sforce.ws.transport.JdkHttpTransport.connectLocal(JdkHttpTransport.java:95)
+	at com.sforce.ws.transport.JdkHttpTransport.connect(JdkHttpTransport.java:91)
+	at com.sforce.ws.transport.SoapConnection.send(SoapConnection.java:95)
+	at com.sforce.soap.partner.wsc.PartnerConnection.login(PartnerConnection.java:1065)
+	at com.salesforce.ide.core.remote.Connection.login(Connection.java:254)
+	at com.salesforce.ide.core.remote.Connection.relogin(Connection.java:448)
+	at com.salesforce.ide.core.remote.Connection$$FastClassByCGLIB$$8e61a81d.invoke(<generated>)
+	at net.sf.cglib.proxy.MethodProxy.invoke(MethodProxy.java:149)
+	at org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint(Cglib2AopProxy.java:700)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:77)
+	at com.salesforce.ide.core.internal.aspects.LoginRetryAspect.loginRetry(LoginRetryAspect.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:627)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:616)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:64)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:50)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:90)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+	at org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept(Cglib2AopProxy.java:635)
+	at com.salesforce.ide.core.remote.Connection$$EnhancerByCGLIB$$ec0b0d0a.relogin(<generated>)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:142)
+	at com.salesforce.ide.core.factories.ConnectionFactory.getConnection(ConnectionFactory.java:157)
+	at com.salesforce.ide.core.services.PackageRetrieveService.retrieveSelective(PackageRetrieveService.java:388)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.handleSourceComponentFileRefresh(RefreshResourceActionController.java:433)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.refreshResources(RefreshResourceActionController.java:141)
+	at com.salesforce.ide.ui.handlers.RefreshResourceHandler$1.execute(RefreshResourceHandler.java:87)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2322)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+ERROR [2019-03-01 16:12:30,097] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-04 16:02:57,766] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-06 18:35:02,210] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-07 12:28:18,804] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-07 16:22:59,792] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-08 11:53:16,493] (MetadataOperationsRetryAspect.java:metadataOperationsRetry:34) - ForceRemoteException occurred while attempting to perform a metadata operation
+ERROR [2019-03-08 14:20:31,043] (SyncServiceListenerBroadcaster.java:handleException:59) - Error executing a contributed ISyncServiceListener
+java.lang.NullPointerException
+	at com.salesforce.ide.core.model.ComponentList.getComponentFactory(ComponentList.java:59)
+	at com.salesforce.ide.core.model.ComponentList.getComponentListForComponentType(ComponentList.java:261)
+	at com.salesforce.ide.debug.ui.sync.SyncActionListener.collectDebuggerElements(SyncActionListener.java:145)
+	at com.salesforce.ide.debug.ui.sync.SyncActionListener.collectApexDebuggerElementsWithOpenedEditors(SyncActionListener.java:120)
+	at com.salesforce.ide.debug.ui.sync.SyncActionListener.projectSync(SyncActionListener.java:113)
+	at com.salesforce.ide.core.services.hooks.SyncServiceListenerBroadcaster$1.run(SyncServiceListenerBroadcaster.java:54)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.ui.internal.JFaceUtil.lambda$0(JFaceUtil.java:47)
+	at org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:176)
+	at com.salesforce.ide.core.services.hooks.SyncServiceListenerBroadcaster.executeExtension(SyncServiceListenerBroadcaster.java:62)
+	at com.salesforce.ide.core.services.hooks.SyncServiceListenerBroadcaster.broadcast(SyncServiceListenerBroadcaster.java:40)
+	at com.salesforce.ide.core.model.ProjectPackageList.saveResources(ProjectPackageList.java:1066)
+	at com.salesforce.ide.core.model.ProjectPackageList.saveResources(ProjectPackageList.java:1000)
+	at com.salesforce.ide.core.services.ProjectService$1.run(ProjectService.java:2153)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2322)
+	at com.salesforce.ide.core.services.ProjectService.handleRetrieveResult(ProjectService.java:2149)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.refreshSourceFolder(RefreshResourceActionController.java:214)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.handleProjectRefresh(RefreshResourceActionController.java:154)
+	at com.salesforce.ide.ui.actions.RefreshResourceActionController.refreshResources(RefreshResourceActionController.java:123)
+	at com.salesforce.ide.ui.handlers.RefreshResourceHandler$1.execute(RefreshResourceHandler.java:87)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2322)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,497] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,513] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,528] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,544] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,560] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,575] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,589] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,604] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null
+ WARN [2019-03-08 14:30:32,604] (MarkerUtils.java:applyRetrieveMarker:325) - Unable to apply retrieve warning marker to resource - resource is null

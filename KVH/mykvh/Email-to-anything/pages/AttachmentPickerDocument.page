@@ -1,0 +1,111 @@
+<apex:page controller="ortoo_e2a.TemporaryAttachmentController" sidebar="false" showHeader="false" tabStyle="ortoo_e2a__User_Settings__c">
+
+    <script>
+      function notifyParent()
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        winMain.attachRefresh();
+      }
+      
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+    </script>
+
+    <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+        <tr>
+            <td><h1 style="color:white;vertical-align:middle">Attachments</h1></td>
+            <td width="100%">&nbsp;</td>
+        </tr>
+    </table>
+    <apex:form id="attachment_dialog_document">
+        <table>
+            <tr>
+                <td class="spacercolumn"></td>
+                <td class="labelcolumn"><apex:outputLabel value="Location"/></td>
+                <td><apex:selectList value="{!AttachmentSearchSelection}" size="1">
+                        <apex:selectOptions value="{!AttachmentSearchOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!SearchSelectionPage}"/>
+                    </apex:selectList>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <apex:pageBlock title="Documents" id="document_list">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Attach" action="{!AttachDocuments}" oncomplete="notifyParent()" reRender="document_list, attachment_list"/>
+                <apex:commandButton value="Click to Complete!" onclick="closeWindow()" reRender="none"/>
+            </apex:pageBlockButtons>
+            <apex:outputPanel layout="block">
+                <apex:outputText value="Folder:"/>&nbsp;&nbsp;
+                <apex:selectList value="{!DocumentFolderSelection}" size="1">
+                    <apex:selectOptions value="{!DocumentFolderOptions}"/>
+                    <apex:actionSupport event="onchange" action="{!DocumentFolderReselect}" reRender="document_list"/>
+                </apex:selectList>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" style="height:3px"/>
+            <apex:outputPanel layout="block">
+                <apex:outputText value="Search:"/>&nbsp;
+                <apex:inputText value="{!DocumentFolderSearchString}"/>
+                <apex:commandButton action="{!DocumentFolderReselect}" id="go_document_search" value="Go!" reRender="document_table,no_documents_msg"/>
+                <apex:inputText style="display:none" />  <!-- To deal with the problem of pressing enter -->
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" style="height:2px"/>
+            <apex:pageBlockTable value="{!DocumentList}" var="DO" id="document_table">
+                <apex:column >
+                    <apex:inputCheckbox value="{!DO.Selected}"/>
+                </apex:column>
+                <apex:column value="{!DO.Document.Name}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Name" rendered="{!DocumentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!DO.Document.Author.Alias}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Author" rendered="{!DocumentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!DO.Document.BodyLength}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Size" rendered="{!DocumentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!DO.Document.IsInternalUseOnly}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Internal Use" rendered="{!DocumentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputPanel id="no_documents_msg">
+                <apex:outputText value="no documents" rendered="{!DocumentsDoNotExist}"/>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        <apex:pageBlock title="Attachments" id="attachment_list">
+            <apex:pageBlockTable value="{!EmailAttachmentsList}" var="AT">
+                <apex:column value="{!AT.Name}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="File" rendered="{!EmailAttachmentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!AT.Size}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Size" rendered="{!EmailAttachmentsExist}"/>
+                    </apex:facet>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="no attachments" rendered="{!EmailAttachmentsDoNotExist}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

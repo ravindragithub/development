@@ -1,0 +1,6 @@
+<apex:component >
+<div id="util-footer">
+    <p class="left">©2016 KVH Industries, Inc. All Rights Reserved</p>
+    <p class="right"><a href="#">Other Links</a> |  <a href="#">FAQs</a>  |  <a href="#">Help</a></p>
+</div>
+</apex:component>

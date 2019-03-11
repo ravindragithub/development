@@ -1,0 +1,13 @@
+.THIS .field-title{
+    padding-bottom : 10px;
+}
+
+.THIS .liststyle{
+    list-style: disc;
+    margin-bottom : 0px;
+    margin-left: 30px;
+}
+.THIS .Bottom-Paragraph {
+    font-style: italic;
+    font-size: 11px;
+}

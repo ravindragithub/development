@@ -1,0 +1,6 @@
+<apex:page standardController="asset" tabStyle="Account" >
+	<h1>Legend: </h1>Sequence, <em>Asset Name (link)</em>, Item Description, Installation Date, Removed Date
+    <div class="bodyDiv" onclick="resizeFrame();">
+            <c:AssetHierarchyTree currentId="{!Asset.id}" />
+    </div>
+</apex:page>

@@ -1,0 +1,16 @@
+.THIS .newsRow{
+    padding: .5rem 0;
+}
+.THIS .newstab{
+    padding: .5rem;
+    margin: 1rem 0;
+}
+
+.THIS p {
+    line-height:normal;
+    margin:0;
+}
+
+.THIS .slds-icon-text-default {
+    fill:rgb(255,255,255);
+}

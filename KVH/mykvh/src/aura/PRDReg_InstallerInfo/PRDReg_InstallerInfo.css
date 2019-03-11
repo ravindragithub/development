@@ -1,0 +1,18 @@
+.THIS .slds-radio{
+    padding: .5rem 0;
+}
+.THIS .toggle {
+    display: none;
+}
+
+.THIS .slds-form-element {
+    margin-bottom:0 !important;
+}
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+}

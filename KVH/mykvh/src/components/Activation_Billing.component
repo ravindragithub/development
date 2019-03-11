@@ -1,0 +1,255 @@
+<apex:component controller="Act_Billing_component_controller" allowDML="true">
+    <!-- ** This component is used in Activation_Billing Tab ** -->
+    
+    <!-- ** Attributes Used for this component Start ** -->
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <apex:attribute name="contactRole" description="This is the contact Role of the component"
+                    type="string" required="required" assignTo="{!strContactRole}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <!-- ** Attributes Used for this component End ** -->
+    
+    <script> 
+    // document.addEventListener('billpartreload', function(e) {sectionOnererender(e.value);},false); 
+    <!-- Method Called from Billing component to disable/enable fields - Start -->
+        function callDisableJS1(param){
+            var currentcomp = j$("[id$="+param+"]");
+            j$("[id$='chkbxk']").removeAttr('disabled');
+            if(j$("[id$='chkbxk']").is(':checked')){
+            	j$("[id$='SaveBillingAddress']").hide();
+                disableBilling(false);
+            }
+            else{
+                j$("[id$='SaveBillingAddress']").show();
+                j$(currentcomp).find('.diableClass').each(function(){
+                    if(j$(this).parent().find('.req').length == 1){
+                        j$(this).addClass('requiredRedMarkFld');
+                    }
+                }); 
+                j$('.staterequired').addClass('requiredRedMarkFld');
+                j$('.diableClass').removeAttr('disabled').removeClass('diableClassStyle');
+                hideLoadingDiv();
+            }
+        }
+    
+    	function callDisableJS(param){
+            var currentcomp = j$("[id$="+param+"]");
+            j$("[id$='chkbxk']").removeAttr('disabled');
+            if(j$("[id$='chkbxk']").is(':checked')){
+            	j$("[id$='SaveBillingAddress']").hide();
+                  callBillingchkSaveOnly();
+            }
+            else{
+                j$("[id$='SaveBillingAddress']").show();
+                j$(currentcomp).find('.diableClass').each(function(){
+                    if(j$(this).parent().find('.req').length == 1){
+                        j$(this).addClass('requiredRedMarkFld');
+                    }
+                }); 
+                j$('.staterequired').addClass('requiredRedMarkFld');
+                j$('.diableClass').removeAttr('disabled').removeClass('diableClassStyle');
+                hideLoadingDiv();
+            }
+        }
+    
+    function buttonfunctionvalidatebill(param,param1,param2){
+        var showmodel = false;
+        var msg = '';
+        if({!intCountBillRep} < 1){
+            showmodel = true;
+            msg = 'Select Billing Representative';
+            
+        }
+        if(showmodel){
+            showgenericpopup(msg);
+        }else{
+            validateError('{!parentContainer}',param1,param2);
+        }
+    }
+    
+    function showgenericpopup(msg){
+        var setcontent = msg; 
+        var instmodel = j$('[data-remodal-id=billinfo]').remodal();
+        j$("#kvh-remodelcontentmessagebillinfo").html(setcontent); 
+        instmodel.open();
+        j$('[data-remodal-id=billinfo]').find('.remodal-close').hide();
+        j$('[data-remodal-id=billinfo]').css('width', '350px').find('div:first').css('width', '100%');
+    }
+    <!-- Method Called from Billing component to disable/enable fields - End -->
+        j$( document ).ready(function() {
+            disableCalling1();
+        });
+    function disableBilling(param){
+        var currentcomp = j$("[id$={!parentContainer}]");
+        if(param)
+        j$("[id$='chkbxk']").attr('disabled','disabled');
+        j$("[id$='PreferredAddressee']").removeAttr('placeholder');
+        j$('.diableClass').attr('disabled','disabled');
+        j$('.diableClass').addClass('diableClassStyle');
+        j$(currentcomp).find('.diableClass').each(function(){
+           if(j$(this).parent().find('.req').length == 1){ 
+                j$(this).removeClass('requiredRedMarkFld');
+           }
+         });
+         if(j$('.diableClass').hasClass('requiredRedMarkFld')){
+             j$('.diableClass').removeClass('requiredRedMarkFld');
+            j$('.diableClass').addClass('staterequired');
+         }
+        hideLoadingDiv();
+    }
+    var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+    
+    /* To remove duplidate popup window initialized -Start */
+    function removeduplicatepopup(popupID){
+        while(j$(popupID).length >1){
+            j$(popupID).last().remove();
+        }
+        while(j$('.remodal-wrapper').find(popupID).length >1){
+            j$('.remodal-wrapper').find(popupID).last().remove();
+        }
+    }
+    /* To remove duplidate popup window initialized -End */
+    
+    
+    /* Activation Corporate button -Start */
+    function buttonfunctionCorporate1(param){
+        j$( "#AccSetup1" ).popup( "open" );
+    }
+    /* Activation Corporate button -End */
+    
+    
+    </script> 
+        <apex:actionFunction name="disableCalling" action="{!callDisableFunction}" oncomplete="callDisableJS('{!parentContainer}');" reRender="Billinngblk" status="statusImge"/>
+    	<apex:actionFunction name="disableCalling1" action="{!callDisableFunction}" oncomplete="callDisableJS1('{!parentContainer}');" reRender="Billinngblk" status="statusImge"/>
+    <div>
+        <apex:outputPanel rendered="{!boolBillingSelection}" id="billingSelect">
+            <div class="clear" style="padding-top:20px;"></div> 
+            <div class="button-bar clear" style="padding-bottom:20px;">
+            </div>
+            <div><h3 style="display: inline; margin-right: 5px;">Billing Address</h3><!--<span class="notes">This address will appear in your invoice.</span>-->
+            </div>
+            <div class="box-content">
+                <div>
+                    <apex:inputcheckbox value="{!objSubscriber.Same_as_Company_Address__c}" id="chkbxk" onchange="showLoadingDiv();disableCalling(); return false;" tabIndex="41" html-data-role="none"/>
+                    <label>Same as Main Contact address</label>
+                </div>
+            </div>
+            <!--** div contain error msg contents -Start **-->
+            <div class="kvh-show-errormsg-here">
+            </div>
+            <!--** div contain error msg contents -End **--> 
+            <apex:outputPanel id="Billinngblk">
+                <div class="left two-col">
+                    <div class="box-content">
+                        <style>
+                            ::-webkit-input-placeholder {
+                            font-style: italic;
+                            }
+                            
+                        </style>
+                        <p><label>Preferred Addressee: <span class="notes">(to whom/where to direct invoice correspondence)</span></label>
+                            <apex:inputField value="{!objSubscriber.Preferred_Addressee__c}" html-tabIndex="42" id="PreferredAddressee" styleClass="diableClass" html-placeholder="C/O Company Name, PO, VAT Number etc." html-data-role="none"/>
+                        </p>
+                        <div class="phone-types">
+                            <label>Address 1:</label><span class="req"></span> 
+                            <apex:inputField id="address1" value="{!objSubscriber.Billing_Rep_Address__c}" html-tabIndex="43" styleClass="diableClass" html-data-role="none"/>
+                        </div>
+                        <div class="clear" style="padding-bottom:20px;"></div>
+                        <p><label>City:</label><span class="req"></span>
+                            <apex:inputField value="{!objSubscriber.Billing_City__c}" html-tabIndex="45" id="city" styleClass="diableClass" html-data-role="none"/></p>
+                        <p class="Country"><label>Country: </label><span class="req"></span>
+                            <apex:actionRegion >
+                                <apex:selectList id="country" tabindex="47" value="{!objSubscriber.Billing_Country__c}" multiselect="false"  size="1" styleClass="diableClass" html-data-role="none">
+                                    <apex:actionSupport action="{!componentCountryChangeHandlerBilling}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();"/>
+                                    <apex:selectOptions value="{!CountriesListBillInfo}" html-data-role="none"/>
+                                </apex:selectList>
+                            </apex:actionRegion>
+                        </p>
+                    </div>
+                </div>
+                <div class="right two-col" style="margin-bottom: 0px;">
+                    <div class="box-content"> 
+                        <p style="padding-bottom: 14%;"></p>
+                        <div class="phone-types" >
+                            <label>Address 2:</label>
+                            <apex:inputField id="address2" value="{!objSubscriber.Billing_Rep_Address_Line_2__c}" html-tabIndex="44" styleClass="diableClass" html-data-role="none"/>
+                            <div class="clear" style="padding-bottom:20px;"></div>
+                        </div>
+                        <p><label>Postal/Zip Code:</label><span class="req"></span>
+                            <apex:inputField value="{!objSubscriber.Billing_Zip_Code__c}" html-tabIndex="46" id="postalcode" styleClass="diableClass" html-data-role="none"/></p> 
+                        <p class="state"><label>State/Province/Territory: </label>
+                            <apex:selectList id="State_Province__c" tabindex="48" value="{!objSubscriber.Billing_State_Province__c}" multiselect="false" size="1" styleClass="{!IF(StatesListBillInfo.size>1,'requiredRedMarkFld diableClass','diableClass')}" html-data-role="none">
+                                <apex:actionSupport action="{!componentStateChangeHandlerBilling}" event="onchange" reRender="stateid1">
+                                    <apex:param value="{!objSubscriber.Billing_State_Province__c}" assignTo="{!dummy}"/> 
+                                </apex:actionSupport>
+                                <apex:selectOptions value="{!StatesListBillInfo}" html-data-role="none"/>
+                            </apex:selectList>
+                        </p>
+                    </div>
+                </div>
+            </apex:outputPanel>
+            <apex:commandLink id="SaveBillingAddress" styleClass="submitbutton button right"  onclick="validateError('{!parentContainer}',true,'Activation_Billing',true); return false;"  value="Save Billing Address" rendered="{!!boolBillingSaved}" tabindex="49">
+            </apex:commandLink>
+            <apex:commandLink style="float: left;margin-top: 2.5%;margin-left: 27%;" value="Edit Billing Address" onclick="showLoadingDiv();" oncomplete="location.reload();" rendered="{!boolBillingSaved}" tabindex="40">
+            </apex:commandLink>
+            <apex:commandLink id="GreenSaved" styleClass="submitbutton button right" style="background-color: #3ead00;" value="✓ Saved" onclick="return false;" rendered="{!boolBillingSaved}" tabindex="49">
+            </apex:commandLink>
+        </apex:outputPanel> 
+        <div class="button-bar clear">
+            <apex:commandLink styleClass="button left" value="< Back" action="{!gototab}" onclick="showLoadingDiv();" immediate="true" tabindex="51">
+                <apex:param value="{!If(hasMainContactrole,'Authorized_Representatives','Subscriber_Information')}" assignTo="{!selectedTab}" />
+            </apex:commandLink>
+            <apex:commandLink styleClass="submitbutton button validateSkipButton" action="{!gototab}" onclick="showLoadingDiv();" value="Skip to Next Page" immediate="true" rendered="{!IF(AND((Billto = 'Customer' || Billto = null),isSkipValidation),true,false)}" tabindex="52" >
+                <apex:param value="Payment_Information" assignTo="{!selectedTab}" />
+            </apex:commandLink> 
+            <apex:commandLink styleClass="submitbutton button validateSkipButton"  action="{!gototab}" onclick="showLoadingDiv();"  value="Skip to Installation" rendered="{!AND(Billto=='Corporate' , isSkipValidation)}" tabindex="52">
+                <apex:param value="Installation_Type" assignTo="{!selectedTab}" />
+            </apex:commandLink>
+            <apex:commandLink styleClass="submitbutton button right" onclick="buttonfunctionvalidatebill(this,true,'Activation_Billing'); return false;" value="Next >" immediate="true" rendered="{!IF(Billto = 'Customer' || Billto = null,true,false)}" tabindex="52" >
+                <apex:param value="Payment_Information" assignTo="{!selectedTab}" />
+            </apex:commandLink> 
+            <apex:commandLink styleClass="submitbutton button right"  onclick="buttonfunctionvalidatebill(this,true,'Activation_Billing'); return false;"  value="Continue to Installation >" rendered="{!Billto=='Corporate'}" tabindex="52">
+            </apex:commandLink>
+            
+        </div>
+        <apex:commandLink styleClass="clear right"  value="Save & Exit" onclick="buttonfunctionvalidatebill(this,false,'Activation_Billing'); return false;"/> 
+        <!-- ** remodal popup Start ** -->
+        
+        <div data-role="popup" id="AccSetup1" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+            </div>
+            <div role="main" class="ui-content center">
+                <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                <div class="center">
+                    <apex:commandLink styleClass="button remodal-cancel"   value="Yes" action="{!saveandExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();" />
+                    <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                </div>
+            </div>
+        </div>  
+        
+        <!-- ** remodal popup End ** -->
+    </div> 
+    <apex:actionFunction name="callBillingSave" action="{!Save}" rerender="billingComponent" oncomplete="hideLoadingDiv();">
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction name="callBillingSaveOnly" action="{!saveandExit}" reRender="billingSelect" oncomplete="disableBilling(true);">
+    </apex:actionFunction>
+    <apex:actionFunction name="callBillingchkSaveOnly" action="{!saveandExit}" reRender="Billinngblk" oncomplete="disableBilling();"></apex:actionFunction>
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="billinfo" id="billinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;" >
+            <span> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="40" height="40"/></span>
+            <span id="kvh-remodelcontentmessagebillinfo" style="padding-left:20px;"></span>
+        </div>
+        <div style="text-align:center;">
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >OK</a>
+        </div>
+    </div>
+    
+    <!-- ** remodal popup End ** -->
+</apex:component>

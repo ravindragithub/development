@@ -1,0 +1,19 @@
+<aura:component >
+    <aura:attribute name="oProduct2" type="sObject" />
+    
+   <aura:attribute name="searchObjective" type="String"/>
+    <!--Register the component level event-->
+    <aura:registerEvent name="oselectedProductEvent" type="c:selectedProductEvent"/>
+    <li role="presentation">
+        <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+            <div class="slds-media__body">
+                <div class="slds-input-has-icon slds-input-has-icon--right">
+                    <c:svgIcon class="slds-input__icon" xlinkHref="/resource/SLDS102/assets/icons/utility-sprite/svg/symbols.svg#account" />                
+                    <div class="slds-lookup__result-text">
+                        <a onclick="{!c.selectProduct}">{!v.oProduct2.Name}</a>
+                    </div>
+                </div>
+            </div>    
+        </span>
+    </li>
+</aura:component>

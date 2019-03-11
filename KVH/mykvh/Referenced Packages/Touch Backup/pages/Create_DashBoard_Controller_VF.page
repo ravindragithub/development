@@ -1,0 +1,130 @@
+<apex:page controller="Touch_Backup.Create_Dashboard_Controller"   docType="html-5.0" standardstylesheets="false">
+
+    <html>
+        <script type="text/javascript">
+            function doSOmething(){
+            var j = '{!JSENCODE(dashboardJSONString)}';
+            
+   			var parseJson = JSON.parse(j);
+			 console.log('********** Mahesh'+JSON.stringify(parseJson));
+			delete parseJson.allowPreview;
+			delete parseJson.namespace;
+
+			delete parseJson.label;
+			delete parseJson.assetSharingUrl;
+			delete parseJson.createdBy;
+			delete parseJson.createdDate;
+			delete parseJson.description;
+			delete parseJson.files; 
+			delete parseJson.id;
+			delete parseJson.lastAccessedDate;
+			delete parseJson.lastModifiedBy;
+			delete parseJson.lastModifiedDate;
+			delete parseJson.name;
+			delete parseJson.permissions;
+			delete parseJson.type;
+			delete parseJson.url;
+			delete parseJson.refreshDate;
+			delete parseJson.datasets;
+			delete parseJson.folder.label;
+			delete parseJson.folder.url;
+
+			var keyArray = [];
+			for (var key in parseJson.state.steps){
+				keyArray.push(key);
+			}
+						//alert('--------------'+keyArray);
+						//alert('--------------'+keyArray.length);
+								
+			for (i = 0; i < keyArray.length; i++) {
+			    
+				if(parseJson.state.steps[keyArray[i]].datasets != null && parseJson.state.steps[keyArray[i]].datasets != ''){	
+					delete parseJson.state.steps[keyArray[i]].datasets[0].label;
+					delete parseJson.state.steps[keyArray[i]].datasets[0].url;
+				} 
+				
+				
+				   
+				
+			   }
+			   
+	
+				//alert(JSON.stringify(parseJson));
+			   document.getElementById('jsonString').value= JSON.stringify(parseJson);
+              
+       			//redirectAct();
+            }
+        </script>
+        
+       
+        
+        <head> 
+            <apex:stylesheet value="{!URLFOR($Resource.Touch_Backup__SLDSv0122, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.Touch_Backup__SLDS090, 'assets/styles/salesforce-lightning-design-system-vf.css')}" /> 
+        </head> 
+        <apex:form id="form">
+        <!--  <apex:actionfunction name="redirectAct" action="{!redirect}" /> -->
+            	<apex:pageMessages escape="false">
+	    
+	</apex:pageMessages>
+	<apex:actionStatus id="status1">
+	    <apex:facet name="start" >
+	        <div style="display:block;position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+	        </div>
+	        <center>
+	        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 50%">
+	        <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+	             <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+	             <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+	        </div>
+	        </div>
+	        </center>
+	     </apex:facet>
+	</apex:actionStatus>
+            <input type="hidden" id="jsonString" name="jsonString"/>
+       
+            <div class="slds" style="height:4500px;">   
+                <div class="slds-grid ">
+                    <div class="slds-col">
+                        <div class="slds-media">   
+                             
+                        </div>
+                    </div>
+                </div> 
+                
+            <div class="slds-page-header " role="banner" style="padding: 5px">   
+                <div class="slds-grid ">
+                    <div class="slds-col">
+                        <div class="slds-media">   
+                            <div id="opaque"/>
+                            <div id="spinner">
+                                    <p>Create DashBoard</p>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+                <div class="slds-modal__content" >
+                    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                        <div class="slds-p-horizontal--small slds-medium-size--1-of-2-align--left slds-text-align--left - col-form-label">DashBoard Name</div>
+                        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--2-of-2 slds-p-bottom--medium" style="width:70%">
+                            <apex:inputText value="{!dashboardName}" />
+                        </div>
+                    </div>
+                 </div> 
+                 <div class="slds-modal__footer" style="padding: 5px;text-align: left;">
+                     <div class="slds-x-small-buttons--horizontal slds-medium-size-align--left" >
+                         <apex:commandButton rerender="form" onclick="doSOmething()" value="Create Dashboard" action="{!redirect}" style="margin-left: 160px" status="status1"/>
+                       
+                         <apex:commandButton action="{!cancel}" value="Cancel" style="margin-left: 10px" status="status1"/>
+                     </div>
+                          
+                 </div>    
+            </div>   
+        </apex:form> 
+           
+   </html> 
+   
+   
+</apex:page>

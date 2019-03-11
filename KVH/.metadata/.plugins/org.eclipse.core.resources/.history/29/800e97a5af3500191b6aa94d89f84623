@@ -1,0 +1,16 @@
+.THIS .slds-page-header{
+    padding: 6px 0 6px 22px;
+    background:rgba(216, 221, 230, 0.38)!Important;
+    border-top: 2px solid #d8dde6;
+}
+.THIS .headerClass
+{
+    font-size: 15px;
+}
+.THIS tr{
+    background-color: white;
+}
+.THIS .nobordertop{
+    background: rgb(240, 248, 252)!important;
+    color:black;
+}

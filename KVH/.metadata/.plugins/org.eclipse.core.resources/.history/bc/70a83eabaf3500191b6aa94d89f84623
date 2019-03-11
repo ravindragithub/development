@@ -1,0 +1,12 @@
+<aura:documentation>
+	<aura:description>Documentation  States:
+  <ul>
+    <li>INIT     - Component is ready to POST</li>
+    <li>POST     - Component is waiting for results from server</li>
+    <li>SUCCESS  - Server returned serviceResults Object where success=true</li>
+    <li>ERROR    - Server returned serviceResults Object where success=false</li>
+  </ul></aura:description>
+	<aura:example name="ExampleName" ref="exampleComponentName" label="Label">
+		Example Description
+	</aura:example>
+</aura:documentation>

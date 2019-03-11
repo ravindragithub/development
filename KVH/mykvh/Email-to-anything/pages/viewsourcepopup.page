@@ -1,0 +1,8 @@
+<apex:page standardController="ortoo_e2a__Queued_Email_Message__c" extensions="ortoo_e2a.viewsourcecontroller" showheader="false" sidebar="false">
+  <apex:pageBlock >
+    <apex:pageBlockSection columns="1" title="{!Sectiontitle}" collapsible="false">
+        <apex:outputField value="{!ortoo_e2a__Queued_Email_Message__c.ortoo_e2a__Headers__c}"  label="" rendered="{!ShowHeader}"/>
+        <Apex:outputField value="{!ortoo_e2a__Queued_Email_Message__c.ortoo_e2a__Html_Body__c}" label="" rendered="{!ShowHtmlSource}"/>
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+</apex:page>

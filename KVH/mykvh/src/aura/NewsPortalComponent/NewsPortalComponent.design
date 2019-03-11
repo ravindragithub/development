@@ -1,0 +1,8 @@
+<!--
+ - Created by Jai Chaturvedi on 11/03/2017.
+ -->
+
+<design:component >
+    <design:attribute name="newsHeader" label="Header" description="Header" />
+    <design:attribute name="serviceName" label="Service Name" description="service name" />
+</design:component>

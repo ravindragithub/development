@@ -1,0 +1,122 @@
+<aura:component >
+    
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="providerAccRequired" type="boolean"/>
+    
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-left_small">
+            <label class="slds-form-element__label">
+                Satellite TV Provider
+                <abbr class="slds-required" title="required">*</abbr>
+            </label>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="3">
+            <lightning:input type="radio" 
+                             label="DISH Network" 
+                             name="Satellite" 
+                             onchange="{!c.onSatelliteTVChange}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="7">
+            <lightning:input type="radio" 
+                             label="DirectTV" 
+                             name="Satellite" 
+                             onchange="{!c.onSatelliteTVChange}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    <aura:if isTrue="{!v.prodRegistration.Satellite_TV_Provider__c == 'DISH Network'}">
+        <lightning:card title="DISH Network" class="slds-m-top_small">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-left_small">
+                    <label class="slds-form-element__label">
+                        Subscriber Status
+                        <abbr class="slds-required" title="required">*</abbr>
+                    </label>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="10" class="slds-p-horizontal_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1">
+                            <lightning:input type="radio"
+                                             label="" 
+                                             name="dish" 
+                                             onchange="{!c.onChangeDISHNetwork}" 
+                                             title="New"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="11">
+                            <p class="slds-form-element__label fontNormal">
+                                NEW - I need to setup a new DISH account
+                            </p><br/>
+                            <p class="slds-form-element__label fontNormal">
+                                Call Dish Mobile Activation Center at 800-970-9623 to set up your new DISH Network Account. 
+                            </p>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1">
+                            <lightning:input type="radio" 
+                                             label="" 
+                                             name="dish" 
+                                             onchange="{!c.onChangeDISHNetwork}" 
+                                             title="Existing"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="11">
+                            <p class="slds-form-element__label fontNormal">
+                                EXISTING - I have a DISH account already
+                            </p><br/>
+                            <p class="slds-form-element__label fontNormal">
+                                Call Dish Mobile Activation Center at 800-333-DISH(8474) to add your new receiver to your DISH account when you receive it.
+                            </p>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+    </aura:if>
+            
+    <aura:if isTrue="{!v.prodRegistration.Satellite_TV_Provider__c == 'DirectTV'}">
+        <lightning:card title="DirectTV" class="slds-m-top_small">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-left_small">
+                    <label class="slds-form-element__label">
+                        Subscriber Status
+                        <abbr class="slds-required" title="required">*</abbr>
+                    </label>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="10" class="slds-p-horizontal_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1">
+                            <lightning:input type="radio" 
+                                             label="" 
+                                             name="directtv" 
+                                             onchange="{!c.onChangeDirectTV}" 
+                                             title="New"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="11">
+                            <p class="slds-form-element__label fontNormal">
+                                NEW - I need to setup a new DIRECTV account
+                            </p><br/>
+                            <p class="slds-form-element__label fontNormal">
+                                Contact KVH to set up your account at 866-551-8004 or <a href="">direct@kvh.com</a>
+                            </p>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1">
+                            <lightning:input type="radio" 
+                                             label="" 
+                                             name="directtv" 
+                                             onchange="{!c.onChangeDirectTV}" 
+                                             title="Existing"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="5">
+                            <p class="slds-form-element__label fontNormal">
+                                EXISTING - I have a DIRECTV account already
+                            </p>
+                            <aura:if isTrue="{!v.prodRegistration.DIRECTV_Subscriber_Status__c=='Existing'}">
+                                <lightning:input label="DIRECTV Account Number"
+                                                 value="{!v.prodRegistration.DIRECTV_Account_Number__c}"
+                                                 required="true"
+                                                 onblur="{!c.validation}"/>
+                            </aura:if>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+    </aura:if>
+</aura:component>

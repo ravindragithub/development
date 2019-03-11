@@ -1,0 +1,217 @@
+<apex:page sidebar="false" showHeader="false" standardStyleSheets="false">
+<!-- <!doctype html> -->
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Activation Order - Vessel Information</title>
+	<!-- Load Style sheets -->
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/responsive-tabs.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+	<link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+	
+	<!-- Load jQuery, use minimized lib-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<!-- Handle jQuery conflicts (e.g. "$") -->
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+	</script>
+	<!-- Load jQuery plug-ins, use minimized libs -->
+	<!-- Library for Modal windows.... -->
+	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+	<!-- Library for jQuery Validator... -->
+	<script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.min.js')}" type="text/javascript"></script>
+	<!-- Responsive Tabs JS -->
+	<script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/js/jquery.responsiveTabs.js')}" type="text/javascript"></script>
+</head>
+
+<body>
+	
+<div id="top">
+	<a href="#">Account Settings</a>  |  <a href="index.html">Logout</a>
+</div>
+
+<c:Activation_Header />
+<!-- <div id="header"> -->
+<!-- 	<img style="height:41px;vertical-align:middle;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/kvh_logo.png')}"/> -->
+<!-- 	<h1 style="height:41px;vertical-align:middle">Airtime Activation Order</h1> -->
+<!-- </div> -->
+	
+<div id="sidebar">
+	<ul>
+		<li><a href="subscriber.html">Subscriber Info</a><a href="#" class="check" data-title="This section is complete!"><img src="{!URLFOR($Resource.ActivationOrders, 'www/images/check.png')}" style=""/></a></li>
+		<li><a href="contacts.html">System Contacts</a><a href="#" class="check" data-title="Please check this section"><img src="{!URLFOR($Resource.ActivationOrders, 'www/images/check_fail.png')}" style=""/></a></li>
+		<li class="active">Vessel Info</li>
+		<li class="dim">Product Info</li>
+		<li class="dim">Services</li>
+	</ul>
+</div>
+
+
+<div id="main">
+	<div class="wrapper">
+		<div class="required"><span class="req">*</span> indicates required field</div>
+		
+		<h1>Vessel Information</h1>
+			
+		<div id="horizontalTab">
+		<ul>
+			<li><a href="#tab-1">1. Vessel Type</a></li>
+			<li><a href="#tab-2">2. Vessel Details</a></li>
+		</ul>
+			
+<!-- TAB 1 - Vessel Type ---------------------->
+			<div id="tab-1">
+				<h1>Vessel Type</h1>
+				<p>Please choose the type of vessel that best describes the one you are activating for.</p>
+			  
+				<table class="inside left" style="width:31%;margin-right:20px;">
+					<tr>
+						<th><h3>Commercial Vessels</h3></th>
+					</tr>
+					<tr>
+						<td>
+							<ul>
+								<li><input type="radio" name="vessel_type"/> <label>Bulk Carrier</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Dry Cargo</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Fishing</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Inland Waterways</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Non-ship Structure</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Non-propelled</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Offshore</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Passenger: <br/><span class="not-bold">Cruise Ship/Ocean Liner</span></label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Passenger: <br/><span class="not-bold">Ferry (cargo and passengers)</span></label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Tankers</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Miscellaneous</label></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+				
+				<table class="inside left" style="width:31%; margin-right:20px;">
+					<tr>
+						<th><h3>Leisure Vessels</h3></th>
+				   	</tr>
+					<tr>
+						<td>
+							 <ul>
+								<li><input type="radio" name="vessel_type"/> <label>Sail Boat/Yacht</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Power Boat/Yacht: </label><br/>
+									If less than 80 ft (24 m):  
+									<select>
+									  <option>Choose one...</option>
+									  <option value="Cruiser">Cruiser</option>
+									  <option value="Houseboat">Houseboat</option>
+									  <option value="Sportfishing">Sportfishing</option>
+									  <option value="Trawler">Trawler</option>
+							   		</select>
+								</li>
+								<li><input type="checkbox"/> <label class="not-bold">Please check if boat/yacht is chartered</label></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+			   
+			   <table class="inside left" style="width:31%;">
+					<tr>
+						<th><h3>Military/Government Vessels</h3></th>
+				   	</tr>
+					<tr>
+						<td>
+							 <ul>
+								<li><input type="radio" name="vessel_type"/> <label>Government</label>
+									<select>
+									  <option>Choose one...</option>
+									  <option value="Homeland Security">Homeland Security</option>
+									  <option value="Emergency Mgmt">Emergency Mgmt</option>
+									  <option value="Scientific Research">Scientific Research</option>
+									  <option value="Other">Other</option>
+							   		</select>
+								</li>
+								<li><input type="radio" name="vessel_type"/> <label>Military</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>NGO</label></li>
+								<li><input type="radio" name="vessel_type"/> <label>Other</label></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+				
+				<div class="clear"></div>
+			  
+				<div class="button-bar">
+					<a href="contacts.html" class="button left">Back to System Contacts</a>
+					<a href="#tab-2" class="button right">Next</a>
+				</div>
+			</div>
+			
+ <!-- TAB 2 - Vessel Details  ---------------------->
+			<div id="tab-2">		   
+			
+			<h1>Vessel Details</h1>
+				
+				<div class="left two-col">
+					<div class="box-content">
+						<p><label>Vessel Name:<span class="req">*</span></label><input name="" type="text" id=""/></p>
+						<p><label>Redio Call Sign:<span class="req">*</span></label><input name="" type="text" id=""/></p>
+						<p><label>MMSI:<span class="req">*</span></label><input name="" type="text" id=""/></p>
+					</div>
+				</div>
+				
+				<div class="right two-col">
+					<div class="box-content">
+						<p><label>Flag:<span class="req">*</span></label><input name="" type="text" id=""/></p>
+						<p><label>Vessel Length:<span class="req">*</span><span class="comment"> (only show required if leisure)</span></label><input name="" type="text" id=""/><br/></p>
+						<p><label>IMO Registration Number:<span class="req">*</span><br/> <span class="comment">(required if comm, mil, and yachts over 500')</span></label><input name="" type="text" id=""/></p>
+					</div>
+				</div>
+			
+				<div class="clear"></div>
+			
+			<div class="button-bar">
+				<a href="#tab-1" class="button left">Back</a>
+				<a href="products.html" class="button right">Save &amp; Continue to Product Information</a>
+				<a href="#modal" class="exit right">Save &amp; Finish Later</a>
+				<div class="remodal" data-remodal-id="modal">
+					<p>When you're ready to come back and finish your activation, just log in with the email and temporary password that is in the email we sent you. Check your spam filter if you don't have an email from KVH Activation Group.</p>
+					<a href="index.html" class="button">Bye!</a>
+				</div>
+			</div>
+		</div>
+	   </div>
+  
+  </div>
+	</div>
+	
+
+	<script type="text/javascript">
+		j$(document).ready(function () {
+			j$('#horizontalTab').responsiveTabs({
+				rotate: false,
+				startCollapsed: 'false',
+				active: 0,
+				setHash: true
+			});
+			
+			j$('.hasTooltip').hover(function() {
+				var offset = $(this).offset();
+				j$(this).next('span').fadeIn(200).addClass('showTooltip');
+				j$(this).next('span').css('left', offset.left + 'px');
+			}, function() {
+				j$(this).next('span').fadeOut(200);
+			});
+		});
+	</script>
+	
+	<script>
+		window.remodalGlobals = {
+			namespace: "modal",
+			defaults: {
+				hashTracking: true
+			}
+		};
+	</script>
+
+</body>
+</html>
+</apex:page>

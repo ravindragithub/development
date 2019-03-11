@@ -1,0 +1,180 @@
+<apex:component controller="Act_Subscriber_component_controller"  allowDML="true">
+    <script>
+    j$( document ).ready(function() {
+        if(j$('[id$=firstname]').val() != null && j$('[id$=firstname]').val() != ''){
+            j$('[id$=firstname]').css('background-color','#f1f1f1');
+            j$('[id$=firstname]').prop( "disabled", true );          
+        } 
+        if(j$('[id$=lastname]').val() != null && j$('[id$=lastname]').val() != ''){
+            j$('[id$=lastname]').css('background-color','#f1f1f1');
+            j$('[id$=lastname]').prop( "disabled", true );          
+        }
+        if(j$('[id$=email]').val() != null && j$('[id$=email]').val() != ''){
+            j$('[id$=email]').css('background-color','#f1f1f1');
+            j$('[id$=email]').prop( "disabled", true );          
+        }   
+    });
+    </script>
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation (Subscriber) Billing detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+                    type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <apex:attribute name="checkPortalFlag" description="Rerender the parter Portal"
+                    type="boolean" required="required" assignTo="{!checkFlag}"/>
+    <apex:attribute name="newProductVal" description="Get old Subcriber Value"
+                    type="string" required="required" assignTo="{!newProduct}"/>
+    
+    <!--<h2 class="mainTitle">Main Contact</h2>
+<p>The Main Contact will be financially responsible for the subscription account.</p>
+<!-- <p class="skipVR">ByPass Validation Rules:<input type="checkbox" id="skipValidation"/></p> -->
+    
+    <!--** div contain error msg contents -Start **-->
+    <div class="kvh-show-errormsg-here">
+    </div>
+    <!--** div contain error msg contents -End **-->   
+    <div class="validator">
+        <div class="left two-col">
+            <div class="box-content">
+                <p>
+                    <span class="left" style="width:20%;">
+                        <label>Salutation:</label>
+                        <apex:inputField id="salutation" value="{!newSubscriber.Subscriber_Contact_Salutation__c}" html-tabIndex="1" html-data-role="none"/>
+                    </span>
+                    <span class="right" style="width:75%;">
+                        <label>First/Given Name:<span class="req"></span></label>
+                        <apex:inputField styleClass="firstname" value="{!newSubscriber.Subscriber_Contact_First_Name__c}" html-tabIndex="2" id="firstname" html-data-role="none"/>
+                    </span>
+                </p>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Company Name: <span class="notes">(if applicable)</span></label>
+                    <apex:inputField value="{!newSubscriber.Subscribing_Company__c}" html-tabIndex="5" html-data-role="none"/></p>
+                <div class="phone-types" >
+                    <label>Primary Phone Number:<span class="req"></span></label>
+                    <apex:selectRadio value="{!newSubscriber.Subscriber_Phone_Type__c}" Id="PPT" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField value="{!newSubscriber.Phone_Number__c}" html-tabIndex="7" styleClass="ppnumber" id="ppnumber" html-data-role="none"/>
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                        <span class="tooltiptext">
+                            Country codes are used when dialing an international phone number.<br/><br/>
+                            Click <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">here</a> to find your country code.
+                        </span>
+                    </span>
+                </div>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Role:</label><span class="req"></span>
+                    <apex:inputField value="{!newSubscriber.Billing_Rep_Job_Function__c}" html-tabIndex="9" id="jobfunction" html-data-role="none"/></p>
+                <p><label>Address 1:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Address__c}" html-tabIndex="11" styleClass="address1" id="address1" html-data-role="none"/></p>
+                <p><label>City:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.City__c}" html-tabIndex="13" styleClass="city" id="city" html-data-role="none"/></p>
+                <p><label>Country: </label><span class="req"></span>
+                    <apex:actionRegion >
+                        <apex:selectList value="{!newSubscriber.Country__c}" multiselect="false" id="country" size="1"  tabIndex="15" styleClass="country " html-data-role="none"> 
+                            <apex:actionSupport event="onchange" action="{!componentCountryChangeHandler}" rerender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();"/>
+                            <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                        </apex:selectList>
+                    </apex:actionRegion>
+                </p>
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                <p>
+                    <label>Last/Family Name/Surname:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Subscriber_Contact_Name__c}" html-tabIndex="4" styleClass="frm-text-required" id="lastname" html-data-role="none"/>
+                </p>
+                <p><label>Email:<span class="req"></span><!--<span class="notes">This email address will receive billing invoices</span> --></label>
+                    <apex:inputField value="{!newSubscriber.Subscriber_Email__c}" html-tabIndex="6" id="email" styleClass="email" html-data-role="none"/></p>
+                <div class="phone-types" >
+                    <label>Secondary Phone Number:</label>
+                    <apex:selectRadio value="{!newSubscriber.Secondary_Phone_Type__c}" Id="SPT" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField value="{!newSubscriber.Secondary_Phone__c}" id="spnumber" html-tabIndex="8" html-data-role="none"/>
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                        <span class="tooltiptext">
+                            Country codes are used when dialing an international phone number.<br/><br/>
+                            Click <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">here</a> to find your country code.
+                        </span>
+                    </span>
+                </div>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Job Title:</label><!--<span class="req"></span> -->
+                    <apex:inputField value="{!newSubscriber.Billing_Rep_Job_Title__c}" html-tabIndex="10" id="jtcon" html-data-role="none"/></p>
+                <p><label>Address 2:</label>
+                    <apex:inputField value="{!newSubscriber.Subscriber_Address_Line_2__c}" html-tabIndex="12" html-data-role="none"/></p>
+                <p><label>Postal/Zip Code:<span class="req"></span></label>
+                    <apex:inputField value="{!newSubscriber.Postal_Zip_Code__c}" html-tabIndex="14" styleClass="frm-text-required" id="postalcode" html-data-role="none"/></p> 
+                <p>
+                    <label>State/Province/Territory:</label>
+                    <apex:selectList value="{!newSubscriber.State_Province__c}" multiselect="false" id="State_Province__c" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}"  tabIndex="16" html-data-role="none">
+                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="State_Province__c">
+                            <apex:param value="{!newSubscriber.State_Province__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesList}" html-data-role="none"/>
+                    </apex:selectList>  
+                </p>
+            </div>
+        </div>
+        <div class="button-bar clear">
+            
+            <apex:commandLink styleClass="button right" id="firstNext" onclick="validateError('{!parentContainer}',true,'Activation_Subscriber'); return false;" value="Next >"> 
+            </apex:commandLink>
+        </div>
+        
+        <apex:commandLink styleClass="clear right" value="Cancel" id="firstCancel"  onclick="cancelProcess(); return false;" rendered="{! (checkflag && !internalUser)}"/>
+        <apex:commandLink styleClass="clear right" value="Cancel" id="firstCancel1"  onclick="cancelProcess(); return false;" rendered="{! (!checkflag && internalUser)}"/>
+        <apex:commandLink styleClass="clear right"  value="Save & Exit" onclick="validateError('{!parentContainer}',false,'Activation_Subscriber'); return false;" rendered="{! (!checkflag && !internalUser)}"/>
+    </div> 
+    
+    <apex:actionFunction name="callSubscriberSave" action="{!Save}" rerender="Act_subscriber" oncomplete="hideLoadingDiv();">
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="saveandExitsubs" action="{!saveandExit}" rerender="Act_subscriber" oncomplete="returntohomepage();" >
+    </apex:actionFunction>
+    
+    <!-- ** remodal popup Start ** -->
+    <div data-role="popup" id="AccSetupActSub" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+        </div>
+        <div role="main" class="ui-content center">
+            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+            <div class="center">
+                <apex:commandLink styleClass="button remodal-cancel" value="Yes" action="{!saveandExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();"/>
+                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+            </div>
+        </div>
+    </div>  
+    <!-- ** remodal popup End ** -->
+    
+    <script type="text/javascript" language="JavaScript">
+    var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+    
+    /* To remove duplidate popup window initialized -Start */
+    function removeduplicatepopup(popupID){
+        while(j$(popupID).length >1){
+            j$(popupID).last().remove();
+        }
+        while(j$('.remodal-wrapper').find(popupID).length >1){
+            j$('.remodal-wrapper').find(popupID).last().remove();
+        }
+    }
+    /* To remove duplidate popup window initialized -End */
+    
+    
+    /* Activation Corporate button -Start */
+    function buttonfunctionCorporateActSub(param){
+        j$( "#AccSetupActSub" ).popup( "open" );
+    }
+    /* Activation Corporate button -End */
+    
+    </script>
+</apex:component>

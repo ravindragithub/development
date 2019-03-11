@@ -1,0 +1,145 @@
+<apex:component allowDML="true" controller="Act_Onboard_Contact_component_controller">
+    <!-- ** This component is used for both Onboard_contact and Antenna_System_Support_Contact Tab ** -->
+    
+    <!-- ** Attributes Used for this conponent Start ** -->
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <!-- ** Attributes Used for this conponent Start ** -->
+    
+    <div>
+        
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here">
+        </div>
+        <!--** div contain error msg contents -End **--> 
+        <!--** div input field content -Start **-->
+        <div class="clear" style="padding-bottom:20px;"></div>
+        <div class="left two-col">
+            <div class="box-content">
+                <p>
+                    <span class="left" style="width:20%;">
+                        <label>Salutation</label>
+                        <apex:inputField id="salutaion" value="{!objOnboardAntennaContact.Salutation__c}" html-tabIndex="1"/>
+                    </span>
+                    <span class="right" style="width:75%;">
+                        <label>First/Given Name:<span class="req"></span></label>
+                        <apex:inputField id="firstname" styleClass="firstname1"  value="{!objOnboardAntennaContact.First_Name__c}" html-tabIndex="2" />
+                    </span>
+                </p>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Company Name:</label>
+                    <apex:inputField id="ree" value="{!objOnboardAntennaContact.Account__c}" html-tabIndex="5"/>
+                </p>
+                <div class="phone-types" >
+                    <label>Primary Phone Number:</label><span class="req"></span> 
+                    <apex:selectRadio value="{!objOnboardAntennaContact.Primary_Phone_Type__c}" Id="PPT" styleClass="frm-phonetype-required" tabIndex="7">
+                        <apex:selectOptions value="{!phoneType}"/>
+                    </apex:selectRadio>
+                    <apex:inputField id="ppnumber" value="{!objOnboardAntennaContact.Primary_Phone__c}" html-tabIndex="8" styleClass="frm-phone-required"/>
+                    
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip">�
+                      <span class="tooltiptext">
+                          Country Codes are used when dialing an international phone number.<br/><br/>
+                          Click here to find your: <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">country code</a>
+                      </span>
+                    </span>
+                </div>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Job Function:</label><span class="req"></span>
+                    <apex:inputField value="{!objOnboardAntennaContact.Job_Function__c}" html-tabIndex="11" id="jobfunction"/></p>
+                 <!-- ** Below Block is rendered only on Onboard_Contact Tab ** -->
+                <apex:actionRegion >
+                    <apex:outputPanel rendered="{!parentContainer =='onboardcontactcomponent'}" id="countryId">
+                        <p class="Country"><label>Country: </label><span class="req"></span>
+                            <apex:selectList id="country" tabindex="13" value="{!objOnboardAntennaContact.Country__c}" multiselect="false"  size="1"><!--=""  -->
+                                <apex:actionSupport action="{!componentCountryChangeHandler}" event="onchange" reRender="state" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();" />
+                                <apex:selectOptions value="{!CountriesList}" />
+                            </apex:selectList>
+                            
+                        </p>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+                 <!-- ** Above Block is rendered only on Onboard_Contact Tab ** -->
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                <p>
+                    <span class="left" style="width:15%;">
+                        <label>Middle</label>
+                        <apex:inputField value="{!objOnboardAntennaContact.Middle_Name__c}" html-tabIndex="3"/>
+                    </span>
+                    <span class="right" style="width:80%;">
+                        <label>Last/Family Name/Surname:<span class="req"></span></label>
+                        <apex:inputField value="{!objOnboardAntennaContact.Last_Name__c}" html-tabIndex="4" id="lastname"/>
+                    </span>
+                </p>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Email:<span class="req"></span></label>
+                    <apex:inputField value="{!objOnboardAntennaContact.Email__c}" html-tabIndex="6" id="email" styleClass="email"/>
+                </p>
+                <div class="phone-types" >
+                    <label>Secondary Phone Number:</label>
+                    <apex:selectRadio value="{!objOnboardAntennaContact.Secondary_Phone_Type__c}" Id="SPT" tabIndex="9">
+                        <apex:selectOptions value="{!phoneType}"/>
+                    </apex:selectRadio>
+                    <apex:inputField value="{!objOnboardAntennaContact.Secondary_Phone__c}" id="spnumber" html-tabIndex="10"/>
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip">�
+                      <span class="tooltiptext">
+                          Country Codes are used when dialing an international phone number.<br/><br/>
+                          Click here to find your: <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">country code</a>
+                      </span>
+                    </span>
+                    <div class="clear" style="padding-bottom:20px;"></div>
+                </div>
+                <p><label>Job Title:</label><span class="req"></span>
+                    <apex:inputField value="{!objOnboardAntennaContact.Job_Title__c}" html-tabIndex="12" id="jtcon"/></p>
+                
+                <!-- ** Below Block is rendered only on Onboard_Contact Tab ** -->
+                <apex:outputPanel rendered="{!parentContainer =='onboardcontactcomponent'}">
+                <p class="state"><label>State/Province/Territory: </label>
+                    <apex:selectList id="state" tabindex="14" value="{!objOnboardAntennaContact.State__c}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}">
+                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="statecon" >
+                            <apex:param value="{!objOnboardAntennaContact.State__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesList}"/>
+                    </apex:selectList>
+                </p>
+                </apex:outputPanel>
+                 <!-- ** Above Block is rendered only on Onboard_Contact Tab ** -->
+            </div>
+        </div>
+         <!--** div input field content -End **-->
+        
+         <!--** div button -Start **-->
+        <div class="button-bar clear">
+            <!--** panel rendered on onboard contact tab -Start **-->
+             <apex:outputPanel rendered="{!parentContainer =='onboardcontactcomponent'}">
+                 <apex:commandLink styleClass="button left" value="< Back" onclick="validateOnboardContactBack(); return false;">
+                 </apex:commandLink>
+                 <apex:commandLink styleClass="button right" value="Next >" onclick="validateOnboardContactNext(); return false;">
+                 </apex:commandLink>
+            </apex:outputPanel>
+            <!--**  panel rendered on onboard contact tab -end **-->
+            
+            <!--**  panel rendered on Antenna System Support contact tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer !='onboardcontactcomponent'}">
+                <apex:commandLink styleClass="button left" value="< Back" onclick="validateAntennaSystemSupportContactBack(); return false;">
+                </apex:commandLink>
+                <apex:commandLink styleClass="button right" value="Continue onto System info >" onclick="validateAntennaSystemSupportContactNext(); return false;" >
+                </apex:commandLink>
+            </apex:outputPanel>
+            <!--**  panel rendered on Antenna System Support contact tab -end **-->
+            <!--** div button -Start **-->
+        </div>
+        <!--** div button -Start **-->
+    </div>
+   
+    <apex:actionFunction name="callcontactsaveFunction" action="{!Save}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+</apex:component>

@@ -1,0 +1,13 @@
+<aura:event type="COMPONENT" description="Event used to tell the parent to refresh" >
+    <aura:attribute name="SelectedAsset" type="Asset"/>
+    <aura:attribute name="ReplacedAsset" type="Asset"/>
+    <aura:attribute name="RemovedAsset" type="Asset"/>
+    <aura:attribute name="ReplacementType" type="string"/>
+    <aura:attribute name="listSubscription" type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="showSubscription" type="boolean"/>
+    <aura:attribute name="messageCaseAssetMove" type="boolean"/>
+    <aura:attribute name="checkDuplicateAsset" type="Asset"/>
+    <aura:attribute name="noAssetSubscription" type="boolean"/>
+    <aura:attribute name="oldListSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+</aura:event>

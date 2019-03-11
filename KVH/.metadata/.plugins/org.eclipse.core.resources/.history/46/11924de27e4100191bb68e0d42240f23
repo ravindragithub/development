@@ -1,0 +1,34 @@
+<aura:component Controller="myKVH_MyRegisteredProductsController">
+ 	<ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+	<aura:attribute name="UserObj" type="Object"/>
+    <aura:attribute name="subject" type="String"/>
+    <aura:attribute name="body" type="String"/>
+   
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib2"/>
+    
+    <div>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <p class="subheading">To: <b>myKVH Support</b></p>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <p class="subheading">From: <b>{!v.UserObj.Name}</b></p>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12">
+                <!--<ui:inputText label="Subject" class="field" value="{!v.subject}" required="true"/>-->
+                <lightning:input type="text" name="Subject" label="Subject" value="{!v.subject}" required="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <ui:inputTextArea  label="Body"  value="{!v.body}" rows="10" required="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" class="slds-p-top_x-small">
+                <lightning:button variant="brand" label="Submit" title="Submit" onclick="{!c.handleSubmit}" />
+                <lightning:button  label="Cancel" title="cancel" onclick="{!c.handleCancel}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    
+</aura:component>

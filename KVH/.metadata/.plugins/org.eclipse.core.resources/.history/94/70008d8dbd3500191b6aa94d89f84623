@@ -1,0 +1,22 @@
+<apex:page showHeader="false" sidebar="false" standardController="Asset">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+      var recordId="{!$CurrentPage.parameters.Id}";
+      var assetName = "{!Asset.Name}";
+      console.log(assetName);
+      var assetProd = "{!Asset.Product2.PRoductCode}";
+      console.log(assetProd);
+      $Lightning.use("c:LTE_controls_app", function() {
+        $Lightning.createComponent(
+            "c:LTE_reprint_qr_label",
+            {"identifier": recordId},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+                console.log(recordId);
+                console.log(cmp);
+            });
+        });
+    </script>
+    <div id="lightning"></div>
+</apex:page>

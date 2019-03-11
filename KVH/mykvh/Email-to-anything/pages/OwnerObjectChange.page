@@ -1,0 +1,27 @@
+<apex:page standardcontroller="ortoo_e2a__EmailMessage__c" extensions="ortoo_e2a.OwnerObjectChangeController">
+
+<apex:form >
+    <apex:sectionHeader title="Object Ownership Edit" subtitle="{!emaildetail.ortoo_e2a__Subject__c}"/>
+    
+    <p>This screen allows you to transfer a e2a email from one object to another.</p>
+    <apex:PageBlock >
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandbutton value="Save" action="{!SaveButton}"/>
+            <apex:commandbutton value="Cancel" action="{!CancelButton}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Select New Owner Object" collapsible="false" columns="1">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >Transfer this e2a email</apex:outputLabel>
+                <apex:outputText value="{!emaildetail.Name}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >Owner Object</apex:outputLabel>
+                <apex:selectList value="{!OwnerPrefix}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!getObjectOwnerOptions}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+
+</apex:page>

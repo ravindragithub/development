@@ -1,0 +1,147 @@
+<!-- add implements="forceCommunity:availableForAllPageTypes" to surface the component in community builder -->
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                controller="myKVH_LightningSelfRegisterController" access="global">
+    <aura:attribute name="accountId" type="String" required="false" description="accountId for creating the user. If not specified, it will create a PersonAccount if possible for B2C scenario. Or otherwise if it's in a community, the community's self-registration accountId will be used."/>
+    <aura:attribute name="regConfirmUrl" type="String" required="true"/>
+    <aura:attribute name="destination" type="String" required="false" default=""/>
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+    <aura:attribute name="firstnameLabel" type="String" required="false" default="First Name"/>
+    <aura:attribute name="lastnameLabel" type="String" required="false" default="Last Name"/>
+    <aura:attribute name="emailLabel" type="String" required="false" default="Email"/>
+    <aura:attribute name="gdprLabel" type="String" required="false" default="testing"/>
+    <aura:attribute name="passwordLabel" type="String" required="false" default="Create Password"/>
+    <aura:attribute name="confirmPasswordLabel" type="String" required="false" default="Confirm Password"/>    
+    <aura:attribute name="submitButtonLabel" type="String" required="false" default="Sign Up"/>
+    <aura:attribute name="includePasswordField" type="Boolean" required="false" default="false" description="Whether to include password"/>    
+    <aura:attribute name="extraFieldsFieldSet" type="String" required="false" description="A field set name whose fields are desired for user registration"/>
+    <aura:attribute name="extraFields" type="list" required="false" description="A field set name whose fields are desired for user registration"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:attribute name="serialNumber" type="String" required="false" description="Potential Serial Number" />
+    <aura:attribute name="GDPR1" type="Boolean"  description="GDPR1" default="false" />
+    <aura:attribute name="expid" type="String" required="false" description="The branding experience ID" />   
+    <aura:attribute name="acceptAllValue" type="Boolean"  description="acceptAllValue" default="false" />
+    <aura:attribute name="emailValue" type="Boolean"  description="emailValue" default="false" />
+    <aura:attribute name="postalValue" type="Boolean"  description="postalValue" default="false" />
+    <aura:attribute name="telephoneValue" type="Boolean"  description="telephoneValue" default="false" />
+    <aura:attribute name="declineValue" type="Boolean"  description="declineValue" default="false" />
+    <aura:attribute name="phone" type="String"  description="phone" default="" />
+    <aura:attribute name="spinner" type="Boolean" default="false"/>  
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateList" type="List"/>
+    <aura:attribute name="selectedCountry" type="string" default="United States"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:dependency resource="c:setStartUrl" type="EVENT"/>
+    <!-- Please uncomment
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT"/>
+    -->
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}"/> 
+    <aura:handler event="c:setExpId" action="{!c.setExpId}"/>    
+    <aura:dependency resource="c:setExpId" type="EVENT"/>   
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <div style="margin:0 auto;position:relative;">
+        <aura:if isTrue="{!v.spinner}">
+            <lightning:spinner variant="brand"
+                               size="large"
+                               alternativeText="Loading Page"/>
+        </aura:if>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+            
+            <div class="slds-col slds-medium-size_10-of-12 content-panel-custom" >
+                <h1>Register for myKVH</h1>
+                <p style="text-align:right;"><small><span class="req">*</span> <em>indicates required fields</em></small></p>
+                        
+                <aura:renderIf isTrue="{!v.showError}">
+                    <div id="error">
+                        <ui:outputRichText value="{!v.errorMessage}"/>
+                    </div>
+                </aura:renderIf>
+                
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small">
+                        <lightning:input aura:id="firstname" onkeyup="{!c.onKeyUp}" required="true" value="" label="First/Given Name"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small">
+                        <lightning:input aura:id="lastname" onkeyup="{!c.onKeyUp}" required="true" value="" label="Last/Family Name/Surname"/>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small">
+                        <c:Country_Picklist_cmp countryList="{!v.countryList}"
+                                                    selectedCountry="{!v.selectedCountry}" selectedState="{!v.selectedState}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-horizontal_small">
+                        <lightning:input aura:id="email" onkeyup="{!c.onKeyUp}" required="true" value="" label="Email"/>
+                        
+                        <aura:iteration aura:id="extraFields" items="{!v.extraFields}" var="curField" indexVar="index">
+                                <lightning:input aura:id="{!curField.fieldPath}" onkeyup="{!c.onKeyUp}" 
+                                             required="true" value="{!curField.value}" label="Mobile Phone Number"/>                                
+                        </aura:iteration>
+                    </div>
+                </div>
+                
+                <div  style="margin-top:30px;">
+                    <lightning:card title="Stay in Touch: Updates, Alerts, and Exclusive Offers">
+                        <p>As a KVH customer, you are eligible to receive communications from <a href="https://www.kvh.com/About-Us/Contact-Us.aspx" target="_blank">KVH Industries, Inc, its family of companies (“KVH”)</a> and its business partners about future enhancements to your product, exclusive customer offers, new options and products that complement your KVH system, invitations to customer events, and more!</p>     
+                        <p>*Click the applicable buttons below for each type of communication you wish to receive:</p>
+                        <div class="slds-grid slds-wrap" style="margin-bottom:15px;">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12"> 
+                                <span><lightning:input aura:id="acceptAllCheckbox" class="checkBoxSideBar" label="Accept All" type="checkbox" onchange="{!c.handleCheckAcceptAll}" checked="{!v.acceptAllValue}" /></span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                                <span><lightning:input aura:id="emailCheckbox" class="checkBoxSideBar" label="Email" type="checkbox" onchange="{!c.handleCheck}" checked="{!v.emailValue}"/></span> 
+                            </div> 
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                                <span><lightning:input aura:id="postalMailCheckbox" class="checkBoxSideBar" label="Postal Mail" type="checkbox" onchange="{!c.handleCheck}" checked="{!v.postalValue}"/></span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                                <span><lightning:input aura:id="telphoneCheckbox" class="checkBoxSideBar" label="Telephone" type="checkbox" onchange="{!c.handleCheck}" checked="{!v.telephoneValue}"/></span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                                <span><lightning:input aura:id="declineCheckbox" class="checkBoxSideBar" label="Decline All" type="checkbox" onchange="{!c.handleCheckDecline}" checked="{!v.declineValue}"/></span>
+                            </div>
+                        </div>
+                        <p>Please know we respect your privacy, communications are occasional, 
+                            and we make every attempt to tailor our communications to fit your 
+                            interests and needs. You can change your mind at any time by emailing 
+                            KVH at <a href="mailto:privacy@kvh.com">privacy@kvh.com</a> or clicking on unsubscribe on any email you receive. 
+                            For additional information, see our <a href="https://www.kvh.com/privacy" target="_blank">Privacy Policy</a>.  
+                            If you decline to receive these communications, KVH will still send you technical and operational 
+                            notices regarding your product and services.</p>
+                        <p>By clicking the “CREATE ACCOUNT” button below, I confirm I have read, understand
+                            and accept the <a href="https://www.kvh.com/Legal/Terms-of-Use.aspx" target="_blank">KVH Terms of Use</a> 
+                            including <a href="https://www.kvh.com/Legal/Terms-of-Use.aspx#myKVH" target="_blank">Specific Terms for myKVH Site Users</a> and the <a href="https://www.kvh.com/privacy" target="_blank">Privacy Policy</a>.</p>
+                    </lightning:card>
+                </div>
+                
+                <aura:renderIf isTrue="{!v.includePasswordField}">
+                    <div id="sfdc_password_container" class="sfdc">
+                        <span id="sfdc_lock" class="login-icon sfdc" data-icon="c"></span>
+                        <ui:inputSecret value="" aura:id="password" placeholder="{!v.passwordLabel}" keyup="{!c.onKeyUp}" class="input sfdc_passwordinput sfdc"/>
+                    </div>
+                    
+                    <div id="sfdc_confirm_password_container" class="sfdc">
+                        <span id="sfdc_lock" class="login-icon sfdc" data-icon="c"></span>
+                        <ui:inputSecret value="" aura:id="confirmPassword" placeholder="{!v.confirmPasswordLabel}" keyup="{!c.onKeyUp}" class="input sfdc_passwordinput sfdc"/>
+                    </div>
+                </aura:renderIf>
+                <div class="sfdc" style="text-align:center;">
+                    <ui:button aura:id="submitButton" label="{!v.submitButtonLabel}" press="{!c.handleSelfRegister}" class="sfdc_button"/>
+                    <br/>
+                    <a href="./login" >Already a myKVH user?</a>
+                </div>
+                
+            </div>
+            
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+        </div>
+    </div>
+</aura:component>

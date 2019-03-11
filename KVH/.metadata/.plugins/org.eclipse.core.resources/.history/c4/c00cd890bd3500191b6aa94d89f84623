@@ -1,0 +1,4 @@
+<apex:page standardController="case"> 
+<wave:dashboard dashboardId="0FK13000000Gmlm" height="1000px" showTitle="false" 
+filter="{'ServiceCase': {'Id': ['{!case.Id}']},'ServiceCaseHistory': {'CaseId': ['{!case.Id}']}}" />
+</apex:page>

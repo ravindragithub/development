@@ -1,0 +1,37 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId">
+    
+    
+    <div style="max-width:1100px;height: 470px;margin:0 auto;">   
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>            
+            <div class="slds-col slds-medium-size_10-of-12 content-panel">
+                
+                <div style="margin: 2rem 0;text-align: right;">
+                    <lightning:button label="Back to Home" class="go-btn button"
+                                      variant="brand" onclick="{!c.onBackHome}" />
+                </div>
+                <div class="lte-header">    
+                    <h1>Thank you for submitting your KVH Product Registration.</h1>                    
+                </div>	
+                <div class="slds-grid slds-wrap slds-gutters callout">
+                    <div class="slds-col slds-medium-size_2-of-12">
+						<h2>Questions?</h2>
+                    </div>
+                    <div class="slds-col slds-medium-size_10-of-12">
+                        <p>
+                            <strong>KVH Airtime Services</strong><br />
+                            Hours: 6:00 PM Sunday to 5:00 PM Friday (ET)<br />
+                            Phone: +1 401.851.3862<br />
+                            Email: <a href="mailto:airtimeservices@kvh.com">airtimeservices@kvh.com</a>
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+        </div>
+    </div>
+</aura:component>

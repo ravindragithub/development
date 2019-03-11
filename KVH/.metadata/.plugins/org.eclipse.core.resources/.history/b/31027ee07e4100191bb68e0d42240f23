@@ -1,0 +1,128 @@
+.THIS table.dashboard {
+    width:100%;
+}
+
+.THIS table.dashboard td,.THIS  table.dashboard th {
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+}
+
+.THIS table.dashboard th {
+    font-weight:bold;
+    padding:10px;
+    font-size:85%;
+}
+
+.THIS table.dashboard th a {
+	text-decoration: none;
+	font-size:120%;
+	border-bottom:none;
+}
+
+.THIS table.dashboard td.row-header {
+    border:none;
+}
+
+.THIS table.dashboard img {
+    width:100%;
+}
+
+.THIS .dashboard img.action-icon {
+    float:left; 
+    width:45px; 
+    height:auto;
+    padding-right:10px;
+}
+
+.THIS .dashboard .action-button {
+    min-width: 90px;
+    text-align: center;
+}
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #444444;
+    font-size: 85%;
+    letter-spacing: .05em;
+}
+
+.THIS h2 {
+    font-size: 18px;
+    font-weight: lighter;
+    color: #666;
+    font-family: arial;
+}
+.THIS .info-box {   
+    background:#fff;
+}
+.THIS .button:hover {
+    background: #f3f3f3;
+    border: 1px solid #f3f3f3;
+}
+
+@media (max-width: 900px) {
+    .THIS .info-box {
+        margin:10px;
+    }
+}
+
+.THIS .info-box h2,.THIS .info-box h3,.THIS .info-box h4 {
+    padding:10px 15px;
+    margin:0;
+    background:#e3e3e3;
+    color:#666;
+}
+.THIS .info-box-heading {
+    padding:10px 15px;
+    margin:0;
+    background:#e3e3e3;
+    color:#666;
+}
+.THIS .info-box h5 {
+    color: #1f83ad;
+    font-weight:bold;
+    padding-bottom:5px;
+    font-style:italic;
+    font-size:1em;
+}
+
+.THIS .info-box .content {
+    padding:10px;
+}
+
+.THIS .info-box button {
+    padding:3px 5px;
+    background:#fff;
+    border: none;
+    outline:none;
+    cursor: pointer;
+}
+
+.THIS .info-box li {
+    padding-bottom:10px;
+}
+
+.THIS .info-box .banner { 
+    width:100%; 
+    height:auto;
+    max-width:400px;
+}
+.THIS .filter-box::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+    border-radius: 8px;
+}
+.THIS .filter-box::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid #f3f3f3;
+    background-color: rgba(0, 0, 0, .4);
+}
+.THIS .filter-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+}

@@ -1,0 +1,3 @@
+<apex:page standardController="ortoo_e2a__EmailMessage__c" extensions="ortoo_e2a.EmailHTMLBodyController" showHeader="false" sidebar="false">
+    <apex:dynamicComponent componentValue="{!OutputText}" />
+</apex:page>

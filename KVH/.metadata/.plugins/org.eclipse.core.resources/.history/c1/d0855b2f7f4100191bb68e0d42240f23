@@ -1,0 +1,47 @@
+<apex:page extensions="QuicklinkToolkitCreation" title="Create Quicklink" standardController="Quick_Link__c" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    
+    <apex:define name="body"> 
+        <apex:sectionHeader subtitle="Create QuickLink" title="Partner Portal Administration"/>
+        <apex:form id="frm" styleClass="page-content">
+            <apex:pageBlock >
+                <div>
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="New QuickLink Details">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="QuickLink Name"></apex:outputLabel>
+                            <apex:inputText style="width: 100%;" value="{!Quick_Link__c.QuickLink_Label__c}"/> 
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Quick_Link__c.Display_Order__c}"/>
+                        <apex:inputField value="{!Quick_Link__c.Background_Color__c}"/>
+                        <apex:inputField value="{!Quick_Link__c.Icon__c}"/>
+                        <apex:inputField value="{!Quick_Link__c.Content_Type_s__c}"/>
+                        <br/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="1" title="Current QuickLinks for Reference">
+                    <apex:pageBlockTable cellspacing="5" style="background: #fff; border-width: 0 0 0px 0;" cellpadding="6" columns="5" value="{!QLs}" var="quick">
+                        <apex:column headerValue="Quicklink" value="{!Quick.QuickLink_Label__c}"/>
+                        <apex:column headerValue="Display Order" value="{!Quick.Display_Order__c}"/>
+                        <apex:column headerValue="Background Color" value="{!Quick.Background_Color__c}"/>
+                        <apex:column headerValue="Icon" value="{!quick.Icon__c}"/>
+                        <apex:column headerValue="Content Type(s)" value="{!quick.Content_Type_s__c}"/>
+                    </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                    <div style="padding: 25px;">
+                        
+                        <apex:commandbutton style="padding: 5px 5px; margin-left: 20px; float: right;" styleClass="button lower-case" value="Create" action="{!createQL}"/>
+                        <apex:commandLink style="float: right;  margin-right: 10px; padding-top: 5px;" immediate="true" value="Cancel" action="/apex/adminlandingpage"/>
+                        
+                    </div>
+                </div>
+            </apex:pageBlock>
+            
+        </apex:form>
+        
+    </apex:define>
+    <script>
+    
+    function returnToTool(){
+        location.href = '/apex/adminlandingpage';
+    }
+    </script>
+</apex:page>

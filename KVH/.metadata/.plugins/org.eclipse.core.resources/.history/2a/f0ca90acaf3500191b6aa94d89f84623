@@ -1,0 +1,9 @@
+<!--
+ - Created by Jai Chaturvedi on 9/03/2017.
+-->
+
+<design:component >
+    <design:attribute name="serviceLabelfieldApiName"
+                      label="ServiceLabel-FieldAPI"
+                      description="Place the Service Label and Field API name in CaseManagement-Case_Management__c format" />
+</design:component>

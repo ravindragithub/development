@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>EmailServicesFunction</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Email services</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>ReadWrite</externalSharingModel>
+    <fields>
+        <fullName>Action_if_No_Match_Found__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Action if No Match Found</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Insert New Record</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Put email in an Unmatched Email Queue</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Drop email</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Go to another e2a Email Service Rule</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Action_if_No_Match_Go_To_Service__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Action if No Match Go To Service</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Allow_Manual_Insert__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Allow Manual Insert</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Allow_Manual_Match__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Allow Manual Match</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Alternate_Record_Matching_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Alternate Record Matching Field</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Alternate_Record_Matching_Group__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Specify regular expression to extract a value from selected parts of email, Using Alternate Record Matching Group.</description>
+        <externalId>false</externalId>
+        <label>Alternate Record Matching Group</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Alternate_Record_Matching_Regex__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Alternate Record Matching Regex</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Alternate_Record_Matching_Search_In__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Alternate Record Matching Search In</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Subject</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Header</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Body</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Subject &amp; Body</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Subject &amp; Body &amp; Header</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Assigned_Owner_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Assigned owner user type</description>
+        <externalId>false</externalId>
+        <label>Assigned Owner Type</label>
+        <length>5</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Assigned_Owner__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <description>Related object assigned owner</description>
+        <externalId>false</externalId>
+        <label>Assigned Owner</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Email_Services_Functions_Assigned_Owner</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Assigned_Queue__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Assigned queue</description>
+        <externalId>false</externalId>
+        <label>Assigned Queue</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Attachments_On_Obj_Is_Set__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Attachments On Obj Is Set</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Attachments_On_Storage_Obj__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Attachments On Storage Obj</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Attachments_On_Target_Obj__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Attachments On Target Obj</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Automatically_Copy_Tags__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Automatically Copy Tags</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Body_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body assign field</description>
+        <externalId>false</externalId>
+        <label>Email Body Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_1_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Body Contains Argument 1 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Body contains argument</description>
+        <externalId>false</externalId>
+        <label>Body Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_2_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Body Contains Argument 2 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Body contains argument</description>
+        <externalId>false</externalId>
+        <label>Body Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_3_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Body Contains Argument 3 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Argument_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Body contains argument</description>
+        <externalId>false</externalId>
+        <label>Body Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains field</description>
+        <externalId>false</externalId>
+        <label>Body Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains field</description>
+        <externalId>false</externalId>
+        <label>Body Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains field</description>
+        <externalId>false</externalId>
+        <label>Body Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_Value_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Body Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_Value_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Body Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Body_Contains_Field_Value_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email body contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Body Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contact_Match_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Contact match type</description>
+        <externalId>false</externalId>
+        <label>Contact Match Type</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Earliest Created</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Latest Created</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Latest Modified</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Email_Body_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Body Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Date_Add_Days__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email received date adjustment days</description>
+        <externalId>false</externalId>
+        <label>Email Date Add Days</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Date_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email received date assign field</description>
+        <externalId>false</externalId>
+        <label>Email Date Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Date_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Date Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_From_Address_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email From-Address Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_From_Domain_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email From Domain Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_From_First_Name_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email From First Name Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_From_Last_Name_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email From Last Name Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_From_Name_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email From Name Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Headers_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Headers Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Html_Body_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Html Body Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Message_Object_Key_Prefix__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related email message object key prefix</description>
+        <externalId>false</externalId>
+        <label>Related Email Msg Obj Key Prefix</label>
+        <length>3</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Subject_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Subject Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_To_Address_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email To-Address Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>From_Address_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email from-address assign field</description>
+        <externalId>false</externalId>
+        <label>Email From-Address Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_Domain_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email from-address domain assign field</description>
+        <externalId>false</externalId>
+        <label>Email From Domain Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_First_Name_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email from first name assign field</description>
+        <externalId>false</externalId>
+        <label>Email From First Name Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_Last_Name_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email from last name assign field</description>
+        <externalId>false</externalId>
+        <label>Email From Last Name Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_Name_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email from name assign field</description>
+        <externalId>false</externalId>
+        <label>Email From Name Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Function_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email services function id</description>
+        <externalId>false</externalId>
+        <label>Function Id</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Headers_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Headers Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Html_Body_Assign_field__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Html Body Assign field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Is_Active__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Record is active</description>
+        <externalId>false</externalId>
+        <label>Is Active</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Matched_Account_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Matched account assign field</description>
+        <externalId>false</externalId>
+        <label>Matched Account Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Matched_Account_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Matched Account Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Matched_Contact_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Matched contact assign field</description>
+        <externalId>false</externalId>
+        <label>Matched Contact Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Matched_Contact_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Matched Contact Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>NewAlternate_Record_Matching_Search_In__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Alternate Record Matching Search In</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Subject</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Body</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Headers</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>To</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>From</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>CC</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Object_Key_Prefix__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object key prefix</description>
+        <externalId>false</externalId>
+        <label>Related Object Key Prefix</label>
+        <length>3</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_1_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object Status Field 1 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_2_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object Status Field 2 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_3_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object Status Field 3 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_Value_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field assigned value</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_Value_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field assigned value</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_Value_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field assigned value</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field assigned value</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Status_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object status picklist field</description>
+        <externalId>false</externalId>
+        <label>Related Object Status Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Queue_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Queue id for unmatched or errored messages</description>
+        <externalId>false</externalId>
+        <label>Queue Id</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Record_Insert__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Target object record insert status</description>
+        <externalId>false</externalId>
+        <label>Record Insert</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Insert Not Allowed</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Insert Allowed</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Only Manual Insert Allowed</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Record_Type_Id_Overwrite__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Record Type Id Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Record_Type_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Related object record type Id (on insert)</description>
+        <externalId>false</externalId>
+        <label>Record Type Id</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_ID_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service ID Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Service_Id_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email service id assign field</description>
+        <externalId>false</externalId>
+        <label>Service ID Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Id_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email service id code</description>
+        <externalId>false</externalId>
+        <label>Service ID Code</label>
+        <length>20</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Store_Attachments_In__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <inlineHelpText>Allow email&apos;s attachments to be stored in Attachment Object or Files.</inlineHelpText>
+        <label>Store Attachments In</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Attachment Object</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Files</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Store_a_copy_of_email_as_an_Activity__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Store a copy of email as an Activity</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Subject_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject assign field</description>
+        <externalId>false</externalId>
+        <label>Email Subject Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_1_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument 1 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Subject contains argument</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_2_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument 2 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Subject contains argument</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_3_Overwrite__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument 3 Overwrite</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Argument_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Subject contains argument</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Argument</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains field</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains field</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains field</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_Value_1__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_Value_2__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Subject_Contains_Field_Value_3__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email subject contains assigned value</description>
+        <externalId>false</externalId>
+        <label>Subject Contains Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Thread_Id_In_Body__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Thread Id In Body</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Thread_Id_In_Subject__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Thread Id In Subject</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>To_Address_Assign_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Email to-address assign field</description>
+        <externalId>false</externalId>
+        <label>Email To-Address Assign Field</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>e2a Email Rule</label>
+    <nameField>
+        <label>Service Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>e2a Email Rules</pluralLabel>
+    <searchLayouts>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <startsWith>Vowel</startsWith>
+</CustomObject>

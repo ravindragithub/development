@@ -1,0 +1,6 @@
+<design:component >
+	 <design:attribute name="TracVisionURL" label="TracVision URL" description="url for TracVision link" />
+     <design:attribute name="miniVSATBroadbandURL" label="mini-VSAT Broadband URL" description="url for mini-VSAT Broadband SATCOM Systems" />
+     <design:attribute name="InmarsatSATCOMSystemsURL" label="Inmarsat SATCOM Systems URL" description="url for Inmarsat SATCOM Systems" />
+     <design:attribute name="miniVSATManagerurl" label="mini-VSAT Manager URL" description="url for mini-VSAT Manager" />
+</design:component>

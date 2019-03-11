@@ -1,0 +1,251 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="PRDReg_Controller" access="global" >
+    <aura:attribute name="newProdRegActivation" type="Object"/>
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="newProdRegActivationError" type="String" />    
+    <aura:attribute name="countryList" type="List"/>
+    <!--  boolean for each accordion-->
+    <aura:attribute name="accountAccordion" type="boolean" default="true"/>   
+    <aura:attribute name="installAccordion" type="boolean" default="true"/>
+    <aura:attribute name="systemAccordion" type="boolean" default="true"/>    
+    <aura:attribute name="ProviderAccountAccordion" type="boolean" default="true"/>
+    <!--  Required field boolean each card-->
+    <aura:attribute name="accountRequired" type="boolean" default="true"/>   
+    <aura:attribute name="installerInfoRequired" type="boolean" default="true"/> 
+    <aura:attribute name="vesselInfoRequired" type="boolean" default="true"/>    
+    <aura:attribute name="systemRequired" type="boolean" default="true"/>  
+    <aura:attribute name="serviceRequired" type="boolean" default="true"/>
+    <aura:attribute name="purchaseRequired" type="boolean" default="true"/>
+    <aura:attribute name="recieverInfoRequired" type="boolean"/>
+    <aura:attribute name="payInfoRequired" type="boolean" default="true"/>
+    <aura:attribute name="cont1Required" type="boolean" default="true"/>
+    <aura:attribute name="perAccRequired" type="boolean" default="true"/>
+    
+    <aura:attribute name="subsCountry" type="string" default="United States"/>
+    <aura:attribute name="checkPersonalAcc" type="boolean" default="false"/>
+    <aura:attribute name="firstnameFlag" type="boolean" default="false"/>
+    <aura:attribute name="lastnameFlag" type="boolean" default="false"/>
+    <aura:attribute name="emailFlag" type="boolean" default="false"/>
+    <aura:attribute name="phoneFlag" type="boolean" default="false"/>  
+    <aura:attribute name="antennaFlag" type="boolean" default="false"/>  
+    <aura:attribute name="countryFlag" type="boolean" default="false"/>
+    <aura:attribute name="stateFlag" type="boolean" default="false"/>
+    <aura:attribute name="attachmentList" type="List"/>
+    <aura:attribute name="loadCheckList" type="boolean" default="false"/>
+    <aura:attribute name="loadPaymntPurch" type="boolean" default="false"/>
+    <aura:attribute name="submitFormOnce" type="boolean" default="false"/>
+    <aura:attribute name="tvSeries" type="boolean" default="false"/>
+    <aura:attribute name="billingInfoFlag" type="boolean" default="false"/>
+    <aura:attribute name="customerInfoFlag" type="boolean" default="false"/> 
+    <aura:attribute name="kvhAUthInfoFlag" type="boolean" default="false"/>    
+    <aura:attribute name="SatelliteTVProvider" type="string"/>
+    
+    <aura:attribute name="simpleProdRegActivation" type="Object" 
+                    default="{'sobjectType':'Product_Registration__c'}"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.serviceRequired}" action="{!c.checkReqFields}"/>
+    <aura:handler name="change" value="{!v.purchaseRequired}" action="{!c.checkReqFields}"/>
+    <aura:handler name="change" value="{!v.simpleProdRegActivation.Free_DirectTV_or_DISH_receiver_requested__c}" action="{!c.checkReqFields}"/>
+    <aura:handler name="change" value="{!v.payInfoRequired}" action="{!c.checkReqFields}"/>
+    <aura:handler name="change" value="{!v.cont1Required}" action="{!c.checkReqFields}"/>
+    
+    <div class="CreateLTEActivation" style="position:relative">
+        <aura:if isTrue="{!v.spinner}">
+            <lightning:spinner variant="brand"
+                               size="large"
+                               alternativeText="Loading Page"/>
+        </aura:if>
+        <div class="slds-docked-form-body content-panel" id="scrollMain">
+            <h1 style="float:left;">KVH TracVision and Compass Product Registration</h1>
+            
+            <div style="float:right;">
+                <lightning:button label="Back to Home" class="go-btn button"
+                                  variant="brand" onclick="{!c.onBackHome}" />
+                <div class="req-note" style="margin-top: 1rem;"><span class="required">*</span> indicates required field</div>
+            </div>
+            
+            <div class="clear"></div>
+            <lightning:accordion aura:id="accordion" 
+                                 activeSectionName="Account" 
+                                 allowMultipleSectionsOpen="false"
+                                 onsectiontoggle="{!c.handleSectionToggle}">                
+                <div id="scrollAccount"></div>
+                <lightning:accordionSection name="Account" label="Account">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! !(v.accountRequired)}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="action:remove" title="" size="xx-small"/>    
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <c:PRDReg_SubscriberInfo simplePRDregistration="{!v.simpleProdRegActivation}" 
+                                                 subInfoRequired="{!v.accountRequired}" 
+                                                 countryList="{!v.countryList}"
+                                                 subsCountry="{!v.subsCountry}"
+                                                 firstnameFlag ="{!v.firstnameFlag}" lastnameFlag ="{!v.lastnameFlag}"
+                                                 emailFlag ="{!v.emailFlag}" phoneFlag ="{!v.phoneFlag}"
+                                                 countryFlag="{!v.countryFlag}" stateFlag="{!v.stateFlag}"
+                                                 billingInfoFlag="{!v.billingInfoFlag}"
+                                                 customerInfoFlag="{!v.customerInfoFlag}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Next" onclick="{!c.handleNextVessel}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                <!-- INSTALLATION PANEL -->
+                <div id="scrollInstallation"></div>
+                <lightning:accordionSection name="Installation" label="Installation">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{! v.installAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{! or(v.vesselInfoRequired,v.installerInfoRequired) }">
+                                    <lightning:icon iconName="action:remove" title="" size="xx-small"/> 
+                                    <aura:set attribute="else">  
+                                        <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <c:PRDReg_VesselVehicleInfo simplePRDregistration="{!v.simpleProdRegActivation}" vesselInfoRequired="{!v.vesselInfoRequired}"/>
+                        <c:PRDReg_InstallerInfo simplePRDregistration="{!v.simpleProdRegActivation}" 
+                                                countryList="{!v.countryList}"
+                                                installerInfoRequired="{!v.installerInfoRequired}"
+                                                kvhAUthInfoFlag ="{!v.kvhAUthInfoFlag}"/>
+                        <aura:if isTrue="{!v.loadCheckList}">
+                            <c:PRDReg_InstallationChecklist productRegId="{!v.simpleProdRegActivation.Id}" attachmentList="{!v.attachmentList}"/>
+                        </aura:if>
+                        
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousAccount}"/>
+                            <lightning:button label="Next" onclick="{!c.handleNextSystem}" variant="brand" class="nextbtn"/>
+                        </div>
+                        <div class="clear"></div>
+                    </aura:set>
+                </lightning:accordionSection>
+                
+                <!-- System Information PANEL -->
+                <div id="scrollSystem"></div>
+                <lightning:accordionSection name="SystemInformation" label="System">
+                    <aura:set attribute="actions">
+                        <aura:if isTrue="{!v.systemAccordion}">
+                            <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!v.systemRequired}">
+                                    <lightning:icon iconName="action:remove" title="" size="xx-small"/> 
+                                    <aura:set attribute="else">  
+                                        <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                    <aura:set attribute="body"> 
+                        <!--<c:PRDReg_SystemInfo simpleLTEActivation="{!v.simpleProdRegActivation}"
+                                             systemRequired="{!v.systemRequired}"
+                                             serviceRequired="{!v.serviceRequired}"
+                                             purchaseRequired="{!v.purchaseRequired}"
+                                             recieverInfoRequired="{!v.recieverInfoRequired}"
+                                             payInfoRequired="{!v.payInfoRequired}"
+                                             cont1Required="{!v.cont1Required}"
+                                             tvSeries="{!v.tvSeries}"/>-->
+                        <c:PRDReg_ProductInfo simpleLTEActivation="{!v.simpleProdRegActivation}" 
+                                              serviceRequired="{!v.serviceRequired}"
+                                              perAccRequired = "{!v.perAccRequired}"
+                                              recieverInfoRequired="{!v.recieverInfoRequired}"
+                                              antennaFlag="{!v.antennaFlag}"
+                                              tvSeries="{!v.tvSeries}"
+                                              kvhAUthInfoFlag="{!v.kvhAUthInfoFlag}"
+                                              customerInfoFlag="{!v.customerInfoFlag}"
+                                              billingInfoFlag="{!v.billingInfoFlag}"/>
+                        <aura:if isTrue="{!v.loadPaymntPurch}">
+                            <c:PRDReg_PaymentPurchase simpleLTEActivation="{!v.simpleProdRegActivation}" 
+                                                      purchaseRequired="{!v.purchaseRequired}"
+                                                      attachmentList="{!v.attachmentList}"/>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!and(v.tvSeries,v.subsCountry=='United States')}">
+                            <c:PRDReg_RecieverInformation simpleLTEActivation="{!v.simpleProdRegActivation}"
+                                                          recieverInfoRequired="{!v.recieverInfoRequired}"/>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!and(v.recieverInfoRequired,v.subsCountry=='United States')}">
+                            <c:PRDReg_PaymentInfo simpleLTEActivation="{!v.simpleProdRegActivation}" 
+                                                  payInfoRequired="{!v.payInfoRequired}"
+                                                  countryList="{!v.countryList}"
+                                                  billingInfoFlag="{!v.billingInfoFlag}"
+                                                  subInfoRequired="{!v.accountRequired}" />
+                            
+                            <c:PRDReg_ReceiverShippingLocation simpleLTEActivation="{!v.simpleProdRegActivation}" 
+                                                               countryList="{!v.countryList}" 
+                                                               cont1Required="{!v.cont1Required}"
+                                                               kvhAUthInfoFlag="{!v.kvhAUthInfoFlag}"
+                                                               customerInfoFlag="{!v.customerInfoFlag}"
+                                                               subInfoRequired="{!v.accountRequired}"
+                                                               installerInfoRequired="{!v.installerInfoRequired}"/>
+                        </aura:if>    
+                        <aura:if isTrue="{!and(v.recieverInfoRequired,v.subsCountry=='United States')}">
+                            <div class="button-bar">
+                                <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousInstall}"/>
+                                <lightning:button label="Next" onclick="{!c.handleNextPAcc}" variant="brand" class="nextbtn"/>
+                            </div>
+                            <aura:set attribute="else">
+                                <div style="text-align:center;">
+                                    <lightning:button label="Save Product Registration" 
+                                                      variant="brand" onclick="{!c.handleSaveProdReg}" 
+                                                      class="savebtn" disabled ="{!v.submitFormOnce}" />
+                                </div>
+                            </aura:set>
+                        </aura:if>                        
+                        <div class="clear"></div>
+                    </aura:set>     
+                </lightning:accordionSection>    
+                
+                <aura:if isTrue="{!and(v.recieverInfoRequired,v.subsCountry=='United States')}">
+                    <!-- Provider Account PANEL-->
+                    <div id="scrollPAcc"></div>
+                    <lightning:accordionSection name="ProviderAccount" label="Provider Account">
+                        <aura:set attribute="actions">
+                            <aura:if isTrue="{! v.ProviderAccountAccordion}">
+                                <lightning:icon iconName="action:approval" title="" size="xx-small" class="notStarted"/>
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!v.perAccRequired}">
+                                        <lightning:icon iconName="action:remove" title="" size="xx-small"/> 
+                                        <aura:set attribute="else">  
+                                            <lightning:icon iconName="action:approval" title="" size="xx-small"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if>
+                        </aura:set>
+                        <aura:set attribute="body">         
+                            <c:PRDReg_PersonalAccount simpleLTEActivation="{!v.simpleProdRegActivation}" 
+                                                      perAccRequired = "{!v.perAccRequired}"
+                                                      SatelliteTVProvider="{!v.SatelliteTVProvider}" />
+                            <div class="button-bar">
+                                <lightning:button label="Back" variant="brand" onclick="{!c.handlePreviousSystem}"/>
+                                <lightning:button label="Next" onclick="{!c.handleNextAgreement}" variant="brand" class="nextbtn"/>
+                            </div>
+                            <div class="clear"></div>
+                        </aura:set>
+                    </lightning:accordionSection>
+                    
+                    <!-- Agreement PANEL-->
+                    <div id="scrollAgreement"></div>
+                    <lightning:accordionSection name="Agreement" label="Agreement">
+                        <c:PRDReg_Agreement SatelliteTVProvider="{!v.SatelliteTVProvider}" 
+                                            onclickSave="{!c.handleSaveProdReg}" 
+                                            submitFormOnce="{!v.submitFormOnce}" />
+                    </lightning:accordionSection>
+                </aura:if>
+            </lightning:accordion>
+        </div>
+    </div>
+</aura:component>

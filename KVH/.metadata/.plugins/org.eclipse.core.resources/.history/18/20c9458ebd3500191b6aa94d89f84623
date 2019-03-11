@@ -1,0 +1,242 @@
+<apex:page standardController="Partner_Portal_Access_Request__c" extensions="PartnerRegistrationController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+        <meta charset="UTF-8"/>
+        <title>Partner Portal Login</title>
+        <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+        <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+    </script>
+    <!-- Library for jQuery Validator... -->
+    <script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+    <script>
+        var validator;
+    $( document ).ready(function() {
+     //   validator = $("[id$='theForm']").validate({ignore: ":disabled"});
+    });
+    $('[id$=country]').each(function(){
+        $(this).rules("add", {
+            selectrequired : "Choose One",
+            messages: {
+                required: ""
+            }
+        });            
+    });
+        $('[id$=state]').each(function(){
+            $(this).rules("add", {
+                selectrequired : "Choose One",
+                messages: {
+                    required: ""
+                }
+            });            
+        });       
+        <!-- script to show error message area -End -->
+            function validateError(param){
+                var Isvalid;
+                var currentcomp = $("[id$="+param+"]");
+                $(currentcomp).find('.kvh-show-errormsg-here').empty();
+                if($(currentcomp).find("[id$=country]").length ==1){
+                    if(Isvalid == undefined)
+                        Isvalid = $(currentcomp).find("[id$=country]").valid();
+                    else
+                        Isvalid = $(currentcomp).find("[id$=country]").valid() && Isvalid;
+                }
+                if($(currentcomp).find("[id$=state]").length ==1){
+                    if(Isvalid == undefined)
+                        Isvalid = $(currentcomp).find("[id$=state]").valid();
+                    else
+                        Isvalid = $(currentcomp).find("[id$=state]").valid() && Isvalid;
+                }else{
+                    var html = "";
+                    var errordiv = currenttabtoshowerror();
+                    $(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                    }
+                    if($(currentcomp).find('[id$=country]').hasClass("error") && ($(currentcomp).find("[id$=country]").valid() == false)){
+                        html += "<li>Select Country</li>";
+                    }
+                    if($(currentcomp).find('[id$=State_Province__c]').hasClass("error") && ($(currentcomp).find("[id$=State_Province__c]").valid() == false)){
+                        html += "<li>Select State</li>";
+                    }
+                    $(currentcomp).find('.error-box').find('.bullets').html(html);
+                    $(currentcomp).find('.error-box').show();
+                }
+            
+    </script>
+    
+       <!--  Below javascript controls the height and width of anything with style class   -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            setTimeout(function() {
+                $j('select.company_functional_group').each(function(i, val) { 
+                    $j(val).width(130);
+                    $j(val).height(70);
+                
+                })
+            },100);
+        });
+    </script>
+    
+    
+    <!-- The script below will replace the default "--None--" salesforce puts on default picklists-->
+    
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+    <script>
+    $j = jQuery.noConflict();
+    
+    $j(function(){
+        replacePickVals();
+    });
+    
+    function replacePickVals(){
+                 $j('option').filter(function () { return $j(this).html() == "Choose One"; }).html('-- Select --');
+         $j('option').filter(function () { return $j(this).html() == "Choose Country First"; }).html('-- Select Country First --');
+        $j('option').filter(function () { return $j(this).html() == "--None--"; }).html('-- Select --');
+    }
+    </script>
+    
+    
+    
+    
+    <header>
+            <div class="logo">
+                <apex:image value="http://progressive.kvh.com/myKVH_Files/images/logo_kvh.png"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+    </header>
+    <body>
+        <div class="content">
+            <h1>Thanks for Requesting Access to the KVH Partner Portal</h1>
+            
+            <div class="section group">
+                <div class="col span_9_of_12" style="padding-right:30px;"> 
+                    <p>The KVH Partner Portal is an exclusive resource for KVH's authorized dealers and distributors and their sales and technical staffs. Register and login often for the latest sales and technical bulletins, dealer updates, technical support resources, sales aids, and more. This is your one-stop shop for everything a KVH dealer needs to be successful!</p>                    
+                    <apex:form id="theForm">
+                    <h2 class="pad-top">Contact Information <span class="required-note-inline">All fields in this section are required.</span></h2>
+                    
+                    <div class="section group">
+                        <div class="col span_2_of_12">
+                            <label>Salutation:</label>
+                            <apex:inputField id="salutation" value="{!Partner_Portal_Access_Request__c.Salutation__c}"/>
+                        </div>
+                        <div class="col span_5_of_12">
+                            <label>First/Given Name:</label>
+                            <apex:inputField required="true" id="firstname" value="{!Partner_Portal_Access_Request__c.First_Name__c}"/>
+                        </div>
+                        <div class="col span_5_of_12">
+                            <label>Last/Family/Surname:</label>
+                            <apex:inputField required="true" id="lastname" value="{!Partner_Portal_Access_Request__c.Last_Name__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Email:</label>
+                            <apex:inputField required="true" id="email" value="{!Partner_Portal_Access_Request__c.Contact_Email__c}" html-placeholder="No group email addresses please"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Contact Phone No.:</label>
+                            <apex:inputField required="true" id="phone" value="{!Partner_Portal_Access_Request__c.Contact_Phone__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Job Title:</label>
+                            <apex:inputField required="true" id="title" value="{!Partner_Portal_Access_Request__c.Job_Title__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Company Functional Group:</label>
+                            <apex:inputField required="true" id="compgroup" value="{!Partner_Portal_Access_Request__c.Company_Functional_Group__c}" styleClass="company_functional_group"/>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    <h2>Company Information <span class="required-note-inline">All fields in this section are required.</span></h2>
+                    
+                    <div class="section group">
+                        <div class="col span_12_of_12">
+                            <div class="ui-widget">
+                              <label for="compname">Company Name: </label>
+                                <apex:inputField required="true" id="compname" value="{!Partner_Portal_Access_Request__c.Company_Name__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Company Address 1:</label>
+                            <apex:inputField required="true" id="add1" value="{!Partner_Portal_Access_Request__c.Company_Address_1__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Company Address 2: <span class="notes">(if applicable)</span></label>
+                            <apex:inputField required="false" id="add2" value="{!Partner_Portal_Access_Request__c.Company_Address_2__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>City:</label>
+                            <apex:inputField required="true" id="city" value="{!Partner_Portal_Access_Request__c.Company_City__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Country:</label>
+                                <apex:actionRegion >
+                                    <apex:selectList id="country"  value="{!country}" multiselect="false" size="1" required="true">
+                                        <apex:actionSupport action="{!componentCountryChangeHandlerBilling}" event="onchange" reRender="state" />
+                                        <apex:selectOptions value="{!CountriesList}"/>
+                                    </apex:selectList>
+                                </apex:actionRegion>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>State/Province/Territory/Region:</label>
+                            <apex:selectList id="state"  value="{!state}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!StatesList}"/>
+                            </apex:selectList>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Zip/Postal Code:</label>
+                            <apex:inputField required="true" id="zip" value="{!Partner_Portal_Access_Request__c.Company_Postal_Zipcode__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Business Phone No.:</label>
+                            <apex:inputField required="true" id="cphone" value="{!Partner_Portal_Access_Request__c.Company_Phone__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>KVH Account No.: <span class="notes">(if known)</span></label>
+                            <apex:inputField id="cacctno" value="{!Partner_Portal_Access_Request__c.KVH_Account_No_if_known__c}"/>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    <h2>Terms of Acceptance</h2>
+                    
+                    <p>I understand that as a KVH partner, I will receive e-mail notifications from KVH concerning updates, upgrades, and news regarding KVH products and services. These e-mails may include information about product software and hardware upgrades, information on changes in satellite services, technical alerts, notifications of special promotional offers for you and your customers, and more.</p>
+                        <apex:commandButton onclick="submitclick('submitformfun()');return false;" value="Submit Request for Portal Access" styleClass="button button-blue"/>
+                        <apex:actionFunction name="submitformfun" action="{!saveTech}" />
+                </apex:form>     
+                </div>
+                
+                <!-- sidebar -->
+                <div class="col span_3_of_12">
+                    <div class="callout">
+                        <h4>NOTE!</h4>
+                        <p>New portal access requests can take up to <strong>three to four</strong> business days to process, however we will do our best to respond as quickly as possible. </p>
+                    </div>
+                    <div class="border pad-inside pad-top">
+                      <h4>Need immediate assistance creating <br/>an account?</h4>
+                        Contact us: <a href="mailto:partnerportal@kvh.com?Subject=Help with Access to the Partner Portal">partnerportal@kvh.com</a>
+                    </div>
+                </div>
+            </div>  
+        </div>
+        </body>
+        <c:spinner ></c:spinner>
+</apex:page>

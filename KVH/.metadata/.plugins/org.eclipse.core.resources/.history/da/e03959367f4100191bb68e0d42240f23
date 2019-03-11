@@ -1,0 +1,30 @@
+<apex:page standardController="Case" standardStylesheets="false" showheader="false">
+<apex:includeLightning />
+<apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+<script src="https://kvh.my.salesforce.com/lightning/lightning.out.js"></script>
+    <script>
+        $Lightning.use("c:lcvfTest", function() {
+          $Lightning.createComponent("c:PartnerHeaderComponent",
+          { },
+          "lightning",
+          function(cmp) {
+          });
+        });
+    </script>
+<apex:form >
+    <div id="lightning" />
+    <div align="center">
+        <apex:commandLink action="/s/mykvh/00a/e?parent_id={!case.id}&retURL=/mykvh/my_Case_View?id={!case.id}" target="_blank">
+        <apex:commandButton value="Add Comment" styleClass="btn" action="/s/mykvh/00a/e?parent_id={!case.id}&retURL=/mykvh/my_Case_View?id={!case.id}" />
+        </apex:commandLink>
+    </div>
+    <br/>
+    <apex:pageBlock title="Case Comments">
+        <apex:pageBlockTable value="{!case.casecomments}" var="c">
+            <apex:column value="{!c.CreatedDate}"/>
+            <apex:column value="{!c.CreatedBy.Name}"/>
+            <apex:column value="{!c.commentbody}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

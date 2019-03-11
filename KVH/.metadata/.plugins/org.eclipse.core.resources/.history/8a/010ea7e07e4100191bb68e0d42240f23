@@ -1,0 +1,5 @@
+({
+	validateInfo: function(component, event, helper) {
+		
+	}
+})

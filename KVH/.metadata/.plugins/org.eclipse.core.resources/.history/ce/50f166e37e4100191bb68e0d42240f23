@@ -1,0 +1,94 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SalesAidsController" >
+	<ltng:require styles="{!$Resource.remodalcss}" />
+    <ltng:require styles="{!$Resource.gridcss}" />
+	<ltng:require styles="{!$Resource.remodal_default_theme}" />
+    <ltng:require styles="{!$Resource.handle_counter_min}" />
+    
+    <aura:handler event="c:showsalesAidspopup"
+    action="{!c.showaddtocartpopup}"/>
+    
+    <aura:attribute name="retURL"
+                    type="string"                    
+                    description="return url for the back button on cart screen"/>
+    
+    <aura:attribute name="showpopup"
+                    type="string"
+                    default="none"
+                    description="show the popup when click on the add to cart button"/>
+    <aura:attribute name="documentobj"
+                    type="Object"
+                    description="Sales aids object for popup" />
+    
+   <aura:attribute name="showaddtocartbuttton" type="boolean" default="true"
+                    description="show add to cart button"/>
+    <aura:attribute name="successmessage" type="String" 
+                    description="show add to cart button"/>
+    <aura:attribute name="errormessage" type="String" default=""
+                    description="Show validation error on the popup when click on add/update to cart"/>
+    
+    <aura:attribute name="showspinner" type="boolean" description="show/hide spinner" default="false"/>
+    
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    
+    <aura:registerEvent name="SalesAidsUpdateCartEvent" type="c:SalesAidsUpdateCartEvent" description="update cart in header component" />
+    
+    <!-- popup code start-->
+    <div class="remodal-overlay remodal-is-opened" style="{!'display: ' + v.showpopup}"></div>
+    <div class="remodal-wrapper remodal-is-opened" style="{!'display: ' + v.showpopup}"><div style="min-height: 200px;" class="remodal remodal-is-initialized remodal-is-opened" data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc" tabindex="-1">
+        <!--  <h1>Added to Sales Aids Order</h1>-->
+        <button data-remodal-action="close" class="remodal-close" aria-label="Close" onclick="{!c.hideAddCartPopup}"></button>
+        <div class="{!v.showspinner ? 'slds-spinner_container slds-show' : 'slds-spinner_container slds-hide'}"
+              style="z-index:1">
+             <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                 <span class="slds-assistive-text">Loading</span>
+                 <div class="slds-spinner__dot-a"></div>
+                 <div class="slds-spinner__dot-b"></div>
+             </div>
+        </div>
+        <aura:if isTrue="{!v.documentobj.productDocId != null}">
+            <div class="section group">
+                    <div class="col span_3_of_12 pad-15">
+                        <aura:if isTrue="{!v.documentobj.imageURL == 'noimage'}">
+                            <img style="width:150px" src="{! $Label.c.Community_URL +  '/resource/NoImage'}" class="width-100"/>
+                            <aura:set attribute="else">
+                                <img src="{!v.documentobj.imageURL}" class="width-100"/>
+                            </aura:set>
+                        </aura:if>                    
+                    </div>
+                    <div class="col span_9_of_12 text-left pad-15">
+                        <h2>{!v.documentobj.productName}</h2>
+                        <p><aura:unescapedHtml value="{!v.documentobj.description}"/></p>
+                        <!--<p>Document Size: {!v.documentobj.size}</p>
+                        <p><em>Brochure ships in packs of 25, 5 pack limit</em></p>-->
+                        <div class="handle-counter" id="handleCounter2">
+                            <label class="left pad-right">Quantity:</label>
+                            <button class="counter-minus btn btn-primary" disabled="{!if(v.documentobj.quantity == 1,true,false)}" onclick="{!c.decreaseqty}">-</button>
+                            <input type="text" value="{!v.documentobj.quantity}" data-num="1" disabled="true"/>
+                            <button class="counter-plus btn btn-primary" onclick="{!c.increaseqty}" disabled="{!v.disableddincreasebtn}">+</button>
+                        </div>
+                        <aura:if isTrue="{!v.errormessage != ''}">
+                            <b style="color:#CC0000">Error : </b>
+                            <span style="color:#CC0000">{!v.errormessage}</span>
+                            <br/>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.showaddtocartbuttton}">
+                            <a href="javascript:void(0);" data-id="{!v.documentobj.productDocId}" class="button button-blue pad-top" onclick="{!c.addtocart}">{!if(v.documentobj.salesOrderItemId != NULL,'Update Order','Add to Cart')}</a>
+                            <aura:set attribute="else">
+                                <br/>
+                                <b style="margin-top:10px;">{!v.successmessage}</b>
+                            </aura:set>
+                        </aura:if>
+                        
+                    </div>                  
+                </div>
+                <div class="button-bar">
+                    <a href="javascript:void(0);" class="button pad-right white-bg" onclick="{!c.hideAddCartPopup}">Continue</a>
+                    
+                    /<a href="{!$Label.c.OrgURL + '/s/salesaidscart?returl=' + v.retURL}" class="button button-red pad-left" >PROCEED TO REVIEW ORDER</a>
+                </div>
+        </aura:if>
+        </div>
+    </div>
+</aura:component>

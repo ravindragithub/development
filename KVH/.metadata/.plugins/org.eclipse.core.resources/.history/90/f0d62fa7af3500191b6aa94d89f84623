@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="searchString" type="string" Description="This is the search attribute" />
+    <aura:attribute name="serialNumber" type="string" description="SatRouter serial number" />
+    <aura:attribute name="provisioningKey" type="string" description="This is a child Provisioning Key" />
+    <aura:attribute name="revision" type="string" description="This is the hardware revision of the SatRouter" />
+</aura:event>

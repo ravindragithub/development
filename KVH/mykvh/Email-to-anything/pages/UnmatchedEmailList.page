@@ -1,0 +1,157 @@
+<apex:page controller="ortoo_e2a.UnmatchedEmailList"> 
+<script type="text/javascript">
+        function selectAllCheckboxes( obj, receivedInputID )
+        {
+            var inputCheckBox = document.getElementsByTagName( "input" );
+            for( var i = 0; i < inputCheckBox.length; i++ )
+            {
+                if( inputCheckBox[ i ].id.indexOf( receivedInputID ) != -1 )
+                {
+                    inputCheckBox[ i ].checked = obj.checked;
+                }
+            }
+        }
+        function clearParentCheckbox( parentID )
+        {
+            var inputCheckBox = document.getElementsByTagName( "input" );
+            for ( var i = 0; i < inputCheckBox.length; i++ )
+            {
+                if( inputCheckBox[ i ].id.indexOf( parentID ) != -1 )
+                {
+                    inputCheckBox[ i ].checked = false;
+                    break;
+                }
+            }
+        }
+        function updateParentCheckbox( obj, parentID )
+        {
+            if ( obj.checked == false )
+            {
+                var inputCheckBox = document.getElementsByTagName( "input" );
+                for( var i = 0; i < inputCheckBox.length; i++ )
+                {
+                    if( inputCheckBox[ i ].id.indexOf( parentID ) != -1 )
+                    {
+                        inputCheckBox[ i ].checked = false;
+                        break;
+                    }
+                }
+            }
+        }
+        function warnNoneSelected( receivedInputID )
+        {
+            var inputCheckBox = document.getElementsByTagName( "input" );
+            for ( var i = 0; i < inputCheckBox.length; i++ )
+            {
+                if ( inputCheckBox[ i ].id.indexOf( receivedInputID ) != -1 )
+                {
+                    if ( inputCheckBox[ i ].checked )
+                    {
+                        
+                        return true;
+                        
+                    }
+                }
+            }
+            window.alert('Please select at least one row.');
+            return false;
+        }
+        function warnNoneSelectedDelete( receivedInputID )
+        {
+            var inputCheckBox = document.getElementsByTagName( "input" );
+            for ( var i = 0; i < inputCheckBox.length; i++ )
+            {
+                if ( inputCheckBox[ i ].id.indexOf( receivedInputID ) != -1 )
+                {
+                    if ( inputCheckBox[ i ].checked )
+                    {
+                        window.alert('Are you sure you want to delete the slected rows.');
+                        return true;
+                        
+                    }
+                }
+            }
+            window.alert('Please select at least one row.');
+            return false;
+        }
+        
+    </script>
+  <apex:form >
+        <apex:sectionHeader title="e2a Unmatched Emails"/>
+        <apex:pageBlock id="email_list">
+            
+            <apex:outputLabel value="View:"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!SelectedQueue}" id="queue_list" multiselect="false" size="1">
+                            <apex:selectOptions value="{!QueueOptions}"></apex:selectOptions>
+                            
+                        </apex:selectList>
+                        
+                        <apex:commandButton value="Go" reRender="email_list_table" action="{!go}" />&nbsp;
+                        
+            
+                    </apex:outputPanel> <br/><br/>
+                    <apex:outputPanel >
+                    <apex:commandButton action="{!matchEmail}" value="Match Selected" onClick="warnNoneSelected('inputId');"/>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel >
+                    <apex:commandButton action="{!DeleteAll}" value="Delete Selected" onclick="warnNoneSelectedDelete('inputId');"/>
+                    </apex:outputPanel> 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!newEmail}" value="New"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!emails}" var="email" id="email_list_table">
+            <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputPanel >
+                            <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" id="parentCB"/>
+                            <script>clearParentCheckbox('parentCB');</script>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!email.RowSelected}" id="inputId" onclick="updateParentCheckbox(this, 'parentCB')"/>
+                </apex:column>
+                <apex:column headerValue="Action" style="width:60px">
+                    <apex:outputPanel >
+                    <apex:commandLink action="{!editEmail}">Edit
+                            <apex:param name="editEmail" value="{!email.relatedFunctionId}" assignTo="{!selectedOwnerId}"/>
+                        </apex:commandLink> |&nbsp;
+                        <apex:commandLink action="{!deleteEmail}" oncomplete="window.location.reload();" onclick="if (!window.confirm('Please confirm you want to delete the selected email.')) return false;">Del
+                            <apex:param name="delemail"  value="{!email.relatedFunctionId}" assignTo="{!selectedOwnerId}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+                
+                <apex:column headerValue="Subject">
+                    <apex:outputPanel >
+                        
+                        <a href="/{!email.relatedFunctionId}">{!email.subject}</a>
+                    </apex:outputPanel>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="From Address"/>
+                    </apex:facet>
+                    <apex:outputText value="{!email.fromaddress}"/>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Message Date"/>
+                    </apex:facet>
+                    <apex:outputText value="{!email.messageDate}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Email Rule"/>
+                    </apex:facet>
+                    
+                    <apex:outputPanel >
+                        <a href="/{!email.RuleId}">{!email.RelatedFunctionName}</a>
+                    </apex:outputPanel>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

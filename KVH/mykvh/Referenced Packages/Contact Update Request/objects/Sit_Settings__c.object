@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Settings of the Stay in touch application</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>ReadWrite</externalSharingModel>
+    <fields>
+        <fullName>Body__c</fullName>
+        <defaultValue>&apos;Dear Contact.FirstName,\n\n&apos; +
+&apos;I’m currently updating my contact database and want to make sure I have your current data right.\n\n&apos; +
+&apos;Could you have a quick look at below info? If you would like to change or update certain information, just click the ‘Update Now’ link on the bottom of the email and save your changes when done.\n\n&apos; + 			
+                    &apos;Salutation: Contact.Salutation\n&apos; +
+                    &apos;Firstname: Contact.FirstName\n&apos; +
+                    &apos;Lastname: Contact.LastName\n&apos; +
+                    &apos;Email address: Contact.Email\n&apos; +
+                    &apos;Current company: Contact.Account.Name\n&apos; +
+                    &apos;Current title: Contact.Title\n&apos; +
+                    &apos;Phone: Contact.Phone\n&apos; +
+                    &apos;Mobile: Contact.MobilePhone\n&apos; +
+                    &apos;Fax: Contact.Fax\n&apos; +
+                    &apos;Street: Contact.MailingStreet\n&apos; +
+                    &apos;Postalcode: Contact.MailingPostalCode\n&apos; +
+                    &apos;City: Contact.MailingCity\n&apos; +
+                    &apos;State/Province: Contact.MailingState\n&apos; +
+                    &apos;Country: Contact.MailingCountry\n\n&apos; +
+                    &apos;Many thanks in advance,\n\n&apos; +
+                    &apos;Contact.Owner.FirstName&apos;</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Body</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Form_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Form Url</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Redirect_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Redirect Url</label>
+        <length>128</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Signature__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Signature</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Subject__c</fullName>
+        <defaultValue>&apos;Getting back in touch&apos;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Subject of the mail</description>
+        <externalId>false</externalId>
+        <label>Subject</label>
+        <length>128</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>SiT Setting</label>
+    <nameField>
+        <label>Sit Settings Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>SiT Settings</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

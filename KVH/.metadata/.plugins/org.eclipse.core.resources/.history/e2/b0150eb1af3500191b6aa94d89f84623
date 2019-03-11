@@ -1,0 +1,6 @@
+.THIS .slds-button{
+   border-radius : 0px;
+}
+.THIS .custombrandbutton{
+    background : #1984C7
+}

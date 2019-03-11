@@ -1,0 +1,8 @@
+<aura:event type="COMPONENT" description="Event template">
+  <aura:attribute name="searchString" type="string" Description="This is the search attribute, the root Part Number of an Asset Hierarhcy" />
+  <aura:attribute name="foundTemplate" type="Object[]" Description="These are the members of the Template" />
+  <aura:attribute name="lteDevices" type="LTE_devices_mfg" Description="This is returned from the Server Side controller" />
+  <aura:attribute name="state" type="string" Description="This is the state of the component" />
+  <aura:attribute name="results" type="String" Description="This is the summarized results from the Service Class invoked by the Component" />
+  <aura:attribute name="assetsCreated" type="Asset[]" Description="This is the Asset Hierarchy created by the component" />
+</aura:event>

@@ -1,0 +1,78 @@
+<apex:page controller="ortoo_e2a.TemplateSelectorController" sidebar="false" showHeader="false" id="thePage">
+
+    <script>
+      function notifyParent(templateId,templateType)
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        var lookupType=document.getElementById('{!$Component.thePage.theform.lookup_type}').value;
+        winMain.templatePassBack(templateId,templateType,lookupType);
+      }
+      
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+    </script>
+    
+    <apex:form id="theForm">
+        <apex:inputHidden value="{!LookupType}" id="lookup_type"/>
+        <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+            <tr>
+                <td><h2 style="color:white;vertical-align:middle">Template&nbsp;Emails</h2></td>
+                <td width="100%">&nbsp;</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td class="spacercolumn"></td>
+                <td class="labelcolumn"><apex:outputLabel value="Search "/></td>
+                <td><apex:inputText value="{!TemplateSearchString}"/></td>
+                <td><apex:inputText style="display:none" /></td>  <!-- To deal with the problem of pressing enter -->
+                <td><apex:commandButton id="go_target_search" value="Go!" reRender="template_lookup"/></td>
+                <td class="labelcolumn"><apex:outputLabel value="Folder "/></td>
+                <td><apex:selectList value="{!TemplateFolderSelection}" size="1">
+                        <apex:selectOptions value="{!TemplateFolders}"></apex:selectOptions>
+                        <apex:actionSupport event="onchange" reRender="template_lookup"/>
+                    </apex:selectList>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div style="text-align: right;">
+            <apex:commandButton value="Close" onclick="closeWindow();" style="background-image:none;width:80px;height:30px;background-color:darkgrey;font-size:12px"/>
+        </div>
+        <apex:pageBlock id="template_lookup">
+            <apex:pageBlockTable value="{!TemplateLookupList}" var="ET">
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Name" rendered="{!EmailTemplatesExist}"/>
+                    </apex:facet>
+                    <apex:commandLink value="{!ET.name}" onclick="notifyParent('{!ET.id}','{!ET.templateType}');"/>
+                </apex:column>
+                <apex:column value="{!ET.templateType}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Type" rendered="{!EmailTemplatesExist}"/>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!ET.description}">
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Description" rendered="{!EmailTemplatesExist}"/>
+                    </apex:facet>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="no templates available" rendered="{!EmailTemplatesDoNotExist}"/>
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

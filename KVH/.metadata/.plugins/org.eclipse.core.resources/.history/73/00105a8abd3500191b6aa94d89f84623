@@ -1,0 +1,17 @@
+<apex:page standardController="case" sidebar="false">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+  <script>
+    var caseId = "{!$CurrentPage.parameters.id}";
+      $Lightning.use("c:AgilePlan_indicator_app", function() {
+          $Lightning.createComponent(
+              "c:AgilePlans_indicator_cmp",
+              {"caseId": caseId },
+              "lightning",
+              function(cmp) {
+                  console.log("Component created!");
+                  console.log(cmp);
+              });
+          });
+  </script>
+  <div id="lightning"></div>
+</apex:page>

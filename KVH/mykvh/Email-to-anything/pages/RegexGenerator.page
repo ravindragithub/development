@@ -1,0 +1,324 @@
+<apex:page showheader="false" sidebar="false" controller="ortoo_e2a.RegexGeneratorController" id="page">
+   <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__Regex)}"/>
+    <apex:stylesheet value="{!$Resource.ortoo_e2a__Regex_CSS}" /> 
+ 
+ <apex:form id="form">
+    <apex:pageBlock id="block">
+        <apex:pageBlockButtons location="bottom" id="pagebuttons">
+            <button type="button" onclick="fillIn();" id="okbutton">OK</button>
+            <button type="button" onclick="Cancel();">Cancel</button>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Regex Generator" collapsible="false" columns="1">
+            <br/><br/>
+            
+            <div id="content">
+            </div>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+ <c:RemoteTK />
+    <script>  
+    
+    var client = new remotetk.Client();
+    
+    function decodeHTMLEntities(text) {
+        var entities = [
+            ['apos', '\''],
+            ['amp', '&'],
+            ['lt', '<'],
+            ['gt', '>']
+        ];
+    
+        for (var i = 0, max = entities.length; i < max; ++i) 
+            text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+    
+        return text;
+    }
+    
+        function Recent_Item_Regex_Group(childJson, i,len)
+        {
+            console.log('[Recent_Item_Regex_Group]');
+            console.log(childJson);
+            console.log('i:'+i);
+            client.create('ortoo_e2a__Recent_Item_Regex_Group__c',childJson,function(result, event){
+              
+                    console.log('-- child result--');
+                    console.log(result);
+                    if(result.success)
+                    {
+                        console.log('after success i :'+i);
+                        var groupElement;
+                        var regexTxt,freeTxt,freeTxtVal;
+                        console.log('i:'+i+'group'+i);
+                        groupElement = document.getElementById('group'+i);
+                        console.log(groupElement.value);
+                        for(var count=1;count<groupElement.value;count++)
+                        {
+                            regexTxt = document.getElementById('RegexText'+(i)+'_'+count).value;
+                            freeTxt = document.getElementById('FreeText'+(i)+'_'+count);
+                            var freeval = freeTxt.options[freeTxt.selectedIndex].label;
+                            var Group_FieldJson = {Name:regexTxt,ortoo_e2a__Free_text__c:freeval,ortoo_e2a__Recent_Item_Regex_Group__c:result.id,
+                            ortoo_e2a__Group_Number__c:i};
+                            client.create('ortoo_e2a__Recent_Item_Regex_Group_Field__c',Group_FieldJson,function(result, event){
+                            
+                            if(result.success)
+                            {
+                                console.log('ortoo_e2a__Recent_Item_Regex_Group_Field__c inserted i:'+i);
+                                console.log('Len'+len);
+                                console.log('count:' +count+'groupElement.value-1:'+parseInt(groupElement.value));
+                                if((len == i) && (count== parseInt(groupElement.value)))
+                                {
+                                     var winMain=window.opener;
+                      
+                                     if (null==winMain)
+                                      {
+                                         winMain=window.parent.opener;
+                                      }
+                                      
+                                      var regexString = GetRegex();
+                                      
+                                      if(regexString == '') // no regex
+                                      {
+                                        regexString = '{!JSENCODE($CurrentPage.parameters.oldregex)}';
+                                        //alert('{!JSENCODE($CurrentPage.parameters.oldregex)}');
+                                         
+                                      }
+                                      
+                                      console.log(regexString);
+                                       var ele=winMain.document.getElementById('{!JSENCODE($CurrentPage.parameters.namefield)}');
+                                      ele.value=decodeHTMLEntities(regexString);
+                                        //alert('Created');
+                                      window.close();
+                                         
+                                }
+                            }
+                            });
+                        }
+                            
+                    }
+                    
+                    
+                    
+                    
+                  });
+            
+        }
+        
+        function fillIn()
+        {
+          
+          document.getElementById('okbutton').disabled = true;
+          
+          var ele = document.getElementById('content');
+          console.log(ele);
+          
+          if(GetRegex()!='')
+          {
+          var myList = ele.getElementsByClassName('group');
+          
+          console.log(myList);
+          
+          //Prepare Parent Object
+          //Global Modifers
+          var casevar = document.getElementById('case') != null ? document.getElementById('case').checked : false;
+          var multivar = document.getElementById('multi') != null ? document.getElementById('multi').checked : false;
+          var globalvar = document.getElementById('global') != null ? document.getElementById('global').checked : false;
+          var Pattern = GetRegex();
+          var userId = document.getElementById('currentuserId').innerHTML;
+          console.log('userId: '+userId);
+          var ParentJSON = {Name :Pattern ,ortoo_e2a__Match_across_newlines__c :  multivar , ortoo_e2a__Dot_matches_newline__c : globalvar ,
+                                ortoo_e2a__Case_insensitive__c : casevar , ortoo_e2a__Lookup_User__c : userId };
+          
+          
+          console.log(ParentJSON);
+          client.create('ortoo_e2a__Recent_Item_Regex__c',ParentJSON,function(result, event){
+            console.log(result);
+            if(result.success)
+            {
+              //Prepare child Objects
+              ortoo_e2a.RegexGeneratorController.DeleteItem(function(result, event){
+                        if(event.status)
+                        {
+                         
+                        }
+                    });
+              //console.log( myList.length);
+              var childArray = new Array(myList.length);
+              for(var i=1 ; i <= myList.length ; i++)
+              {
+                var temp = myList[i];
+                /*var Field = document.getElementById('RegexText'+i).value;
+                if(Field == '')
+                {
+                    Field ='  ';
+                }
+                var FreeText = document.getElementById('FreeText'+i);
+                var freeval = FreeText.options[FreeText.selectedIndex].label;*/
+                var Matchastring = document.getElementById('selectlist'+i);
+                var matchval = Matchastring.options[Matchastring.selectedIndex].label ;
+                //when setting values to object (JSON Object) see if group >1 then set to followed by field
+                
+                /*--- Quantifiers ----*/
+                var val1 = 1;
+                var val2 = 1;
+                
+                var exquat = document.getElementById('qty'+i+'_0').checked;
+                if(exquat)
+                val1 = document.getElementById('f1qty'+i+'_0').value;
+                
+                var moreti = document.getElementById('qty'+i+'_1').checked;
+                if(moreti)
+                val1 = document.getElementById('f1qty'+i+'_1').value;
+                
+                var betquat = document.getElementById('qty'+i+'_2').checked;
+                if(betquat)
+                {
+                    val1 = document.getElementById('f1qty'+i+'_2').value;
+                    val2 = document.getElementById('f2qty'+i+'_2').value;
+                }
+                var greedy = document.getElementById('qty'+i+'_3').checked;
+                
+                var nongreedy = document.getElementById('qty'+i+'_4').checked; 
+                
+                var quantifier = 1;
+                if(exquat){quantifier = 1;}
+                if(moreti){quantifier = 2;}
+                if(betquat){quantifier = 3;}
+                if(greedy){quantifier = 4;}
+                if(nongreedy){quantifier = 5;}
+
+                
+                /*--- Groups ----*/
+                var applyq = document.getElementById('qty'+i+'_5').checked;
+                var gpfield = document.getElementById('qty'+i+'_6').checked;
+                var capgp = document.getElementById('qty'+i+'_7').checked;
+                
+                var ChildJson = {ortoo_e2a__Match_string__c : matchval , ortoo_e2a__Followed_by__c : matchval , ortoo_e2a__Group_Number__c : i ,
+                                ortoo_e2a__Quantifier__c : quantifier ,ortoo_e2a__Quantifier_Val_1__c : val1 ,ortoo_e2a__Quantifier_Val_2__c : val2 ,
+                                ortoo_e2a__Group_fields__c : gpfield , ortoo_e2a__Capture_group__c : capgp , ortoo_e2a__Apply_quantifier__c : applyq ,
+                                ortoo_e2a__Recent_Item_Regex__c : result.id};
+                
+                console.log('child:' + ChildJson);
+                console.log('before i:'+i);
+                Recent_Item_Regex_Group(ChildJson,i,myList.length);
+                /*client.create('ortoo_e2a__Recent_Item_Regex_Group__c',ChildJson,function(result, event){
+              
+                    console.log('-- child result--');
+                    console.log(result);
+                    console.log('after i:'+i);
+                    if(result.success)
+                    {
+                        console.log('after success i :'+i);
+                        var groupElement;
+                        var regexTxt,freeTxt,freeTxtVal;
+                        console.log('i:'+i+'group'+i);
+                        groupElement = document.getElementById('group'+i);
+                        console.log(groupElement.value);
+                        for(var count=1;count<groupElemente.value;count++)
+                        {
+                            regexTxt = document.getElementById('RegexText'+(i)+'_'+count).value;
+                            freeTxt = document.getElementById('FreeText'+(i)+'_'+count);
+                            var freeval = freeTxt.options[freeTxt.selectedIndex].label;
+                            var Group_FieldJson = {Name:regexTxt,ortoo_e2a__Free_text__c:freeval,ortoo_e2a__Recent_Item_Regex_Group__c:result.id};
+                            client.create('ortoo_e2a__Recent_Item_Regex_Group_Field__c',Group_FieldJson,function(result, event){
+                            
+                            if(result.success)
+                            {
+                                console.log('ortoo_e2a__Recent_Item_Regex_Group_Field__c inserted');
+                                if((myList.length == i-1) && (count== parseInt(groupElement.value)-1))
+                                {
+                                     var winMain=window.opener;
+                      
+                                     if (null==winMain)
+                                      {
+                                         winMain=window.parent.opener;
+                                      }
+                                      
+                                      var regexString = GetRegex();
+                                      
+                                      if(regexString == '') // no regex
+                                      {
+                                        regexString = '{!JSENCODE($CurrentPage.parameters.oldregex)}';
+                                        //alert('{!JSENCODE($CurrentPage.parameters.oldregex)}');
+                                         
+                                      }
+                                      
+                                      console.log(regexString);
+                                       var ele=winMain.document.getElementById('{!JSENCODE($CurrentPage.parameters.namefield)}');
+                                      ele.value=decodeHTMLEntities(regexString);
+                                        //alert('Created');
+                                      window.close();
+                                         
+                                }
+                            }
+                            });
+                        }
+                            
+                    }
+                    
+                    
+                    
+                    
+                  });*/
+              
+              }
+    
+            }//End if success
+            
+            
+          });
+          }
+          else
+          {
+            var winMain=window.opener;
+          
+             if (null==winMain)
+              {
+                 winMain=window.parent.opener;
+              }
+              window.close();
+          }
+        }
+        
+        function Cancel()
+        {
+          var winMain=window.opener;
+          
+          if (null==winMain)
+          {
+             winMain=window.parent.opener;
+          }
+          
+          var regexString = '{!JSENCODE($CurrentPage.parameters.oldregex)}';
+          
+          var ele=winMain.document.getElementById('{!JSENCODE($CurrentPage.parameters.namefield)}');
+          ele.value= regexString;
+          
+          window.close();
+        }
+        
+        function GetRegex()
+        {
+            var regex = '';
+            var RegexDiv = document.getElementById('TargetRegex');
+            for(var j = 0; j < RegexDiv.childNodes.length; j++)
+            {
+                if(RegexDiv.childNodes[j].nodeValue != null)
+                {
+                    regex += RegexDiv.childNodes[j].nodeValue;
+                }
+                else
+                {
+                    y = RegexDiv.childNodes[j];
+                    regex += y.innerHTML;
+                    
+                }
+            }
+            
+            //alert('Regex: ' + regex);
+            return regex;
+            
+        }
+    </script>
+</apex:page>

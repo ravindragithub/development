@@ -1,0 +1,529 @@
+<apex:page standardController="Partner_Portal_Access_Request__c" extensions="PartnerRegistrationController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Accordian)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.IconsUI)}"/>
+    <head>  
+        <title>Partner Credit Application</title>       
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://use.fontawesome.com/a343804bcf.js"></script>
+        
+        <!-- script to show/hide div by radio button -->
+            <script>
+            function show1(){
+            document.getElementById('bank').style.display ='none';
+        }
+        function show2(){
+            document.getElementById('bank').style.display = 'block';
+        }
+        </script>
+        <style>
+            
+            .ui-icon, .ui-widget-content .ui-icon {
+            float:right;
+            }
+            
+            .ui-state-active {
+            background:#666;
+            border:none;
+            }
+            
+            .ui-accordion .ui-accordion-header {
+            font-size:1.3em;
+            margin-top:15px;
+            padding:15px;
+            }
+            
+            .ui-accordion .ui-accordion-content {
+            padding:15px;
+            }
+            
+            .ui-state-default {
+            border:none;
+            }
+            
+            button {
+            padding:10px 20px;
+            border:none;
+            background: transparent;
+            }
+            .red-ital li{
+            color: #cc0000;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+        <div class="fa-events-icons-ready">    
+            <header>
+                <div class="logo">
+                    <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+                </div>
+                <h1><a>Partner Portal</a></h1>
+            </header> 
+            
+            <apex:form >
+                <div class="content">
+                    <h1>Credit Application Form</h1>
+                    <div class="section group">
+                        <div class="col span_9_of_12" style="padding-right:30px;">
+                            <p>Talented dealers and distributors are critical to KVH’s success and the satisfaction of our customers around the globe. A member of the KVH financial team will review your application after which a member of KVH’s Sales Department or your local KVH sales representative will be contacting you. For information on our privacy and security practices, please <a href="http://www.kvh.com/privacy" target="_blank">click here</a>.</p>
+                            <apex:messages styleClass="required-note-inline red-ital" style="font-size: 15px;"/>
+                            <div id="accordion" class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+                                <!-- company info -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-header-active ui-state-active ui-accordion-icons" role="tab" id="ui-id-1" aria-controls="ui-id-2" aria-selected="true" aria-expanded="true" tabindex="0"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-s"></span><a href="#">Company Information</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active" id="ui-id-2" aria-labelledby="ui-id-1" role="tabpanel" aria-hidden="false" style="display: block;">
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <div class="ui-widget">
+                                                <label>Company Name: </label>
+                                                <apex:inputText id="CompanyName" value="{!CompanyName}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Number of Years in Business:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Years_in_Business__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Number of Years at this Location:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Number_of_Years_at_this_Location__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Number of Employees:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Number_of_Employees__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Organization Type:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Organization_Type__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>State/Province/Region/Country Incorporated in:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Incorporation_Location__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Year Incorporated:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Year_Incorporated__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Tax Status:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Tax_Status__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Dun &amp; Bradstreet Number: <span class="notes">(if applicable)</span></label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Dun_Bradstreet_Number__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="button-bar">
+                                        <button class="next button button-blue right">Next Section</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- contacts -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-accordion-header-collapsed ui-corner-all ui-state-default ui-accordion-icons" role="tab" id="ui-id-3" aria-controls="ui-id-4" aria-selected="false" aria-expanded="false" tabindex="-1"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-e"></span><a href="#">Contacts</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content" id="ui-id-4" aria-labelledby="ui-id-3" role="tabpanel" aria-hidden="true" style="display: none;">
+                                    <div class="section group">
+                                        <div class="col span_12_of_12">
+                                            <label>Officers or Principles:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Officers_or_Principles__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Accounts Payable Contact:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Accounts_Payable_Contact__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Accounts Payable Email:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Accounts_Payable_Email__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_12_of_12">
+                                            <label>Authorized Buyers:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Authorized_Buyers__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="button-bar">
+                                        <button class="button">Previous Section</button>
+                                        <button class="next button button-blue right">Next Section</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- billing info -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-accordion-header-collapsed ui-corner-all ui-state-default ui-accordion-icons" role="tab" id="ui-id-5" aria-controls="ui-id-6" aria-selected="false" aria-expanded="false" tabindex="-1"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-e"></span><a href="#">Billing Information</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content" id="ui-id-6" aria-labelledby="ui-id-5" role="tabpanel" aria-hidden="true" style="display: none;">
+                                    <apex:outputPanel id="auth">
+                                        <div class="section group">
+                                            <div class="col span_6_of_12">
+                                                <label>DBA:</label>
+                                                <apex:inputText value="{!dba}"/>
+                                            </div>
+                                            
+                                        </div>
+                                    </apex:outputPanel>
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Address 1:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_Address_1__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Address 2:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_Address_2__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <apex:outputPanel >
+                                        <div class="section group">
+                                            <div class="col span_6_of_12">
+                                                <label>City:</label>
+                                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_City__c}"/>
+                                            </div>
+                                            <apex:actionRegion >
+                                                <div class="col span_6_of_12">
+                                                    <label>Country:</label>
+                                                    <apex:selectList id="country"  value="{!creditcountry}" multiselect="false" size="1" html-placeholder="Select One">
+                                                        <apex:actionSupport action="{!componentCreditCountryChangeHandlerBilling}" event="onchange" reRender="state" />
+                                                        <apex:selectOptions value="{!CountriesList}"/>
+                                                    </apex:selectList>
+                                                </div>
+                                            </apex:actionRegion>
+                                        </div>
+                                        
+                                        <div class="section group">
+                                            <div class="col span_6_of_12">
+                                                <label>State/Province/Territory/Region:</label>
+                                                <apex:selectList id="state"  value="{!creditstate}" multiselect="false" size="1">
+                                                    <apex:selectOptions value="{!StatesList}"/>
+                                                </apex:selectList>
+                                            </div>
+                                            <div class="col span_6_of_12">
+                                                <label>Zip/Postal Code:</label>
+                                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_Zip__c}"/>
+                                            </div>
+                                        </div>
+                                    </apex:outputPanel>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Phone No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_Phone__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Fax No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Credit_Fax__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="button-bar">
+                                        <button class="previous button">Previous Section</button>
+                                        <button class="next button button-blue right">Next Section</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- shipping info -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-accordion-header-collapsed ui-corner-all ui-state-default ui-accordion-icons" role="tab" id="ui-id-7" aria-controls="ui-id-8" aria-selected="false" aria-expanded="false" tabindex="-1"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-e"></span><a href="#">Shipping Information</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content" id="ui-id-8" aria-labelledby="ui-id-7" role="tabpanel" aria-hidden="true" style="display: none;">
+                                    <apex:outputPanel id="addr">
+                                        
+                                        <apex:outputPanel >
+                                            <apex:actionRegion >
+                                                <p class="pad-top">Please include addresses of all applicable shipping locations below.</p>
+                                                <apex:dataTable columns="5" title="Entered Locations" var="address" value="{!addresses}" rendered="{!tablerender}" styleClass="dashboard">
+                                                    <apex:column headerValue="Location Name" value="{!address.Location_Name__c}"/>
+                                                    <apex:column headerValue="Address">
+                                                        {!address.Address_1__c}<br/> {!address.Address_2__c}
+                                                    </apex:column>
+                                                    <apex:column headerValue="State" value="{!address.State__c}"/>
+                                                    <apex:column headerValue="Country" value="{!address.Country__c}"/>
+                                                    <apex:column headerValue="Phone" value="{!address.Phone__c}"/>
+                                                </apex:dataTable>
+                                                <h3>Retail Location {!integ}:</h3>
+                                                <apex:messages styleClass="required-note-inline red-ital" style="font-size: 15px;"/>
+                                                <div class="section group">
+                                                    <div class="col span_12_of_12">
+                                                        <label>Location Name:</label>
+                                                        <apex:inputText id="locname" value="{!locname}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>Address 1:</label>
+                                                        <apex:inputText id="add1" value="{!add1}"/>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Address 2:</label>
+                                                        <apex:inputText id="add2" value="{!add2}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>City:</label>
+                                                        <apex:inputText id="city" value="{!city}"/>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <apex:actionRegion >
+                                                            <label>Country:</label>
+                                                            <apex:selectList id="addcountry"  value="{!addcountry}" multiselect="false" size="1" html-placeholder="Select One">
+                                                                <apex:actionSupport action="{!componentaddCountryChangeHandlerBilling}" event="onchange" reRender="addstate" />
+                                                                <apex:selectOptions value="{!addCountriesList}"/>
+                                                            </apex:selectList>
+                                                        </apex:actionRegion>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>State/Province/Territory/Region:</label>
+                                                        <apex:selectList id="addstate"  value="{!addState}" multiselect="false" size="1">
+                                                            <apex:selectOptions value="{!addStatesList}"/>
+                                                        </apex:selectList>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Zip/Postal Code:</label>
+                                                        <apex:inputText id="zip" value="{!zip}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>Phone No.:</label>
+                                                        <apex:inputText id="phone" value="{!phone}"/>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Fax No.:</label>
+                                                        <apex:inputText id="fax" value="{!fax}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <apex:commandButton action="{!addLocation}" styleClass="button" style="color:#fff; background:#cc0000; border: transparent; margin-top:20px;" value="Add Another Location" reRender="addr"/>
+                                            </apex:actionRegion>
+                                            
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                    <div class="button-bar">
+                                        <button class="previous button">Previous Section</button>
+                                        <button class="next button button-blue right">Next Section</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- bank references -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-accordion-header-collapsed ui-corner-all ui-state-default ui-accordion-icons" role="tab" id="ui-id-9" aria-controls="ui-id-10" aria-selected="false" aria-expanded="false" tabindex="-1"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-e"></span><a href="#">Bank Reference</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content" id="ui-id-10" aria-labelledby="ui-id-9" role="tabpanel" aria-hidden="true" style="display: none;">
+                                    <p>The following information must be completed for all net 30 and credit term applicants.</p>
+                                    <apex:outputPanel id="credit">
+                                        <div class="section group">
+                                            <div class="col span_6_of_12">
+                                                <label>Standard bank and credit reference form faxed to KVH at 401-845-8190, attn: Sue Powell.</label>
+                                            </div>
+                                            <apex:actionRegion >
+                                                <div class="col span_6_of_12 pad-top-10">
+                                                    <apex:selectRadio id="applater" value="{!applater}">
+                                                        <apex:selectOption itemLabel="Yes" itemValue="false"/>
+                                                        <apex:selectOption itemLabel="No, I will enter it here" itemValue="true"/>
+                                                        <apex:actionSupport action="{!render7set}" event="onchange" reRender="credit"/>
+                                                    </apex:selectRadio>
+                                                </div>
+                                            </apex:actionRegion>
+                                        </div>
+                                        
+                                        <apex:outputPanel rendered="{!render7}">
+                                            <div id="bank" class="callout">
+                                                <h4>Enter Bank Reference</h4>
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>Bank Name:</label>
+                                                        <apex:inputField value="{!Partner_Portal_Access_Request__c.Bank_Name__c}"/>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Bank Branch:</label>
+                                                        <apex:inputField value="{!Partner_Portal_Access_Request__c.Bank_Branch__c}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>Bank Country:</label>
+                                                        <apex:selectList id="bankcountry"  value="{!bankcountry}" multiselect="false" size="1" html-placeholder="Select One">
+                                                            <apex:selectOptions value="{!bankCountriesList}"/>
+                                                        </apex:selectList>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Account Number:</label>
+                                                        <apex:inputfield value="{!Partner_Portal_Access_Request__c.Account_Number__c}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="section group">
+                                                    <div class="col span_6_of_12">
+                                                        <label>Bank Phone No.:</label>
+                                                        <apex:inputField value="{!Partner_Portal_Access_Request__c.Bank_Phone__c}"/>
+                                                    </div>
+                                                    <div class="col span_6_of_12">
+                                                        <label>Bank Fax No.:</label>
+                                                        <apex:inputField value="{!Partner_Portal_Access_Request__c.Bank_Fax__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                    <div class="button-bar">
+                                        <button class="previous button">Previous Section</button>
+                                        <button class="next button button-blue right">Next Section</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- credit references -->
+                                <h3 class="ui-accordion-header ui-corner-top ui-accordion-header-collapsed ui-corner-all ui-state-default ui-accordion-icons" role="tab" id="ui-id-11" aria-controls="ui-id-12" aria-selected="false" aria-expanded="false" tabindex="-1"><span class="ui-accordion-header-icon ui-icon ui-icon-caret-1-e"></span><a href="#">Credit References</a></h3>
+                                <div class="ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content" id="ui-id-12" aria-labelledby="ui-id-11" role="tabpanel" aria-hidden="true" style="display: none;">
+                                    <h4>Company 1</h4>
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Company Name:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Company_Name_1__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Account No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Account_1__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Phone No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Phone_1__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Fax No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Fax_1__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="pad-top">Company 2</h4>
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Company Name:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Company_Name_2__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Account No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Account_2__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Phone No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Phone_2__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Fax No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Fax_2__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="pad-top">Company 3</h4>
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Company Name:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Company_Name_3__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Account No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Account_3__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section group">
+                                        <div class="col span_6_of_12">
+                                            <label>Phone No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Phone_3__c}"/>
+                                        </div>
+                                        <div class="col span_6_of_12">
+                                            <label>Fax No.:</label>
+                                            <apex:inputField value="{!Partner_Portal_Access_Request__c.Reference_Fax_3__c}"/>
+                                        </div>
+                                    </div>
+                                    <h3></h3>
+                                    <div  class="button-bar">
+                                        Applicant hereby requests and authorises KVH or its agents, to investigate applicant's credit worthiness. By clicking the "Submit Credit Application Button", applicant warrants that the information submitted herein is true and correct and hereby authorises referecnes contained herin to release any necessary information to KVH. Further, applicant warrants it is understood that KVH reserves the right to reverse any credit decision if the information contained herein is found to be incorrect. Applicant agrees to the proper payment in consideration of extended credit. Applicant agrees to pay all collection costs, court costs, and legal fees incurred to collect delinquent balances. Applicant also agrees to the KVH <a href="https://www.kvh.com/Legal/Privacy.aspx" target="_blank">Privacy Policy</a> and sites <a href="https://www.kvh.com/Legal/Terms-of-Use.aspx" target="_blank">Terms of Use</a>.
+                                    </div>
+                                    
+                                    
+                                    <div class="button-bar">
+                                        <button class="previous button">Previous Section</button>
+                                        <apex:commandButton action="{!updateppac}" value="Submit Credit Application" styleClass="button button-red right" style="color:#fff;"/>                        
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div>
+                                <apex:commandButton styleClass="button" style="background: transparent; font-size: 1em; font-family: Arial,Helvetica,sans-serif;" action="{!backtoreg}" value="Back to Previous Page"/>                        
+                            </div>
+                        </div>
+                        
+                        <!-- sidebar -->
+                        <div class="col span_3_of_12 callout">
+                            <h3>NOTE!</h3>
+                            <p>Credit applications can take up to three to four business days to process, however we will do our best to respond as quickly as possible.</p>
+                        </div>
+                    </div>
+                </div>
+            </apex:form>
+            <script>
+            $( function() {
+                $( "#accordion" ).accordion({
+                    collapsible: true,
+                    heightStyle: "content",
+                    icons: { "header": "ui-icon-caret-1-e", "activeHeader": "ui-icon-caret-1-s" }
+                });
+            } );
+            </script>
+            <script>
+            window.history.forward();
+            function preventBack()
+            {
+                window.history.forward(1);   
+            }
+            window.onload = preventBack;
+            </script>
+            <script>jQuery(document).ready(function(){
+            $('#accordion').accordion();
+            $('#accordion button').click(function(e) {
+                e.preventDefault();
+                var delta = ($(this).is('.next') ? 1 : -1);
+                $('#accordion').accordion('option', 'active', ( $('#accordion').accordion('option','active') + delta  ));
+            });
+            });
+            </script>
+        </div>
+    </body>
+</apex:page>

@@ -1,0 +1,112 @@
+<aura:component controller="Update_AssetSubscriptionController">
+    <aura:attribute name="AssetRec" type="sObject"  />
+    <aura:attribute name="listOfSearchRecords" type="Asset[]"  />
+    <aura:attribute name="listAssetIdInHierarchy" type="string[]"  />
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="listofRecordsCount" type="Integer" default="0" />
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="ReplacementType" type="string"/>
+    <aura:registerEvent name="appEvent" type="c:AssetMovementModal_evt"/>
+    <aura:registerEvent name="cmpEvnt" type="c:Update_AssetSubscription_Evt"/>
+    <aura:handler event="c:AssetMovementModal_evt" action="{!c.getDuplicateAssetCheck}" />
+    
+    <div class="">
+        Search Asset :
+        <div aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+            <div class="slds-form-element__control">
+                <div class="slds-input-has-icon slds-input-has-icon--right">
+                    <c:svgIcon class="slds-input__icon slds-show" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#search'}" />
+                    <!-- This markup is for when an record is selected -->
+                    <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                        <span class="slds-pill">
+                            <span class="slds-pill__label">
+                                {!v.AssetRec.Name}  
+                            </span>
+                            <button class="slds-button slds-button--icon slds-pill__remove" onclick="{!c.clear}">
+                                <c:svgIcon class="slds-button__icon" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#close'}" />
+                                <span class="slds-assistive-text">Remove</span>
+                            </button>
+                        </span>
+                    </div>
+                    <div aura:id="lookupField" class="slds-show">
+                        <ui:inputText updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input " value="{!v.SearchKeyWord}" placeholder="Please enter atleast 4 characters of Asset.."/>
+                    </div>   
+                </div>
+                
+                <button aura:id="submit" class="slds-button slds-button--brand" onclick="{!c.submitAssetSearchSelect}">Submit</button>
+            </div>
+            
+            <!--This part is for Display typehead lookup result List-->  
+            <div >
+                <center>
+                    <div class="slds-lookup__item--label slds-text-body--small">
+                        <aura:if isTrue="{! !(v.listofRecordsCount == 0)}">
+                            {!v.Message} : {!v.listofRecordsCount}
+                            <aura:set attribute="else">
+                                {!v.Message}
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    
+                </center>
+                <aura:if isTrue="{! !empty(v.listOfSearchRecords)}">
+                    
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-max-medium-table--stacked-horizontal">
+                        <thead>
+                            <tr class="slds-text-heading--label">
+                                <th scope="col" class="nobordertop" title="Asset Name">
+                                    <div>Asset Name</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Product Name">
+                                    <div>Product Name</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Serial Number">
+                                    <div>Serial Number</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Install Date">
+                                    <div>Install Date</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Account Name">
+                                    <div>Account Name</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Contact Name">
+                                    <div>Contact Name</div>
+                                </th>
+                                <th scope="col" class="nobordertop" title="Date Removed">
+                                    <div>Date Removed</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.listOfSearchRecords}" var="temp" indexVar="index">
+                                <tr class="slds-hint-parent">
+                                    <td data-label="Asset Name" scope="col">
+                                        <ui:outputURL click="{!c.selectAsset}" title="{!index}" label="{!temp.Name}"/>
+                                    </td>
+                                    <td data-label="Product Name" scope="col">
+                                        <div class="rowDataClass">{!temp.Product2.Name}</div>
+                                    </td>
+                                    <td data-label="Serial Number" scope="col">
+                                        <div class="rowDataClass">{!temp.SerialNumber}</div>
+                                    </td>
+                                    <td data-label="Install Date" scope="col">
+                                        <div class="rowDataClass"><ui:outputDate value="{!temp.InstallDate}" format="MM/DD/YY"/></div>
+                                    </td>
+                                    <td data-label="Account Name" scope="col">
+                                        <div class="rowDataClass">{!temp.Account_Name__c}</div>
+                                    </td>
+                                    <td data-label="Contact Name" scope="col">
+                                        <div class="rowDataClass">{!temp.Contact.Name}</div>
+                                    </td>
+                                    <td data-label="Date Removed" scope="col">
+                                        <div class="rowDataClass"><ui:outputDate value="{!temp.Date_Removed__c}" format="MM/DD/YYYY"/></div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+</aura:component>

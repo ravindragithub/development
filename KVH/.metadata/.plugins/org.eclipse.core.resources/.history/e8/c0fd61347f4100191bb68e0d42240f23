@@ -1,0 +1,1642 @@
+<apex:page controller="Services_Controller" sidebar="false" showHeader="false" standardStyleSheets="false">
+    <!-- <!doctype html> -->
+    <html> 
+        <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <title>Online Activation Order - Subscriptions</title>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+            </script>
+            <script src="https://use.fontawesome.com/0633ed32ab.js">
+            </script>
+            <link href="https://use.fontawesome.com/0633ed32ab.css" media="all" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+            
+            <!-- Handle jQuery conflicts (e.g. "$") -->
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            </script>
+            <!-- Load jQuery plug-ins, use minimized libs -->
+            <!-- Library for Modal windows.... -->
+            <script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+            <!-- Library for jQuery Validator... -->
+                <script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+            <!--Action Status Resources-->
+            <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+            <script>
+            var validator;
+            j$( document ).ready(function() {
+                validator = j$("[id$='theForm']").validate({ignore: ":disabled"});
+             
+                if(j$("[Id$='IpServiceContacts']").length>0){
+                    j$("[Id$='IpServiceContacts']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                } 
+                
+                if(j$("[Id$='Other_Inbound_Applications__c']").length>0){
+                    j$("[Id$='Other_Inbound_Applications__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$("[Id$='Inbound_IPs_ranges__c']").length>0){
+                    j$("[Id$='Inbound_IPs_ranges__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$("input[type=radio][name$=Regions]").length>0){
+                    j$("input[type=radio][name$=Regions]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$("input[type=checkbox][name$=Inbound_Applications]").length>0){
+                    j$("input[type=checkbox][name$=Inbound_Applications]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                if(j$("input[type=radio][name=voiceline1]").length>0){
+                    j$("input[type=radio][name=voiceline1]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                 if(j$("input[type=radio][name=voiceline2]").length>0){
+                    j$("input[type=radio][name=voiceline2]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                
+                if(j$("[Id$='Voice1_User_Country__c']").length>0){
+                    j$("[Id$='Voice1_User_Country__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$("[Id$='Voice2_User_Country__c']").length>0){
+                    j$("[Id$='Voice2_User_Country__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                   
+                j$("input[type=radio][name$=commboxEnterRadio]").each(function(){
+                    j$(this).rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                });
+                
+                 if(j$("input[type=radio][name$=bandwidthManagementControl]").length>0){
+                    j$("input[type=radio][name$=bandwidthManagementControl]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+                
+                  if(j$("[Id$='Pilot_IMEI_Number__c']").length>0){
+                    j$("[Id$='Pilot_IMEI_Number__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                } 
+                if(j$("[Id$='Pilot_SIM_Card_Number__c']").length>0){
+                    j$("[Id$='Pilot_SIM_Card_Number__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$("[Id$='Media_Server_Serial_Number__c']").length>0){
+                    j$("[Id$='Media_Server_Serial_Number__c']").rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$("input[type=radio][name$=mediaserverradio]").length>0){
+                    j$("input[type=radio][name$=mediaserverradio]").each(function(){
+                        j$(this).rules("add",{
+                            required: true,
+                            messages: {
+                                required: ""
+                            }
+                        });
+                    });
+                }
+              
+                j$("input[type=radio][name$=bandwidthManagementControl]").each(function(){
+                    if(j$(this).val() == '2-hour'){ 
+                        j$(this).parent().find('label').append('<span class="notes"> (calculated by dividing the monthly MB plan allotment by 30 days, then by 12 internvals per day)</span>');
+                    }
+                });
+                
+                j$('.planTypeClass').click(function(e) { 
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();          
+                });  
+                
+            });
+           
+            <!-- script to show error message area -Start -->
+                function currenttabtoshowerror(){
+                    var errordiv= "<div class='error-box' id='globalErrorBOX' style='display:none !important'>"; 
+                    errordiv += "<h1><img src='/resource/cautionImage' height='20' width='20' />";
+                    errordiv += "Please correct the errors indicated below and try again. </h1> <ul class='bullets'></ul> </div>";
+                    return errordiv;
+                }
+            <!-- script to show error message area -End -->
+                
+                function validatePlanName(param){
+                    var Isvalid ;
+                    var currentcomp  = document.getElementById(param);
+                    j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                    j$(".planTypeClass").each(function(){
+                        if(j$(this).val() == 'Selected'){
+                            Isvalid = true;
+                        }
+                    });
+                    if(Isvalid){
+                        showLoadingDiv();
+                        btnSelectednavigateNext('Airtime_Plans');
+                    }else{
+                        var msg = 'Please Select Plan Type';
+                        showgenericpopup(msg);
+                    }
+                }
+            
+            function clearErrorMsg(param){
+                var currentcomp  = document.getElementById(param);
+                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+            }
+            
+            function ValidateProductName(param){
+                var Isvalid ;
+                var currentcomp  = document.getElementById(param);
+                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                j$(".productselectedclass").each(function(){
+                    if(j$(this).val() == 'Selected'){
+                        Isvalid = true;
+                    }
+                });
+                if(j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").valid() && Isvalid;
+                } 
+                
+                j$('input[type="radio"].radiovldCust').each(function(){
+                    if(j$(this).val() == "true"){
+                        Isvalid = true;
+                    }
+                });
+                if((Isvalid && '{!objActivationService}' != null && '{!objActivationService.Product__c}' != null && '{!objActivationService.Product__c}' != '' ) || j$(currentcomp).find("[Id$='Special_Instructions__c']").val() != ''){
+                    showLoadingDiv();
+                    updateActivationServiceNext();
+                }else if(j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]:checked").length ==0 && j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").length >0){
+                    var errordiv = currenttabtoshowerror();
+                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                    var html = "";
+                    if(j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").hasClass("error") && (j$(currentcomp).find("input[type=radio][name$=bandwidthManagementControl]").valid() == false)){
+                        html += "<li>Select Bandwidth Management Control</li>";
+                    }
+                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                    j$(currentcomp).find('.error-box').show();
+                }else{
+                    var msg = 'Select Rate Plan. If you don\'t see your plan, please enter plan details in the "Special Instructions" field.';
+                    showgenericpopup(msg, '50%');
+                }
+            }
+            
+            function selectedProductPlan(PlanTypeName, currentEmntId){
+                j$("#"+currentEmntId).addClass("selected");
+                j$("#"+currentEmntId).find('input').val('Selected');
+                showLoadingDiv();
+                loadDynamicRatePlanTableMethod(PlanTypeName);
+            }
+            
+            
+            /* To remove duplidate popup window initialized -Start */
+            function removeduplicatepopup(popupID){
+                while(j$(popupID).length >1){
+                    j$(popupID).last().remove();
+                }
+                while(j$('.remodal-wrapper').find(popupID).length >1){
+                    j$('.remodal-wrapper').find(popupID).last().remove();
+                }
+            }
+            /* To remove duplidate popup window initialized -End */
+            
+            /* Generic popup window -Start */
+            var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+            function showgenericpopup(msg, width){
+                var setcontent = msg;
+                removeduplicatepopup('[data-remodal-id=servicesinfo]');
+                var instmodel = j$('[data-remodal-id=servicesinfo]').remodal(options);
+                j$("#kvh-remodelcontentmessageservicesinfo").html(setcontent);
+                instmodel.open();
+                j$('[data-remodal-id=servicesinfo]').find('.remodal-close').hide();
+                j$('[data-remodal-id=servicesinfo]').css('width', (width != null ? width : '15%')).css('padding', '20px 20px').find('div:first').css('width', '100%');
+            }
+            
+            function showgenericpopupSaveExit(width){
+             j$( "#saveExit" ).popup( "open" );   
+            }
+            
+            function showgenericpopupExit(width){
+             j$( "#Exit" ).popup( "open" );   
+            }
+            /* Generic popup window -End */
+            
+            function returntohomepage(){
+                window.top.location = '/home/home.jsp';
+            }
+            
+            function ServiceInfoValidate(param){
+                var Isvalid;
+                var currentcomp  = document.getElementById(param);
+                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").removeClass('error');
+                j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").removeClass('error');
+                if(j$(currentcomp).find("[Id$='IpServiceContacts']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("[Id$='IpServiceContacts']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("[Id$='IpServiceContacts']").valid() && Isvalid;
+                }
+                if(j$(currentcomp).find("input[type=radio][name$=Regions]").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("input[type=radio][name$=Regions]").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("input[type=radio][name$=Regions]").valid() && Isvalid;
+                } 
+                 if(j$(currentcomp).find("input[type=checkbox][name$=Inbound_Applications]").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("input[type=checkbox][name$=Inbound_Applications]").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("input[type=checkbox][name$=Inbound_Applications]").valid() && Isvalid;
+                } 
+                if(j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").valid() && Isvalid;
+                }
+                if(j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").valid() && Isvalid;
+                }
+                if(Isvalid){
+                    showLoadingDiv();
+                    updateServiceMethodInfo();
+                }else{
+                    var errordiv = currenttabtoshowerror();
+                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                    var html = "";
+                    if(j$(currentcomp).find("[Id$='IpServiceContacts']").hasClass("error") && (j$(currentcomp).find("[Id$='IpServiceContacts']").valid() == false)){
+                        html += "<li>Select Contact</li>";
+                    }
+                    if(j$(currentcomp).find("input[type=radio][name$=Regions]").hasClass("error") && (j$(currentcomp).find("input[type=radio][name$=Regions]").valid() == false)){
+                        html += "<li>Select Region</li>";
+                    }
+                    if(j$(currentcomp).find("input[type=checkbox][name$=Inbound_Applications]").hasClass("error") && (j$(currentcomp).find("input[type=checkbox][name$=Inbound_Applications]").valid() == false)){
+                        html += "<li>Select Application or \"None\"</li>";
+                    }
+                    if(j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").hasClass("error") && (j$(currentcomp).find("[Id$='Other_Inbound_Applications__c']").valid() == false)){
+                        html += "<li>Specify Other applications/protocols</li>";
+                    }
+                    if(j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").hasClass("error") && (j$(currentcomp).find("[Id$='Inbound_IPs_ranges__c']").valid() == false)){
+                        html += "<li>List IP Addresses or Select \"None\"</li>";
+                    }
+                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                    j$(currentcomp).find('.error-box').show();
+                }
+            }
+            
+            function validateVoiceLine1(param, param1){
+                var Isvalid ;
+                var currentcomp  = document.getElementById(param);
+                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                if(j$(currentcomp).find("input[type='radio'][name='voiceline1']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("input[type='radio'][name='voiceline1']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("input[type='radio'][name='voiceline1']").valid() && Isvalid;
+                }
+                
+                if(j$(currentcomp).find("[Id$='Voice1_User_Country__c']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("[Id$='Voice1_User_Country__c']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("[Id$='Voice1_User_Country__c']").valid() && Isvalid;
+                }
+                 if(j$(currentcomp).find("input[type='radio'][name='voiceline2']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("input[type='radio'][name='voiceline2']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("input[type='radio'][name='voiceline2']").valid() && Isvalid;
+                }
+                 if(j$(currentcomp).find("[Id$='Voice2_User_Country__c']").length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find("[Id$='Voice2_User_Country__c']").valid();
+                    else
+                        Isvalid = j$(currentcomp).find("[Id$='Voice2_User_Country__c']").valid() && Isvalid;
+                }
+                if(Isvalid){
+                    var voiceline1 ='';
+                    var voiceline2 ='';
+                    j$("input[type=radio][name=voiceline1]").each(function(){
+                        if(j$(this).is(':checked')){
+                            voiceline1 = j$(this).val();
+                        }
+                    });
+                    j$("input[type=radio][name=voiceline2]").each(function(){
+                        if(j$(this).is(':checked')){
+                            voiceline2 = j$(this).val();
+                        }
+                    });
+                    if(param1){
+                        showLoadingDiv();
+                        console.log('test' + j$("[id$='IP_MobileCast_cell']").length);
+                         if(j$("[id$='IP_MobileCast_cell']").length ==1){
+                            updateVoiceLine1Record(voiceline1,voiceline2);
+                        }
+                        else{
+                            updateVoiceLine1RecordV3(voiceline1,voiceline2);
+                        }
+                    }
+                    else{
+                        if(j$("[id$='IP_MobileCast_cell']").length ==1){
+                            updateVoiceLine1Recordsaveexit(voiceline1,voiceline2);
+                        }
+                        else{
+                            updateVoiceLine1RecordV3saveexit(voiceline1,voiceline2);
+                        }
+                    }
+                }else{
+                    var errordiv = currenttabtoshowerror();
+                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                    var html = "";
+                    if(j$(currentcomp).find("input[type=radio][name=voiceline1]").hasClass("error") && (j$(currentcomp).find("input[type=radio][name=voiceline1]").valid() == false)){
+                        html += "<li>Select Voice Line 1 Type</li>";
+                    } 
+                    if(j$(currentcomp).find('[id$=Voice1_User_Country__c]').hasClass("error") && (j$(currentcomp).find("[id$=Voice1_User_Country__c]").valid() == false)){
+                        html += "<li>Country For Voice Line 1 Required</li>";
+                    }
+                    if(j$(currentcomp).find("input[type=radio][name=voiceline2]").hasClass("error") && (j$(currentcomp).find("input[type=radio][name=voiceline2]").valid() == false)){
+                        html += "<li>Select Voice Line 2 Type</li>";
+                    } 
+                    if(j$(currentcomp).find('[id$=Voice2_User_Country__c]').hasClass("error") && (j$(currentcomp).find("[id$=Voice2_User_Country__c]").valid() == false)){
+                        html += "<li>Country For Voice Line 2 Required</li>";
+                    }
+                    if(j$(currentcomp).find("[Id$='Voice1_User_Specified_Code__c']").hasClass("error") && (j$(currentcomp).find("[Id$='Voice1_User_Specified_Code__c']").valid() == false)){
+                        html += "<li>Select Area Code</li>";
+                    } 
+                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                    j$(currentcomp).find('.error-box').show();
+                }
+            }
+            
+            function backOptionalPlans(){
+                if(j$("[id$='IP_MobileCast_cell']").length ==1){
+                    btnSelectednavigateNext('IP_MobileCast');
+                }
+                else{
+                    btnSelectednavigateNext('Voice_Lines');
+                }
+            }
+            
+            </script>
+            <style>
+                .rich-tabpanel-content{
+                box-shadow: none;
+                }
+                .rich-tab-bottom-line {
+                border-bottom: 1px solid #c7c7c7;
+                }
+                 #main {
+                background: white;
+                padding-left: 20%;
+                }
+                #main {
+                float: left;
+                width: 100%;
+                }
+                .loadingStatus {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                list-style: none;
+                z-index: 9999;
+                }
+                
+                .loadingStatus .img {
+                width: 32px;
+                margin: 0 auto;
+                }
+                
+                .error-box
+                { color:#cc0000;margin-bottom:20px; }
+                
+                .error-box h1
+                { background:#cc0000; color:#fff !important; font-size:1em !important; padding:5px; margin-bottom:10px; font-weight:bold; }
+                
+                .error-box li
+                { margin-left:0px; font-weight: bold; } 
+                
+                .loadingBox {
+                display: none;
+                background: #000000;
+                opacity: 0.45;
+                filter: alpha(opacity=45);
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: 9999;
+                }
+                selecterror{
+                border : 1px solid #fe6d55;
+                box-shadow : 0 0 5px 0 rgba(255,178,157,0.75);
+                }
+                .requiredRedMarkFld{
+                border-left:4px solid #cc0000 !important;
+                padding-left: 4px !important;
+                }
+                .kvh-disabledcss{
+                background-color: #f1f1f1 !important;
+                }
+                .requiredRedMarkFld{
+                border-left:4px solid #cc0000 !important;
+                padding-left: 4px !important;
+                }
+                
+                .error{
+                border-top: 1px solid #cc0000 !important;
+                border-bottom: 1px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                
+                label.error{
+                border-top: 0px solid #cc0000 !important;
+                border-bottom: 0px solid #cc0000 !important;
+                color: #cc0000 !important;
+                }
+                .error-box{ 
+                border:1px solid #cc0000; 
+                width:47%; 
+                color:#cc0000; 
+                border-radius:3px; 
+                margin-bottom:20px; 
+                }
+                
+                .error-box h1{ 
+                background:#cc0000; 
+                color:#fff !important; 
+                font-size:1em !important; 
+                padding:5px; 
+                margin-bottom:10px; 
+                font-weight:bold; 
+                }
+                
+                .error-box li{ 
+                margin-left:20px; 
+                } 
+                
+                #display-error {
+                width: 100%;
+                margin-top: 10px;
+                border: 1px solid #D8D8D8;
+                padding: 5px;
+                border-radius: 5px;
+                font-family: Arial;
+                font-size: 11px;
+                text-transform: uppercase;
+                background-color: red;
+                color: white;
+                text-align: center;
+                }
+                
+                img.err {
+                float: left; 
+                }
+                
+                .bulletErrors {
+                list-style-type: square !important;
+                }
+                .h2Class {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: black;
+                }
+                
+                ul.rig.columns1 li {
+                width: 29.5%;
+                }
+                
+                ul.columns1 {
+                text-align: center;
+                }
+                
+                p.kvh-fontsmall{
+                font-size: small !important;
+                text-align: left !important;
+                min-height: 125px !important;
+                }
+                
+                .KVH-table {
+                border: solid 1px #DDEEEE;
+                border-spacing: 0;
+                width: 100%;
+                font-size: 90% !important;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                }
+                
+                .KVH-tableplan tbody th {
+                background-color: #DDEFEF;
+                border: solid 1px #DDEEEE;
+                color: #336B6B;
+                padding: 10px;
+                text-align: left;
+                text-shadow: 1px 1px 1px #fff;
+                background-color:#f3f3f3 !important
+                }
+                
+                table.KVH-tableplan > thead > tr > th {
+                text-align: center;
+                }
+                
+                table.KVH-tableplan > tbody > tr > td {
+                text-align: center;
+                }
+                table.KVH-tableplan > tbody > tr:last-child {
+                font-weight:bold;
+                }
+                
+                .KVH-table-horizontal tbody td {
+                border-left: none;
+                border-right: none;
+                }
+                
+                #ck-button span:hover {
+                background-color: #3ead00;
+                font-weight: bold;
+                color: #fff;
+                }
+                
+                #ck-button input:checked + span {
+                background-color: #3ead00;
+                font-weight: bold;
+                color: #fff;
+                }
+                
+                input[name="Selected"] {
+                background-color: #3ead00;
+                font-weight: bold !important;
+                color: #fff !important;
+                }
+                
+                .collapse-p{
+                font-size: 80%;
+                width: 80%;
+                font-weight: normal;
+                white-space: normal;
+                margin-top: 10px;
+                font-family: DINPro-Regular, Arial !important;
+                }
+                
+                .ui-collapsible-inset {
+                margin: 0 0 30px 0;
+                font-family: DIN Pro;
+                }
+                
+                .button {
+                color: #fff !important;
+                padding: 7px 27px 8px;
+                margin: 15px 0;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                display: -moz-inline-stack;
+                display: inline-block;
+                zoom: 1;
+                _overflow: hidden;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                background: #6699cc;
+                border: 0;
+                text-shadow: none !important;
+                }
+                
+                .pad-bottom {
+                margin-bottom: 20px;
+                }
+                
+                
+                .scrolling td, th {
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                }
+
+                .added {
+                background-color: #3ead00 !important;
+                color: #fff !important;
+                }
+                .collapse-button {
+                font-size: 80% !important;
+                font-weight: normal !important;
+                color: #444 !important;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                font-family: DINPro-Regular, Arial !important;
+                }
+                
+                div.selected {
+                box-shadow: 0 0 7px #3ead00; 
+                }
+                .pad-right {
+                margin-right: 20px;
+                }
+
+                .ui-popup {
+                position: relative;
+                }
+                ul.terms {
+                list-style-type: disc;
+                }
+                .pad-left {
+                margin-left: 20px;
+                }
+                ol, ul {
+                list-style: none;
+                }
+                
+                .collapse-buttonstl {
+                font-size: 80% !important;
+                font-weight: normal !important;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                font-family: DINPro-Regular, Arial !important;
+                }
+                .notes {
+                font-style: italic;
+                font-size: .875em;
+                font-weight: normal;
+                }
+                
+                .KVH-disabledclassComm{
+                pointer-events: none;
+                }
+                
+                .panel-contents {
+                padding: 20px;
+                width: 95%;
+                margin: 0 auto;
+                font-family: DINPro-Regular, Arial !important;
+                }
+                
+                label {
+                display: inline-block !important;
+                font-size: 100% !important;
+                font-weight: bold !important;
+                }
+                
+              
+                table.collapse-panels1 {
+                width: 100%;
+                margin: 20px auto;
+                border: 1px solid #ddd;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                }
+                table.collapse-panels1 th {
+                background: #f3f3f3;
+                text-align: left;
+                font-weight: bold;
+                font-size: 85%;
+                color: #444;
+                width: 200px;
+                padding: 10px;
+                }
+                table.collapse-panels1 td {
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+                padding: 10px;
+                }
+                
+                table.collapse-panels1 td.plan-name {
+                background: #ecf5fc;
+                }
+                
+                table.collapse-panels1 th.plan-type {
+                text-align: left;
+                vertical-align: top;
+                background: transparent;
+                }
+                
+                table.collapse-panels1 td.row-hdr {
+                background: #ddd;
+                text-align: left;
+                padding: 3px 3px 3px 5px;
+                font-size: 80%;
+                text-transform: uppercase;
+                font-weight: bold;
+                color: #444;
+                text-shadow: none;
+                }
+                
+                table.collapse-panels2 {
+                width: 100%;
+                margin: 20px auto;
+                border: 1px solid #ddd;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                margin-top:-20px;
+                }
+                table.collapse-panels2 th {
+                background: #f3f3f3;
+                text-align: left;
+                font-weight: bold;
+                font-size: 85%;
+                color: #444;
+                width: 200px;
+                padding: 10px;
+                }
+                
+                  table.collapse-panels {
+                width: 100%;
+                margin: 20px auto;
+                border: 1px solid #ddd;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+                border-collapse: separate;
+                line-height: normal;
+                }
+                table.collapse-panels th.plan-type {
+                text-align: left;
+                vertical-align: top;
+                background: transparent;
+                }
+                
+                table.collapse-panels th {
+                background: #f3f3f3;
+                text-align: left;
+                font-weight: bold;
+                font-size: 85%;
+                color: #444;
+                width: 200px;
+                padding: 10px;
+                }
+                table.collapse-panels td.plan-name {
+                background: #ecf5fc;
+                }
+                table.collapse-panels td {
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+                padding: 10px;
+                }
+
+                table.collapse-panels >tbody >tr:last-child > th { 
+                font-weight: bold;
+                font-size: 115%;
+                border-top: 3px solid #ccc;
+                }
+                table.collapse-panels >tbody >tr:last-child > td { 
+                font-weight: bold;
+                font-size: 115%;
+                border-top: 3px solid #ccc;
+                }
+                h1, h2, h3, p {
+                padding-bottom: 15px;
+                line-height: normal;
+                }
+                h4 {
+                font-size: 1em;
+                font-family: DINPro-Bold;
+                color: #30445b;
+                }
+                
+                #main p {
+                padding-bottom: 10px;
+                }
+                .notes {
+                font-style: italic;
+                font-size: .875em;
+                font-weight: normal;
+                }
+                .commBoxparent, .commBoxchild{
+                max-width : 150px;
+                }
+                ul.terms li {
+                padding: 0 0 10px 5px;
+                text-align: left;
+                }
+                hr {
+                border: 0;
+                height: 1px;
+                border-bottom: 1px solid #c7c7c7;
+                margin-bottom: 30px;
+                }
+                .pad-top {
+                margin-top: 20px;
+                }
+                
+                #horizontalTab h1 {
+                font-size: 1.75em;
+                color: #30445b;
+                }
+                
+                input[type="button"] {
+                width: auto;
+                margin: 10px 0;
+                padding: 5px 15px;
+                }
+                
+                .ui-popup-container {
+                width: 70%;
+                }
+                h3 {
+                font-size: 1.3em;
+                color: #7c7c7c;
+                font-weight: bold;
+                }
+                
+                td.width-5, th.width-5 {
+                width: 5%;
+                }
+                td.text-left, th.text-left {
+                text-align: left !important;
+                }
+                td.width-20, th.width-20 {
+                width: 20%;
+                }
+                td.width-15, th.width-15 {
+                width: 15%;
+                }
+                table.collapse-panels1 td.plan-name {
+                background: #ecf5fc;
+                }
+                .text-center {
+                text-align: center !important;
+                }
+                strong {
+                font-family: DINPro-Bold;
+                }
+                
+                .remodalAgains{
+                max-width: 700px !important;
+                min-width: 700px !important;
+                min-height: 200px !important;
+                margin: 0px auto !important;
+                border-radius: 6px !important;
+                padding: 0px 0px !important;
+                } 
+            </style>
+        </head>
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                
+                <!-- ** Form tag Start ** -->
+                <apex:form id="theForm">
+                    <div class="loadingStatus" id="loadingDiv">
+                        <div class="">
+                            <div class="img "><img src="/img/loading.gif"/></div>
+                        </div>
+                    </div>
+                    <div id="loadingBox" class="loadingBox"></div>
+                    
+                    
+                    <!-- ** Top header Start **-->
+                    
+                    <c:Activation_Header />
+                    <!-- ** Top header End **-->
+                    
+                    <!-- ** Sidebar Start **-->
+                    <div id="sidebar">
+                        <c:Activation_Status state="{!ActivationStatus}" pageOrderID="{!ActivationOrderId}"/> 
+                    </div>
+                    <!-- ** Sidebar End **--> 
+                    <apex:actionFunction name="updateActivationServiceNext" action="{!updateActivationService1}" oncomplete="btnSelectednavigateNext('Voice_Lines');" reRender="wrapper">
+                    </apex:actionFunction>
+                    
+                     <apex:actionFunction name="updateActivationServiceclose" action="{!updateActivationService1}" oncomplete="returntohomepage();" reRender="wrapper">
+                    </apex:actionFunction>
+                    
+                    <apex:actionFunction name="btnSelectednavigateNext" action="{!goToTab}" oncomplete="hideLoadingDiv();" reRender="wrapper">
+                        <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+                    </apex:actionFunction>
+ 
+                    <apex:actionFunction name="loadDynamicRatePlanTableMethod" action="{!updateActivationService}" oncomplete="btnSelectednavigateNext('Plan_Types');" reRender="test">
+                        <apex:param name="param2" assignTo="{!strPlanName}" value="" />
+                    </apex:actionFunction>
+                    
+                    <div id="main">
+                        <apex:outputPanel layout="block" id="wrapper" styleClass="wrapper">
+                            <div style="float:left;">  <h1 class="title">Subscriptions</h1></div>
+                            <div class="required"><span class="requiredRedMarkFld"></span> = Required field</div> 
+                            <!-- ** TabPanel Start **-->
+                            <div id="horizontalTab">
+                                <apex:tabPanel switchType="client" value="{!selectedTab}" id="theTabPanel" > 
+                                    
+                                    <!-- ** Plan Types Tab Start  ** -->
+                                    <apex:tab label="Plan Types" rendered="{!NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'))}" name="Plan_Types" id="Plan_Types" disabled="{!IF((mapdisableActivationServiceTabs['Plan_Types'] > ActivationStatus.Services_Type_Last_Active_Tab_Index__c),true,false)}"  onTabEnter="showLoadingDiv();btnSelectednavigateNext('Plan_Types');">
+                                        <div>
+                                            <h1 class="pad-bottom">Select Plan Type</h1>
+                                        </div>
+                                        <!--** div contain error msg contents -Start **-->
+                                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                        </div>
+                                        <!--** div contain error msg contents -End **-->
+                                           <apex:outputPanel layout="none" rendered="{!boolHasCustomRatePlan}"><!-- {!objActivationSubscriber.Corporate_Billing_Account__r.Has_Custom_Rate_Plan__c} -->
+                                             <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+                                            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                                                Customer Specific Rate Plans
+                                                <input style="cursor: pointer;" data-role="none" onclick="selectedProductPlan('Custom Rate Plans', 'customRatePlans');" name="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c, 'Custom Rate Plans'),'Selected', 'Select')}" type="button" class="button collapse-button right ui-link planTypeClass" value="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c,'Custom Rate Plans'),'Selected', 'Select')}"/>
+                                                <span class="collapse-p"><br/><br/>Variants of Open, Metered and Fixed Rate plans with additional features to meet your specific business needs.</span>     
+                                                 </h2> 
+                                                 <div aria-hidden="true">
+                                                <apex:outputPanel id="customRatePlans">
+                                                    <div class="panel-contents">
+                                                        Variants of Open, Metered and Fixed Rate plans with additional features to meet your specific business needs. Select to choose from your available options. For additional details, contact your KVH Sales Representative or Airtime Services.
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                        </apex:outputPanel>
+                                        
+                                        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+                                            <h2 class="ui-collapsible-heading  ui-collapsible-heading-collapsed"> 
+                                                Open Rate Plans
+                                                <input style="cursor: pointer;" data-role="none" data-theme="b"  data-mini="true" data-inline="true" onclick="selectedProductPlan('Open Rate Plans', 'openRatePlans');" name="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c, 'Open Rate Plans'),'Selected', 'Select')}" type="button" class="button collapse-button right ui-link planTypeClass" value="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c,'Open Rate Plans'),'Selected', 'Select')}"/>
+                                                <span class="collapse-p"><br/><br/>Offering the highest speeds on the network at every price point with large monthly data allowances and extremely affordable “over-plan” MB rates. </span>                                                
+                                            </h2> 
+                                            <div aria-hidden="true">
+                                                <apex:outputPanel id="openRatePlans">
+                                                    <div class="panel-contents">
+                                                        <div class="two-col left">
+                                                            <p>Offering the highest speeds on the network at every price point with large monthly data allowances and extremely affordable “over-plan” MB rates. Unrestricted access to all applications and protocols and priority on the network with “Business Class Service”. Economical long distance phone rates for outgoing calls.</p>
+                                                        </div>
+                                                        <div class="two-col right">
+                                                            <p><em>Two plan types offered:</em></p>
+                                                            <p><strong>Open-Standard</strong> – Whether you need 2,000 MBs or 150,000 MBs there’s a plan to fit every need.</p>
+                                                            <p><strong>Open-Flex</strong> – Plans designed to deliver the ultimate flexibility! Pay only for the months you need coverage - no suspension restrictions.</p>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                        <hr/>
+                                                        <h4>Open Rate Plan Details</h4>
+                                                        <ul class="terms pad-top pad-left">
+                                                            <li>All plans offer the highest shore-to-ship and ship-to-shore speeds available for each antenna system</li>
+                                                            <li>Unrestricted access to all applications and protocols</li>
+                                                            <li>Prioritization of the subscriber’s traffic on the network with "Business Class Service"</li>
+                                                            <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>1</sup></li>
+                                                            <li>Large data allowances with extremely affordable "over-plan" rates</li>
+                                                            <li>2 phone lines available for TracPhone Enhanced Voice Service</li>
+                                                            <li>Economical long distance phone rates to land or mobile starting as low as $0.05/minute!</li>
+                                                        </ul>
+                                                        <p class="notes pad-top">
+                                                            <sup>1</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.
+                                                        </p>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                        
+                                        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+                                            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                                                Metered Rate Plans
+                                                <input style="cursor: pointer;" data-role="none" onclick="selectedProductPlan('Metered Rate Plans', 'meteredRatePlans');" name="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c, 'Metered Rate Plans'),'Selected', 'Select')}" type="button" class="button collapse-button right ui-link planTypeClass" value="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c ,'Metered Rate Plans'),'Selected', 'Select')}"/>
+                                                <span class="collapse-p"><br/><br/>Offering the highest speeds on the network at every price point with large monthly data allowances and extremely affordable “over-plan” MB rates. </span>                                                
+                                            </h2> 
+                                            <div aria-hidden="true">
+                                                <apex:outputPanel id="meteredRatePlans">
+                                                    <div class="panel-contents">
+                                                        <div class="two-col left">
+                                                            <p>Flexible usage-based plans starting as low as $49/month and offering the highest speeds on the network plus long-distance phone service with one simple, single price worldwide.</p>
+                                                        </div>
+                                                        <div class="two-col right">
+                                                            <p><em>Two plan types offered:</em></p>
+                                                            <p><strong>Metered-Standard</strong> – Flexible plans offering from 50-2,000 MB to fit every need.</p>
+                                                            <p><strong>Metered-Flex</strong> – All of the great features of the standard plans with the flexibility to pay only for the months you need coverage - no suspension restrictions.</p>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                        <hr/>
+                                                        <h4>Metered Rate Plan Details</h4>
+                                                        <ul class="terms pad-left pad-top">
+                                                            <li>All plans offer the highest shore-to-ship and ship-to-shore speeds available for each antenna system</li>
+                                                            <li>Unrestricted access to all applications and protocols</li>
+                                                            <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>1</sup></li>
+                                                            <li>Affordable "over-plan" rates</li>
+                                                            <li>2 phone lines available for TracPhone Enhanced Voice Service<sup>2</sup></li>
+                                                            <li>Economical long distance phone service offers one single price WORLDWIDE for both incoming and outgoing calls to land or mobile</li>
+                                                        </ul>
+                                                        <p class="notes pad-top">
+                                                            <sup>1</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.<br/>
+                                                            <sup>2</sup>TracPhone V3<small>IP</small>/V3 has one available phone line
+                                                        </p>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                        
+                                        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+                                            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                                                Fixed Rate Plans
+                                                <input style="cursor: pointer;" data-role="none" onclick="selectedProductPlan('Fixed Rate Plans', 'fixedRatePlans');" name="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c, 'Fixed Rate Plans'),'Selected', 'Select')}" type="button" class="button collapse-button right ui-link planTypeClass" value="{!IF(CONTAINS(objActivationService.Activation_Plan_Type__c, 'Fixed Rate Plans'),'Selected', 'Select')}"/>
+                                                <span class="collapse-p"><br/><br/>Traditional <strong>speed-based</strong> plans for customers with conservative data transmission needs and the requirement of a fixed monthly charge.</span>                                            </h2> 
+                                            <div aria-hidden="true">
+                                                <apex:outputPanel id="fixedRatePlans">
+                                                    <div class="panel-contents">
+                                                        <p>Traditional <strong>speed-based</strong> plans for customers with conservative data transmission needs and the requirement of a fixed monthly charge. Offering a wide selection of plans with monthly data allotments from 5,000 MBs to 80,000 MBs and a choice of Bandwidth Management Control method for 100% transparency. Economical long distance phone rates for outgoing calls.</p>
+                                                        <hr/>
+                                                        <h4>Fixed Rate Plan Details</h4>
+                                                        <ul class="terms pad-left">
+                                                            <li>Speed-based plans<sup>1</sup> with clear monthly data allotments</li>
+                                                            <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>2</sup> </li>
+                                                            <li>Choice of Bandwidth Management Control method</li>
+                                                            <li>Restrictions imposed on access to data-intensive applications and protocols (streaming, video, P2P, VPN)</li>
+                                                            <li>2 phone lines available for TracPhone Enhanced Voice Service</li>
+                                                            <li>Election of either a monthly or 2-hour Bandwidth Management Control (BMC) interval is mandatory. BMC initiates a temporary speed reduction when data usage exceeds the MB allowance associated with the selected plan for the selected interval. Plan speed is restored at the beginning of the following month or 2-hour interval, as elected.</li>
+                                                            <li>Economical long distance phone rates to land or mobile starting as low as $0.05/minute!</li>
+                                                        </ul>
+                                                        <p class="notes pad-top">
+                                                            <sup>1</sup> Data rates are rate plan maximums.<br/>
+                                                            <sup>2</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.
+                                                        </p>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="clear" style="padding-bottom:20px;"></div>
+                                        <div class="button-bar clear">
+                                            <apex:commandLink styleClass="button left" id="planTypeBackBtn" value="< Back to Review" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                <apex:param value="" assignTo="{!selectedTab}" /> 
+                                            </apex:commandLink>
+                                            <apex:commandLink styleClass="button right" id="planTypeNextBtn" value="Next >" onclick="validatePlanName('{!$Component.Plan_Types}');return false;" >
+                                            </apex:commandLink>
+                                        </div>
+                                        <apex:commandLink styleClass="clear right" value="Save & Exit" onclick="showgenericpopupSaveExit('80%');return false;" /> 
+                                    </apex:tab> 
+                                    <!-- ** Plan Types Tab End  ** -->
+                                    
+                                    <!-- **Airtime Plans Tab Start  ** -->
+                                    <apex:tab label="Airtime Plans" name="Airtime_Plans" id="Airtime_Plans" disabled="{!IF((mapdisableActivationServiceTabs['Airtime_Plans'] > ActivationStatus.Services_Type_Last_Active_Tab_Index__c),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('Airtime_Plans');">
+                                        <apex:outputPanel >
+                                            <apex:outputPanel rendered="{!(ActivationStatus.Services_Active_Tab__c == 'Airtime_Plans')}" >
+                                                <div>
+                                                    <h2 class="mainTitle">Airtime Plans</h2>
+                                                </div>
+                                                <apex:outputPanel rendered="{!AND(objActivationService.Activation_Plan_Type__c != null,  CONTAINS(objActivationService.Activation_Plan_Type__c, 'Metered Rate Plans'))}">
+                                                    <div>
+                                                        <h3>Metered Rate Plans</h3>
+                                                    </div>
+                                                    <p style="">KVH’s enterprise-grade plans offer supreme value with unconstrained transmissions, 100% transparency, the highest speeds at every price point, and extremely affordable data plans with large allowances and very low “over-plan” MB rates. 
+                                                        <a href="#metered_more" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="metered_more" aria-expanded="false" class="ui-link">Learn more about Metered Rate Plans.</a></p>
+                                                    
+                                                    <!--** div contain error msg contents -Start **-->
+                                                    <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                    </div>
+                                                    <!--** div contain error msg contents -End **-->
+                                                    <div class="clear" ></div>
+                                                    <apex:outputPanel rendered="{!IF(objActivationService != null, true,false)}">
+                                                        <apex:repeat value="{!lstProductFeatures}" var="objProductFeature">
+                                                            <c:Activation_RatePlanTable className="collapse-panels" SelectedProductName="{!objActivationService.Product__c}" currentTab="Airtime_Plans" rendered="{!IF(objActivationService != null, true,false)}" selectedRatePlan="{!objProductFeature.Id}" planType="{!objProductFeature.Name + ' Plans'}"  activationServices="{!objActivationService}" planTypepopupId="{!IF(CONTAINS(UPPER(objProductFeature.Name), 'FLEX'), 'Metered_Flex','Standard_Metered')}"/>
+                                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                                        </apex:repeat>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!AND(objActivationService.Activation_Plan_Type__c != null, CONTAINS(objActivationService.Activation_Plan_Type__c ,'Open Rate Plans'))}"> <!-- ,false -->
+                                                    <div>
+                                                        <h3>Open Rate Plans</h3>
+                                                        <p style="">KVH’s enterprise-grade plans offer supreme value with unconstrained transmissions, 100% transparency, the highest speeds at every price point, and extremely affordable data plans with large allowances and very low “over-plan” MB rates. 
+                                                            <a href="#open_more" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="open_more" aria-expanded="false" class="ui-link">Learn more about Open Rate Plans.</a></p>
+                                                    </div>
+                                                    <!--** div contain error msg contents -Start **-->
+                                                    <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                    </div>
+                                                    <!--** div contain error msg contents -End **-->
+                                                    
+                                                    <div class="clear"></div>
+                                                    <apex:outputPanel rendered="{!IF(AND(objActivationService != null , objActivationService.Id != null), true,false)}">
+                                                        <apex:repeat value="{!lstProductFeatures}" var="objProductFeature">
+                                                            <c:Activation_RatePlanTable className="collapse-panels" SelectedProductName="{!objActivationService.Product__c}" currentTab="Airtime_Plans" rendered="{!IF(AND(objActivationService != null , objActivationService.Id != null), true,false)}" selectedRatePlan="{!objProductFeature.Id}" planType="{!objProductFeature.Name + ' Plans'}"  activationServices="{!objActivationService}" planTypepopupId="{!IF(CONTAINS(UPPER(objProductFeature.Name), 'FLEX'), 'Open_Flex','Standard_Open')}"/>
+                                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                                        </apex:repeat>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!AND(objActivationService.Activation_Plan_Type__c != null,  CONTAINS(objActivationService.Activation_Plan_Type__c, 'Fixed Rate Plans'))}"> <!-- ,false -->
+                                                    <div>
+                                                        <h3>Fixed Rate Plans</h3>
+                                                        <p class="">KVH’s traditional plans for customers with conservative data transmission needs and the requirement of a fixed monthly charge. <a href="#fixed_more" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="fixed_more" aria-expanded="false" class="ui-link">Learn more.</a></p>
+                                                    </div>
+                                                    <!--** div contain error msg contents -Start **-->
+                                                    <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                    </div>
+                                                    <!--** div contain error msg contents -End **-->
+                                                    <div class="requiredRedMarkFld" style="margin-bottom: 5px;">
+                                                        <strong>Select Bandwidth Management Control (BMC) Interval:</strong>
+                                                        <span class="tooltip ui-link"><apex:image value="{!$Resource.Activation_Info}" width="16" height="16"/>
+                                                            <span class="tooltiptext">
+                                                               Fixed plans require election of either a 2-hour or a monthly Bandwidth Management Control (BMC) interval.  If MB usage exceeds the plan's MB allowance for the chosen interval, BMC will initiate a temporary speed reduction. For monthly BMC, the plan speed will be restored at the beginning of the following month. For 2-hour BMC the plan speed will be restored after the 2-hour period has elapsed.
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <apex:selectRadio id="bandwidthManagementControl" value="{!objActivationService.Bandwidth_Management_Control_Interval__c}" layout="pageDirection" html-data-role="none">
+                                                        <apex:selectOptions value="{!bandwidthManagementControl}" html-data-role="none"/>
+                                                        <apex:actionSupport event="onchange" action="{!updateActivationService}" onsubmit="showLoadingDiv();clearErrorMsg('{!$Component.Airtime_Plans}');" oncomplete="btnSelectednavigateNext('Airtime_Plans');" reRender="wrapper"/>
+                                                    </apex:selectRadio>
+                                                    
+                                                    <div class="clear"></div>
+                                                    <apex:actionRegion >
+                                                        <apex:outputPanel id="fixedrateplantable" rendered="{!IF(AND(objActivationService != null , objActivationService.Id != null), true,false)}">
+                                                            <apex:repeat value="{!lstProductFeatures}" var="objProductFeature">
+                                                                <c:Activation_RatePlanTable className="collapse-panels" SelectedProductName="{!objActivationService.Product__c}" currentTab="Airtime_Plans" rendered="{!IF(AND(objActivationService != null , objActivationService.Id != null), true,false)}" selectedRatePlan="{!objProductFeature.Id}" planType="{!objProductFeature.Name + ' Plans'}"  activationServices="{!objActivationService}" planTypepopupId="{!IF(CONTAINS(UPPER(objProductFeature.Name), 'MONTHLY'), 'Monthly_BMC','2Hour_BMC')}"/>
+                                                                <div class="clear" style="padding-bottom:20px;"></div>
+                                                            </apex:repeat>
+                                                        </apex:outputPanel>
+                                                    </apex:actionRegion>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!AND(objActivationService.Activation_Plan_Type__c != null, CONTAINS(objActivationService.Activation_Plan_Type__c ,'Iridium Rate Plans'))}"> <!-- ,false -->
+                                                    <div>
+                                                        <h3>mini-VSAT Broadband/Iridium OpenPort Bundle</h3>
+                                                        <p class="">With the TracPhone V3<small>IP</small>/Iridium Pilot System Bundle, the ICM is preconfigured by KVH to ensure seamless integration, so your vessel will have satellite Internet, email, and phone access wherever you go.  <a href="#iridium_more" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="iridium_more" aria-expanded="false" class="ui-link">Learn more.</a></p>
+                                                    </div>
+                                                    <!--** div contain error msg contents -Start **-->
+                                                    <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                    </div>
+                                                    <!--** div contain error msg contents -End **-->
+                                                    
+                                                    <div class="clear"></div>
+                                                    <apex:outputPanel rendered="{!IF(objActivationService != null, true,false)}">
+                                                        <apex:repeat value="{!lstProductFeatures}" var="objProductFeature">
+                                                            <c:Activation_RatePlanTable className="collapse-panels" SelectedProductName="{!objActivationService.Product__c}" currentTab="Airtime_Plans" rendered="{!IF(objActivationService != null, true,false)}" selectedRatePlan="{!objProductFeature.Id}" planType="{!objProductFeature.Name + ' Plans'}"  activationServices="{!objActivationService}" planTypepopupId="VSAT_IOP"/>
+                                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                                        </apex:repeat>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!AND(boolHasCustomRatePlan, objActivationService.Activation_Plan_Type__c != null, CONTAINS(objActivationService.Activation_Plan_Type__c ,'Custom Rate Plans'))}">
+                                                    <div>
+                                                        <h3>Customer Specific Rate Plans</h3>
+                                                        <p style="">Variants of Open, Metered and Fixed Rate plans with additional features to meet your specific business needs.
+                                                            <!-- <a href="#custom_more" data-rel="popup" data-position-to="window" data-transition="pop" aria-haspopup="true" aria-owns="custom_more" aria-expanded="false" class="ui-link">Learn more about Custom Rate Plans.</a>  -->
+                                                        </p>
+                                                    </div>
+                                                    <!--** div contain error msg contents -Start **-->
+                                                    <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                    </div>
+                                                    <!--** div contain error msg contents -End **-->
+                                                    <div class="clear"></div>
+                                                    <c:Activation_CustomRatePlanTable id="CustomRateplanTable" SelectedProductName="{!objActivationService.Product__c}" SelectedCustomRatePlanAccount="{!objActivationSubscriber.Account__c}" activationServices="{!objActivationService}" rendered="true"/> <!-- {!AND(boolHasCustomRatePlan, objActivationService.Activation_Plan_Type__c != null, CONTAINS(objActivationService.Activation_Plan_Type__c ,'Custom Rate Plans'))} --> 
+                                                </apex:outputPanel>
+                                                
+                                                <hr class="clear pad-top"/>
+                                                
+                                                <div class="left two-col">
+                                                    <h2>Don't see your plan?</h2>
+                                                    <p>Use the special instructions box to fill in the detail, and a KVH representative will contact you if necessary.</p>
+                                                </div>
+                                                <div class="left two-col pad-left">
+                                                    <label>Special Instructions</label>
+                                                    <apex:inputField html-rows="4" id="Special_Instructions__c" html-cols="50" value="{!objActivationService.Special_Instructions__c}" html-data-role="none" style="max-width: 100%;"/>
+                                                </div>
+                                                 
+                                                <div class="button-bar clear">
+                                                    <apex:commandLink styleClass="button left" rendered="{!IF(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'), false, true)}" id="airtimePlanBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                        <apex:param value="Plan_Types" assignTo="{!selectedTab}" /> 
+                                                    </apex:commandLink> 
+                                                    <apex:commandLink styleClass="button left" rendered="{!IF(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'), true, false)}" id="airtimePlanBackReviewBtn" value="< Back to Review" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                        <apex:param value="" assignTo="{!selectedTab}" /> 
+                                                    </apex:commandLink>
+                                                    <apex:commandLink styleClass="button right" id="airtimePlanNextBtn" value="Next >" onclick="ValidateProductName('{!$Component.Airtime_Plans}'); return false;">
+                                                    </apex:commandLink>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:commandLink styleClass="clear right" value="Save & Exit" onclick="showgenericpopupSaveExit('80%');return false;" /> 
+                                        </apex:outputPanel>
+                                    </apex:tab>
+                                    <!-- **Airtime Plans Tab End  ** -->
+                                    
+                                    <!-- **Voice Lines Tab Start  ** -->
+                                    <apex:tab label="Voice Lines" name="Voice_Lines" id="Voice_Lines" disabled="{!IF(OR(mapdisableActivationServiceTabs['Voice_Lines'] > ActivationStatus.Services_Type_Last_Active_Tab_Index__c, AND(!objActivationService.Is_Selected__c, objActivationService.Special_Instructions__c == '')),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('Voice_Lines');">
+                                        <div>
+                                           <h2>mini-VSAT Broadband Enhanced Voice Service</h2>
+                                        </div>
+                                        
+                                        <apex:outputPanel rendered="{!(ActivationStatus.Services_Active_Tab__c == 'Voice_Lines')}" >
+                                            <!--** div contain error msg contents -Start **-->
+                                            <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                            </div>
+                                            <!--** div contain error msg contents -End **-->
+                                            <c:Activation_Voice_Line_Component VoiceLineActivationService="{!objActivationService}" />
+                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="voiceLinesBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                    <apex:param value="Airtime_Plans" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="voiceLinesNextBtn" value="Next >" onclick="validateVoiceLine1('{!$Component.Voice_Lines}', true); return false;">
+                                                </apex:commandLink>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:commandLink styleClass="clear right" value="Save & Exit" onclick="validateVoiceLine1('{!$Component.Voice_Lines}', false); return false;" /> 
+                                    </apex:tab> 
+                                    <!-- **Voice Lines Tab End  ** -->
+                               <!--     {!IF(OR(CONTAINS(UPPER(objActivationService.Activation_Rate_Plan__c), 'FLEX'),objActivationService.Activation_Rate_Plan__c == ''), false, true)}
+                                    {!IF(AND(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'), AND(objActivationPlatform.Market__c != '',CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL')), OR(objActivationPlatform.Market_Sector__c == '', NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARITIME')))), false, true)}
+                                    {!IF(AND(OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'), objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c != 'Yes'), AND(AND(objActivationPlatform.Market__c != '', CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL')), OR(objActivationPlatform.Market_Sector__c == '', NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARITIME')))))), false, true)}
+                                    {!IF(AND(NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7')),NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11'))), false, true)}
+                                    {!IF(AND(OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),OR(AND(NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE')),CONTAINS(UPPER(objActivationPlatform.Market__c),'COMMERCIAL'),IF(AND(objActivationPlatform.Market__c != '' ,objActivationPlatform.Market_Sector__c != '', OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'MIL/GOV'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MIL MARITIME')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'))),objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c != 'Yes'), true, false))), true, false)} -->
+                                    <!-- **IP-MobileCast Tab Start  ** -->
+                                    <apex:tab label="IP-MobileCast" name="IP_MobileCast" id="IP_MobileCast"
+                                              rendered="{!IF(AND(IF(OR(CONTAINS(UPPER(objActivationService.Activation_Rate_Plan__c), 'FLEX'),objActivationService.Activation_Rate_Plan__c == ''), false, true)
+                                                        ,IF(AND(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'), AND(objActivationPlatform.Market__c != '',CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL')), OR(objActivationPlatform.Market_Sector__c == '', NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARITIME')))), false, true)
+                                                        ,IF(AND(OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'))), AND(AND(objActivationPlatform.Market__c != '', CONTAINS(UPPER(objActivationPlatform.Market__c), 'COMMERCIAL')), OR(objActivationPlatform.Market_Sector__c == '', NOT(CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARITIME')))))), false, true)
+                                                        ,IF(AND(NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7')),NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11'))), false, true)
+                                                        ,IF(AND(OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),OR(AND(NOT(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE')),CONTAINS(UPPER(objActivationPlatform.Market__c),'COMMERCIAL'),IF(AND(objActivationPlatform.Market__c != '' ,objActivationPlatform.Market_Sector__c != '', OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'MIL/GOV'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MIL MARITIME')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE')))), true, false))), true, false)), true, false)}"
+                                              disabled="{!IF(OR(mapdisableActivationServiceTabs['IP_MobileCast'] > ActivationStatus.Services_Type_Last_Active_Tab_Index__c, AND(!objActivationService.Is_Selected__c, objActivationService.Special_Instructions__c == '')),true,false)}"
+                                              onTabEnter="showLoadingDiv();btnSelectednavigateNext('IP_MobileCast');">
+                                        <apex:outputPanel rendered="{!(ActivationStatus.Services_Active_Tab__c == 'IP_MobileCast')}" >
+                                            
+                                            <h2 class="pad-bottom">IP-MobileCast</h2>
+                                            
+                                            <c:Activation_Entertainment_Programming EntertainmentActivationService="{!objActivationService}" rendered="{!IF(AND(objActivationPlatform.Market__c != '' ,objActivationPlatform.Market_Sector__c != '', OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'MIL/GOV'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MIL MARITIME')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'),OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c != 'Yes'))), false, true)}"  />
+                                            
+                                            <c:Activation_IndependentNewsSports id="IndependentNewsSports"  IndependentActivationService="{!objActivationService}" rendered="{!IF(AND(objActivationPlatform.Market__c != '' ,objActivationPlatform.Market_Sector__c != '', OR(AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'MIL/GOV'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MIL MARITIME')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V3')),AND(CONTAINS(UPPER(objActivationPlatform.Market__c), 'LEISURE'),CONTAINS(UPPER(objActivationPlatform.Market_Sector__c), 'MARINE'),OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11')),objActivationPlatform.Confirm_if_boat_yacht_is_chartered__c != 'Yes'))), false, true)}"/> 
+                                            
+                                            <c:Activation_Operation_Data_Services DataServicesActivationService="{!objActivationService}" />
+                                            
+                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="mobileCastBackBtn" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                    <apex:param value="Voice_Lines" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="mobileCastNextBtn" value="Next >" onclick="showLoadingDiv();" action="{!goToTab}" >
+                                                    <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+                                                </apex:commandLink>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:commandLink styleClass="clear right" value="Exit" onclick="showgenericpopupExit('80%');return false;" /> 
+                                    </apex:tab>
+                                    <!-- **IP-MobileCast Tab End  ** -->
+                                    
+                                    <!-- **Additional Plans & Services Tab Start  ** -->
+                                    <apex:tab label="Optional Plans and Services" name="Additional_Plans_and_Services" id="Additional_Plans_and_Services" disabled="{!IF(OR(mapdisableActivationServiceTabs['Additional_Plans_and_Services'] > ActivationStatus.Services_Type_Last_Active_Tab_Index__c, AND(!objActivationService.Is_Selected__c, objActivationService.Special_Instructions__c == '')),true,false)}" onTabEnter="showLoadingDiv();btnSelectednavigateNext('Additional_Plans_and_Services');">
+                                        <apex:outputPanel rendered="{!(ActivationStatus.Services_Active_Tab__c == 'Additional_Plans_and_Services')}" >
+                                            
+                                            <h2 class="pad-bottom">Optional Plans and Services</h2>
+                                            
+                                            <c:Activation_Static_IP_Component StaticIPActivationService="{!objActivationService}" />                                   
+                                            
+                                            <c:Activation_OpenPort_Component OpenPortActivationService="{!objActivationService}" rendered="{!OR(CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V7'),CONTAINS(objActivationService.VSAT_Antenna_Hardware__c, 'V11'))}"/>
+                                            
+                                            <c:Activation_CommBox_Component CommBoxActivationService="{!objActivationService}"/>
+                                            
+                                             <c:Activation_CREWlink_Component /> <!--  CREWlinkActivationService="{!objActivationService}" -->
+                                            
+                                            <div class="clear" style="padding-bottom:20px;"></div>
+                                            <div class="button-bar clear">
+                                                <apex:commandLink styleClass="button left" id="additionalPlanBackBtn" value="< Back" onclick="showLoadingDiv();backOptionalPlans();">
+                                                </apex:commandLink>
+                                                <apex:commandLink styleClass="button right" id="additionalPlanNextBtn" value="Continue to OneCare >" onclick="showLoadingDiv();" action="{!goToTab}" >
+                                                    <apex:param value="Technical_Assistance_Package" assignTo="{!selectedTab}" />
+                                                </apex:commandLink>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:commandLink styleClass="clear right" value="Exit" onclick="showgenericpopupExit('80%');return false;" /> 
+                                    </apex:tab>
+                                    <!-- **Additional Plans & Services Tab End  ** -->
+                                </apex:tabPanel> 
+                            </div>
+                                <script>
+                            j$("[data-role='collapsible']").collapsible({
+                                collapse: function( event, ui ) {
+                                    j$(this).children().next().slideUp(500);
+                                },
+                                expand: function( event, ui ) {
+                                    j$(this).children().next().hide();
+                                    j$(this).children().next().slideDown(500);
+                                }
+                                
+                            });
+                            </script>
+                            
+                        </apex:outputPanel>
+                        
+                         <!-- /popup confirm Flex change -->
+                        <div data-role="popup" style="min-width:400px !important; max-width:800px !important;" id="confirmchange" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1"></h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                                <input type="hidden" value="" id="selectedProductId"/>
+                                <input type="hidden" value="" id="selectedProductFeatureName"/>
+                                <span>Are you sure you want to change your plan selection? IPMC subscriptions are not available with a Flex plan.</span>
+                                <div class="center">
+                                    <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();updateServiceMethodrate(j$('#confirmchange').find('#selectedProductId').val() , j$('#confirmchange').find('#selectedProductFeatureName').val());">Yes</a> 
+                                    <a href="#" class="pad-left ui-link" data-rel="back">Cancel</a>                           
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /popup confirm Flex change -->
+                        
+                        <!-- /popup save & exit contents -->
+                        <div data-role="popup" id="saveExit" style="min-width:400px !important; max-width:600px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();updateActivationServiceclose();">Yes</a> 
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                            </div>
+                        </div>
+                        <!-- /popup save & exit contents -->
+                        
+                         <!-- /popup exit contents -->
+                        <div data-role="popup" id="Exit" style="min-width:400px !important; max-width:600px !important;margin: auto !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Exit Activation Order</h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                                <span>Are you sure you want to exit the activation order? <div class="notes">Selections on this page may not be saved.</div></span>
+                                <div class="center">
+                                    <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();updateActivationServiceclose();">Exit &amp; Return to Home</a> 
+                                    <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /popup exit contents -->
+                        
+                        <!-- Terms popup contents --> 
+                        <c:Activation_Terms_Component referencePageName="{!UPPER($CurrentPage.Name)}"/>
+                        <!-- Terms popup contents --> 
+                        
+                        <!-- /popup open_more contents --> 
+                        <div data-role="popup" id="open_more" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Open Rate Plan Details</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <ul class="terms pad-left">
+                                    <li>All plans offer the highest shore-to-ship and ship-to-shore speeds available for each antenna system</li>
+                                    <li>Unrestricted access to all applications and protocols</li>
+                                    <li>Prioritization of the subscriber’s traffic on the network with "Business Class Service"</li>
+                                    <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>1</sup></li>
+                                    <li>Large data allowances with extremely affordable "over-plan" rates</li>
+                                    <li>2 phone lines available for TracPhone Enhanced Voice Service</li>
+                                    <li>Economical long distance phone rates to land or mobile starting as low as $0.05/minute!</li>
+                                </ul>
+                                <hr/>
+                                <p class="notes">
+                                    <sup>1</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- /popup open_more contents --> 
+                        
+                        <!-- /popup metered_more contents --> 
+                        <div data-role="popup" id="metered_more" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Metered Rate Plan Details</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <ul class="terms pad-left">
+                                    <li>All plans offer the highest speeds available for antenna system shore-to-ship  and ship-to-shore</li>
+                                    <li>Unrestricted access to all applications and protocols</li>
+                                    <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>1</sup></li>
+                                    <li>Affordable "over-plan" rates</li>
+                                    <li>2 phone lines available for TracPhone Enhanced Voice Service<sup>2</sup></li>
+                                    <li>Economical long distance phone service offers one single price WORLDWIDE for both incoming and outgoing calls to land or mobile.</li>
+                                </ul>
+                                <hr/>
+                                <p class="notes">
+                                    <sup>1</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.<br/>
+                                    <sup>2</sup>TracPhone V3<small>IP</small>/V3 has one available phone line
+                                </p>
+                            </div>
+                        </div>
+                        <!-- /popup metered_more contents -->    
+                        
+                        <!-- /popup fixed_more contents --> 
+                        <div data-role="popup" id="fixed_more" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Fixed Rate Plan Details</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <ul class="terms pad-left">
+                                    <li>Speed-based plans<sup>1</sup> with clear monthly data allotments</li>
+                                    <li>100% transparency with easy-to-use alerts, system configuration, and crew allocation tools through the mykvh.com portal<sup>2</sup> </li>
+                                    <li>Choice of Bandwidth Management Control method</li>
+                                    <li>Restrictions imposed on access to data-intensive applications and protocols (streaming, video, P2P, VPN)</li>
+                                    <li>2 phone lines available for TracPhone Enhanced Voice Service</li>
+                                    <li>Election of either a monthly or 2-hour Bandwidth Management Control (BMC) interval is mandatory. BMC initiates a temporary speed reduction when data usage exceeds the MB allowance associated with the selected plan for the selcted interval. Plan speed is restored at the beginning of the following month or 2-hour interval, as elected.</li>
+                                    <li>Economical long distance phone rates to land or mobile starting as low as $0.05/minute!</li>
+                                </ul>
+                                <hr/>
+                                <p class="notes">
+                                    <sup>1</sup>  Data rates are rate plan maximums.<br/>
+                                    <sup>2</sup> System configuration and crew allocation tools only available with TracPhone V11 antenna systems &amp; V<small>IP</small>-series systems.<br/>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- /popup fixed_more contents --> 
+                        
+                         <!-- /popup iridium_more contents -->
+                        <div data-role="popup" id="iridium_more" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">mini-VSAT Broadband/Iridium OpenPort Bundle Rate Plan Details</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <ul class="terms pad-left">
+                                    <li>All plans offer speeds of up to 2 Mbps shore-to-ship/128 Kbps ship-to-shore using mini-VSAT Broadband data service, and up to 134 Kbps using Iridium OpenPort broadband service</li>
+                                    <li>Unrestricted access to all applications and protocols</li>
+                                    <li>Affordable "over-plan" rates</li>
+                                    <li>Includes 1 phone line for TracPhone Enhanced Voice Service and 2 phone lines for Iridium OpenPort Voice Service</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /popup iridium_more contents -->
+                    
+                        <!-- /popup open-terms contents --> 
+                       <!-- <div data-role="popup" id="open-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Open - Standard Plan Terms</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <ul class="pad-left pad-top terms">
+                                    <li>All prices are in USD and do not include any taxes or fees that may apply.</li>
+                                    <li>All rate plans are based on a minimum 1-year contract. Contract term automatically renews on an annual basis.</li>
+                                    <li>Published data rates are rate plan maximums and may vary in different regions and under different conditions. Subscribers will typically experience speeds ship-to-shore that are 70-80% of the published data rates.</li>
+                                    <li>All services and plans are subject to the KVH Airtime Services End User Agreement.</li>
+                                    <li>Subscribers are permitted to change subscription plans and suspend service with certain restrictions. For complete details, see KVH mini-VSAT Broadband “Airtime Rate Plan Changes and Suspension Policies” and “Airtime Rate Plan Change/Suspension Form” at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                    <li>A maximum of 5 Global Static IP addresses are available per modem.</li>
+                                    <li>KVH offers first voice line at no charge and second voice line at $20/month. KVH-assigned voice line phone numbers for either line are provided at no charge. User-specified voice line phone numbers for either line are $20/month.</li>
+                                    <li>Virtual local phone numbers can be added for a monthly fee of $20 per number (5 max per voice line) where available and are subject to in-country regulations. The list of available area/city codes worldwide can be found at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                    <li>Outgoing calls and faxes are subject to long distance charges.  See details on the “TracPhone V11/V11<small>IP</small> &amp; V7/V7<small>IP</small> – Enhanced Voice Service – Open, Unrestricted, and Fixed Plans Long Distance Rate Sheet”.</li>
+                                </ul>
+                            </div>
+                        </div> -->
+                        <!-- /popup open-terms contents --> 
+                        
+                        <!-- /popup openflex-terms contents --> 
+                       <!-- <div data-role="popup" id="openflex-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Open - Flex Plans Terms</h1>
+                            </div>
+                            <div role="main" class="ui-content">
+                                <strong>Standard Plan Terms</strong>
+                                <ul class="pad-left pad-top terms">
+                                    <li>All prices are in USD and do not include any taxes or fees that may apply.</li>
+                                    <li>All rate plans are based on a minimum 1-year contract. Contract term automatically renews on an annual basis.</li>
+                                    <li>Published data rates are rate plan maximums and may vary in different regions and under different conditions. Subscribers will typically experience speeds ship-to-shore that are 70-80% of the published data rates.</li>
+                                    <li>All services and plans are subject to the KVH Airtime Services End User Agreement.</li>
+                                    <li>Subscribers are permitted to change subscription plans and suspend service with certain restrictions. For complete details, see KVH mini-VSAT Broadband “Airtime Rate Plan Changes and Suspension Policies” and “Airtime Rate Plan Change/Suspension Form” at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                    <li>A maximum of 5 Global Static IP addresses are available per modem.</li>
+                                    <li>KVH offers first voice line at no charge and second voice line at $20/month. KVH-assigned voice line phone numbers for either line are provided at no charge. User-specified voice line phone numbers for either line are $20/month.</li>
+                                    <li>Virtual local phone numbers can be added for a monthly fee of $20 per number (5 max per voice line) where available and are subject to in-country regulations. The list of available area/city codes worldwide can be found at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                    <li>Outgoing calls and faxes are subject to long distance charges.  See details on the “TracPhone V11/V11<small>IP</small> &amp; V7/V7<small>IP</small> – Enhanced Voice Service – Open, Unrestricted, and Fixed Plans Long Distance Rate Sheet”.</li>
+                                </ul>
+                                <strong class="pad-top">Open - Flex Plan Additional Terms</strong>
+                                <ul class="pad-left pad-top terms">
+                                    <li>Suspension is permitted for 1-month increments with no minimum or maximum limit. For complete details, see KVH mini-VSAT Broadband “Flex Airtime Rate Plan Changes and Suspension Policies” and “Flex Airtime Rate Plan Change &amp; Suspension Form” at www.kvh.com/mvbcustomercenter.</li>
+                                    <li>Fees for remote diagnostics and monitoring service, KVH OneCare™ Technical Assistance Package, VoIP lines, and fax server remain in effect during the suspension period.</li>
+                                    <li>A $100 fee applies for each rate plan service suspension and for each rate plan service reactivation and each requires the submission of a “Flex Airtime Rate Plan Change &amp; Suspension Form”.</li>
+                                    <li>IP-MobileCast™ is not available with Flex Plans.</li>
+                                </ul>
+                            </div>
+                        </div> -->
+                        <!-- /popup openflex-terms contents -->
+                    
+                        <!-- /popup iridium-terms contents -->
+                   <!-- <div data-role="popup" id="iridium-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                            <h1 class="ui-title" role="heading" aria-level="1">mini-VSAT Broadband/Iridium OpenPort Bundle Terms</h1>
+                        </div>
+                        <div role="main" class="ui-content">
+                            <ul class="pad-left pad-top terms">
+                                <li>All prices are in USD and do not include any taxes or fees that may apply.</li>
+                                <li>Contract term automatically renews on an annual basis</li>
+                                <li>Published data rates are rate plan maximums and may vary in different regions and under different conditions. Subscribers will typically experience speeds ship-to-shore that are 70-80% of the published data rates.</li>
+                                <li>All services and plans are subject to the KVH Airtime Services End User Agreement.</li>
+                                <li>MB charges apply to both mini-VSAT Broadband and Iridium OpenPort service and either service can be applied to the monthly allotment. Plan changes are not permitted. </li>
+                                <li>Subscribers are not permitted to change subscription plans but are permitted to suspend service with certain restrictions. For complete suspension details, see KVH mini-VSAT Broadband “Airtime Rate Plan Changes and Suspension Policies” and “Airtime Rate Plan Change/Suspension Form” at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                <li>A maximum of 5 Global Static IP addresses are available per TracPhone V3<small>IP</small> modem. See www.kvh.com/staticip for details. <em>Note: Static IPs do not work when connected to the Iridium service.</em></li>
+                                <li>A KVH-assigned voice line phone number is provided at no charge. A userspecified voice line phone number is $20/month. </li>
+                                <li>Virtual local phone numbers can be added for a monthly fee of $20 per number (5 max per voice line) where available and are subject to in-country regulations. The list of available area/city codes worldwide can be found at <a href="http://www.kvh.com/mvbcustomercenter" target="_blank" class="ui-link">www.kvh.com/mvbcustomercenter</a>.</li>
+                                <li>On mini-VSAT Broadband service, both incoming and outgoing calls are charged at $0.49/minute. A few select countries and satellite phone services are blocked. Contact KVH Airtime Services for special rates for these areas and services. </li>
+                                <li>On Iridium OpenPort service, outgoing calls are charged at $0.49/minute. Calls to other satellite networks are $9.99/minute. Incoming calls are not charged to the vessel.</li>
+                                <li>In order to operate within Russia, Iridium devices must be registered with Iridium’s Russian affiliate (Iridium Communications OOO). Users may register their Iridium SIM card at <a href="http://www.iridium-russia.com" target="_blank" class="ui-link">www.iridium-russia.com</a></li>
+                            </ul>
+                        </div>
+                    </div> -->
+                     <!-- /popup iridium-terms contents -->
+                </apex:form>
+                
+                <!-- ** remodal popup Start ** -->
+                <div class="remodal" data-remodal-id="servicesinfo" id="servicesinfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+                    <div style="display: inherit; width:100%;text-align:center;" >
+                        <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+                        <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageservicesinfo"></div>
+                    </div>
+                    <div style="text-align:center;">
+                        <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >OK</a>
+                    </div>
+                </div>
+                <!-- ** remodal popup End ** -->
+            </div>
+        </body>
+    </html>
+</apex:page>

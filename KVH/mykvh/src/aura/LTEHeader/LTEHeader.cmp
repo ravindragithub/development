@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+	<!-- <ltng:require styles="{!$Resource.MASTERAppsStyles}" />-->
+    <div>
+        <div class="lte-header">
+            
+            <div class="kvh-logo">
+                <img src="{!$Resource.KVHLogoWhite}" />
+            </div>
+            
+            <div class="lte-icon">
+                <img src="{!$Resource.MVBManagerDome}" />
+            </div>
+            
+            <div class="lte-title">
+                <h1>LTE Activation</h1>            
+            </div>
+            
+        </div>
+    </div>
+</aura:component>

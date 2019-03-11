@@ -1,0 +1,6 @@
+<aura:component >
+  <aura:attribute name="terminalStatus" type="HTSOSS_hts_terminals_status" description="This is description" />
+  This is text inside a Lightning Component!
+  
+  <c:terminalStatusCard_cmp />
+</aura:component>

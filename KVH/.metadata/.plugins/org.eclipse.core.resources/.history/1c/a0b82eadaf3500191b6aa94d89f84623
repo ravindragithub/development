@@ -1,0 +1,46 @@
+<aura:component >
+    
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="systemRequired" type="boolean"/>
+    
+    <lightning:card title="Product Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Receiver Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Credit Card Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Receiver Shipping Location">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="sdsd"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

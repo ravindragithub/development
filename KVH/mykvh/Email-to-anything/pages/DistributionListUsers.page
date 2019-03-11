@@ -1,0 +1,25 @@
+<apex:page controller="ortoo_e2a.EmailDistributionListUsers"  tabStyle="ortoo_e2a__Email_Distribution_List__c">
+    <apex:stylesheet value="{!$Resource.ortoo_e2a__EmailPageCSS}" /> 
+    <apex:form >
+    <apex:sectionHeader title="Users for distribution list: {!DistributionListName}"/>
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!DLUsers}" var="US" id="user_list">
+            <apex:column headerValue="Action" rendered="{!ActionIsRendered}">
+                <apex:commandLink action="{!DeleteDLUser}" reRender="user_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                    <b>Del</b>
+                    <apex:param name="dluserid" value="{!US.Id}" assignTo="{!DeleteDLUserID}"/>
+                </apex:commandLink>
+            </apex:column>
+            <apex:column value="{!US.User__r.LastName}, {!US.User__r.FirstName}" headerValue="Name"/>
+            <apex:column value="{!US.ortoo_e2a__User__c}"/>
+            <apex:column value="{!US.User__r.Email}"/>
+        </apex:pageBlockTable>
+        <apex:toolbar styleClass="pagingToolBar">
+        <apex:toolbarGroup itemSeparator="grid" location="right">
+            <apex:commandLink action="{!PreviousPage}"  rendered="{!HasPrevious}">&lt;Previous page</apex:commandLink>
+            <apex:commandLink action="{!NextPage}" rendered="{!HasNext}">Next page&gt;</apex:commandLink>
+        </apex:toolbarGroup>
+    </apex:toolbar>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

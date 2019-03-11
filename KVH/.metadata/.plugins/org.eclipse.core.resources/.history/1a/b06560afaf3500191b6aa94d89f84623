@@ -1,0 +1,72 @@
+.THIS h1, .THIS h2, .THIS h3, .THIS h4, .THIS h5, .THIS h6{
+    font-family: sans-serif;
+}
+.THIS h2 {
+    font-size: 1.5em;
+    font-weight: lighter;
+    color: #666;
+}
+.THIS p, .THIS li, .THIS a {
+    color: #555;
+    line-height: 125%;
+}
+.THIS h1, .THIS h2, .THIS h3, .THIS h4, .THIS p, .THIS li {
+    margin-bottom: 15px;
+    line-height: normal;
+}
+.THIS h4 {
+    font-size: 1em;
+    font-weight: bold;
+}
+.THIS .pad-top-10 {
+    padding-top: 10px;
+}
+.THIS .notes {
+    font-weight: normal;
+    font-size: 90%;
+    font-style: italic;
+}
+.THIS .padinside{
+    padding: 20px;
+}
+.THIS .whitebg{
+    background: #fff;
+    max-width: 1000px;
+}
+.THIS body{
+    background : #F3F3F3;
+}
+.THIS h1 {
+    font-size: 1.7em;
+    padding-bottom: 10px;
+}
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #cc0000;
+    border-radius: 3px;
+    font-size: 95%;
+}
+.THIS h1{
+     font-weight: lighter;
+    font-family: sans-serif;
+}
+.THIS p, .THIS li, .THIS a{
+    color: #555;
+    line-height: 125%;
+}
+.THIS h1, .THIS h2, .THIS h3, .THIS h4, .THIS p, .THIS li {
+    margin-bottom: 15px;   
+}
+.THIS center{
+    margin-bottom: 15px;
+    text-align: left;
+}
+.THIS center b{
+    font-size: 1.3em;
+    font-weight: lighter;
+}

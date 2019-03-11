@@ -1,0 +1,119 @@
+<apex:page standardcontroller="Case" showHeader="false" extensions="PartnerSupportCaseController" standardstylesheets="false" cache="false">
+    <apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    <script>
+        var $j = jQuery.noConflict();   
+    $j(document).ready(function(){
+        console.log(valueSelect);
+        var radios = $j("input[type='radio']");
+        radios.attr('name', 'singleRadio');
+        
+        //if none selected select the first.. 
+       /* if(valueSelect==undefined && radios.size()>0 )
+        {
+            radios[0].checked=true;
+            valueSelect='Cannot find a document';
+        }*/
+        
+        // $j('.btn').removeClass('btn').addClass('kvhbtn');
+        
+        
+    }); 
+    
+    var valueSelect; 
+    function setSelectionLocal(x) 
+    {
+        valueSelect = x;
+        $('[id$="symptom"]').val(valueSelect);        
+    }
+    
+     
+    </script>
+    
+     
+    <apex:form id="form" > 
+        <c:spinner />
+        <apex:pagemessages />
+        
+        <apex:pageblock rendered="{!firstpage}">
+            <style>
+            body {
+            background-color:#f3f3f3;
+            }
+            </style>
+            
+            <div class="partner_portal">
+                
+                <div class="width-20 left">
+                    <ul class="support-sidenav">
+                        <li><a href="https://partners.kvh.com/s/supportlanding" target="_parent">Portal Support Main</a></li>
+                        <li><a href="https://partners.kvh.com/s/requestinfo" target="_parent">Airtime Services Support</a></li>
+                        <li><a href="https://partners.kvh.com/s/reportproblem" target="_parent">Technical Support</a></li>
+                        <li class="active"><a href="https://partners.kvh.com/s/partnersupportcase" target="_parent">Portal Help and Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="width-75 right">                   
+                    <a href="https://partners.kvh.com/s/supportlanding" class="button right">BACK</a>
+                    <h1>Partner Portal Help and Feedback</h1>
+                    <p>We’re sorry that you are having a problem or issue with the KVH Partner Portal. With the information you provide we will create a KVH Case and work to remedy your issue as quickly as possible.
+                    </p>
+                    <p>
+                        If you are providing feedback, thank you! We are always working to make the Portal better and appreciate your comments. 
+                    </p>
+                    <p>
+                        Please select from the following options:
+                    </p>
+                    <h3 style="margin: 2px;">Product Resources</h3>
+                    <apex:selectRadio onclick="setSelectionLocal(this.value);" value="{!valueSelected}" layout="pageDirection">
+                        <apex:selectOptions value="{!radio1}"/>
+                    </apex:selectRadio>
+                    
+                    <h3 style="margin: 2px;">Learning Center</h3>
+                    <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                        <apex:selectOptions value="{!radio2}"/>
+                    </apex:selectRadio>
+                    
+                    <h3 style="margin: 2px;">General</h3>
+                    <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                        <apex:selectOptions value="{!radio3}"/>
+                    </apex:selectRadio>
+                    
+                    <h3 style="margin: 2px;">Need to update company information? </h3>
+                    <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                        <apex:selectOptions value="{!radio4}"/>
+                    </apex:selectRadio>
+                    <br/>
+                    <h3 style="margin: 2px;">Please provide details on your issue or feedback:</h3>
+                    <apex:inputfield value="{!srvCase.Description}"/>
+                        <p>
+                        Attach File <span style="font-style: italic; font-size: smaller;"> (attachments must be less than 25Mb)</span>:
+                            </p>
+                    <p>
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        
+                    </p>
+                        <div class="button-bar" style="margin-top: 20px;">
+                            <a href="https://partners.kvh.com/s/supportlanding" class="button left">BACK</a>
+                            <apex:commandButton value="Submit" styleClass="right button button-blue" onclick="submitclick('CreateCase()'); return false;" />
+                            <apex:actionFunction name="CreateCase" action="{!CreateCase}"/>
+                            <apex:inputHidden id="symptom" value="{!srvCase.Case_Symptom__c}"/>
+                        </div>
+                </div>
+            </div>            
+        </apex:pageblock>    
+    </apex:form>
+    <script>
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+    </script>   
+    
+        
+</apex:page>

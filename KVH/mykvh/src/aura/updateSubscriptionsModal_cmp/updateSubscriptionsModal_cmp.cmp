@@ -1,0 +1,78 @@
+<aura:component controller="SubscriptionAssigmentLightningController">
+    <aura:attribute name="newSubscriptionRecord" type="SBQQ__Subscription__c" />
+    <aura:attribute name="oldSubscriptionRecord" type="SBQQ__Subscription__c" 
+                    default="{ 'sobjectType': 'SBQQ__Subscription__c'}" />
+    <aura:attribute name="listSubscriptionRecord" type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="selectedProductId" type="Id" />
+    <aura:registerEvent name="oChangeSubsEvent" type="c:ChangeSubscription_Evt"/>
+    <aura:handler name="oselectedProductEvent" event="c:selectedProductEvent" action="{!c.handleComponentEvent}"/>
+    
+    <div class="slds-modal__container">		
+        
+        <div class="slds-modal__header">
+            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#close'}" />
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 id="header43" class="slds-text-heading--medium">Subscription Data : {!v.newSubscriptionRecord.Name}</h2>		
+        </div>		
+        <div class="slds-modal__content slds-p-around--medium">  
+            <div class="slds-grid slds-grid--pull-padded">
+                <div class="slds-col--padded">
+                    
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="Quantity">Quantity</label>
+                        <div class="slds-form-element__control">
+                            
+                            <ui:inputNumber class="slds-input" value="{!v.newSubscriptionRecord.SBQQ__Quantity__c}"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="Product">Product</label>
+                        <div class="slds-form-element__control">
+                            <c:customLookup SearchKeyWord="{!v.newSubscriptionRecord.SBQQ__Product__r.Name}" searchObjective="Update_Subscription" />
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="Asset">Asset</label>
+                        <div class="slds-form-element__control">
+                            <ui:outputtext aura:Id="outputTextId"  class="slds-input" value="{!v.newSubscriptionRecord.Asset__r.Name}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="startDate">Start Date</label>
+                        <div class="slds-form-element__control">
+                            <ui:inputDate aura:id="startDate"
+                                          class="slds-input slds-input-date"
+                                          value="{!v.newSubscriptionRecord.SBQQ__SubscriptionStartDate__c }"
+                                          displayDatePicker="true"
+                                          format="MM/DD/YYYY"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="endDate">End Date</label>
+                        <div class="slds-form-element__control">
+                            <ui:inputDate aura:id="startDate"
+                                          class="slds-input slds-input-date"
+                                          value="{!v.newSubscriptionRecord.SBQQ__SubscriptionEndDate__c }"
+                                          displayDatePicker="true"
+                                          format="MM/DD/YYYY"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="inputSample2">Price in (<ui:outputText value="{!v.newSubscriptionRecord.SBQQ__Product__r.CurrencyIsoCode}"/>)</label>
+                        <div class="slds-form-element__control">
+                            <ui:outputNumber class="slds-input" value="{!v.newSubscriptionRecord.SBQQ__Product__r.Standard_Pricebook_Price__c}"/>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>		
+        <div class="slds-modal__footer">		
+            <button class="slds-button slds-button--neutral" onclick="{!c.submitSubscription}">Submit</button>
+            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal}">Close</button>
+        </div>		
+    </div>
+</aura:component>

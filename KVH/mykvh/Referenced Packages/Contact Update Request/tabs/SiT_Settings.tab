@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Deprecated!! Please make this tab hidden for all profiles. The new SiT Settings are configured in the Custom Settings and as Letterhead/Email templates.</description>
+    <icon>Contact_Update_Request/contact_update_request_button.png</icon>
+    <label>Contact Update Request</label>
+    <mobileReady>false</mobileReady>
+    <motif>Custom290: TV Widescreen</motif>
+    <page>SiTSettings</page>
+</CustomTab>

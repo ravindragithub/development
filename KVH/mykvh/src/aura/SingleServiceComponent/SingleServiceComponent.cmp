@@ -1,0 +1,81 @@
+<!--
+ - Created by Jai Chaturvedi on 15/03/2017.
+ -->
+
+<aura:component description="SingleServiceComponent.
+This component is used to each block on top row of available services.
+This is called from PartnerMainServicesComponent for each option available.">
+
+    <aura:attribute name="buttonLabel"
+                    type="String"
+                    description="Stores the button label"/>
+    <aura:attribute name="serviceLabel"
+                    type="String"
+                    description="Stores the heading of service block"/>
+    <aura:attribute name="description"
+                    type="String"
+                    description="Stores the description text for service block"/>
+    <aura:attribute name="icon"
+                    type="String"
+                    description="Stores the lightning utility icon name"/>
+    <aura:attribute name="customicon"
+                    type="String"
+                    description="Stores the custom icon name"/>
+    <aura:attribute name="urlLink"
+                    type="String"
+                    description="Stores the URL for button click."/>
+    <aura:attribute name="colorCode"
+                    type="String"
+                    description="Stores the back-ground color code for service block"/>
+    <aura:attribute name="colorCodehover"
+                    type="String"
+                    description="Stores the back-ground color code for mouse hover"/>
+    
+    <aura:attribute name="gridClass"
+                    type="String"
+                    description="Stores the specific block grid width"/>
+    <aura:attribute name="selectedView"
+                    type="String"
+                    description="Stores the button label"/>
+	<style>
+        .servicebg{
+        	background: {!v.colorCode}
+        }
+        .servicebg:hover{
+        	background: {!v.colorCodehover};
+        	cursor: pointer;
+        }
+    </style>
+
+    <div class="servicebg" style="padding:20px;">
+        <div class="slds-align--absolute-center">
+            <aura:if isTrue="{!v.customicon != NULL}">
+                <img class="customicon" src="{!  '/resource/icons/' + v.customicon}"/>
+                <aura:set attribute="else">
+                    <lightning:icon class="lighticon"
+                                    iconName="{!v.icon}"
+                                    variant="inverse"
+                                    size="small"
+                                    />
+                </aura:set>
+            </aura:if> 
+        </div>
+
+        <div class="slds-text-heading--medium slds-align--absolute-center"
+             style="color:#fff;font-size: 1.7em;margin-top: 4px;">
+                {!v.serviceLabel}
+        </div>
+
+        <div class="slds-align--absolute-center slds-m-top--small  kvhDescription width-80" >
+            {!v.description}
+        </div>
+
+        <div class="slds-align--absolute-center slds-m-top--medium">
+            <lightning:button variant="neutral"
+                              label="{!v.buttonLabel}"
+                              onclick="{! c.handleClick }"
+                              class="kvhButton" />
+        </div>
+    </div>
+    
+</aura:component>

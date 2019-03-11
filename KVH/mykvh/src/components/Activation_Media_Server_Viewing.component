@@ -1,0 +1,99 @@
+<apex:component controller="Act_Entertainment_Programming_Ctrl" allowDML="true" id="MediaServer_Comp_Id">
+    
+    <apex:attribute name="MediaServerActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <style>
+        .settopboxoption{
+        display : none;
+        }
+    </style>
+    
+   <script>
+    j$(function() {
+        j$('input[type=radio].mediaserverradio').each(function(){
+            if(j$(this).val() == "true"){
+                j$(this).prop('checked', true);
+                if(j$(this).data('selname').indexOf('None') >=0){
+                    j$('.settopboxoption').show();
+                }else{
+                    j$('.settopboxoption').hide();
+                }
+            }
+        });
+        
+        j$( "input[type=radio].mediaserverradio" ).on( "click", function() {
+            if(j$(this, ":checked").data('selname').indexOf('None') >=0){
+                j$('.settopboxoption').show();
+            }else{
+                j$('.settopboxinputoptionnumber').val('');
+                j$('.settopboxoption').hide();
+            }
+        });
+    });
+    </script>
+    
+    <apex:outputPanel id="MediaServerMainId">
+       <!-- <a href="#ipmc-terms" data-rel="popup" data-position-to="window" data-transition="fade" class="right ui-link" aria-haspopup="true" aria-owns="ipmc-terms" aria-expanded="false"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> View terms</a> -->
+        <h2>Media Server</h2>
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+        </div>
+        <!--** div contain error msg contents -End **-->
+        <div class="two-col left" style="margin-bottom: -10px;">
+            <p class="pad-bottom">
+                <label>Media Server Serial Number:</label> 
+                <apex:inputText id="Media_Server_Serial_Number__c" style="width:60%; margin-left:5px;" value="{!objActivationService.Media_Server_Serial_Number__c}" styleClass="requiredRedMarkFld" html-data-role="none" />
+            </p>
+        </div>
+        <div class="clear"></div>
+        <h2>Viewing Options</h2>
+        
+        
+        <table class="collapse-panels1" id="MediaTable">
+            <thead>
+                <tr>
+                    <th colspan="5" class="text-left requiredRedMarkFld">
+                        <h3 style="font-size: 1.6em;">Device Licenses</h3>
+                        <p style="font-size: 1.2em;font-weight: 500;">Select number of devices that will be used to access content onboard, including iPads, iPhones, Android phones/tablets, Macs and PCs. <strong>Note: Do not include Set-top Boxes in device count.</strong></p>
+                    </th>
+                </tr>
+                <tr>
+                    <td class="row-hdr"></td>
+                    <td class="row-hdr">Number of Devices</td>
+                    <td class="row-hdr"></td>
+                    <td class="row-hdr"></td>
+                    <td class="row-hdr text-center">$/Month</td>
+                </tr>
+            </thead> 
+            <tbody>
+                <apex:repeat value="{!lstwrapDynamicMediaRatePlanTable}" var="objwrapDynamicMediaRatePlanTable">
+                    <tr>
+                        <td class="width-5">
+                            <input type="radio" name="mediaserverradio" class="mediaserverradio" data-role="none" data-selname="{!objwrapDynamicMediaRatePlanTable.strPlanProductName}" value="{!objwrapDynamicMediaRatePlanTable.boolIsSelectedProduct}"/>
+                            <apex:inputHidden html-data-role="none" value="{!objwrapDynamicMediaRatePlanTable.strPlanProductId}" html-class="selectedproductId"/>
+                            <apex:inputHidden html-data-role="none" value="{!objwrapDynamicMediaRatePlanTable.strPlanProductName}" html-class="selectedproductName"/>
+                        </td>
+                        <td class="text-left width-25" style="vertical-align: middle;">
+                            <div style="float:left;">
+                                <h4>{!objwrapDynamicMediaRatePlanTable.strPlanProductName}</h4>
+                            </div>
+                        </td>
+                        <td class="text-right width-20" style="text-align: right;">
+                            <apex:outputPanel rendered="{!IF(CONTAINS(UPPER(objwrapDynamicMediaRatePlanTable.strPlanProductName), 'NONE'),true,false)}" styleClass="settopboxoption">
+                                Set-Top Box Number :      
+                            </apex:outputPanel>
+                        </td>
+                        <td class="text-left" >
+                            <apex:outputPanel rendered="{!IF(CONTAINS(UPPER(objwrapDynamicMediaRatePlanTable.strPlanProductName), 'NONE'),true,false)}" styleClass="settopboxoption">
+                                <apex:inputText style="width:60%;margin:0px;" styleClass="settopboxinputoptionnumber" html-data-role="none" rendered="{!CONTAINS(UPPER(objwrapDynamicMediaRatePlanTable.strPlanProductName), 'NONE')}" value="{!objActivationHardware.Below_Decks_Serial_Number__c}" />
+                            </apex:outputPanel>
+                        </td>
+                        <td class="width-15">{!objwrapDynamicMediaRatePlanTable.strPlanProductPrice}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:outputPanel>
+    
+</apex:component>

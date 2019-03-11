@@ -1,0 +1,324 @@
+<apex:page controller="ortoo_e2a.GlobalSettingsController" id="thePage" tabStyle="Global_Settings__tab">
+<apex:includeScript value="/support/console/33.0/integration.js"/>
+<script type="text/javascript">
+
+	function openTemplateSelectorPopup(lookuptype)
+    {
+        
+        var url="/apex/ortoo_e2a__TemplateSelector?lookuptype=" + lookuptype;
+        openPopup(url, "ortoo", 750, 410, "left=100,top=100,width=750,height=410,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    function templatePassBack(templateId,templateType,lookupType)
+    {
+        closePopup();
+        if(lookupType=='new'){
+        document.getElementById('{!$Component.thePage.theform.new_template_id}').value = templateId;
+        rerenderEmailTemplate();
+        }
+        else if(lookupType=='reply'){
+        document.getElementById('{!$Component.thePage.theform.reply_template_id}').value = templateId;
+        rerenderReplyEmailTemplate();
+        }
+        else if(lookupType=='forward'){
+        document.getElementById('{!$Component.thePage.theform.forward_template_id}').value = templateId;
+        rerenderForwardEmailTemplate();
+        }       
+    }
+    
+    setTitle(); 
+    
+    function setTitle()
+    {
+       console.log('setting title');
+       if (sforce.console.isInConsole())
+       {
+        sforce.console.setTabTitle('e2a Global Settings');
+       } 
+    }
+</script>
+    <apex:pageMessages />
+    <apex:form id="theForm">
+    	<apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Email_Template__c}" id="new_template_id"/>
+        <apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Reply_Email_Template__c}" id="reply_template_id"/>
+        <apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Forward_Email_Template__c}" id="forward_template_id"/>
+        <apex:sectionHeader title="Global Settings"/>
+        <apex:pageBlock id="viewPageBlock" rendered="{!EditIsActive == false}">
+            <apex:pageBlockButtons rendered="{!EditIsAllowed}">
+                <apex:commandButton action="{!Edit}" value="Edit"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockSection title="Email Client" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!ComplianceBCCEnabledHelpText}">
+                    <apex:outputLabel value="Compliance BCC Enabled" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Compliance_BCC_Enabled__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!RestrictFromAddressesHelpText}">
+                    <apex:outputLabel value="Restrict From-Addresses" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Restrict_From_Addresses__c}"/>
+                </apex:pageblockSectionItem>          
+                <apex:pageblockSectionItem helpText="{!ThreadIdInSubjectHelpText}">
+                    <apex:outputLabel value="Add Thread Id to Subject" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Thread_Id_In_Subject__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!ThreadIdInBodyHelpText}">
+                    <apex:outputLabel value="Add Thread Id to Body"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Thread_Id_In_Body__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!StoreSentEmailsHelpText}">
+                    <apex:outputLabel value="Store Sent Emails" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Store_Sent_Emails__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!StoreSentEmailsAsActivityHelpText}">
+                    <apex:outputLabel value="Store Sent Emails As Activity" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Store_Sent_Emails_As_Activity__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!AutoRepliedStatusHelpText}">
+                    <apex:outputLabel value="Automatically Set Replied/Forwarded Status"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Auto_Replied_Status__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EnableBusinessUnitHelpText}">
+                    <apex:outputLabel value="Enable Business Unit"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Enable_Business_Unit__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!HideToFieldHelpText}">
+                    <apex:outputLabel value="Hide To Field"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Hide_To_Field__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="If checked, users will have to select a Business Unit to send email. If not checked, users can send email without selecting any Business Unit. Business Unit is only mandatory if a user is a member of one or more business units." rendered="{!Settings.ortoo_e2a__Enable_Business_Unit__c==true}">
+                    <apex:outputLabel value="Business Unit Mandatory"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Business_Unit_Mandatory__c}"/>
+                </apex:pageblockSectionItem> 
+                <apex:pageblockSectionItem helpText="{!SetBusinessUnitFromCurrentRecordHelpText}">
+                    <apex:outputLabel value="Set Business Unit from current record"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Set_Business_Unit_from_current_record__c}"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+            <apex:pageBlockSection title="Outgoing Emails" collapsible="false" columns="2">
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayHelpText}">
+                    <apex:outputLabel value="Email Gateway"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Email_Gateway__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayAPIKeyHelpText}" rendered="{!IsDefaultEmailGateway == false}">
+                    <apex:outputLabel value="Email Gateway API Key"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Email_Gateway_API_Key__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayDomainHelpText}" rendered="{!IsDefaultEmailGateway == false}">
+                    <apex:outputLabel value="Email Gateway Domain"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Email_Gateway_Domain__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!copyTagsInReplyOrForwardEmail}">
+                    <apex:outputLabel value="Copy Tags in Reply or Forward Email"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Copy_Tags_In_Reply_Forward__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!uncheckBccCheckboxforallUsersHelpText}">
+                    <apex:outputLabel value="Sender BCC Default Value"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Uncheck_BCC_checkbox_for_all_Users__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputText value="{!DefaultEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputText value="{!DefaultReplyEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputText value="{!DefaultForwardEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!AutoFillContactInNewEmail}">
+                    <apex:outputLabel value="Auto-Fill Contact in New emails"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Auto_Fill_Contact_in_New_emails__c}"/>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Other Settings" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!ReparentEmailsHelpText}">
+                    <apex:outputLabel value="Re-parent Emails on Lead Conversion"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__Re_parent_emails_on_Lead_conversion__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!enableEmailCountHelpText}">
+	                <apex:outputLabel value="Enable Email Count"/>
+	                <apex:outputField value="{!Settings.ortoo_e2a__Enable_Email_Count__c}"/>
+	            </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection collapsible="false" >
+            	<apex:pageBlockSection />
+            </apex:pageBlockSection>
+        
+        <apex:pageBlock id="tagSetting" title="Tag Settings">
+		    <apex:pageBlockButtons location="top" >
+		        <apex:commandButton value="New" action="{!openNewPageForTagSettings}">
+		            
+		        </apex:commandButton>
+		    </apex:pageBlockButtons>
+		    <apex:pageBlockTable value="{!TagList}"  id="tagsListBlock" columnsWidth="10%,90%" var="tag">
+                  	<apex:column >
+                          <apex:facet name="header" >Action</apex:facet>
+                          <apex:actionStatus id="refreshText">
+                    <apex:facet name="start">
+                    <apex:outputText value="Deleting..."/>
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandLink action="{!RemoveTag}" value="Del" rerender="tagSetting" status="refreshText">
+                             <apex:param name="tagid" value="{!tag.id}"/> 
+                           </apex:commandLink>
+                    </apex:facet>
+                    </apex:actionStatus>
+                             
+                       </apex:column>
+				<apex:column headerValue="Tag Value" >
+					<apex:outputLabel style="color:#000000;padding-left: 5px;padding-right: 5px;display: -webkit-inline-box;background: {!JSENCODE(tag.ortoo_e2a__Colour__c)};" value=" {!tag.ortoo_e2a__Tag_Value__c} " />
+				</apex:column>
+			</apex:pageBlockTable>
+			<apex:panelGrid id="paginationButtons" style="margin-left: 40%;" columns="6">
+				    <apex:commandButton status="fetchStatus" reRender="tagsListBlock,paginationButtons" value="|<" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/>
+	                <apex:commandButton status="fetchStatus" reRender="tagsListBlock,paginationButtons" value="<" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/>
+	                <div style="padding-top: 5%;">
+	                	{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,(setCon.pageNumber * size))} of {!noOfRecords}
+	                </div>
+	                <apex:commandButton status="fetchStatus" reRender="tagsListBlock,paginationButtons" value=">" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/>
+	                <apex:commandButton status="fetchStatus" reRender="tagsListBlock,paginationButtons" value=">|" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/>
+	                <apex:outputPanel style="color:#4AA02C;font-weight:bold" >
+	                    <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
+	                </apex:outputPanel>
+                
+            </apex:panelGrid>
+			
+				
+		</apex:pageBlock>
+	</apex:pageBlock>
+        <apex:pageBlock id="editPageBlock" rendered="{!EditIsActive}">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!Save}" value="Save"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockSection title="Email Client" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!ComplianceBCCEnabledHelpText}">
+                    <apex:outputLabel value="Compliance BCC Enabled" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Compliance_BCC_Enabled__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!RestrictFromAddressesHelpText}">
+                    <apex:outputLabel value="Restrict From-Addresses" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Restrict_From_Addresses__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!ThreadIdInSubjectHelpText}">
+                    <apex:outputLabel value="Add Thread Id to Subject" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Thread_Id_In_Subject__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!ThreadIdInBodyHelpText}">
+                    <apex:outputLabel value="Add Thread Id to Body"/>
+                    <apex:inputCheckbox value="{!Settings.ortoo_e2a__EC_Thread_Id_In_Body__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!StoreSentEmailsHelpText}">
+                    <apex:outputLabel value="Store Sent Emails" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Store_Sent_Emails__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!StoreSentEmailsAsActivityHelpText}">
+                    <apex:outputLabel value="Store Sent Emails As Activity" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Store_Sent_Emails_As_Activity__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!AutoRepliedStatusHelpText}">
+                    <apex:outputLabel value="Automatically Set Replied/Forwarded Status"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Auto_Replied_Status__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EnableBusinessUnitHelpText}">
+                    <apex:outputLabel value="Enable Business Unit"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Enable_Business_Unit__c}">
+                        <apex:actionSupport event="onchange" rerender="editPageBlock"/>
+                    </apex:inputField>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!HideToFieldHelpText}">
+                    <apex:outputLabel value="Hide To Field"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Hide_To_Field__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="If checked, users will have to select a Business Unit to send email. If not checked, users can send email without selecting any Business Unit. Business Unit is only mandatory if a user is a member of one or more business units." rendered="{!Settings.ortoo_e2a__Enable_Business_Unit__c==true}">
+                    <apex:outputLabel value="Business Unit Mandatory"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Business_Unit_Mandatory__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!SetBusinessUnitFromCurrentRecordHelpText}">
+                    <apex:outputLabel value="Set Business Unit from current record"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Set_Business_Unit_from_current_record__c}"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+            <apex:pageBlockSection title="Outgoing Emails" collapsible="false" columns="2" id="outgoingemail_section">
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayHelpText}">
+                    <apex:outputLabel value="Email Gateway"/>
+                    <apex:SelectList value="{!Settings.ortoo_e2a__Email_Gateway__c}" size="1">
+                        <apex:SelectOptions value="{!EmailGatewayOption}"/>
+                        <apex:actionsupport event="onchange" rerender="outgoingemail_section"/>
+                    </apex:SelectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayAPIKeyHelpText}" rendered="{!IsDefaultEmailGateway == false}" >
+                    <apex:outputLabel value="Email Gateway API Key"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Email_Gateway_API_Key__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!EmailGatewayDomainHelpText}" rendered="{!IsDefaultEmailGateway == false}">
+                    <apex:outputLabel value="Email Gateway Domain"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Email_Gateway_Domain__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!copyTagsInReplyOrForwardEmail}">
+                    <apex:outputLabel value="Copy Tags in Reply or Forward Email"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Copy_Tags_In_Reply_Forward__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!uncheckBccCheckboxforallUsersHelpText}">
+                    <apex:outputLabel value="Sender BCC Default Value"/>
+                    <apex:SelectList value="{!Settings.ortoo_e2a__Uncheck_BCC_checkbox_for_all_Users__c}" size="1">
+                        <apex:SelectOptions value="{!senderBCCOptions}"/>
+                    </apex:SelectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultEmailTemplate}" id="email_template_text" />
+                        <apex:actionFunction name="rerenderEmailTemplate" rerender="email_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('new');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultReplyEmailTemplate}" id="email_reply_template_text" />
+                        <apex:actionFunction name="rerenderReplyEmailTemplate" rerender="email_reply_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('reply');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearReplyTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultForwardEmailTemplate}" id="email_forward_template_text" />
+                        <apex:actionFunction name="rerenderForwardEmailTemplate" rerender="email_forward_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('forward');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearForwardTemplate}" value="Clear" />
+                    </apex:outputPanel>
+            	</apex:pageblockSectionItem>
+            	<apex:pageBlockSectionItem helpText="{!AutoFillContactInNewEmail}">
+                    <apex:outputLabel value="Auto-Fill Contact in New emails"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Auto_Fill_Contact_in_New_emails__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Other Settings" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!ReparentEmailsHelpText}">
+                    <apex:outputLabel value="Re-parent Emails on Lead Conversion"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__Re_parent_emails_on_Lead_conversion__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!enableEmailCountHelpText}">
+	                <apex:outputLabel value="Enable Email Count"/>
+	                <apex:inputField value="{!Settings.ortoo_e2a__Enable_Email_Count__c}"/>
+	            </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

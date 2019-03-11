@@ -1,0 +1,241 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SalesAidsCartController"  >
+	<ltng:require styles="{!$Resource.remodalcss}" />
+    <ltng:require styles="{!$Resource.gridcss}" />
+    <ltng:require styles="{!$Resource.remodal_default_theme}" />
+    <ltng:require styles="{!$Resource.handle_counter_min}" />
+	
+    <aura:attribute name="orderplaced" type="boolean" default="false" description="show thank you message" />
+    <aura:attribute name="cartObj" type="Object" description="sales aids cart object" />
+    <aura:attribute name="sameaspartner" type="boolean" default="false" description="shipping address is same as partner address." />
+    <aura:attribute name="showspinner" type="boolean" description="show/hide spinner" default="false"/>
+	<aura:attribute name="validationMessage" type="String" description="validation error message" />
+    <aura:attribute name="backbuttonurl" type="String" description="back button url"
+                    />
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    
+    <aura:registerEvent name="SalesAidsUpdateCartEvent" type="c:SalesAidsUpdateCartEvent" description="update cart in header component" />
+    
+    <div class="section group white-bg">
+		
+        <!-- sidebar filters -->
+        <div class="col span_2_of_12">
+            &nbsp;
+        </div>
+
+        <!-- main content area -->
+        <div class="col span_8_of_12 pad-inside white-bg">
+
+            <ul class="breadcrumb">
+                <li><a href=".">Home</a></li>
+                <li><a href="./productresources">Partner Resources</a></li>
+                <li><a href="./productresources?salesaids=true">Sales Aids</a></li>
+                <li>Sales Aids Order</li>
+            </ul>
+            <aura:if isTrue="{!v.cartObj.orderProcessed}">
+                 <div class="section group">
+                     <div class="col span_12_of_12">                       
+                         <aura:if isTrue="{!v.cartObj.message != ''}">
+                             <h1 style="{!if(v.cartObj.isError,'color:#cc0000','')}"><aura:unescapedHtml value="{!v.cartObj.messageheader}"/></h1>
+                             <p style="{!if(v.cartObj.isError,'color:#cc0000','')}"><aura:unescapedHtml value="{!v.cartObj.message}"/></p>                 
+                         </aura:if>
+                     </div>
+                     
+                </div>
+            </aura:if>
+          
+           <aura:if isTrue="{!not(v.cartObj.orderProcessed)}">
+             <div class="section group">
+                 <div class="col span_10_of_12">
+                     <h1 style="margin:0px;padding:0px;">Sales Aids Order</h1>
+                     <!--<h3 class="left">(Add page descriptive text here)</h3>-->
+                     <aura:if isTrue="{!v.cartObj.message != ''}">
+                         <h1 style="{!if(v.cartObj.isError,'color:#cc0000','')}"><aura:unescapedHtml value="{!v.cartObj.messageheader}"/></h1>
+                   		 <p style="{!if(v.cartObj.isError,'color:#cc0000','')}"><aura:unescapedHtml value="{!v.cartObj.message}"/></p>                 
+                	 </aura:if>
+                 </div>
+                 <div class="col span_2_of_12">
+                     <a href="{!v.backbuttonurl}" class="button button-red right">BACK</a>
+                 </div>
+            </div>
+                
+            	
+                
+                
+                <div class="clear pad-bottom"></div>
+                <table class="documents width-100" style="margin-bottom:0;">
+                    <tbody>
+                        <tr>
+                            <th class="width-10"></th>
+                            <th class="width-50">Description</th>
+                            <th class="width-30">Quantity</th>
+                            <th class="width-10">Total</th>
+                            <th class="width-10" style="text-align:center">Remove</th>
+                        </tr>
+                        
+                        <aura:iteration items="{!v.cartObj.lineItems}" var="item" indexVar="row">
+                            <tr>
+                                <td>
+                                    <aura:if isTrue="{!item.Product_Document__r.Image_URL__c == NULL}">                                    
+                                        <img style="width:100px" src="{! $Label.c.Community_URL + '/' + $Label.c.Community_Prefix +'/resource/NoImage'}"/>
+                                        <aura:set attribute="else">
+                                            <img style="width:100px" src="{!item.Product_Document__r.Image_URL__c}" />
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                <td><a href="#">{!item.Product_Document__r.Title_Display_Name__c}</a>
+                                    <!--<p>Document description if available</p>-->
+                                    <aura:if isTrue="{!!empty(item.Product_Document__r.Sub_Title__c)}">
+                                        <br/>
+                                        {!item.Product_Document__r.Sub_Title__c} 
+                                    </aura:if>
+                                </td>
+                                <td>
+                                    <div class="handle-counter" id="handleCounter2">
+                                        <button data-row="{!row}" class="counter-minus btn btn-primary" disabled="{!if(item.Quantity__c == 1,true,false)}" onclick="{!c.decreaseqty}">-</button>
+                                        <input type="text" value="{!item.Quantity__c}" data-num="1" data-row="{!row}" onchange="{!c.updatequantity}" />
+                                        <button data-row="{!row}" class="counter-plus btn btn-primary" onclick="{!c.increaseqty}">+</button>
+                                    </div>
+                                </td>
+                                <td>${!item.Price__c}</td>
+                                <td style="text-align:center"><i data-row="{!row}" onclick="{!c.removeItem}" class="fa fa-trash-o" aria-hidden="true" style="font-size:20px;cursor: pointer;"></i></td>
+                            </tr>
+                        </aura:iteration>
+                        
+                       
+                        <tr class="gray-bg">
+                            <td colspan="2"></td>
+                            <td class="text-right">
+                                <h4>Total:</h4>
+                            </td>
+                            <td>
+                                <h4>$0</h4>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+           
+            <hr class="pad-top"/>
+				<div class="errormsg"><aura:unescapedHtml value="{!v.validationMessage}"></aura:unescapedHtml></div>
+                <div class="left width-45">
+                    <h3>Partner Information</h3>
+                    <table class="width-100 small-padding">
+                        <tbody>
+                            <tr>
+                                <td>Company Name:</td>
+                                <td class="pad-right"><strong>{!v.cartObj.partnerInfo.companyName}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Contact Name:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.contactName}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Email:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.email}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Address 1:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.address}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>City:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.city}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Country:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.country}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>State/Province/Territory:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.state}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Zip/Postal Code:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.zipcode}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Phone:</td>
+                                <td><strong>{!v.cartObj.partnerInfo.phone}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+    
+                </div>
+    
+                <div class="right width-50">
+    
+                    <h3>Shipping Information</h3>
+                    <table class="width-100 small-padding">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <ui:inputCheckbox class="left" label="Same as Partner Information" value="{!v.sameaspartner}" change="{!c.sameaspartnerchange}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Company Name:</td>
+                                <td><ui:inputText aura:id="companyname" focus="{!c.removeclass}" blur="{!c.addclass}"  value="{!v.cartObj.shippinginfo.companyName}" required="true" /></td>
+                            </tr>
+                            <tr>
+                                <td>Contact Name:</td>
+                                <td><ui:inputText aura:id="contactname" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.contactName}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Email:</td>
+                                <td><ui:inputText aura:id="email" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.email}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Address 1:</td>
+                                <td><ui:inputText aura:id="address1" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.address}" /></td>
+                            </tr>
+                            <tr>
+                                <td>City:</td>
+                                <td><ui:inputText aura:id="city" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.city}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Country:</td>
+                                <td><ui:inputText aura:id="country" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.country}" /></td>
+                            </tr>
+                            <tr>
+                                <td>State/Province/Territory:</td>
+                                <td><ui:inputText aura:id="state" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.state}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Zip/Postal Code:</td>
+                                <td><ui:inputText aura:id="postalcode" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.zipcode}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Phone:</td>
+                                <td><ui:inputText aura:id="phone" focus="{!c.removeclass}" blur="{!c.addclass}" value="{!v.cartObj.shippinginfo.phone}" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+    
+                <div class="clear"></div>
+    
+                <div class="pad-top center">                   
+                    <a href="javascript:void(0);" style="{!if(v.cartObj.lineItems.length > 0,'','cursor: default;')}" class="button button-red width-30 center" onclick="{!c.placeOrder}">Place Order</a>
+                </div>
+           </aura:if> 
+        </div>
+          
+        <div class="col span_2_of_12 ">
+            &nbsp;
+        </div>  
+    </div>
+    
+  
+     <div class="{!v.showspinner ? 'slds-spinner_container slds-show' : 'slds-spinner_container slds-hide'}"
+          style="z-index:1">
+         <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+             <span class="slds-assistive-text">Loading</span>
+             <div class="slds-spinner__dot-a"></div>
+             <div class="slds-spinner__dot-b"></div>
+         </div>
+    </div>
+</aura:component>

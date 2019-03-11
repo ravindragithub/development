@@ -1,0 +1,77 @@
+<apex:page id="changePasswordSuccess" showHeader="false" standardStylesheets="false" controller="PartnerChangePasswordSuccessClass" title="{!$Label.site.change_password}">
+    <apex:stylesheet value="{!URLFOR($Resource.grid_margin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.customcss)}"/>
+    
+    <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    
+   <!-- <apex:slds />
+
+    <style>
+        .msgIcon {
+            display: none !important
+        }
+        .customMessage * {
+            color: #fff !important
+        }
+        .customMessage {
+            margin: 5px 0!important;
+            max-width: 1280px;
+            opacity: 1!important;
+            width: 100%;
+            font-size: 12px;
+            border: 0px;
+            padding-left: 10px;
+        }
+    </style>-->
+    
+
+        <div class="white-bg pad-inside" style="max-width:1000px; margin:auto;">
+            <ul class="breadcrumb">
+                <li><a href="/">Home</a></li>
+                <li>Change Password</li>
+            </ul>
+            
+            <div class="content">
+                <h1>Change Password</h1>
+                 <p>You have successfully changed your password.</p>
+                  <a href="/s" style="font-size:12px;"  class="pad-right button">Return Home</a>                           
+           </div>
+       </div>
+   <!-- <div class="slds">
+        <div class="slds-notify_container slds-is-relative">
+            <apex:pageMessages id="error"/>
+        </div>
+
+        <div class="slds-p-horizontal_xx-large">
+
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">
+                            Change Password
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+            <apex:form id="theForm">
+                <div class="slds-align_absolute-center slds-size_2-of-3 slds-large-size_2-of-3">
+                    <div class="slds-grid slds-wrap slds-grid_pull-padded slds-size_2-of-3 slds-large-size_2-of-3">
+                        <div class="slds-p-horizontal_medium slds-p-vertical_x-small slds-size_2-of-3 slds-large-size_2-of-3">
+                            <abbr class="slds-form-element__label">You have successfully changed your password.</abbr>
+                        </div>
+                        <div class="slds-p-horizontal_medium slds-p-vertical_x-small slds-size_2-of-3 slds-large-size_2-of-3">
+                            <apex:commandButton id="rhabtn" action="{!returnHome}"
+                                                value="Return Home"
+                                                styleClass="slds-button slds-button_destructive"
+                                                reRender="error"
+                                                style="float: right;"/>
+                        </div>
+                    </div>
+                </div>
+            </apex:form>
+        </div>
+    </div>-->
+</apex:page>

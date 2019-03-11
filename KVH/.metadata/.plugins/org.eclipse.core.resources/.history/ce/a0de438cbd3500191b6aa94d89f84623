@@ -1,0 +1,17 @@
+<apex:page standardController="case" extensions="Find_or_Create_Contract_or_Service">
+    <script>
+        function CheckCase()
+        {
+            if(!{!CreateAccountinSalesforce} || !{!AssociateAssetPaltform} || {!searchPlatformAssetAccount} || !{!addorUpdateContactRoles})
+            {
+                alert("Please confirm that the appropriate platform is in the :\n 1) Create Account in Salesforce must be checked and \n 2) Associate the Asset to platform in Salesforce must be checked and \n 3) Search Platform / Asset Account must NOT be Null and \n 4)Add or Update Contacts and Roles must be checked .\n Or you can initiate the Find_and_Add_Account_to_Asset."); 
+            }else
+            {
+                window.open("/apex/Create_addorUpdateContractRoles?caseid="+'{!CaseID}');    
+            }
+        }
+    </script>
+    <apex:form >
+       <apex:commandLink value="Find or Create Contract or Service(opens in a new window)" onclick="CheckCase()"/>
+    </apex:form>
+</apex:page>

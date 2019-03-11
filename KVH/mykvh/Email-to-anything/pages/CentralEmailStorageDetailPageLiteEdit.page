@@ -1,0 +1,281 @@
+<apex:page sidebar="false" standardstylesheets="false" showheader="false" doctype="html-5.0" controller="ortoo_e2a.EmailStorageDetailPageLiteEditController">
+ <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<head>
+		<title>Salesforce Lightning Design System Trailhead Module</title>
+		<link rel="stylesheet" href="{!URLFOR($Resource.slds, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>
+		<link rel="stylesheet" href="{!URLFOR($Resource.fonts, '/font/css/font-awesome.min.css')}"/>
+        <!--<script type="text/javascript" src="{!URLFOR($Resource.ckeditor,'ckeditor/ckeditor.js')}" />-->
+		<apex:includeLightning />
+		
+     <style>
+		     
+		.input-width
+		{
+			min-width:100%;
+		}
+		.fieldset-top-margin
+		{
+			margin-top:10px;
+		}
+		.break
+		{
+		    word-wrap: break-word;
+		    word-break: break-all;
+		    height: 80px;
+		}
+		
+		#cke_1_top
+	    {
+	        display:none !important;
+	    }
+     </style>      
+	</head>
+	<body  style="background-color:white">
+		
+		<div class="slds">
+		  <fieldset class="slds-form--compound slds-has-divider--bottom">
+				<div class="form-element__group">
+					<div class="slds-form-element__row">
+						<div class="slds-size--1-of-1">
+							<div class="slds-button-group slds-float--right" role="group"  data-aljs="icon-group">
+								<a style="font-size: 30px" class="slds-button slds-button--neutral slds-is-selected" onclick="saveMessage();">
+									<i class="fa fa-check"></i>
+								</a>
+								<a style="font-size: 30px" class="slds-button slds-button--neutral slds-is-selected" id="close">
+									<i class="fa fa-times"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				<div class="form-element__group">
+					<div class="slds-form-element__row">
+						<label class="slds-size--2-of-12" for="from">From:</label>
+	                    <div class="slds-size--10-of-12">
+	                        <input  id="from" class="slds-input--bare input-width" type="text" /> 
+	                        
+	                    </div>
+	                    <div class="slds-size--1-of-12 slds-text-align--right">
+	                    	<a href="#" onclick="addItem(); return false;" id="downarrow">
+								<svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+								 	<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevrondown')}"></use>
+								</svg>
+							</a>
+							<a href="#" onclick="addItem(); return false;" id="uparrow">
+								<svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+									 	<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevronup')}"></use>
+								</svg>
+							</a>
+	                    </div>
+					</div>
+				</div>
+			</fieldset>
+			<div id="additionalFields">
+				<fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="to">To:</label>
+				 			<div class="slds-size--10-of-12">
+		                        <input id="to" class="slds-input--bare input-width" type="text"/>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				 <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="cc">CC:</label>
+				 			<div class="slds-size--11-of-12">
+		                        <input id="cc" class="slds-input--bare input-width" type="text" />
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				  <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="bcc">BCC:</label>
+				 			<div class="slds-size--10-of-12">
+		                        <input id="bcc" class="slds-input--bare input-width" type="text" />
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+			</div>
+			 <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<div class="slds-size--11-of-12">
+		                        <input id="subject" class="slds-input--bare input-width" type="text" style="font-weight:bold;"/>
+		                    </div>
+				 		</div>
+				 	</div>
+		   </fieldset>
+		   
+		   			
+		   		<div class="slds-form-element__row">
+		   				<div class="slds-grid">
+			                <div class="slds-size--1-of-1">
+			                    
+			                        <div class="slds-docked-composer__body slds-docked-composer__body--email slds-col slds-grid slds-grid--vertical slds-nowrap">
+			                           <!--<div class="slds-form-element" id="richTextEditor">
+              						  </div>  style="display:none"-->
+                            		  <div id="editor" style="width: 100%;height: 450px;border: 1px solid #ccc;padding: 5px;;overflow:auto;" contenteditable="true" class="slds-form-element__static dont-break-out" >
+                                           
+                                      </div>
+									  <textarea rows="20" class="slds-textarea" id="body"  style="display:none;"></textarea>
+			                        </div>
+			                   </div>
+			            </div>		
+		   			</div>
+			
+ </div>
+		
+		
+		<script src="{!URLFOR($Resource.aljs, '/jquery/jquery-1.11.1.min.js')}"></script>
+		<script src="{!URLFOR($Resource.aljs, '/moment/moment.js')}"></script>
+		<script src="{!URLFOR($Resource.aljs, '/jquery/jquery.aljs-all.min.js')}"></script>
+		
+        <script>
+       
+            var richtext;
+             
+		
+			function addItem() 
+			{
+				$( "#additionalFields" ).toggle();
+				$( "#downarrow" ).toggle();
+				$( "#uparrow" ).toggle();
+			 }
+		function getQueryStringValue (key) 
+		{  
+			return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
+		} 
+	    function goToURL(url)
+		{
+			if(typeof sforce == 'undefined')
+			{ 
+				window.location.href = url;
+			}
+			else
+			{
+				sforce.one.navigateToURL(url);
+			}
+		}
+		function saveMessage()
+		{
+			var id = getQueryStringValue("id");
+			var from = document.getElementById("from").value;
+			var subject = document.getElementById("subject").value;
+			var to = document.getElementById("to").value;
+			var cc = document.getElementById("cc").value;
+			var bcc = document.getElementById("bcc").value;
+			var is_rich_text = {!JSENCODE($CurrentPage.parameters.isrichtext)};
+			var body
+			if(is_rich_text == 1)
+			{
+                body = document.getElementById("editor").innerHTML;//CKEDITOR.instances['body'].getData();//richtext.find("inputRT").get("v.value");
+			}
+			else if(is_rich_text == 0)
+			{
+			  var body = document.getElementById('body').value;
+			}
+			
+			ortoo_e2a.EmailStorageDetailPageLiteEditController.saveMessage(id, from, subject, body,is_rich_text, to, cc, bcc, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						goToURL('/apex/ortoo_e2a__CentralEmailStorageDetailPageLite?id='+id)
+					}
+					else
+					{
+						alert(event.message);
+					}
+					
+				}, {escape:false});
+		}
+		function getEmaiMessage()
+		{
+			var id = getQueryStringValue("id");
+			ortoo_e2a.EmailStorageDetailPageLiteEditController.getEmailMessage(id, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						
+						if (typeof result.emailFrom  !== 'undefined' || result.emailFrom != null)
+						{
+							document.getElementById("from").value = result.emailFrom;
+						}
+						if (typeof result.emailSubject  !== 'undefined' || result.emailSubject != null)
+						{
+							document.getElementById("subject").value = result.emailSubject;
+						}
+						if (typeof result.emailTo  !== 'undefined' || result.emailTo != null)
+						{
+							document.getElementById("to").value = result.emailTo;
+						}
+						if (typeof result.emailCc  !== 'undefined' || result.emailCc != null)
+						{
+							document.getElementById("cc").value = result.emailCc;
+						}
+						if (typeof result.emailBcc  !== 'undefined' || result.emailBcc != null)
+						{
+							document.getElementById("bcc").value = result.emailBcc;
+						}					
+						if (typeof result.emailBody  !== 'undefined' || result.emailBody != null)
+						{
+							var is_rich_text = getQueryStringValue("isrichtext");
+							if(is_rich_text == 0)
+							{
+                                document.getElementById("body").style.display = "block";
+                                document.getElementById('body').value = result.emailBody;//CKEDITOR.instances['body'].getData();	
+							}
+							else if(is_rich_text == 1)
+							{
+                                //document.getElementById('body').value = result.emailBody;
+                                
+                                 document.getElementById("editor").innerHTML = "<div>&nbsp;</div>"+result.emailBody;
+                                
+                                // other stuff happens down here
+                                /*
+                            	$Lightning.use("c:LiteApp", function() {
+					                 $Lightning.createComponent("ortoo_e2a:RichTextEditor", {richtextData:result.emailBody},
+					                     "richTextEditor",
+					                     function(cmp) {
+					                         // do some stuff
+					                         richtext = cmp;
+					                     });
+					             });
+                                 */
+                              
+							}
+						}	
+					}
+					else
+					{
+						alert(event.message);
+					}
+					
+					
+					
+				}, {escape:false});
+		}    
+		$(document).ready(function()
+		{
+			$("#additionalFields").hide();
+			$("#uparrow").hide(); 
+			getEmaiMessage();
+			var id = getQueryStringValue("id");
+			document.getElementById("close").setAttribute('href', "/apex/ortoo_e2a__CentralEmailStorageDetailPageLite?id="+id);
+			
+		});
+			
+			
+		</script>
+	</body>
+</html>	
+</apex:page>

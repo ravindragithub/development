@@ -1,0 +1,1346 @@
+<apex:page controller="ortoo_e2a.EmailClientController" id="thePage" title="E2A: Send Mail" action="{!ProcessTemplateAndSaveParms}" tabStyle="ortoo_e2a__User_Settings__c">
+    <apex:stylesheet value="{!$Resource.ortoo_e2a__EmailPageCSS}" />
+    <style>
+        .card{
+            /*background: #FFF;
+            border: 1px dashed #AAA;*/
+            background: #CFEEF8;
+            border: 1px dashed #1797C0;      
+            padding: 4px;
+            opacity: 0.8;       
+            text-align: center;  
+            vertical-align: middle;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .sending_email_card{
+            /*background: #FFF;
+            border: 1px dashed #AAA;*/
+            background: #e3e6ef;
+            border: 1px dashed #1797C0; 
+            padding-top: 6px;
+            opacity: 0.8;       
+            text-align: left;  
+            vertical-align: middle;
+            display: inline-block;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom : 10px; 
+            height: 25px;   
+        }
+        
+        .SalesForceClassic
+        {
+            align-content: center; 
+            margin-left: 110px;
+        }
+        
+        .ConsoleApp
+        {
+            align-content: center; 
+            margin-left: 161px;
+        }
+        
+        .mce-colorbtn-trans div
+        {
+        	display: none;
+        }
+        
+         
+        .document tr:hover{
+		    background-color: #e5c130;
+		    color: #FFF;
+		}
+		
+		.selected {
+		    background-color: #e5c130;
+		    color: #FFF;
+		}
+		
+		
+       
+
+    </style> 
+    <apex:includeScript value="/support/console/33.0/integration.js"/> 
+    <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/29.0/apex.js"/>
+    <script type="text/javascript">
+    var isLoadOnce = false;
+    var emailSendButtonclicked = false;
+    
+    window.onload = function() 
+    {
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        document.getElementById('{!$Component.thePage.theForm.thePB.pbS.pbSI_body.editor_panel}').style.display='';
+        setTitle();
+    }
+    function setTitle() {
+        console.log('setting title');
+        sforce.console.setTabTitle('Email Client');
+        if (sforce.console.isInConsole()) 
+        {
+           document.getElementById('thePage:theform:thePB:searchInValuehidden').checked = true;
+        }
+       
+
+    }
+    
+    </script>
+
+    <apex:includeScript value="{!URLFOR($Resource.ortoo_e2a__jQuery, 'jQuery/js/jquery-1.11.2.min.js')}"/>
+    <script type="text/javascript" src="{!URLFOR($Resource.tinymce,'tinymce/tinymce.min.js')}"></script>
+    <!-- <script type="text/javascript" src="{!URLFOR($Resource.ckeditor,'ckeditor/ckeditor.js')}" /> --> 
+   	<script type="text/javascript" src="{!URLFOR($Resource.Selectize,'Selectize/selectize.js')}"></script>
+	<apex:stylesheet value="{!URLFOR($Resource.ortoo_e2a__Selectize,'Selectize/selectize.default.css')}" />
+    
+    <c:RemoteTK />
+    <script type="text/javascript">
+    
+    var client = new remotetk.Client();
+    
+    function getExtension(path) {
+	    var basename = path.split(/[\\/]/).pop(),  // extract file name from full path ...
+	                                               // (supports `\\` and `/` separators)
+	        pos = basename.lastIndexOf(".");       // get last position of `.`
+	
+	    if (basename === "" || pos < 1)            // if file name is empty or ...
+	        return "";                             //  `.` not found (-1) or comes first (0)
+	
+	    return basename.slice(pos + 1);            // extract extension ignoring `.`
+	}
+	
+	
+	function highlight(node) {
+		var table = document.getElementById('table')
+		selected = table.getElementsByClassName('selected');
+	    if (selected[0]) selected[0].className = '';
+	    node.parentNode.className = 'selected';
+	}
+	
+	var selected_image_src = '';
+	function selectImage(documnet_id)
+	{              
+		selected_image_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + documnet_id.id + '&oid={!getOrgId}';
+		$("#preview_image").html('<img data-mce-selected="1" style="width: 100%;" src="' + selected_image_src + '" data-mce-selected="1" ><br data-mce-bogus="1">');
+		highlight(documnet_id);
+	}
+    
+    function loaded(evt) {
+            var filename = 'test';
+            var fileContent = String(evt.target.result);
+            fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+            uploadContentVersion(filename, fileContent,getExtension(filename));  
+        }
+
+        function errorHandler(evt) {
+            if (evt.target.error.name == 'NotReadableError') {
+                alert('File could not be read');
+            }
+            else {
+                alert(evt.target.error);
+            }
+        }
+     
+    function uploadContentVersion(filename, filecontent, type) 
+    {
+        var doc = new sforce.SObject('Document');
+					    doc.Name        = filename;
+					    doc.Body   = filecontent;
+					    doc.Type = type;
+					    doc.FolderId = sforce.connection.getUserInfo().userId;
+					    doc.IsPublic = true;
+					    
+		var results = sforce.connection.create([doc]);
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].getBoolean("success")) {
+                //alert('New ContentVersion record created:' + results[i].id);
+                return results[i].id;
+            }
+            else {
+                console.log('Failed:' + results[i]);
+
+            }
+        }
+	}
+    
+var flag = true; 
+function readPastedBlob(blob) {
+    if (blob) {
+        reader = new FileReader();
+        reader.onload = function(evt) {
+            pasteImage(evt.target.result);
+        };
+        reader.readAsDataURL(blob);
+    }
+}
+    function dateTime()
+    {
+        var d = new Date(),
+        minutes = d.getMinutes().toString().length == 1 ? '0'+d.getMinutes() : d.getMinutes();
+        hours = d.getHours().toString().length == 1 ? '0'+d.getHours() : d.getHours();
+        ampm = d.getHours() >= 12 ? 'pm' : 'am';
+        var month = d.getMonth()+1;
+        return month+'-'+d.getDate()+'-'+d.getFullYear()+' '+hours+':'+minutes+ampm;
+    }
+function pasteImage(source) {
+    var fileContent = String(source);
+    fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+    var fileName = "Inline-" + dateTime();
+    
+    if('{!isPEorGE}' == false)
+    {
+	    var id = uploadContentVersion(fileName, fileContent,'Jpg');
+	    var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}'; 
+		            
+	   	var image = "<img src='" + custom_src + "' data-mce-selected='1'></img>";
+		window.tinyMCE.execCommand('mceInsertContent', false, image);
+    }
+    else
+    {
+	    client.getCurrentUserId(function (response){
+			var document = {Name: fileName , Body : fileContent , Type: 'Jpg' , Ispublic : true , FolderId : response};	
+		 	
+			client.create('Document' , document , function (response){
+				console.log(response);
+				if(response.success)
+				{
+					console.log('success');
+					var id = response.id;
+					
+					var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}'; 
+		            
+		            var image = "<img src='" + custom_src + "' data-mce-selected='1'></img>";
+	    			window.tinyMCE.execCommand('mceInsertContent', false, image);
+				}
+				else
+				{
+					console.log('Record Creation Failed');
+					console.log(response.errors);
+				}
+				
+			});	   
+		});
+	}
+    /*var id = uploadContentVersion(fileName, fileContent,'Jpg');
+    var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}';
+    var image = "<img src='" + custom_src + "' data-mce-selected='1'></img>";
+    window.tinyMCE.execCommand('mceInsertContent', false, image);*/
+}
+    
+
+
+function dataURItoBlob(dataURI) {
+  // convert base64 to raw binary data held in a string
+  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  var byteString = atob(dataURI.split(',')[1]);
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+  // write the bytes of the string to an ArrayBuffer
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+  }
+
+  // write the ArrayBuffer to a blob, and you're done
+  var blob = new Blob([ab], {type: mimeString});
+  return blob;
+
+  // Old code
+  // var bb = new BlobBuilder();
+  // bb.append(ab);
+  // return bb.getBlob(mimeString);
+}
+    var ol_style = '';
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == true) {
+   
+        tinymce.init({
+            mode: "specific_textareas",            
+            editor_selector : "mceEditor",
+            editor_deselector : "mceNoEditor",            
+            browser_spellcheck : true,
+            forced_root_block : 'div', 
+            branding: false, 
+            plugins: [
+            "advlist anchor autolink autoresize charmap colorpicker hr image",
+            "lists link media nonbreaking searchreplace template",
+            "insertdatetime table paste textcolor"
+            ],
+            paste_data_images: true,
+            toolbar: "insertfile undo redo | fontselect | fontsizeselect | styleselect | forecolor backcolor | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link customimg",
+            button_tile_map : true,
+            use_salesforce_proxy : "TRUE",
+            width : "775",
+            height : "500",
+            paste_preprocess: function(plugin, args) {
+                        console.log(args.content);
+                		
+                       var elem= document.createElement("div");
+                       elem.innerHTML = args.content;
+                        
+                       var images = elem.getElementsByTagName("img");
+                        
+                       for(var i=0; i < images.length; i++){
+                           // var blob = images[i].src.replace('data:image/png;base64,',"");
+                           var file = dataURItoBlob(images[i].src);
+                           readPastedBlob(file);
+                           
+                       }
+					   args.content = args.content.replace(/<img[^>]*>/g,"");
+                      },
+            
+            textcolor_map: [
+			    "000000", "Black",
+			    "993300", "Burnt orange",
+			    "333300", "Dark olive",
+			    "003300", "Dark green",
+			    "003366", "Dark azure",
+			    "000080", "Navy Blue",
+			    "333399", "Indigo",
+			    "333333", "Very dark gray",
+			    "800000", "Maroon",
+			    "FF6600", "Orange",
+			    "808000", "Olive",
+			    "008000", "Green",
+			    "008080", "Teal",
+			    "0000FF", "Blue",
+			    "666699", "Grayish blue",
+			    "808080", "Gray",
+			    "FF0000", "Red",
+			    "FF9900", "Amber",
+			    "99CC00", "Yellow green",
+			    "339966", "Sea green",
+			    "33CCCC", "Turquoise",
+			    "3366FF", "Royal blue",
+			    "800080", "Purple",
+			    "999999", "Medium gray",
+			    "FF00FF", "Magenta",
+			    "FFCC00", "Gold",
+			    "FFFF00", "Yellow",
+			    "00FF00", "Lime",
+			    "00FFFF", "Aqua",
+			    "00CCFF", "Sky blue",
+			    "993366", "Red violet",
+			    "FFFFFF", "White",
+			    "FF99CC", "Pink",
+			    "FFCC99", "Peach",
+			    "FFFF99", "Light yellow",
+			    "CCFFCC", "Pale green",
+			    "CCFFFF", "Pale cyan",
+			    "99CCFF", "Light sky blue",
+			    "CC99FF", "Plum"
+			  ],
+            // Theme options
+            theme_advanced_buttons1 : "fontselect,fontsizeselect,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,fullscreen",
+            theme_advanced_buttons2 : "pastetext,pasteword,selectall,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,code,|,forecolor,backcolor,|,spellchecker,|,print,|,help",
+            theme_advanced_buttons3 : "",
+            theme_advanced_buttons4 : "",
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "none",
+            theme_advanced_resizing : true,
+            setup: function(ed) {
+            
+            ed.addButton('customimg', {
+            title : 'Insert Inline Image',
+            icon: 'image',
+            stateSelector: "img:not([data-mce-object],[data-mce-placeholder])",
+            onclick : function() {
+                ed.windowManager.open({
+                    title: 'Insert Image',
+                    bodyType: 'tabpanel',
+                    body: [
+                    		
+                    		{
+                    		   id: 'upload_image_tab',
+                               title: 'Upload Image',
+                               type: "form",
+                               items: [
+                                   {type: 'textbox',id: 'file_upload', name: 'source', label: 'Source', class:'input', subtype: 'file'},
+                               ]
+                           },
+                           {
+                               title: 'Link Image',
+                               type: "form",
+                               items: [
+                                   { name: 'url', id:'image_url', type: 'textbox', label: 'Image URL' },
+                                   { name: 'desc', id:'image_desc', type: 'textbox', label: 'Image description' },
+                               ]
+                           },
+                           {
+                           	   id: 'document_tab',
+                               title: 'Documents',
+                               html: '<input type="hidden" value="0" id="theValue" />'+
+                               		 '<div style="width: 50%;height: 140px;overflow-y: scroll;float:left;" >'+
+                               		 	'<table id="table" style="border-collapse: collapse;" >'+
+                               		 	  '<thead><tr><th style="padding: 8px; text-align: center;border-bottom: 1px solid #ddd;font-size: large;">Document Name</th></tr></thead><tbody class="document">'+
+	                               		 '</tbody></table>'+
+	                               	 '</div>'+
+	                        		 '<div id="preview_image" style="float:left;width:50%;height: 100%;display: table-cell;vertical-align:middle;text-align:center;overflow-y: auto;"> <p style="margin-top: 33%;text-align:center;">Preview not Available</p></div>',
+                           },
+                                                   
+                    ],
+                    
+                    onsubmit: function(e) 
+                    {
+                      var is_upload_image_selecetd = $('[aria-controls="upload_image_tab"]').attr("aria-selected");// document.getElementById("upload_image_tab").selected;
+                      console.log('is_upload_image_selecetd:'+is_upload_image_selecetd);
+                      
+                      var is_documents_selected = $('[aria-controls="document_tab"]').attr("aria-selected");
+                      
+                      console.log('is_documents_selected :'+is_documents_selected);
+                      
+                      var CHUNK_SIZE = 180000; //Must be evenly divisible by 3, if not, data corruption will occur
+                      if(is_upload_image_selecetd == 'true')
+                      {
+                      	console.log('in upload Image selected');
+                      	var file = document.getElementById("file_upload").files[0];
+                      	byteChunkArray = new Array();  
+                        var reader = new FileReader();
+						   reader.onloadend = function()
+						   {
+						     var fileContent = String(reader.result);
+				             fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+				             console.log('Testing ');
+				             console.log('{!isPEorGE}');
+				             
+				             if('{!isPEorGE}' == 'false')
+				             {
+				             	console.log('no PE or GE');
+					             var id = uploadContentVersion(file.name, fileContent,getExtension(e.data.source));
+					             var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}'; 
+					             //org instance +  [image id]& + oid=[org id]
+					            
+					             ed.selection.setContent('<div ><img data-mce-selected="1" src="' + custom_src + '"  ><br data-mce-bogus="1"></br></div>');
+							 }
+							 else
+							 {
+								if(file.size <= CHUNK_SIZE)
+								{
+									byteChunkArray[0] =  fileContent;// ('0-' + (file.size - 1);
+								}
+								else
+								{
+									//Determine how many whole byte chunks make up the file,
+									var numOfFullChunks = Math.floor(file.size / CHUNK_SIZE); //i.e. 1.2MB file would be 1000000 / CHUNK_SIZE
+									var remainderBytes = file.size % CHUNK_SIZE; // would determine remainder of 1200000 bytes that is not a full chunk
+									var startByte = 0;
+									var endByte = CHUNK_SIZE - 1;
+									
+									//Loop through the number of full chunks and build the byteChunkArray array
+									for(i = 0; i < numOfFullChunks; i++){
+									
+										console.log(startByte +':'+endByte);
+									
+										byteChunkArray[i] = fileContent.slice(startByte,parseInt(endByte)+1);
+										
+										//Set new start and stop bytes for next iteration of loop
+										startByte = endByte + 1;
+										endByte += CHUNK_SIZE;
+										
+										console.log('after: '+startByte +':'+endByte);
+									}
+									
+									//Add the last chunk of remaining bytes to the byteChunkArray
+									startByte = file.size - remainderBytes;
+									endByte = file.size;
+									
+									console.log('forl oop end:'+startByte +':'+ endByte);
+									
+									byteChunkArray.push(fileContent.slice(startByte , parseInt(endByte)+1));
+									}
+									
+									console.log('-- byte chunk--');
+									console.log(byteChunkArray);
+					             
+						             client.getCurrentUserId(function (response){
+						             	console.log(response);
+										client.attachDocument(response , true ,file.name , getExtension(e.data.source) ,byteChunkArray	,function (response){
+											console.log(response);
+											if(response.success)
+											{
+												console.log('success');
+												var id = response.id;
+												
+												var custom_src = '{!getInstanceUrl}servlet/servlet.ImageServer?id=' + id + '&oid={!getOrgId}'; 
+									             
+									            ed.selection.setContent('<div ><img  src="' + custom_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+											}
+											else
+											{
+												console.log('Record Creation Failed');
+												console.log(response.errors);
+											}
+										});
+											   
+									});
+								}
+				                     
+						   }
+						   reader.onerror = errorHandler;
+			               if(file)
+                           {
+						      reader.readAsDataURL(file);
+						   }
+						   
+                      }
+                      else if(is_documents_selected == 'true')
+                      {
+	                      if(selected_image_src != '')
+	                      {
+	                      	ed.selection.setContent('<div ><img data-mce-selected="1" src="' + selected_image_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+	                      }
+                      }
+                      else
+                      {
+                      	var custom_src = document.getElementById("image_url").value;
+                      	var custom_desc = document.getElementById("image_desc").value;
+                      	console.log('custom_src :'+custom_src);
+                      	if(custom_src != '')
+                      	{
+                      		ed.selection.setContent('<div ><img data-mce-selected="1" alt="'+ custom_desc +'" src="' + custom_src + '" data-mce-selected="1" ><br data-mce-bogus="1"></br></div>');
+                      	}                      	
+                      }                      	
+                    }
+                });
+            }
+        });
+             ed.on('paste', function(e) {
+               
+             });
+    		
+            //Hyperlink will work on Coltrol key (Key Code is 17) pressed 
+            ed.on('keydown', function(e) {
+                if (e.keyCode === 17) 
+                {
+                    var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        aTags[i].addEventListener('mouseover', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        aTags[i].addEventListener('mouseleave', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', true);
+                        });
+                    }                    
+                }
+                });
+                
+                ed.on('keyup', function(e) {
+                if (e.keyCode === 17) 
+                {
+                   var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        var new_element = aTags[i].cloneNode(true);
+                        aTags[i].parentNode.replaceChild(new_element, aTags[i]);
+                    }
+                    tinymce.activeEditor.getBody().setAttribute('contenteditable', true); 
+                }
+                
+                var parent_ol = tinyMCE.activeEditor.selection.getNode().parentNode.parentNode.parentNode.nodeName;
+                var child_ol = tinyMCE.activeEditor.selection.getNode().parentNode.nodeName;
+                var child_node = tinyMCE.activeEditor.selection.getNode().parentNode;
+                
+                if(parent_ol == 'OL' && child_ol == 'OL' )
+                {
+	                var parent_ol_style = tinyMCE.activeEditor.selection.getNode().parentNode.parentNode.parentNode.style.cssText;
+                	if(parent_ol_style == '')
+                	{
+                		child_node.style.cssText = 'list-style-type: lower-alpha;';
+                	}
+                	else if(parent_ol_style == 'list-style-type: lower-alpha;')
+                	{
+                		child_node.style.cssText = 'list-style-type: lower-greek;';
+                	}
+                	else if(parent_ol_style == 'list-style-type: lower-greek;')
+                	{
+                		child_node.style.cssText = 'list-style-type: lower-roman;';
+                	}
+                	else if(parent_ol_style == 'list-style-type: lower-roman;')
+                	{
+                		child_node.style.cssText = '';
+                	}
+                	else
+                	{
+                		//checking one if at a time 
+                	}
+                }
+                
+                
+               	console.log('child_node.nodeName : '+child_node.nodeName);
+               	console.log('child_node.parentNode.nodeName : child'+child_node.parentNode.nodeName);
+               	console.log('child_node.parentNode.parentNode.nodeName : child'+child_node.parentNode.parentNode.nodeName);
+                
+            });                
+                ed.on('init', function() 
+                {
+                    this.getDoc().body.style.fontSize = '12px';
+                    this.getDoc().body.style.fontFamily = 'Arial';    
+                });        
+        }
+        });        
+    }
+        
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == false) {
+   
+        tinymce.init({
+            editor_deselector : "mceEditor",
+            editor_selector : "mceNoEditor",
+            mode: "textareas",
+            button_tile_map : true,
+            use_salesforce_proxy : "TRUE",
+            branding: false,
+            width : "775",
+            height : "500",
+            forced_root_block : false,
+            force_br_newlines : true,
+            force_p_newlines : false,
+            valid_elements: "br",
+            // Theme options
+            theme_advanced_buttons1 : "pastetext,selectall,|,search,replace,|,spellchecker,|,print,|,help",
+            theme_advanced_buttons2 : "",
+            theme_advanced_buttons3 : "",
+            theme_advanced_buttons4 : "",
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "none",
+            theme_advanced_resizing : true,
+            convert_fonts_to_spans : false,
+            setup: function(ed) {
+            //Hyperlink will work on Coltrol key (Key Code is 17) pressed 
+            ed.on('keydown', function(e) {
+                 if (e.keyCode === 17) 
+                 {
+                    var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        aTags[i].addEventListener('mouseover', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        aTags[i].addEventListener('mouseleave', function(ea) {
+                            tinymce.activeEditor.getBody().setAttribute('contenteditable', true); 
+                        });
+                    }
+                 }
+                 });
+                ed.on('keyup', function(e) {
+                if (e.keyCode === 17) 
+                {
+                    var aTags = tinymce.activeEditor.getDoc().getElementsByTagName("a");
+                    for (var i=0;i<aTags.length;i++)
+                    {
+                        var new_element = aTags[i].cloneNode(true);
+                        aTags[i].parentNode.replaceChild(new_element, aTags[i]);
+                    }
+                    tinymce.activeEditor.getBody().setAttribute('contenteditable', true); 
+                }
+            });
+        }
+        });
+        
+    }
+    
+    //Map for storing unique keys
+    var tag_map = new Object();
+	function isTagExist(k) {
+	    return tag_map[k];
+	}
+	
+    //set colors
+    <apex:repeat value="{!tagObjectList}" var="e">
+        var key = '{!e.ortoo_e2a__Tag_Value__c}';
+        key = key.toLowerCase();
+        tag_map[key] = true;
+	</apex:repeat>
+	
+	function getRendomColor()
+	{
+		var randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+		console.log(randomColor);
+		return randomColor;
+	}
+	
+	getRendomColor();
+
+    //Tag feature 
+    $(function() {
+    $("#tags").selectize({
+  	   create: true,
+       plugins: ['remove_button'],
+       delimiter: '{!tagDelimiter}',
+       valueField: 'title',
+	    labelField: 'title',
+	    searchField: 'title',
+	    options: [
+	    			<apex:repeat value="{!tagObjectList}" var="e">
+                        {
+                            id: "{!e.Id}",
+                            title: '{!e.ortoo_e2a__Tag_Value__c}',
+                            color: '{!e.ortoo_e2a__Colour__c}'
+                        },
+             		</apex:repeat>
+	    ] ,
+	onItemAdd: function (value, $item) {    
+        	var data = this.options[value];
+            if(isTagExist(data.title.toLowerCase()))
+            {
+            	$('[data-value="'+value+'"]').css('background',data.color);
+            }
+            else
+            {
+            	var tmp_color = getRendomColor();
+            	data.color = tmp_color;
+            	var key = data.title;
+        		key = key.toLowerCase();
+        		tag_map[key] = true;
+            	$('[data-value="'+data.title+'"]').css('background',tmp_color);
+            }
+            
+            addTag(data.title,data.color);
+    },
+    onItemRemove:function(value)
+    {
+         var data = this.options[value];
+         removeTag(data.title,data.color);
+    },
+    create: function(input) { 
+       					if(input.length > 20 || isTagExist(input.toLowerCase()))
+       					{
+       						alert('Tag can not contains more than 20 characters or Value already exist!');
+       						return null;
+       					}
+       					else
+       					{
+       						return {title:input};
+       					}
+       					},
+  	onChange: function(value) {
+              
+           	validateTags(document.getElementById('thePage:theform:thePB:pbS:tabSectionItem:hiddenTagValue').value, document.getElementById('tags').value);
+	          
+            console.log('Test on change :'+value);
+              
+          }
+    })
+    
+    var selectize_tags = $("#tags")[0].selectize;
+    selectize_tags.clear();
+    <apex:repeat value="{!prePopulatedTags}" var="tagValue">
+        selectize_tags.addItem('{!tagValue}');
+        console.log('tagValue after error :'+'{!tagValue}')
+    </apex:repeat>
+    
+    <apex:repeat value="{!newTags}" var="tag">
+        selectize_tags.addItem('{!tag.ortoo_e2a__Tag_Value__c}');
+        console.log('new tags :'+'{!tag.ortoo_e2a__Tag_Value__c}')
+    </apex:repeat>
+    
+});
+function validateTags(old_value, new_value)
+{
+	if(new_value.length < 255)
+	{
+		document.getElementById('thePage:theform:thePB:pbS:tabSectionItem:hiddenTagValue').value = document.getElementById('tags').value;
+	}
+	else
+	{
+		old_value = old_value + '{!tagDelimiter}';
+		var remove_item = remove_item = new_value.replace(old_value,'');
+		
+		var selectize_tags = $("#tags")[0].selectize;
+	    selectize_tags.removeItem(remove_item);				
+	}
+
+	
+}
+function removeAllTags()
+ {
+ 	var selectize_tags = $("#tags")[0].selectize;
+    selectize_tags.clear();
+    
+ }
+ 
+ function SendEmail()
+ {
+ 	if(emailSendButtonclicked == false)
+ 	{
+ 		console.log('email');
+ 		document.getElementById('loader_div').style.display = 'block';
+ 		emailSendButtonclicked = true;
+	 	tinyMCE.triggerSave();
+	 	disableAllVFButtons();
+	 	ValidateSelfReply();
+	 	console.log('emailSendButtonclicked:2 '+emailSendButtonclicked);
+ 	}
+ }
+ 
+ function disableAllVFButtons() {
+ 	console.log('try !');
+	var jnc = jQuery.noConflict();
+	
+	jnc(".cvf_button").each(function(argIndex, argEle) {
+		console.log('try inside !');
+		jnc(this).prop('disabled', true);
+	});
+}
+
+function enableAllVFButtons() {
+ 	console.log('try en!');
+	var jnc = jQuery.noConflict();
+	
+	jnc(".cvf_button").each(function(argIndex, argEle) {
+		console.log('try inside en !');
+		jnc(this).prop('disabled', false);
+	});
+}
+ 
+    /*Disable enter on subject*/
+    $(document).ready(function() {
+        $('#email_subject').keypress(function(event) 
+        {
+            if (event.keyCode == 13) 
+            {
+                event.preventDefault();
+        	}
+        });
+   });
+    </script>
+    <apex:remoteObjects jsNamespace="OrtooModel">
+	    <apex:remoteObjectModel name="Document" fields="Id,Name,Body,FolderId,IsPublic"/>
+	</apex:remoteObjects>
+
+    <apex:sectionHeader title="Ortoo" subtitle="Send Mail"/>
+    <apex:outputPanel id="EmailValidate">
+    	<script type="text/javascript">
+    		var email_to_self = "{!emailToSelf}";
+    		console.log('hello'+email_to_self);
+    		if(email_to_self == 'true')
+    		{
+    			console.log('heeeeeellllo');
+    			//alert('cnfn');
+    			var confirm_val = confirm("To and from Addresses are same. Is this intended reply? Please click OK to send an email, Cancel to go back to Compose Email");
+    			if(confirm_val)
+    			{
+    				document.getElementById('loader_div').style.display = 'block';
+    				SendMessage();
+    			}
+    			else
+    			{
+    				enableAllVFButtons();
+    			}
+    		}
+    		else
+    		{
+    			console.log('heeeeeellllo  222');
+    			document.getElementById('loader_div').style.display = 'block';
+    			SendMessage();
+    		}
+    	</script>
+    </apex:outputPanel>
+    <apex:outputPanel id="send_loader"> <div class="sending_email_card" style="display:none;"  id="loader_div"> <img src="/img/loading.gif" /> &nbsp; Sending .... </div></apex:outputPanel>
+    <apex:form id="theform">
+    	<apex:actionfunction name="SendMessage" action="{!Send}" rerender="pageMsgs,send_loader" oncomplete="enableAllVFButtons();"/>
+    	<apex:actionfunction name="ValidateSelfReply" action="{!ValidatingIfEmailSendingToSelf}" rerender="EmailValidate,pageMsgs,send_loader" />
+	    <apex:actionfunction name="addTag" action="{!addTag}" rerender="" >
+            <apex:param name="value" value=""/>
+            <apex:param name="color" value=""/>
+        </apex:actionfunction>
+        <apex:actionfunction name="removeTag" action="{!removeTags}" reRender=""  status="actStatusId"> 
+                    <apex:param name="title" value=""/>
+                    <apex:param name="color" value=""/>
+     	</apex:actionfunction>
+        <apex:actionFunction action="{!GetNextParentId}" name="attachRefresh" reRender="attachments,attachment_list,attachment_list_msg,customPbSectionTitle,attachment_count"/>
+        <apex:actionFunction name="draftRefresh" action="{!RetrieveDraftEmail}"/>
+        <apex:actionFunction name="templateRefresh" action="{!SelectEmailTemplate}"/>
+        <apex:actionFunction name="BusinessUnitRerender" />
+        <apex:actionFunction name="validateRelatedObj" action="{!ValidateRelatedObjNameNumber}" reRender="pageMsgs"/>
+        <apex:actionFunction name="refreshSettings" action="{!refreshUserSettings}" reRender="jsFunctions"/>
+        <apex:inputHidden value="{!SelectedDraftEmailId}" id="selected_draft_id"/>
+        <apex:inputHidden value="{!TemplateLookupSelectedTemplateId}" id="selected_template_id"/>
+        <apex:inputHidden value="{!TemplateLookupSelectedTemplateType}" id="selected_template_type"/>
+
+        <!-- fields required for "to popup lookup" -->
+        <input name="thePage:theform:thePB:pbS:pbSI_target:target_mod" id="thePage:theform:thePB:pbS:pbSI_target:target_mod" value="0" type="hidden"/>
+        <!-- <input name="thePage:theform:thePB:pbS:pbSI_target:target_lkid" id="thePage:theform:thePB:pbS:pbSI_target:target_lkid" value="" type="hidden"/>-->
+        <input name="thePage:theform:thePB:pbS:pbSI_target:target_lkold" id="thePage:theform:thePB:pbS:pbSI_target:target_lkold" value="" type="hidden"/>
+        <!-- fields required for "to popup lookup" -->
+
+        <!-- fields required for "related to popup lookup" -->
+        <input name="thePage:theform:thePB:pbS:pbSI_relto:relto_name_mod" id="thePage:theform:thePB:pbS:pbSI_relto:relto_name_mod" value="0" type="hidden"/>
+        <!-- <input name="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkid" id="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkid" value="" type="hidden"/>-->
+        <input name="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkold" id="thePage:theform:thePB:pbS:pbSI_relto:relto_name_lkold" value="" type="hidden"/>
+        <!-- fields required for "related to popup lookup" -->
+        	
+            <apex:pageBlock id="thePB" mode="edit">
+                <apex:pageBlockButtons id="thePBB">
+                	<apex:commandButton id="send"  onclick="SendEmail(); return false;" value="Send" styleClass="cvf_button" oncomplete="enableAllVFButtons();"/>
+                    <apex:commandButton value="Select Template" onclick="openTemplateSelectorPopup();return false;" immediate="true"/>
+                    <apex:commandButton onfocus="refreshSettings();" onclick="openAttachmentPopup();return false;" value="Attach File" rerender="none"/>
+                    <apex:commandButton action="{!InitDraftEmailDialog}" onclick="tinyMCE.triggerSave();" value="Drafts" oncomplete="openDraftSelectorPopup();"/>  <!-- disabled="{!DraftButtonIsDisabled}" -->
+                    <apex:outputPanel id="statusOutputPanel">
+                        <apex:commandButton action="{!saveEmailToDraft}" onclick="tinyMCE.triggerSave();" value="Save" reRender="statusOutputPanel" status="actStatus" />
+                        <apex:commandButton action="{!Cancel}" value="Cancel" immediate="true" />
+                        <apex:outputPanel >
+                        <apex:actionStatus id="actStatus" rendered="{!enableActionStatus}">
+                            <apex:facet name="start">
+                              <img src="/img/loading.gif" />                    
+                            </apex:facet>
+                        </apex:actionStatus>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                     <!-- <apex:commandButton value="Drafts 2" onclick="openDraftSelectorPopup();return false;" disabled="{!DraftButtonIsDisabled}"/>-->
+                </apex:pageBlockButtons>
+                <apex:actionPoller action="{!saveEmailToDraftAutoSave}" interval="20" onsubmit="tinyMCE.triggerSave();"/>
+                
+                <!-- <apex:pageBlockSection title="Settings" columns="1" rendered="{!BusinessUnitIsRendered}">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Business Unit" for="business_unit"/>
+                        <apex:selectList value="{!BusinessUnitId}" id="business_unit" size="1">
+                            <apex:selectOptions value="{!BusinessUnitOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!SelectBusinessUnit}" reRender="from_address,bcc_panel"/>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>-->
+                <apex:inputCheckbox value="{!inConsole}" id="searchInValuehidden" style="display:none"/>
+                <apex:outputpanel id="attachments" >
+                    <apex:outputPanel rendered="{!IF(EmailAttachmentsList.size == 0 , false , true)}">
+                    <br/> 
+                    <apex:repeat value="{!EmailAttachmentsList}" var="AT">
+                        &nbsp;
+                        <apex:outputPanel StyleClass="card">
+                            <b>{!AT.Name} ({!AT.Size})</b> &nbsp;
+                            <apex:outputPanel > <!--  rendered="{!AT.Description != 'TEMPLATE-FORINFO'}">-->
+                               <apex:commandLink action="{!DeleteAttachment}" immediate="true" reRender="attachments,attachment_list,attachment_list_msg,customPbSectionTitle,attachment_count" onclick="if (!window.confirm('Are you sure?')) return false;">
+                                   <b>x</b>
+                                   <apex:param name="attachid" value="{!AT.Id}" assignTo="{!DeleteAttachmentID}"/>
+                               </apex:commandLink>
+                           </apex:outputPanel>
+                       </apex:outputPanel>
+                    </apex:repeat>
+                    <br/><br/>
+                    </apex:outputPanel>
+                </apex:outputpanel>
+                <apex:outputPanel id="pageMsgs">
+                	<script type="text/javascript">
+                		emailSendButtonclicked = false;
+                	</script>
+                 	<apex:pageMessages />
+                 </apex:outputPanel>
+                <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+                    <span class="pbSubExtra"></span>
+                    <h3>Edit Email</h3>
+                </div>
+                <apex:pageBlockSection columns="1" id="pbS" collapsible="false">
+                    <apex:pageBlockSectionItem rendered="{!AND(BusinessUnitIsRendered,isBusinessUnitEnable)}" >
+                        <apex:outputLabel value="Business Unit" for="business_unit"/>
+                        <apex:selectList value="{!BusinessUnitId}" id="business_unit" size="1">
+                            <apex:selectOptions value="{!BusinessUnitOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!SelectBusinessUnit}" oncomplete="BusinessUnitRerender();"/>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                   
+                    <apex:pageBlockSectionItem > 
+                        <apex:outputLabel value="Email Format" for="html_switch"/>
+                        <apex:outputText >{!CurrentMailFormat} [
+                            <apex:commandLink id="html_switch" action="{!SwitchMailFormat}" onclick="if (!switchMailAlert()) return false;">
+                            Switch to: {!SwitchToMailFormat}
+                            </apex:commandLink> 
+                        ]
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="fromblock">
+                        <apex:outputLabel value="From" for="from_address"/>
+                        <apex:selectList value="{!FromAddress}" id="from_address" size="1">
+                            <apex:selectOptions value="{!FromAddressOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pbSI_target" rendered="{!HideToField == false}">
+                        <apex:outputLabel value="To" for="target"/>
+                        <apex:outputPanel >
+                            <apex:inputText value="{!TargetName}" id="target">
+                                <c:AutoCompleteComponent objectname="{!TargetObjectName}" autocomplete_textbox="{!$Component.target}" />
+                            </apex:inputText>&nbsp;
+                            <apex:inputhidden value="{!TargetId}" id="target_lkid"/>&nbsp;
+                            <apex:outputLink value="JavaScript:openLookup('/_ui/common/data/LookupPage?lkfm=thePage:theform&lknm=thePage:theform:thePB:pbS:pbSI_target:target&lktp='+'{!JSENCODE($CurrentPage.parameters.rtype)}',670,'1','&lksrch='+document.getElementById('thePage:theform:thePB:pbS:pbSI_target:target').value)" onclick="setLastMousePosition(event)" title="To Lookup (New Window)"  style="vertical-align:top">
+                                <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            </apex:outputLink>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="pbSI_relto" ><!-- rendered="{!RelatedObjectIsRendered}">-->
+                        <apex:outputLabel value="Related To" for="system_object"/>
+                        <apex:outputPanel >
+                            <apex:selectList value="{!RelatedToSObjectPrefix}" id="relto_prefix" size="1">
+                                <apex:selectOptions value="{!RelatedObjectOptions}"></apex:selectOptions>
+                            </apex:selectList>
+                            &nbsp;
+                            <apex:inputText value="{!RelatedToSObjectName}" id="relto_name"/>
+                            <apex:inputHidden value="{!RelatedToSObjectId}" id="relto_name_lkid"/>
+                            <apex:outputLink value="JavaScript:openLookup('/_ui/common/data/LookupPage?lkfm=thePage:theform&lknm=thePage:theform:thePB:pbS:pbSI_relto:relto_name&lktp='+document.getElementById('thePage:theform:thePB:pbS:pbSI_relto:relto_prefix').value,670,'1','&lksrch='+document.getElementById('thePage:theform:thePB:pbS:pbSI_relto:relto_name').value)" onclick="setLastMousePosition(event)" title="Related To Lookup (New Window)"  style="vertical-align:top">
+                                <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            </apex:outputLink>&nbsp;
+                            <apex:outputPanel id="addbtn"><apex:commandLink value="Add Additional Related To" action="{!AddAnother}" reRender="op_repeat, addbtn" rendered="{!AND(RelatedtoList.size == 0,RelatedObjectOptions2.size > 0)}"/></apex:outputPanel>
+                        </apex:outputPanel> 
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:outputPanel id="op_repeat">
+                    <!-- <apex:outputPanel id="relatedto_add">
+                    <apex:outputPanel id="PBS_rt_add">-->
+                    <apex:variable value="{!0}" var="index"/>    
+                    <apex:repeat value="{!RelatedtoList}" var="rep" id="repeater">
+                        <!-- fields required for "related to popup lookup" -->
+                        <input name="thePage:theform:thePB:pbS:repeater:{!rep.IdIndex}:relto_name_mod" id="thePage:theform:thePB:pbS:repeater:{!rep.IdIndex}:relto_name_mod" value="0" type="hidden"/>
+                        <!-- <input name="thePage:theform:thePB:pbS:relatedto_add:PBS_rt_add:repeater:{!rep.IdIndex}:pbSI_relto:relto_name_lkid" id="thePage:theform:thePB:pbS:relatedto_add:PBS_rt_add:repeater:{!rep.IdIndex}:pbSI_relto:relto_name_lkid" value="" type="hidden"/>-->
+                        <input name="thePage:theform:thePB:pbS:repeater:{!rep.IdIndex}:relto_name_lkold" id="thePage:theform:thePB:pbS:repeater:{!rep.IdIndex}:relto_name_lkold" value="" type="hidden"/>
+                        <!-- fields required for "related to popup lookup" -->
+                        <apex:PanelGrid columns="5" id="pbSI_relto" styleClass="{!IF(inConsole == false,'SalesForceClassic','ConsoleApp')}">
+                            <apex:outputLabel value="Related To"  style="color: rgb(74, 74, 86); text-align: right; font-size: 91%; font-weight: bold;"/>
+                            <apex:outputPanel style="border-color: #ECECEC;padding: 2px 2px 2px 16px;" id="selectto_panel">
+                                <apex:inputhidden value="{!rep.RelatedToSobjectPrefix}" id="relto_prefix"/>
+                                <apex:inputhidden value="{!rep.RelatedToSObjectId}" id="relto_name_lkid"/>
+                                <apex:selectList value="{!rep.RelatedToAPIName}" size="1" id="relto_prefix2" style="width:95px">
+                                    <apex:selectOptions value="{!rep.RelatedObjectOptions}"></apex:selectOptions>
+                                    <apex:actionsupport event="onchange" action="{!ObjectOptionOnChange}" rerender="op_repeat"/>
+                                </apex:selectList>
+                                &nbsp;
+                                <apex:inputText value="{!rep.RelatedToSObjectName}" id="relto_name"/>
+                                <apex:outputLink value="JavaScript:openLookup('/_ui/common/data/LookupPage?lkfm=thePage:theform&lknm=thePage:theform:thePB:pbS:repeater:{!index}:relto_name&lktp='+document.getElementById('thePage:theform:thePB:pbS:repeater:{!index}:relto_prefix').value,670,'1','&lksrch='+document.getElementById('thePage:theform:thePB:pbS:repeater:{!index}:relto_name').value)" onclick="setLastMousePosition(event)" title="Related To Lookup (New Window)"  style="vertical-align:top">
+                                    <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                                </apex:outputLink>
+                                <apex:commandLink value="Remove" action="{!Remove}" reRender="op_repeat,addbtn">
+                                    <apex:param value="{!rep.IDIndex}" name="indexId"/>
+                                </apex:commandLink>&nbsp;
+                                <apex:commandLink value="Add Additional Related To" action="{!AddAnother}" reRender="op_repeat" rendered="{!AND(RelatedtoList.size == rep.IDIndex+1 , RelatedObjectOptions2.size > 0)}"/>
+                            </apex:outputPanel>
+                        </apex:PanelGrid>
+                        <apex:variable var="index" value="{!index + 1}"/>
+                    </apex:repeat>
+                   <!--  </apex:outputPanel>
+                    </apex:outputPanel>-->
+                    </apex:outputPanel>
+                    <apex:pageBlockSectionItem id="pbSI_to">
+                        <apex:commandLink value="{!AdditionalToLabel}" onclick="openEmailAddressLookupPopup();return false;"/>
+                        <apex:outputPanel >
+                            <apex:inputTextarea id="to_addresses" value="{!ToAddresses}" style="width:90%;height:25px">
+                                <c:AutoCompleteComponent objectname="Contact,Lead,User" additionalfield="Email" extractfield="Email" autocomplete_textbox="{!$Component.to_addresses}" nextsearch_delimiter=";"/>
+                            </apex:inputTextarea>&nbsp;
+                            <apex:commandLink onclick="openEmailAddressLookupPopup();return false;" style="vertical-align:top">
+                                <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            </apex:commandLink>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pbSI_cc">
+                        <apex:commandLink value="CC" onclick="openEmailAddressLookupPopup();return false;"/>
+                        <apex:outputPanel >
+                            <apex:inputTextarea id="cc_addresses" value="{!CcAddresses}" style="width:90%;height:25px">
+                                <c:AutoCompleteComponent objectname="Contact,Lead,User" additionalfield="Email" extractfield="Email" autocomplete_textbox="{!$Component.cc_addresses}" nextsearch_delimiter=";"/>
+                            </apex:inputTextarea>&nbsp;
+                            <apex:commandLink onclick="openEmailAddressLookupPopup();return false;" style="vertical-align:top">
+                                <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            </apex:commandLink>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pbSI_bcc" rendered="{!BccIsRendered}">
+                        <apex:commandLink value="BCC" onclick="openEmailAddressLookupPopup();return false;"/>
+                        <apex:outputPanel id="bcc_panel">
+                            <apex:inputTextarea id="bcc_addresses" value="{!BccAddresses}" style="width:90%;height:25px">
+                                <c:AutoCompleteComponent objectname="Contact,Lead,User" additionalfield="Email" extractfield="Email" autocomplete_textbox="{!$Component.bcc_addresses}" nextsearch_delimiter=";"/>
+                            </apex:inputTextarea>&nbsp;
+                            <apex:commandLink onclick="openEmailAddressLookupPopup();return false;" style="vertical-align:top">
+                                <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                            </apex:commandLink>
+                            <apex:outputPanel layout="block" rendered="{!DefaultBccIsRendered}">
+                                <apex:inputCheckbox id="default_bcc_select" value="{!DefaultBccSelect}" selected="true" disabled="{!DefaultBccSelectIsDisabled}" onclick="toggleDefaultBccAddress(this);"/>&nbsp;
+                                <apex:outputLabel id="default_bcc_label" value="Default BCC:" style="font-weight:bold"/>&nbsp;
+                                <apex:outputText id="default_bcc_address" value="{!DefaultBccAddress}" style=""/>
+                            </apex:outputPanel>
+                            <apex:outputPanel layout="block">
+                                <apex:inputCheckbox id="sender_bcc_select" value="{!SenderBccSelect}" onclick="toggleSenderBccAddress(this);"/>&nbsp;
+                                <apex:outputLabel id="sender_bcc_label" value="Sender BCC:" style="font-weight:bold;{!SenderBccStyle}"/>&nbsp;
+                                <apex:outputText id="sender_bcc_address" value="{!SenderBccAddress}"/>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!ImportanceIsRendered}">
+                        <apex:outputLabel value="Importance" for="importance"/>
+                        <apex:selectList value="{!Importance}" id="importance" size="1">
+                            <apex:selectOptions value="{!ImportanceOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="tabSectionItem" >
+		                <apex:outputLabel value="Tags"/>
+			            <apex:outputPanel >    
+			                <input id="tags" value="{!tags}" type="text" style="width: 90%;" />
+			               	<apex:inputText value="{!tags}" id="hiddenTagValue"  style="display: none;"/>
+			               	<apex:commandbutton value="Clear All Tags" onclick="removeAllTags();return false;"/>
+		               </apex:outputPanel>
+		            </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Subject" for="email_subject"/>
+                        <apex:outputPanel id="subject_panel">
+                            <apex:inputText id="email_subject" value="{!Subject}" style="width:90%" rendered="{!SubjectInputTextIsRendered}" onkeydown="return (event.keyCode!=13);"/>
+                            <apex:inputText id="email_subject2" value="{!Subject}" style="width:90%" rendered="{!SubjectOutputTextIsRendered}"/>
+                            <!--<apex:outputText value="{!Subject}" rendered="{!SubjectOutputTextIsRendered}"/>-->
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <!--
+                    <apex:pageBlockSectionItem rendered="{!ShowBodyCheckboxIsRendered}">
+                        <apex:outputLabel value="Show Body Text"/>
+                        <apex:inputCheckbox value="{!ShowBody}">
+                            <apex:actionSupport event="onchange" action="{!ShowBodyToggle}"/>
+                        </apex:inputCheckbox>
+                    </apex:pageBlockSectionItem>
+                    -->
+                    
+                    
+                    <apex:pageBlockSectionItem id="pbSI_body">
+                        <apex:outputLabel value="Body" for="email_body"/>
+                        <apex:outputPanel id="editor_panel" layout="block" style="display:none;">
+                            <apex:inputTextarea id="email_body" styleClass="mceEditor" value="{!Body}" rows="20" cols="130" style="width:90%"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <!--<apex:pageBlockSectionItem rendered="{!TemplateFrameIsRendered}">
+                        <apex:outputLabel value="Body"/>
+                        <apex:outputPanel layout="block" style="background-color:White;width:750px">
+                            <apex:iframe width="750px" src="{!TemplateFrameUrl}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>-->
+                 <!-- <apex:inputHidden value="{!Body}" id="CKEditorBodyContent"/> -->
+                </apex:pageBlockSection>
+                
+            </apex:pageBlock>
+           
+            
+    </apex:form>
+    <script>
+    function SaveCKEditorContent()
+    {
+      var editor = CKEDITOR.instances['thePage:theform:thePB:pbS:pbSI_body:email_body'];
+      document.getElementById('thePage:theform:thePB:pbS:CKEditorBodyContent').value=editor.getData();
+    }
+    
+    //Set Html tags if there is any html tag is not closes 
+    //It remove invalid tag from html too
+    function tidyHtml(html) 
+    {
+        var html = html.trim().replace(/>[^<]+</gm, function ($1) {
+            return '>' + $1.substr(1, $1.length - 2).trim() + '<';
+        }).replace(/>\s+</gm, '><');
+        var containerElement = document.createElement('div');
+        containerElement.innerHTML = html;
+        var result = containerElement.innerHTML;
+        
+        return result;
+        
+    }
+    //clean html tags whenever html body is rendered 
+    if({!JSENCODE($CurrentPage.parameters.isrichtext)} == true)  
+    {
+        var textarea_instance = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_body.email_body}');
+        
+        textarea_instance.value = tidyHtml(textarea_instance.value);
+        
+        console.log('dad' + textarea_instance.value);
+   }
+    /* Richtext 
+    if ({!JSENCODE($CurrentPage.parameters.isrichtext)} == false) {
+    
+        document.getElementById('thePage:theform:thePB:pbS:pbSI_body:email_body').className = 'ckeditorToNone';
+        var textarea_instance = document.getElementById('thePage:theform:thePB:pbS:pbSI_body:email_body');
+        textarea_instance.value = textarea_instance.value.replace(/\n\s*\n/g, '\n');
+        
+    }
+    */
+    </script>
+    <apex:outputPanel id="jsFunctions">
+    <script>
+    var newWin=null;
+    
+    function refresh()
+    {
+        refreshSettings();
+    }
+    function openAttachmentPopup()
+    {
+        var urlpart1 = '{!JSENCODE(HTMLENCODE(attachmentLocation))}';         
+        
+        if(urlpart1 == undefined || urlpart1 == null || urlpart1 == '')
+        {
+            urlpart1 = "/apex/ortoo_e2a__AttachmentPickerLocal?loc=LOCAL";
+        }
+        var keyPrefix = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_relto.relto_prefix}').value;
+        var objName = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_relto.relto_name}').value;
+        var ObjId = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_relto.relto_name_lkid}').value;
+        var url=urlpart1+"&parentid={!JSENCODE($CurrentPage.parameters.parentid)}&lktp="+keyPrefix+"&lknm="+objName+"&lkId="+ObjId;
+        openPopup(url, "ortoo", 500, 550, "left=100,top=100,width=500,height=550,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+        validateRelatedObj();
+    }
+    function openUserSettingsPopup()
+    {
+        var url="/apex/ortoo_e2a__UserSettings";
+        openPopup(url, "ortoo", 800, 340, "left=100,top=100,width=800,height=340,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    
+    function openDraftSelectorPopup()
+    {
+        var url="/apex/ortoo_e2a__DraftSelector?parentid={!JSENCODE($CurrentPage.parameters.parentid)}&isrichtext={!JSENCODE($CurrentPage.parameters.isrichtext)}&fromaddress={!JSENCODE($Component.thePage:theform:thePB:pbS:fromblock:from_address)}";
+        openPopup(url, "ortoo", 700, 400, "left=100,top=100,width=700,height=400,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    
+    function openTemplateSelectorPopup()
+    {
+        var url="/apex/ortoo_e2a__TemplateSelector";
+        openPopup(url, "ortoo", 750, 410, "left=100,top=100,width=750,height=410,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    function openTargetLookupPopup()
+    {
+        var url="/apex/ortoo_e2a__TargetLookup?rtype={!JSENCODE($CurrentPage.parameters.rtype)}&lksrch=" + 
+                escapeUTF(document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_target.target}').value);
+        openPopup(url, "ortoo", 500, 500, "left=100,top=100,width=500,height=500,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    function openEmailAddressLookupPopup()
+    {
+        var url="/apex/ortoo_e2a__AddressLookup?related_id={!RelatedObjectIdParm}";
+        openPopup(url, "ortoo", 630, 530, "left=100,top=100,width=630,height=540,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    
+    function draftPassBack(draftId)
+    {
+        closePopup();
+        document.getElementById('{!$Component.thePage.theform.selected_draft_id}').value = draftId;
+        draftRefresh();
+    }
+    
+    function templatePassBack(templateId,templateType)
+    {
+        closePopup();
+        document.getElementById('{!$Component.thePage.theform.selected_template_id}').value = templateId;
+        document.getElementById('{!$Component.thePage.theform.selected_template_type}').value = templateType;
+        templateRefresh();
+    }
+    function targetPassBack(targetName)
+    {
+        closePopup();
+        document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_target.target}').value = targetName;
+    }
+    function emailAddressPassBack(toAddresses,ccAddresses,bccAddresses)
+    {
+        closePopup();
+        var existingTo = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_to.to_addresses}').value;
+        var existingCc = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_cc.cc_addresses}').value;
+        var existingBcc = '';
+        var Bcc_hidden = false;
+        if(document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.bcc_addresses}') != null)
+        {
+        	var existingBcc = document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.bcc_addresses}').value;
+        }
+        else
+        {
+        	Bcc_hidden = true;
+        }
+        
+        if (toAddresses!='')
+        {
+            if (trim(existingTo)!='' && toAddresses!='' && lastChar(existingTo)!=';')
+                existingTo=existingTo+'; ';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_to.to_addresses}').value = existingTo+toAddresses;
+        }
+        if (ccAddresses!='')
+        {
+            if (trim(existingCc)!='' && ccAddresses!='' && lastChar(existingCc)!=';')
+                existingCc=existingCc+'; ';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_cc.cc_addresses}').value = existingCc+ccAddresses;
+        }
+        if (Bcc_hidden == false && bccAddresses!='')
+        {
+            if (trim(existingBcc)!='' && bccAddresses!='' && lastChar(existingBcc)!=';')
+                existingBcc=existingBcc+'; ';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.bcc_addresses}').value = existingBcc+bccAddresses;
+        }
+    }
+    function lastChar(stringIn)
+    {
+        var strLastChar='';
+        var trimStr= trim(stringIn);
+        if (trimStr.length>0)
+            strLastChar=stringIn.charAt(trimStr.length-1);
+        return strLastChar;
+    }
+    function trim(stringToTrim)
+    {
+        return stringToTrim.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    }
+    </script>
+    </apex:outputPanel>
+    <script>
+    function attachmentAlert()
+    {
+        if (document.getElementById('{!$Component.thePage.theform.attachment_count}').innerHTML!='none')
+        {
+            if (!window.confirm('Existing attachments will be lost.\n\nAre you sure?'))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+    </script>
+    <script>
+    function switchMailAlert()
+    {
+        if ({!JSENCODE($CurrentPage.parameters.isrichtext)})
+        {
+            if (!window.confirm('All HTML formatting will be removed.\n\nAre you sure?'))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+    </script>
+    <script type="text/javascript">
+    function toggleDefaultBccAddress( chkBox )
+    {
+        if ( chkBox.checked )
+        {
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.default_bcc_label}').style.color='';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.default_bcc_address}').style.color='';
+        }
+        else
+        {
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.default_bcc_label}').style.color='grey';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.default_bcc_address}').style.color='grey';
+        }
+    }
+    function toggleSenderBccAddress( chkBox )
+    {
+        if ( chkBox.checked )
+        {
+            document.getElementById( '{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.sender_bcc_label}' ).style.color='';
+            document.getElementById( '{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.sender_bcc_address}' ).style.color='';
+        }
+        else
+        {
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.sender_bcc_label}' ).style.color='grey';
+            document.getElementById('{!$Component.thePage.theform.thePB.pbS.pbSI_bcc.sender_bcc_address}' ).style.color='grey';
+        }
+    }
+    </script>
+</apex:page>

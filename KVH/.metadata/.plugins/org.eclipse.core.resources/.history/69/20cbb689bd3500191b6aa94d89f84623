@@ -1,0 +1,66 @@
+<apex:component >
+  <style>
+        .slds-spinner_container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: calc(9000 + 2);
+            background-color: rgba(255,255,255,.75);
+            visibility: visible;
+            opacity: 1;
+            transition: opacity .2s ease,visibility 0s;
+            transition-delay: 0s,.3s;
+        }
+        .slds-spinner_medium {
+            width: 2rem;
+        }
+        .slds-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%) rotate(90deg);
+        }
+        .slds-assistive-text {
+            position: absolute!important;
+            margin: -1px!important;
+            border: 0!important;
+            padding: 0!important;
+            width: 1px!important;
+            height: 1px!important;
+            overflow: hidden!important;
+            clip: rect(0 0 0 0)!important;
+            text-transform: none!important;
+        }
+         .slds-spinner__dot-a, .slds-spinner__dot-b {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            
+        }            
+        
+    </style>
+    <script>
+        function submitclick(function_name){
+            showstatusmessage();
+            eval(function_name);
+        }
+        
+        function showstatusmessage(){        
+            $("#load-status").show();
+        }
+    </script>
+    <div class="" id="load-status" style="height: 6rem;display:none;" >
+      <div class="slds-spinner_container">
+        <div role="status" class="slds-spinner slds-spinner_medium">
+          <span class="slds-assistive-text">Loading</span>
+          <div class="slds-spinner__dot-a">
+               <img src="{!URLFOR($Resource.slds_spinner_brand)}" style="width:70px;" />
+          </div>
+          <div class="slds-spinner__dot-b"></div>
+        </div>
+      </div>
+    </div>  
+</apex:component>

@@ -1,0 +1,18 @@
+<apex:page standardController="Asset" sidebar="false" showHeader="false" title="Replacement Asset" >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+
+    <script>
+        $Lightning.use("c:Update_AssetSubscription_App", function() {
+            $Lightning.createComponent(
+                "c:Update_AssetSubscriptionMainPage_cmp",
+                {"assetId" : '{!$CurrentPage.parameters.assetId}',"caseId" : '{!$CurrentPage.parameters.CID}',"caseNumber" : '{!$CurrentPage.parameters.CN}',"UpdateSubscription" : {!$CurrentPage.parameters.UpdateSubscription}},
+                "lightning",
+                function(cmp) {
+                    console.log("Component created!");
+                });
+            });
+    </script>
+    <body style="background-color: #f8f8f8;">
+    <div id="lightning"></div>
+    </body>
+</apex:page>

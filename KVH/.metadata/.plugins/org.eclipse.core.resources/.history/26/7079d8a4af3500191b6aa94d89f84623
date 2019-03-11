@@ -1,0 +1,90 @@
+<aura:component controller="AddAttachmentController">    
+    <aura:attribute name="objectId" type="string"/>
+    <aura:attribute name="attachmentList" type="List"/>
+    <aura:attribute name="attachmentCheck" type="boolean" default="false"/>
+    <aura:attribute name="accept" type="List" default="{!$Label.c.admTol_Acceptable_File_Types}"/>
+    <aura:attribute name="multiple" type="Boolean" default="true"/>  
+    <aura:attribute name="label" type="string" default="Upload File"/>
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div class="">          
+        <div class="slds-col slds-size_1-of-1"> 
+            <lightning:fileUpload name="fileUploader"
+                                  label= "{!v.label}"
+                                  multiple="{!v.multiple}"
+                                  accept="{!v.accept}"
+                                  disabled="{!v.disabled}"
+                                  recordId="{!v.objectId}"
+                                  onuploadfinished="{! c.handleUploadFinished }"/>
+        </div>
+        <br/>
+        <div class="slds-col slds-size_1-of-1"> 
+            <aura:if isTrue="{! empty(v.attachmentList)}">
+                <p class="noAttach">No Attachments</p>
+                <aura:set attribute="else">
+                    <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="slds-cell-shrink" scope="col">
+                                    <div class="slds-truncate" title="Name">Name
+                                    </div>
+                                </th>
+                                <th class="slds-cell-shrink" scope="col">
+                                    <div class="slds-truncate" title="Size">Size
+                                    </div>
+                                </th>                       
+                                <th class="slds-cell-shrink" scope="col">
+                                    <div class="slds-truncate" title="Type">Type
+                                    </div>
+                                </th>   
+                                <aura:if isTrue="{!!v.disabled}">
+                                    <th class="slds-cell-shrink" scope="col">
+                                        <div class="slds-truncate" title="Action">Action
+                                        </div>
+                                    </th>   
+                                </aura:if>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.attachmentList}" var="attach">
+                                <tr class="slds-hint-parent">
+                                    <td class="slds-cell-shrink" data-label="Name">
+                                        <div class="slds-truncate" title="Name">{!attach.attachName}</div>
+                                    </td>
+                                    <td class="slds-cell-shrink" data-label="Size">
+                                        <div class="slds-truncate" title="Size">{!attach.attachSize}</div>	
+                                    </td>                    
+                                    <td class="slds-cell-shrink" data-label="Type">
+                                        <div class="slds-truncate" title="Type">{!attach.attachType}</div>
+                                    </td>
+                                    <aura:if isTrue="{!!v.disabled}">
+                                        <td class="slds-cell-shrink" data-label="Remove">
+                                            <span title="Remove" onclick="{!c.deleteAttach}" id="{!attach.attachId}" data-attriVal="{!attach.attachsObject}">
+                                                <lightning:icon iconName="utility:delete" size="small" alternativeText="Indicates approval"/>
+                                            </span>
+                                            &nbsp;&nbsp;
+                                            <span title="Download">
+                                                <aura:if isTrue="{!attach.attachsObject == 'Attachment'}">
+                                                    <lightning:buttonIcon iconName="utility:download" size="small" 
+                                                                          alternativeText="Indicates approval" onclick="{!c.downloadAttachment}"
+                                                                          value="{!attach.attachId}"/>
+                                                    <aura:set attribute="else">
+                                                        <lightning:buttonIcon iconName="utility:download" size="small" 
+                                                                              alternativeText="Indicates approval" onclick="{!c.downloadFiles}"
+                                                                              value="{!attach.attachDocVerId}"/>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </span>
+                                        </td>
+                                        
+                                    </aura:if>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </aura:set>                
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

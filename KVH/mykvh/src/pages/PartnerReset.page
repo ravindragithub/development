@@ -1,0 +1,317 @@
+<apex:page controller="PartnerLoginController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/> 
+    <apex:stylesheet value="{!URLFOR($Resource.jqueryDialog,'/css/jquery-ui.css')}"/>
+    
+    
+    <apex:includeScript value="{!URLFOR($Resource.jqueryDialog,'/js/jquery-1.12.4.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jqueryDialog,'/js/jquery-ui.js')}" />
+    <style>
+        .ui-button .ui-icon,.ui-widget-header .ui-icon {
+            background-image: url("{!URLFOR($Resource.jqueryDialog,'/images/ui-icons_555555_256x240.png')}");
+        }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+        .ui-state-highlight{
+            border: 1px solid #dad55e;
+            background: #fffa90;
+            color: #777620;
+        }
+        
+        .link {
+        background: #fffa90;
+        color: #777620;
+        }
+        
+        .ui-autocomplete-loading {
+            background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0.7;
+            top: 0px;
+            left: 0px;
+            position: fixed;
+            z-index: 500;
+        
+        }
+        
+        .status {
+            cursor: pointer;
+            -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+            -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+            box-shadow: 0 0 15px 5px #DDDDDD;  
+            opacity: 1;
+            height: auto;
+            position: fixed;
+            left: 50%;
+            margin-top: 5%;
+            padding: 15px;
+            z-index: 1000;
+            display: block;
+        }
+        
+    </style>
+    <body>      
+        <header>
+            <div class="logo">
+                <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>            
+        </header>
+        <apex:form id="frm" >
+        <div class="content">
+            <h1>Welcome to the KVH Partner Portal</h1>
+            <div class="section group">
+                <div class="col span_6_of_12">
+                    <h3>Forgot your password or need to reset it?</h3>
+                    <p>Enter the email address you signed up with and we will send you the password reset instructions.</p>
+                    <div class="alert">
+                        <p style="margin:0;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> If you already have access to the KVH Partner Portal but have not yet logged into the <strong>NEW</strong> portal, you will need to reset your password (you can use the same one you had before).</p>
+                    </div>
+                    <div class="alert">
+                        <p style="margin:0;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> If it's been more than 18 months since you last logged in, you will need to <a href="./PartnerLogin">register for access</a>.</p>
+                    </div>
+                    <p></p>
+                    <apex:pageMessages />
+                    <p></p>
+                    <p><label>Email: </label><br/>
+                        <apex:inputText value="{!uname}"/>
+                        <p/>
+                        <apex:commandButton style="background: #cc0000;color: #fff;border: transparent;padding: 8px;" value="Submit" styleClass="button button-red" reRender="frm" action="{!resetpass}"/></p>
+                </div>
+                <div class="col span_6_of_12 callout pad-inside">
+                    <h4 class="pad-bottom">Having trouble logging in?</h4>
+                    <ul class="list">
+                        <li>Passwords are case sensitive.</li>
+                        <li>If you don't know the email address, or if your email address is no longer valid, please <a href="javascript:void(0)" onclick="openForm();">Contact Us</a> for further assistance.</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+            
+           
+           
+        </apex:form>
+      
+          <!---- contact us dailog start-->
+          <div id="dialog-form" title="Contact Us" style="display:none;">
+              <apex:actionStatus id="load-status">
+                  <apex:facet name="start">
+                    <div class="overlay"></div>
+                    <div class="status">                               
+                        <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                        <span id="load-statustext">Please wait...</span>
+                    </div>
+                  </apex:facet>
+              </apex:actionStatus>
+                  
+             <apex:outputPanel id="contactusform">
+                 <script>
+                     var messagesent = {!messagesent};
+                 </script>
+                 <p class="validateTips">All form fields are required.</p>
+                 <apex:pageMessages ></apex:pageMessages>
+                 <apex:form >
+                     <apex:outputLabel value="First Name"></apex:outputLabel>
+                     <apex:inputText id="firstname" value="{!firstname}"/>
+                     <apex:outputLabel value="Last Name"></apex:outputLabel>
+                     <apex:inputText id="lastname" value="{!lastname}"/>
+                     <apex:outputLabel value="Email"></apex:outputLabel>
+                     <apex:inputText id="email" value="{!email}"/>
+                     <apex:outputLabel value="Message"></apex:outputLabel>
+                     <apex:inputTextarea id="message" rows="8" value="{!message}"/>
+                     <apex:actionFunction name="createCase" action="{!createCase}" status="load-status" reRender="contactusform" oncomplete="closemessagepopup();"/>
+                 </apex:form>
+             </apex:outputPanel>
+             <!---- contact us dailog start-->
+              <div id="form-submited" title="Confirmation">
+                  <apex:pageMessage severity="success" strength="2" summary="Your message has been sent! Thank you for reaching out to KVH Partner Portal support."></apex:pageMessage>
+              </div>
+          </div>
+        <!---- contact us dailog end--> 
+      
+        <script>
+            var  emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                      firstname = $('[id*="firstname"]'),
+                      lastname = $('[id*="lastname"]'),
+                      email = $('[id*="email"]'),
+                      message = $('[id*="message"]'),
+                      allFields = $( [] ).add( firstname ).add( lastname ).add( email ).add(message),
+                      tips = $( ".validateTips" );
+               var  dialog,formsubmitpopup;
+            $( function() {
+                formsubmitpopup = $( "#form-submited" ).dialog({
+                              autoOpen: false,
+                             width: 'auto', // overcomes width:'auto' and maxWidth bug
+                            maxWidth: 600,
+                            height: 'auto',
+                            modal: true,
+                            fluid: true, //new option
+                            resizable: false,
+                              buttons: {
+                                "OK": function() {
+                                  formsubmitpopup.dialog( "close" );
+                                }
+                              }
+                    });
+                      
+                dialog = $( "#dialog-form" ).dialog({
+                    autoOpen: false,
+                    width: 'auto', // overcomes width:'auto' and maxWidth bug
+                    maxWidth: 600,
+                    height: 'auto',
+                    modal: true,
+                    fluid: true, //new option
+                    resizable: false,
+                    buttons: {  
+                       
+                        Cancel: function() {
+                            dialog.dialog( "close" );
+                            
+                        },
+                        
+                        Submit:  sendmail,
+                       
+                        
+                    },
+                    close: function() {
+                          $('[id*="firstname"]').val("");
+                          $('[id*="lastname"]').val("");
+                          $('[id*="email"]').val("");
+                          $('[id*="message"]').val("");
+                    }
+                    
+                });
+                    $('.ui-dialog-buttonpane :button').each(function(){ 
+                    var body_tag_css = {
+                      "color": "blue",
+                      "background-color" : "transparent",
+                       "border" : "none",
+                       "text-decoration" : "underline"
+                       
+                    }
+                    
+                    
+                    if($(this).text() === 'Save') {
+                        $(this).css('background', 'green');
+                    }
+                    else if($(this).text() === 'Cancel') {
+                        $(this).css(body_tag_css);
+                    }
+                });
+                
+               
+                
+                
+                // on window resize run function
+                $(window).resize(function () {
+                    fluidDialog();
+                });
+                
+                // catch dialog if opened within a viewport smaller than the dialog width
+                $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
+                    fluidDialog();
+                });
+            });
+            
+            function openForm(){
+                   dialog.dialog( "open" );
+            }
+            
+            function sendmail (){
+                 firstname = $('[id*="firstname"]');
+                  lastname = $('[id*="lastname"]');
+                  email = $('[id*="email"]');
+                  message = $('[id*="message"]');
+                  allFields = $( [] ).add( firstname ).add( lastname ).add( email ).add(message);
+                  tips = $( ".validateTips" );
+               // alert("hello");
+                var valid = true;
+                  allFields.removeClass( "ui-state-error" );
+             
+                  valid = valid && checkLength( firstname, "First Name", 1, 255 );
+                  valid = valid && checkLength( lastname, "Last Name", 1, 255 );
+                  valid = valid && checkLength( email, "Email", 6, 80 );
+                 
+                  
+                  valid = valid && checkRegexp( email, emailRegex, "Please enter a valid email address" );
+                  
+             
+                  if ( valid ) {
+                   // alert("form validation passed.");
+                   // dialog.dialog( "close" );
+                   createCase();
+                  }
+                  return valid;
+            }
+            
+            function fluidDialog() {
+                var $visible = $(".ui-dialog:visible");
+                // each open dialog
+                $visible.each(function () {
+                    var $this = $(this);
+                    var dialog = $this.find(".ui-dialog-content").data("ui-dialog");
+                    // if fluid option == true
+                    if (dialog.options.fluid) {
+                        var wWidth = $(window).width();
+                        // check window width against dialog width
+                        if (wWidth < (parseInt(dialog.options.maxWidth) + 50))  {
+                            // keep dialog from filling entire screen
+                            $this.css("max-width", "90%");
+                        } else {
+                            // fix maxWidth bug
+                            $this.css("max-width", dialog.options.maxWidth + "px");
+                        }
+                        //reposition dialog
+                        dialog.option("position", dialog.options.position);
+                    }
+                });
+            
+            }
+            
+            function checkLength( o, n, min, max ) {
+              if ( o.val().length > max || o.val().length < min ) {
+                o.addClass( "ui-state-error" );
+                updateTips( "Length of " + n + " must be between " +
+                  min + " and " + max + "." );
+                return false;
+              } else {
+                return true;
+              }
+            }
+            
+             function checkRegexp( o, regexp, n ) {
+               //  alert( regexp.test( o.val() ));
+              if ( !( regexp.test( o.val() ) ) ) {
+                o.addClass( "ui-state-error" );
+                updateTips( n );
+                return false;
+              } else {
+                return true;
+              }
+            }
+            
+            function updateTips( t ) {
+              tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+              setTimeout(function() {
+                tips.removeClass( "ui-state-highlight", 1500 );
+              }, 500 );
+            }
+            
+            function closemessagepopup(){
+                if(messagesent == true){
+                    dialog.dialog( "close" );
+                    formsubmitpopup.dialog( "open" );
+                }
+            }
+        </script>
+    </body>
+</apex:page>

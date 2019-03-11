@@ -1,0 +1,33 @@
+<aura:component >
+    <aura:attribute name="satRouterSerialNumber" type="string" description="This attribute is used to propogate the satRouterSerialNumber to child Components" default="" />
+
+    <aura:attribute name="searchResults" type="List" description="This is the JSON returned from the callout and Event" />
+
+    <aura:handler name="cmpDataUpdated" event="c:HTS_SatRouter_Bubbling_evt" action="{!c.handleStateChange}" />
+
+
+    <div style="width: 60%;">
+        <!-- Always visible -->
+        <div aura:id="search_div">
+            <c:searchSatRouter_cmp aura:id="search"/>
+            <!-- This component Fires an event after search -->
+        </div>
+        <!-- The following divs are conditionally rendered based on result of search -->
+        <div aura:id="spinner_div" class="slds-hide">
+            <lightning:spinner variant="brand" size="large" alternativeText="Waiting for server response..."/>
+        </div>
+
+        <div aura:id="insert_div" class="toggle">
+            <c:insertSatRouter_cmp aura:id="insert" />
+        </div>
+        
+        <div aura:id="exception_div" class="toggle">
+            <c:exceptionSatRouter_cmp aura:id="exception" />
+        </div>
+        
+        <div aura:id="success_div" class="toggle">
+            <c:successSatRouter_cmp aura:id="success" />
+        </div>
+    </div>
+
+</aura:component>

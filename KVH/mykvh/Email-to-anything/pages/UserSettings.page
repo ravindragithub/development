@@ -1,0 +1,183 @@
+<apex:page controller="ortoo_e2a.UserSettingsController" id="thePage" tabStyle="User_Settings__tab">
+<apex:includeScript value="/support/console/33.0/integration.js"/>
+    <script>
+        
+    function openTemplateSelectorPopup(lookuptype)
+    {
+        
+        var url="/apex/ortoo_e2a__TemplateSelector?lookuptype=" + lookuptype;
+        openPopup(url, "ortoo", 750, 410, "left=100,top=100,width=750,height=410,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    function templatePassBack(templateId,templateType,lookupType)
+    {
+        closePopup();
+        if(lookupType=='new'){
+        document.getElementById('{!$Component.thePage.theform.new_template_id}').value = templateId;
+        rerenderEmailTemplate();
+        }
+        else if(lookupType=='reply'){
+        document.getElementById('{!$Component.thePage.theform.reply_template_id}').value = templateId;
+        rerenderReplyEmailTemplate();
+        }
+        else if(lookupType=='forward'){
+        document.getElementById('{!$Component.thePage.theform.forward_template_id}').value = templateId;
+        rerenderForwardEmailTemplate();
+        }       
+    }
+    
+  setTitle();
+   
+  function setTitle()
+    {
+    
+       console.log('setting title');
+       if (sforce.console.isInConsole())
+       {
+        sforce.console.setTabTitle('e2a User Settings');
+       } 
+    }
+    
+
+    </script>
+    <apex:form id="theForm">
+        <apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Email_Template__c}" id="new_template_id"/>
+        <apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Reply_Email_Template__c}" id="reply_template_id"/>
+        <apex:inputHidden value="{!Settings.ortoo_e2a__EC_Default_Forward_Email_Template__c}" id="forward_template_id"/>
+        <apex:sectionHeader title="User Settings"/>
+        <apex:pageBlock id="viewPageBlock" rendered="{!EditIsActive == false}">
+            <apex:pageBlockButtons rendered="{!EditIsAllowed}">
+                <apex:commandButton action="{!Edit}" value="Edit"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockSection title="Email Client" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!SenderNameHelpText}">
+                    <apex:outputLabel value="Alternate Email Display Name" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Sender_Name__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EmailAddressHelpText}">
+                    <apex:outputLabel value="Alternate Email Address" />
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Email_Address__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!SenderBCCDefaultValueHelpText}">
+                    <apex:outputLabel value="Sender BCC Default Value"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Sender_BCC_Default_Value__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!UseSignatureHelpText}">
+                    <apex:outputLabel value="Use Signature"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Use_Signature__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EmailFormatHelpText}">
+                    <apex:outputLabel value="Email Format"/>
+                    <apex:outputField value="{!Settings.ortoo_e2a__EC_Email_Format__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultFromAddressHelpText}">
+                    <apex:outputLabel value="Default From-Address"/>
+                    <apex:outputText value="{!DefaultFromAddressDisplay}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultBUHelpText}" rendered="{!isBusinessUnitEnable == true}">
+                    <apex:outputLabel value="Default Business Unit"/>
+                    <apex:outputText value="{!DefaultBusinessUnit}" style="{!DefaultBusinessUnitStyle}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultTemplateFolderHelpText}">
+                    <apex:outputLabel value="Default Template Folder"/>
+                    <apex:outputText value="{!DefaultTemplateFolder}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputText value="{!DefaultEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputText value="{!DefaultReplyEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputText value="{!DefaultForwardEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        <apex:pageBlock id="editPageBlock" title="User Settings" rendered="{!EditIsActive}">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!Save}" value="Save"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockSection title="Email Client" collapsible="false" columns="2">
+                <apex:pageblockSectionItem helpText="{!SenderNameHelpText}">
+                    <apex:outputLabel value="Alternate Email Display Name" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Sender_Name__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EmailAddressHelpText}">
+                    <apex:outputLabel value="Alternate Email Address" />
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Email_Address__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!SenderBCCDefaultValueHelpText}">
+                    <apex:outputLabel value="Sender BCC Default Value"/>
+                    <apex:inputCheckbox value="{!Settings.ortoo_e2a__EC_Sender_BCC_Default_Value__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!UseSignatureHelpText}">
+                    <apex:outputLabel value="Use Signature"/>
+                    <apex:inputField value="{!Settings.ortoo_e2a__EC_Use_Signature__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!EmailFormatHelpText}">
+                    <apex:outputLabel value="Email Format"/>
+                    <apex:selectList value="{!Settings.ortoo_e2a__EC_Email_Format__c}" id="email_format" size="1">
+                        <apex:selectOptions value="{!EmailFormatOptions}"/>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultFromAddressHelpText}">
+                    <apex:outputLabel value="Default From-Address"/>
+                    <apex:selectList value="{!DefaultFromAddress}" id="default_from_address" size="1">
+                        <apex:selectOptions value="{!DefaultFromAddressOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultBUHelpText}" rendered="{!isBusinessUnitEnable == true}">
+                    <apex:outputLabel value="Default Business Unit"/>
+                    <apex:selectList value="{!Settings.ortoo_e2a__Default_Business_Unit__c}" id="business_unit" size="1">
+                        <apex:selectOptions value="{!BusinessUnitOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultTemplateFolderHelpText}">
+                    <apex:outputLabel value="Default Template Folder"/>
+                    <apex:selectList value="{!Settings.ortoo_e2a__EC_Default_Template_Folder__c}" id="template_folder" size="1">
+                        <apex:selectOptions value="{!TemplateFolderOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultEmailTemplate}" id="email_template_text" />
+                        <apex:actionFunction name="rerenderEmailTemplate" rerender="email_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('new');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultReplyEmailTemplate}" id="email_reply_template_text" />
+                        <apex:actionFunction name="rerenderReplyEmailTemplate" rerender="email_reply_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('reply');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearReplyTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultForwardEmailTemplate}" id="email_forward_template_text" />
+                        <apex:actionFunction name="rerenderForwardEmailTemplate" rerender="email_forward_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('forward');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearForwardTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        </apex:form>
+</apex:page>

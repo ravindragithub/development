@@ -1,0 +1,5 @@
+<design:component >
+	 <design:attribute name="videoURL" label="videoURL" description="You tube video url" />
+     <design:attribute name="documentURL" label="documentURL" description="form url for download button" />
+     <design:attribute name="bottomImageName" label="Bottom Image Name" description="name of the image which loaed in images static resource" />
+</design:component>

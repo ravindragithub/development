@@ -1,0 +1,33 @@
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+    .THIS .longPanel{
+        /*padding: .5rem 0 .5rem 0;*/
+    }
+}
+.THIS .required {
+    color:rgb(194, 57, 52);
+    float:none!important;
+}
+.THIS .popover button{
+    background-color: transparent!Important;
+}
+.THIS .note {
+    font-size:90%;
+    font-style:italic;
+    padding: 0 0 0 .75rem!important;
+    color:#555;
+}
+.THIS .ccSecure1 svg{
+    width: 1rem;
+    height: 1rem;
+}
+.THIS .ccSecure2 svg{
+    width: 1rem;
+    height: 1rem;
+    margin-top: -15px;
+}

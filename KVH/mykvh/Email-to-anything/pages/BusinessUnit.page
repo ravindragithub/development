@@ -1,0 +1,267 @@
+<apex:page StandardController="ortoo_e2a__Business_Unit__c" extensions="ortoo_e2a.BusinessUnitExtension" id="thePage">
+	<script type="text/javascript">
+
+	function openTemplateSelectorPopup(lookuptype)
+    {
+        
+        var url="/apex/ortoo_e2a__TemplateSelector?lookuptype=" + lookuptype;
+        openPopup(url, "ortoo", 750, 410, "left=100,top=100,width=750,height=410,toolbar=no,status=no,directories=no,menubar=no,resizable=no,scrollbars=yes", true);
+    }
+    function templatePassBack(templateId,templateType,lookupType)
+    {
+        closePopup();
+        if(lookupType=='new'){
+        document.getElementById('{!$Component.thePage.theform.new_template_id}').value = templateId;
+        rerenderEmailTemplate();
+        }
+        else if(lookupType=='reply'){
+        document.getElementById('{!$Component.thePage.theform.reply_template_id}').value = templateId;
+        rerenderReplyEmailTemplate();
+        }
+        else if(lookupType=='forward'){
+        document.getElementById('{!$Component.thePage.theform.forward_template_id}').value = templateId;
+        rerenderForwardEmailTemplate();
+        }       
+    }
+    </script>
+    <apex:form id="theForm">
+    	<apex:inputHidden value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__EC_Default_Email_Template__c}" id="new_template_id"/>
+        <apex:inputHidden value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__EC_Default_Reply_Email_Template__c}" id="reply_template_id"/>
+        <apex:inputHidden value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__EC_Default_Forward_Email_Template__c}" id="forward_template_id"/>
+        <apex:sectionHeader title="{!SectionHeaderTitle}" subtitle="{!ortoo_e2a__Business_Unit__c.Name}"/>
+        <apex:pageBlock title="Business Unit Detail" id="pageView" rendered="{!EditIsNotActive}">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!EditBusinessUnit}" value="Edit" immediate="true" rendered="{!EditIsAllowed}"/>
+            <apex:commandButton action="{!Delete}" value="Delete" onclick="if (!window.confirm('Are you sure?')) return false;" rendered="{!DeleteIsAllowed}"/>
+        </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem helpText="{!BUNameHelpText}">
+                    <apex:outputLabel value="Business Unit"/>
+                    <apex:outputField value="{!ortoo_e2a__Business_Unit__c.Name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Owner" for="owner"/>
+                    <apex:outputPanel >
+                        <apex:outputLink value="/{!ortoo_e2a__Business_Unit__c.Owner.Id}">{!ortoo_e2a__Business_Unit__c.Owner.Name}</apex:outputLink>&nbsp;
+                            <apex:outputLink value="/{!ortoo_e2a__Business_Unit__c.Id}%2Fa?retURL=/apex/ortoo_e2a__BusinessUnit?id={!ortoo_e2a__Business_Unit__c.Id}" rendered="{!ChangeOwnerIsRendered}">[Change]</apex:outputLink>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Title of Business Unit">
+                	<apex:outputLabel value="Business Unit Title"/>
+                	<apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Busines_Unit_Title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Email Address">
+                	<apex:outputLabel value="Email Address"/>
+                	<apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Email_Address__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Phone Number">
+                	<apex:outputLabel value="Phone Number"/>
+                	<apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Phone_Number__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Fax Number">
+                	<apex:outputLabel value="Fax Number"/>
+                	<apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Fax_Number__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Website URL">
+                	<apex:outputLabel value="Website URL"/>
+                	<apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Website_URL__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="From-Address Settings" collapsible="false" columns="1">
+                <apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Allow_All_From_Addresses__c}"/>
+                <apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__User_From_Address_Allowed__c}"/>
+                <apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Default_OWEA_Id__c}" rendered="false"/> <!-- Necessary to retrieve field in controller extension object-->
+                <apex:pageBlockSectionItem >
+                    <c:customHelpTextLabel labelValue="Default Email From-Address" labelFor="from_address" helpTextID="DefaultEmailFromAddress" helpText="{!DefaultFromAddressHelpText}"/>
+                    <apex:outputText id="from_address" value="{!DefaultFromAddress}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="BCC Settings" collapsible="false" columns="1">
+                <apex:pageBlockSectionItem helpText="{!DefaultBCCAddressHelpText}">
+                    <apex:outputLabel value="Default BCC Address"/>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Default_BCC_Address__c}"/>
+                        <apex:outputText value="(none)" rendered="{!OR(ortoo_e2a__Business_Unit__c.ortoo_e2a__Default_BCC_Address__c == null, ortoo_e2a__Business_Unit__c.ortoo_e2a__Default_BCC_Address__c == '')}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Allow_BCC_Deselect__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Default Template Settings" collapsible="false">
+            	<apex:pageBlockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputText value="{!DefaultEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputText value="{!DefaultReplyEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputText value="{!DefaultForwardEmailTemplate}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <br/>
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" for="created_by"/>
+                    <apex:outputPanel >
+                        <apex:outputLink id="created_by" value="/{!ortoo_e2a__Business_Unit__c.CreatedBy.Id}">{!ortoo_e2a__Business_Unit__c.CreatedBy.Name}</apex:outputLink>,&nbsp;
+                        <apex:outputField value="{!ortoo_e2a__Business_Unit__c.CreatedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" for="modified_by"/>
+                    <apex:outputPanel >
+                        <apex:outputLink id="modified_by" value="/{!ortoo_e2a__Business_Unit__c.LastModifiedBy.Id}">{!ortoo_e2a__Business_Unit__c.LastModifiedBy.Name}</apex:outputLink>,&nbsp;
+                        <apex:outputField value="{!ortoo_e2a__Business_Unit__c.LastModifiedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Business Unit Detail" id="pageEdit" rendered="{!EditIsActive}">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!SaveBusinessUnit}" value="Save"/>
+            <apex:commandButton action="{!CancelEditBusinessUnit}" value="Cancel" immediate="true"/>
+        </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem helpText="{!BUNameHelpText}">
+                    <apex:outputLabel value="Business Unit"/>
+                    <apex:inputField value="{!ortoo_e2a__Business_Unit__c.Name}" required="true"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Title of Business Unit">
+                	<apex:outputLabel value="Business Unit Title"/>
+                	<apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Busines_Unit_Title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Email Address">
+                	<apex:outputLabel value="Email Address"/>
+                	<apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Email_Address__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Phone Number">
+                	<apex:outputLabel value="Phone Number"/>
+                	<apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Phone_Number__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Fax Number">
+                	<apex:outputLabel value="Fax Number"/>
+                	<apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Fax_Number__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Website URL">
+                	<apex:outputLabel value="Website URL"/>
+                	<apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Website_URL__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="From-Address Settings" collapsible="false" columns="1">
+                <apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Allow_All_From_Addresses__c}"/>
+                <apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__User_From_Address_Allowed__c}"/>
+                <apex:pageBlockSectionItem >
+                    <c:customHelpTextLabel labelValue="Default Email From-Address" labelFor="from_address_edit" helpTextID="DefaultEmailFromAddressEdit" helpText="{!DefaultFromAddressHelpText}"/>
+                    <apex:selectList value="{!DefaultFromAddressSelection}" id="from_address_edit" size="1">
+                        <apex:selectOptions value="{!DefaultFromAddressOptions}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="BCC Settings" collapsible="false" columns="1">
+                <apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Default_BCC_Address__c}" style="width:300px"/>
+                <apex:inputField value="{!ortoo_e2a__Business_Unit__c.ortoo_e2a__Allow_BCC_Deselect__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Default Template Settings" collapsible="false">
+            	<apex:pageblockSectionItem helpText="{!DefaultEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default New Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultEmailTemplate}" id="email_template_text" />
+                        <apex:actionFunction name="rerenderEmailTemplate" rerender="email_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('new');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultReplyEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Reply Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultReplyEmailTemplate}" id="email_reply_template_text" />
+                        <apex:actionFunction name="rerenderReplyEmailTemplate" rerender="email_reply_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('reply');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearReplyTemplate}" value="Clear" />
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem helpText="{!DefaultForwardEmailTemplateHelpText}">
+                    <apex:outputLabel value="Default Forward Email Template"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!DefaultForwardEmailTemplate}" id="email_forward_template_text" />
+                        <apex:actionFunction name="rerenderForwardEmailTemplate" rerender="email_forward_template_text" />
+                        <apex:commandLink onclick="openTemplateSelectorPopup('forward');return false;" style="vertical-align:top">
+                            <img src="/s.gif" class="lookupIcon" onmouseout="this.className='lookupIcon';" onmouseover="this.className='lookupIconOn';"/>
+                        </apex:commandLink>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!ClearForwardTemplate}" value="Clear" />
+                    </apex:outputPanel>
+            	</apex:pageblockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Add New From-Address" rendered="{!AddFromAddressIsRendered}">
+            <apex:pageMessages />
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem helpText="{!OWEAHelpText}">
+                    <apex:outputLabel value="Org Wide Email Address:"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!NewFromAddress}" id="new_from_address" size="1">
+                            <apex:selectOptions value="{!OWEAOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!AddNewAllowedFromAddress}" value="Add" reRender="new_from_address, from_address_list"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Allowed From-Addresses" rendered="{!EditIsNotActive}" id="from_address_list">
+            <apex:pageBlockTable value="{!AllowedFromAddressList}" var="FA">
+                <apex:column style="width:2px"/>
+                <apex:column headerValue="Action" rendered="{!FromAddressActionIsRendered}">
+                    <apex:commandLink action="{!DeleteAllowedFromAddress}" immediate="true" reRender="from_address_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                        <b>Del</b>
+                        <apex:param name="buoweaid" value="{!FA.BusinessUnitOWEAId}" assignTo="{!DeleteFromAddressID}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!FA.DisplayName}"/>
+                <apex:column headerValue="Address" value="{!FA.EmailAddress}"/>
+            </apex:pageBlockTable>
+            <apex:outputText value="no allowed from-addresses found" rendered="{!AllowedFromAddressesDoNotExist}"/>
+        </apex:pageBlock>
+        <apex:pageBlock title="Add New Public Group" rendered="{!AddPublicGroupIsRendered}">
+            <apex:pageMessages />
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem helpText="{!PublicGroupHelpText}">
+                    <apex:outputLabel value="Public Group:"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!NewPublicGroup}" id="new_selected_group" size="1">
+                            <apex:selectOptions value="{!PublicGroupOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!AddNewSelectedPublicGroup}" value="Add" reRender="new_selected_group, selected_group_list"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Selected Public Groups" rendered="{!EditIsNotActive}" id="selected_group_list">
+            <apex:pageBlockTable value="{!SelectedPublicGroupList}" var="PG">
+                <apex:column style="width:2px"/>
+                <apex:column headerValue="Action" width="60px" rendered="{!GroupsActionIsRendered}">
+                    <apex:commandLink action="{!DeleteSelectedPublicGroup}" immediate="true" reRender="selected_group_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                        <b>Del</b>
+                        <apex:param name="bugroupid" value="{!PG.BusinessUnitGroupId}" assignTo="{!DeletePublicGroupId}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/setup/own/groupdetail.jsp?id={!PG.PublicGroupId}&setupid=PublicGroups">
+                        {!PG.PublicGroupName}
+                    </apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="no public groups found" rendered="{!SelectedPublicGroupsDoNotExist}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

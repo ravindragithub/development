@@ -1,0 +1,34 @@
+<aura:component >
+    <aura:attribute name="statusMessage" type="string" description="This is the StatusMessage returned from server" default="An Exception has Occurred! These are the only details" />
+    <aura:attribute name="searchResults" type="List" description="This is the JSON returned from the callout and Event" />
+    <aura:attribute name="assetList" type="List" />
+    
+    <div style="width: 100%; height: 7px; background: #F87431; overflow: hidden;" />
+    {!v.statusMessage}
+    <aura:renderIf isTrue="{!v.searchResults.length > 0}">
+    <div>
+    <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-title--caps">
+                <th scope="col">
+                    <div class="slds-truncate" title="Key">Key</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Value">Value</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.searchResults}" var="map">
+                <tr>
+                    <td>{!map.key}</td>
+                    <td>{!map.value}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+    </div>
+    </aura:renderIf>
+    <div style="width: 100%; height: 7px; background: #F87431; overflow: hidden;" />
+    <c:HTS_existingAssets_cmp assetList="{!v.assetList}" />
+</aura:component>

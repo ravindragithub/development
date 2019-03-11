@@ -1,0 +1,46 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="serviceRequired" type="boolean"/>
+    <aura:attribute name="antennaFlag" type="boolean"/>
+    <lightning:card title="System Information">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.serviceRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        
+        <div class="slds-p-horizontal--small"> 
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input aura:id="LTEField" label="Antenna Serial No" style="margin-bottom:0;"
+                                     value="{!v.simpleLTEActivation.Antenna_Serial_No__c}" required="true"
+                                     onblur="{!c.systemValidation}" disabled="{!v.antennaFlag}"
+                                     />
+                    <a href="" onclick="{!c.openPicker}" style="margin:0;padding:0;font-style:italic;font-size:80%;">Where can I find my serial number?</a>
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel"> 
+                    <lightning:input aura:id="LTEField" label="Purchased from"
+                                     value="{!v.simpleLTEActivation.Purchased_From__c}"/>
+                </div>
+                <!--
+                <lightning:input aura:id="LTEField" label="Sim Card No." 
+                                 value="{!v.simpleLTEActivation.Sim_Serial_No__c}"/>    
+-->
+            </div>
+        </div>
+        <div aura:id="text" class="toggle modal">
+            <div class="modal-content">
+                <span class="close" onclick="{!c.openPicker}">&times;</span>
+                <p>Locate this label on the TracPhone LTE product box</p>
+                <img src="{!$Resource.SerialNumber}"/>
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

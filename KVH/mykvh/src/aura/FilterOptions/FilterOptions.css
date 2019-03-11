@@ -1,0 +1,19 @@
+/**
+ * Created by Jai Chaturvedi on 04/04/2017.
+ */
+.THIS .jstree-themeicon {
+          margin-right: -20px  !important ;
+          font-size: 14px;
+}
+
+.THIS .jstree-anchor{
+     font-size: 12px !important ;
+}
+
+.THIS .customHeading {
+          font-weight: bold ;
+          font-size: 12px;
+}
+.THIS .bluespin{
+    position: fixed;
+}

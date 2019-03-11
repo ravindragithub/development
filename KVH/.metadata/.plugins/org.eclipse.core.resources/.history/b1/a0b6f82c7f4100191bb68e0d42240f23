@@ -1,0 +1,80 @@
+<apex:page extensions="ProductEntryController" standardController="Account" showHeader="true" standardStyleSheets="true">
+    <apex:form >
+        <apex:outputPanel >
+        <apex:outputPanel >
+        <apex:pageBlock title="Step 1: Select Portal View(s)">
+        <apex:pageBlockSection title="Products available are dependent upon the portal view(s) selected." >
+            <apex:actionRegion id="pvSelect">
+                <apex:inputField label="Portal View(s)" value="{!Account.Portal_View_s__c}" id="pv">
+                    <apex:actionSupport action="{!saveChanges}" event="onchange" reRender="productList" status="statOK"/>
+                </apex:inputField>
+                <apex:actionStatus id="statOK" startText="Working...  Please Wait." startStyle="font-weight: bold; color: red;"/>
+            </apex:actionRegion>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        </apex:outputPanel>
+            <apex:outputPanel id="productList">
+             <apex:pageBlock title="Step 2: Add Products">
+                 <apex:pageMessages ></apex:pageMessages>
+                 <apex:pageBlockTable value="{!wrappers}" var="wrapper" id="wtable">
+                     <apex:column headerValue="Product" >
+                         <apex:selectList size="0" value="{!wrapper.prodCat.For_Admin_Use__c}">
+                             <apex:selectOptions value="{!prodList}"/>
+                         </apex:selectList>
+                     </apex:column>
+                     <apex:column headerValue="Sell Products">
+                         <apex:inputCheckbox selected="true" value="{!wrapper.prodCat.Sales__c}"/>
+                     </apex:column>
+                     <apex:column headerValue="Service Only">
+                         <apex:inputCheckbox selected="true" value="{!wrapper.prodCat.Services_Only__c}"/>
+                     </apex:column>
+                     <apex:column headerValue=" ">
+                         <apex:commandButton value="Delete" action="{!delWrapper}" rerender="wtable">
+                             <apex:param name="toDelIdent" value="{!wrapper.ident}" assignTo="{!toDelIdent}"/> 
+                         </apex:commandButton>
+                     </apex:column>
+                 </apex:pageBlockTable>
+                 <apex:commandButton value="Add Row" action="{!addRow}" rerender="wtable">
+                     <apex:param name="addCount" value="1" assignTo="{!addCount}"/>
+                 </apex:commandButton>	
+                 <apex:commandButton value="Add 5 Rows" action="{!addRow}" rerender="wtable">
+                     <apex:param name="addCount" value="5" assignTo="{!addCount}"/> 
+                 </apex:commandButton>
+                 </apex:pageBlock>
+                </apex:outputPanel>
+            <apex:pageBlock title="Step 3: Add Region(s)">
+                <apex:pageBlockSection title="Regions determine Where to Buy/Where to Get Service." />
+                    <apex:pageBlockTable value="{!cwraps}" var="cwrap" id="ctries">
+                        <apex:column headerValue="Country" >
+                            <apex:actionRegion >
+                                <apex:inputField value="{!cwrap.prodCount.Country__c}">
+                                    <apex:actionSupport action="{!noaction}" event="onchange" reRender="state" status="statOK2"/>
+                                </apex:inputField>
+                            </apex:actionRegion>
+                            <apex:actionStatus id="statOK2" startText="Working...  Please Wait." startStyle="font-weight: bold; color: red;"/>
+                        </apex:column>
+                        <apex:column headerValue="State">
+                            <apex:outputPanel id="state">
+                                <apex:inputField id="state1" rendered="{!if(cwrap.prodCount.Country__c == 'United States', true, false)}" value="{!cwrap.prodCount.State__c}"/>
+                            </apex:outputPanel>
+                        </apex:column>
+                        <apex:column headerValue=" "> 
+                         <apex:commandButton value="Delete" action="{!delWrapper1}" rerender="ctries">
+                             <apex:param name="toDelIdent" value="{!cwrap.ident1}" assignTo="{!toDelIdent1}"/> 
+                         </apex:commandButton>
+                     </apex:column>
+                    </apex:pageBlockTable><br/>
+                <apex:commandButton value="Add Row" action="{!addRow1}" rerender="ctries">
+                    <apex:param name="addCount" value="1" assignTo="{!addCount1}"/>
+                </apex:commandButton>	
+                <apex:commandButton value="Add 5 Rows" action="{!addRow1}" rerender="ctries">
+                    <apex:param name="addCount" value="5" assignTo="{!addCount1}"/> 
+                </apex:commandButton>
+            </apex:pageBlock>
+            <apex:outputPanel >
+                <apex:commandButton style="float:left" value="Go Back" action="{!returning}"/>
+                <apex:commandButton style="float:right" value="Confirm Products and Approve" action="{!saveRecords}"/> 
+            </apex:outputPanel>
+        </apex:outputPanel>
+        </apex:form>
+</apex:page>

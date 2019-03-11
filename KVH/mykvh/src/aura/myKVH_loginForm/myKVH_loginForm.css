@@ -1,0 +1,75 @@
+.THIS {
+    font-size:85%;
+    color:#fff;
+}	
+
+.THIS .slds-wrap {
+    align-items:stretch;
+}
+.THIS .page-content {
+    padding:60px 0;
+}
+.THIS input{
+    padding: 10px;
+}
+.THIS label,
+.THIS .notes,
+.THIS h2,
+.THIS ul li {
+    color:#fff;
+}
+
+.THIS .myKVH-login-ad {
+    background-color:#1984C7;
+}
+
+.THIS ul {
+    list-style-position: outside;
+    margin-left: 20px;
+    margin-bottom:0;
+    list-style: disc;
+}
+
+.THIS li {
+    margin-bottom:3px;
+}
+
+@media screen and (max-width: 768px) {
+    .THIS .slds-size_1-of-1 {
+        margin:30px;
+            width:88%;
+    }
+    .THIS .page-content {
+        padding-top:10px;
+    }
+    .THIS .hide {
+        display:none;
+    }
+}
+
+.THIS .bg {
+    background-color:#000e17;
+    background-image:url(/resource/BGmyKVHCustomerPortalLogin); 
+    background-position: middle bottom;
+    background-repeat:no-repeat;
+    background-size: cover;
+}
+
+.THIS button.sfdc_button {
+    padding:5px 20px !important;
+}
+
+.THIS .slds-spinner {
+    position: fixed;
+}
+
+.THIS .icon-img {
+    width:25px;
+    height:auto;
+    margin:10px 0 5px 0;
+}
+
+.THIS a {
+    color:#fff;
+    text-decoration:underline;
+}

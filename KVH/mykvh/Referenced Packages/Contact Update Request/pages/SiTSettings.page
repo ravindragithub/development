@@ -1,0 +1,182 @@
+<apex:page controller="AcuerdoCUR.SiTSettingsController" title="Edit my stay in touch preferences" tabStyle="SiT_Settings__tab">
+    <apex:stylesheet value="/sCSS/Theme3/en/emailAdministration.css"/>
+
+    <script>
+        var standardOptions = null;
+        var customOptions = null;
+        function setStandardOptions(inputOptions) {
+            standardOptions = inputOptions;
+        }
+        function setCustomOptions(inputOptions) {
+            customOptions = inputOptions;
+        }
+    
+        function modifyMergeFieldSelect(cause, effect) {
+            // Do not use isIE because of the way firefox gets isIE and isIE() confused.
+            var isBrowserIE = navigator.appName.indexOf("Microsoft") != -1;
+            var isIE55 = navigator.userAgent.indexOf('MSIE 5.5') > 0;
+    
+            var s = standardOptions[cause.selectedIndex];
+            var c = customOptions[cause.selectedIndex];
+            var i;
+    
+            effect.innerHTML = '';
+    
+            var blankOption = new Option('', '');
+            if (isBrowserIE) {
+                effect.add(blankOption);
+            } else {
+                effect.add(blankOption, null);
+            }
+    
+            if (c && c.length > 0 && !isIE55) {
+                var optg = document.createElement('optgroup');
+                optg.label = 'Standard Fields';
+                effect.appendChild(optg);
+    
+                for (i = 0; i < s.length; i += 1) {
+                    optg.appendChild(s[i].cloneNode(true));
+                }
+    
+                optg = document.createElement('optgroup');
+                optg.label = 'Connected Fields';
+                effect.appendChild(optg);
+    
+                for (i = 0; i < c.length; i += 1) {
+                    optg.appendChild(c[i].cloneNode(true));
+                }
+            } else {
+                for (i = 0; i < s.length; i += 1) {
+                    effect.appendChild(s[i].cloneNode(true));
+                }
+                for (i = 0; i < c.length; i += 1) {
+                    effect.appendChild(c[i].cloneNode(true));
+                }
+            }
+    
+            document.getElementById('mergeFieldValue').value = '';
+        }
+    
+        function copyToTextInputFocusAndSelect(selectElement) {
+            var textInput = document.getElementById('mergeFieldValue');
+            textInput.value = selectElement.options[selectElement.selectedIndex].value;
+            textInput.focus();
+            textInput.select();
+        }
+    
+        function init() {
+            var standardOpts = [];
+            var customOpts = [];
+            var option;
+            var options = [];
+            var options2 = [];
+
+        <apex:repeat value="{!ConnectedMergeFields}" var="mergeField">
+            option = new Option();
+            option.value = '{!mergeField}';
+            option.appendChild(document.createTextNode('{!ConnectedMergeFields[mergeField]}'));
+            options2.push(option);
+        </apex:repeat>
+        <apex:repeat value="{!StandardMergeFields}" var="mergeField">
+            option = new Option();
+            option.value = '{!JSENCODE(mergeField)}';
+            option.appendChild(document.createTextNode('{!JSENCODE(StandardMergeFields[mergeField])}'));
+            options.push(option);
+        </apex:repeat>
+
+            standardOpts.push(options);
+            customOpts.push(options2);
+                
+            setStandardOptions(standardOpts);
+            setCustomOptions(customOpts);
+        }
+    
+        init();
+    </script>
+
+
+<apex:sectionHeader title="Contact Update Request" subtitle="Deprecated!! Ask an administrator to hide this Tab"/>
+
+    <apex:pageMessages id="msgs"/>  
+
+    <apex:form >
+    
+  
+        <apex:pageBlock mode="detail">
+ 
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton action="{!Save}" value="Save" rendered="{!CanSave && CanView}"/>
+            </apex:pageBlockButtons>
+  
+            <apex:pageBlockSection title="Mail merge fields" columns="1" showHeader="true" >
+
+                Use merge fields to personalize your email content.<br />
+                <div class="allControls" id="editCtrls" >
+                    <div class="mergeFieldControls">
+                        <div class="controlTitle mergeFields">
+                            Available Merge Fields
+                        </div>
+                        
+                        <div class="mergeItems">
+                    
+                            <div class="mergeItem"> <!-- Select Field Type -->
+                                <label for="mergeTypeSelect">Select Field Type</label>
+                                <div>
+                                    <select id="mergeTypeSelect" onchange="modifyMergeFieldSelect(this, document.getElementById('mergeFieldSelect'));">
+                                        <option value="0">Contact Fields</option>
+                                    </select>
+                                </div>
+                            </div>
+                    
+                            <div class="mergeItem"> <!-- Select Field -->
+                                <label for="mergeFieldSelect">Select Field</label>
+                                <div>
+                                    <select id="mergeFieldSelect" onchange="copyToTextInputFocusAndSelect(this)"></select>
+                                </div>
+                            </div>
+                    
+                            <div class="mergeItem"> <!-- Copy Merge Field Value -->
+                                <label for="mergeFieldValue">Copy Merge Field Value</label>
+                                <div>
+                                    <input type="text" id="mergeFieldValue" value=""/>
+                                </div>
+                            </div>
+                    
+                            <div class="mergeFieldInstructions">
+                                Copy and paste the merge field value into your template below.
+                            </div>
+        
+                    </div>
+                    <script>modifyMergeFieldSelect(document.getElementById('mergeTypeSelect'), document.getElementById('mergeFieldSelect'));</script>
+                
+                </div>
+            </div>
+
+          </apex:pageBlockSection>
+          
+          
+       <apex:pageBlockSection title="Email preferences" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Subject" for="subject" Title="The subject of the contact update request mail message, you can use mail merge fields here."/>
+                <apex:inputText id="subject" value="{!Subject}" size="30" disabled="{!if(IsSubjectWorkable, false, true)}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Body" for="body" Title="The body of the contact update request message."/>
+             <apex:inputTextArea id="body" value="{!Body}" cols="100" rows="25" disabled="{!if(IsBodyWorkable, false, true)}"/>
+            </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+
+
+       <apex:pageBlockSection title="Form preferences" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Form Url" for="url" Title="The url of the public force.com site with the validation form"/>
+                <apex:inputText id="url" value="{!Url}" size="128" disabled="{!if(IsUrlWorkable, false, true)}"/>
+            </apex:pageBlockSectionItem>  
+       </apex:pageBlockSection>
+           
+    </apex:pageBlock>
+    
+    
+    
+  </apex:form>
+</apex:page>

@@ -1,0 +1,178 @@
+<aura:component>
+    <!--Installation  Type-->
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="installationRequired" type="boolean"/>
+    <aura:attribute name="vesselTypeMap" type="Object"/>
+    <aura:attribute name="platformTyps" type="list"/>
+    <aura:attribute name="appTypeOptions" type="list"/>
+    <aura:attribute name="appOptions" type="list"/>
+    <!--Installer Information-->
+    <aura:attribute name="countryOptions" type="list"/>
+    <aura:attribute name="countryStateMap" type="Object"/>
+    <aura:attribute name="stateOptions" type="list"/>
+    <aura:attribute name="KVHAuthDealerAddres" type="boolean"/>
+    <aura:attribute name="isInstaInfoPriorOwner" type="string"/>
+    <!--Attach Installation Checklist-->
+    <aura:attribute name="attachmentList" type="list"/>
+    <aura:attribute name="spinner" type="boolean"/>
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />    
+    
+    <lightning:card title="Installation Type">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-horizontal_small">
+                <label class="slds-form-element__label">
+                    Platform Type
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+            </lightning:layoutItem>
+            <aura:iteration items="{!v.platformTyps}" var="platfrmType">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-horizontal_small">
+                    <lightning:input type="radio" label="{!platfrmType}" name="platfrmTypOpt" onchange="{!c.onChangePlatformType}"/>
+                </lightning:layoutItem>
+            </aura:iteration>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="{!10-(v.platformTyps.length*2)}" class="slds-p-horizontal_small">
+            	
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:select value="{!v.prodRegistration.Application__c}"
+                                  label="Application"
+                                  onchange="{!c.onAppChange}" 
+                                  disabled="{!v.appOptions.length==0}"
+                                  required="true">
+                    <option text="" value=""/>
+                    <aura:iteration items="{!v.appOptions}" var="opt">
+                        <option text="{!opt.label}" value="{!opt.value}"/>
+                    </aura:iteration>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:select value="{!v.prodRegistration.Application_Type__c}"
+                                  label="Application Type" 
+                                  onchange="{!c.onAppTypeChange}"
+                                  disabled="{!v.appTypeOptions.length==0}"
+                                  required="true">
+                    <option text="" value=""/>
+                    <aura:iteration items="{!v.appTypeOptions}" var="opt">
+                        <option text="{!opt.label}" value="{!opt.value}"/>
+                    </aura:iteration>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <aura:if isTrue="{!v.prodRegistration.Platform_Type__c=='Vehicle'}">
+                    <lightning:input label="RV or Vehicle Make/Model"
+                                     value="{!v.prodRegistration.RV_or_Vehicle_Make_Model__c}" 
+                                     onblur="{!c.validateField}" 
+                                     required="true"/>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.prodRegistration.Platform_Type__c=='Vessel'}">
+                    <lightning:input label="Vessel Name"
+                                     value="{!v.prodRegistration.Vessel_Name__c}" 
+                                     onblur="{!c.validateField}" 
+                                     required="true"/>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <aura:if isTrue="{!v.prodRegistration.Application_Type__c=='Other'}">
+                	<lightning:input label="Other" value="{!v.prodRegistration.Other_Installation__c}"/>
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Installer Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                <lightning:input type="radio"
+                                 label="KVH Authorized Dealer/Distributor" 
+                                 name="installer" 
+                                 onchange="{!c.onIntalerInfoChange}"/>
+                
+                <div style="{!if(v.prodRegistration.Installer_Information__c=='KVH Authorized Dealer/Distributor','','display:none;')}">
+                    <lightning:layout multipleRows="true" class="slds-m-horizontal_small">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                            <lightning:input aura:id="addFld"
+                                             label="Company Name" 
+                                             required="true"
+                                             value="{!v.prodRegistration.Installer_Contact_Name__c}" 
+                                             onblur="{!c.onKVHAuthAddresChange}"/>                  
+                            <lightning:input aura:id="addFld"
+                                             label="City" 
+                                             required="true" 
+                                             value="{!v.prodRegistration.Installer_City__c}"
+                                             onblur="{!c.onKVHAuthAddresChange}"/>
+                            <lightning:input aura:id="addFld"
+                                             label="Postal/Zip Code" 
+                                             required="true" 
+                                             value="{!v.prodRegistration.Installer_Zip_Code__c}"
+                                             onblur="{!c.onKVHAuthAddresChange}"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                            <lightning:input aura:id="addFld"
+                                             label="Address" 
+                                             required="true" 
+                                             value="{!v.prodRegistration.Installer_Address__c}"
+                                             onblur="{!c.onKVHAuthAddresChange}"/>
+                            
+                            <lightning:select aura:id="contrySelect"
+                                              label="Country"
+                                              required="true"
+                                              onchange="{!c.onCountrySelect}">
+                                <aura:iteration items="{!v.countryOptions}" var="option">
+                                    <option text="{!option.label}" value="{!option.value}"/>
+                                </aura:iteration>
+                            </lightning:select>
+                            
+                            <lightning:select aura:id="stateSelect"
+                                              label="State/Province/Territory"
+                                              required="{!v.stateOptions.length>0}"
+                                              value="{!v.prodRegistration.Installer_State_Province_Territory__c}"
+                                              onchange="{!c.onStateSelect}">
+                                <option text="" value=""/>
+                                <aura:iteration items="{!v.stateOptions}" var="option">
+                                    <option text="{!option.label}" value="{!option.value}"/>
+                                </aura:iteration>
+                            </lightning:select>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                <lightning:input type="radio"
+                                 label="At Factory (by vessel/vehicle manufacturer)"
+                                 name="installer" 
+                                 onchange="{!c.onIntalerInfoChange}"/>
+                
+                <aura:if isTrue="{!v.prodRegistration.Installer_Information__c=='At Factory (by vessel/vehicle manufacturer)'}">
+                    <lightning:layout multipleRows="true" class="slds-m-horizontal_small">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                            <lightning:input label="Manufacturer" 
+                                             value="{!v.prodRegistration.Installer_Manufacture__c}"/>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                <lightning:input type="radio"
+                                 label="Self" name="installer" 
+                                 onchange="{!c.onIntalerInfoChange}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                <lightning:input type="radio"
+                                 label="Prior Owner" 
+                                 name="installer" 
+                                 onchange="{!c.onIntalerInfoChange}"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    <lightning:card title="Attach Installation Checklist (if applicable)" variant="narrow" class="instalChecklist">
+        <lightning:layout>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <c:PrdReg_UploadFile productRegId="{!v.prodRegistration.Id}" 
+                                     attachmentList="{!v.attachmentList}"
+                                     suffix="_CkList"
+                                     spinner="{!v.spinner}"/>
+            </lightning:layoutItem>
+        </lightning:layout>	
+    </lightning:card>
+</aura:component>

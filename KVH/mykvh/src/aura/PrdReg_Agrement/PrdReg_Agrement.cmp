@@ -1,0 +1,67 @@
+<aura:component >
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="onSubmit" type="Aura.Action"/>
+    <aura:attribute name="submitFormOnce" type="boolean"/>
+    <lightning:card title="Terms of Service &amp; Fees">
+        <div class="slds-p-horizontal--small">  
+            By signing this agreement, Customer (hereafter referred to as "I"/"me"/"you"/"your") agrees to abide by the following terms and conditions, as applicable: <br/><br/>
+            <div class="slds-grid slds-wrap">
+                <aura:if isTrue="{!v.prodRegistration.Satellite_TV_Provider__c == 'DISH Network'}">
+                    <b class="header">DISH Network Terms</b>
+                    <ul>
+                        <li class="">
+                            <u>DISH Residential Customer Agreement.</u>
+                            By accepting delivery and activation of your DISH Network receiver and service, you agree to the terms and conditions of the DISH Residential Customer Agreement, as published and made available for your review at <a href="http://www.kvh.com/dishterms" target="blank">www.kvh.com/dishterms</a>. 
+                        </li>
+                        <li class="">
+                            <u>Product Registration.</u> 
+                            By registering your KVH product you agree to KVH's Privacy Policy, which is published and available for review at <a href="http://www.kvh.com/privacy" target="blank">www.kvh.com/privacy</a>. 
+                        </li>
+                        <li class="">
+                            <u>Shipping &amp; Handling.</u>
+                            A $29.00 shipping and handling fee will be charged to the credit card designated above.
+                        </li>
+                    </ul>
+                    <br/>
+                </aura:if>
+                <aura:if isTrue="{!v.prodRegistration.Satellite_TV_Provider__c == 'DirectTV'}">
+                    <b class="header">DIRECTV Terms</b>
+                    <ul>
+                        <li class="">
+                            <u>DIRECTV Customer Agreement.</u>
+                            By accepting delivery and activation of your DIRECTV receiver and service, you agree to the terms and conditions of the DIRECTV Residential Customer Agreement and DIRECTV Equipment Lease Agreement, which are published and made available for your review at <a href="http://www.kvh.com/legal" target="blank">www.kvh.com/legal</a>.
+                        </li>
+                        <li class="">
+                            <u>Additional Terms and Conditions.</u>
+                            You hereby further acknowledge and agree that this DIRECTV Annual Programming Agreement (I) is separate and different from any other annual agreement you may have previously made with DIRECTV and is fully enforceable under these terms; and (II) sets forth additional terms and conditions regarding your (x) receipt of DIRECTV programming, (y) receipt of your leased receiver,  and (z) activation of access cards and shall be applied in conjunction with the DIRECTV Residential Customer Agreement, a copy of which is provided at <a href="http://www.kvh.com/legal" target="blank">www.kvh.com/legal</a> and included with your first bill.
+                        </li>
+                        <li class="">
+                            <u>Consequences of Terminating the DIRECTV Subscription:</u>
+                            Termination of the DIRECTV subscription will require the return of the leased receiver and/or early termination fees.
+                        </li>
+                        <li class="">
+                            <u>Product Registration.</u>
+                            By registering your KVH product you agree to KVH's Privacy Policy, which is published and available for review at <a href="http://www.kvh.com/privacy" target="blank">www.kvh.com/privacy</a>
+                        </li>
+                        <li class="">
+                            <u>Shipping &amp; Handling.</u>
+                            A $29.00 shipping and handling fee will be chaed to the credit card designated above.
+                        </li>            	
+                    </ul>
+                    <br/> 
+                </aura:if>
+                <p class="Bottom-Paragraph">
+                    <sup>1</sup>
+                    Please note that because DIRECTV no longer manufactures this receiver, receivers are factory refurbished and may show cosmetic imperfections. 
+                </p>
+            </div>
+        </div>
+        <div style="text-align:center;">
+            <lightning:button label="Save Product Registration" 
+                              variant="brand" 
+                              onclick="{!v.onSubmit}" 
+                              class="savebtn slds-m-top_small" 
+                              disabled="{!v.submitFormOnce}" />
+        </div>
+    </lightning:card>
+</aura:component>

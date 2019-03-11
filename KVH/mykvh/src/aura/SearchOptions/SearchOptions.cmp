@@ -1,0 +1,24 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+        access="global"
+        controller="ProductSearchClass">
+
+    <aura:attribute name="sectiontitle" type="String" description=""/>
+
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-horizontal--small slds-size--1-of-1">
+
+            <div class="slds-docked-composer__header"
+                 style="background-color:#e3e3e3;border-bottom: 0px solid !important">
+                <h2 onclick="{!c.collapseexpand}" style="color:#666">{!v.sectiontitle}</h2>
+            </div>
+            <div class="slds-docked-composer__body slds-col slds-grid slds-grid--vertical slds-nowrap slds-size--1-of-1">
+                <div class="slds-p-around--x-small" >
+                    <div class="slds-is-expanded" id="{!v.sectiontitle}">
+                        <c:SearchFilter ></c:SearchFilter>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</aura:component>

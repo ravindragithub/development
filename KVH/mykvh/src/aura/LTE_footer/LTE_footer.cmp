@@ -1,0 +1,53 @@
+<aura:component description="PartnerFooterComponent. Used as footer in Partner Community"
+                implements="forceCommunity:availableForAllPageTypes"
+                access="global">
+    <ltng:require styles="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+    
+    <div class="fa-events-icons-ready footer footerstyle">
+        <div class="division section group font-85">
+            <div class="slds-grid slds-wrap clear">
+                <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12">
+                    <p class="para">Copyright ©2018 KVH Industries, Inc. All rights reserved.</p>
+                    <a href="https://www.linkedin.com/company/kvh-industries-inc-?trk=company_logo" target="_blank" class="another pad-bottom" style="padding-left:0px;">
+                        <i class="fa fa-linkedin-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.facebook.com/kvhindustries/" target="_blank" class="another ">
+                        <i class="fa fa-facebook-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>
+                    <a href="http://twitter.com/#!/kvh" target="_blank" class="another ">
+                        <i class="fa fa-twitter-square fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.youtube.com/user/KVHindustries?sub_confirmation=1" target="_blank" class="another">
+                        <i class="fa fa-youtube-play fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>
+                    <a href="http://instagram.com/kvhindustries" target="_blank" class="another ">
+                        <i class="fa fa-instagram fa-2x index" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>
+                    <a href="http://www.kvhmobileworld.com/" target="_blank" class="another index ">
+                        <i class="fa fa-rss-square fa-2x" style="color: #ddd;" aria-hidden="true"></i>
+                    </a>								
+                </div>
+                
+                <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12 ">
+                  
+                </div>
+            
+            
+            <div class="slds-size--12-of-12 slds-small-size--1-of-1 slds-medium-size--4-of-12 slds-large-size--4-of-12">
+                <div class="slds-grid slds-wrap right-align">
+                    <div>
+                        <a href="http://www.kvh.com/Legal/Privacy.aspx" target="_blank" class="another pad-links   ">Privacy Policy |</a>
+                        <a href="http://www.kvh.com/Legal/Terms-of-Use.aspx" target="_blank" class="another pad-links  ">Terms of Use |</a>
+                        
+                        <a href="/s/trademarks" class="another pad-links">Trademarks</a>                        
+                </div>
+                </div>
+                <div style="clear:both;"></div>
+                <div class="slds-grid slds-wrap right-align pad-top">
+                    <a href="/s/lte-contact-us" class="button button-gray pad-top right">Contact KVH</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</aura:component>

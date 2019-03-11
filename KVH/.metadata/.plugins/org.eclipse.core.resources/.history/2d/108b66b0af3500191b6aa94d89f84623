@@ -1,0 +1,21 @@
+<aura:component implements="forceCommunity:themeLayout" access="global" 
+                description="Custom Theme Layout">
+    <aura:attribute name="search" type="Aura.Component[]"/>
+    <aura:attribute name="sidebarFooter" type="Aura.Component[]"/>
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="newFooter" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="maxheight" type="String" />
+     <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    <div class="slds-grid slds-grid--align-center slds-grid--vertical">        
+        <div class="newHeader">
+            {!v.newHeader}
+        </div>
+        <div class="slds-col content" style="{!'background: #f3f3f3; min-height:' + v.maxheight + 'px'}">
+            {!v.body}
+        </div>        
+        <div class="newFooter">
+            {!v.newFooter}
+        </div>
+    </div>
+    
+</aura:component>

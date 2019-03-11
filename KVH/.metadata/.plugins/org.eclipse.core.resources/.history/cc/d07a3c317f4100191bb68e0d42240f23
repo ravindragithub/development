@@ -1,0 +1,43 @@
+<apex:page showHeader="false" sidebar="false">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+    
+        $Lightning.use("c:LTEAct_app", function() {
+        $Lightning.createComponent(
+            "c:LTEHeader",
+            {},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+            });
+          
+        });
+    
+    
+      $Lightning.use("c:LTEAct_app", function() {
+        $Lightning.createComponent(
+            "c:LTEActivationHome_cmp",
+            {"inhibitTransform": true},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+            });
+        });
+    
+  
+         $Lightning.use("c:LTEAct_app", function() {
+        $Lightning.createComponent(
+            "c:LTE_footer",
+            {},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+            });
+          
+        });
+    
+    
+    
+    </script>
+    <div id="lightning"></div>
+</apex:page>

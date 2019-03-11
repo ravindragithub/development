@@ -1,0 +1,41 @@
+<aura:component description="QuickLink. Used to generate quick links section"
+        controller="QuickLinksController">
+    
+    <ltng:require scripts="{!$Resource.PortalCustomResources + '/b5c2bcde2c.js'}"/>
+
+	  
+    <aura:attribute name="quicklinks"
+            type="Quick_Link__c[]"
+            description="Holds the quick link records"/>
+    <aura:attribute name="blankQuicklink"
+            type="Quick_Link__c"
+            description="Holds the blank  quick link record"/>
+    
+
+    <aura:attribute name="gridClass"
+            type="String"
+            description="Used to hold the size of options. Helps in dividing the quick link boxes into equal size."/>
+
+    <aura:handler name="init"
+            value="{!this}"
+            action="{!c.loadQuickLinks}"/>
+
+    <div>
+        <h3 class="slds-section-title--divider"
+            style="text-transform: initial;
+            color: #000;letter-spacing:0;
+            font-size: 1.3em;
+		    line-height: 1;
+            background:#ddd;
+            font-family:sans-serif;">
+            Quick Links
+        </h3>
+    </div>
+         <div class="slds-grid slds-wrap slds-grid--pull-padded" >  
+            <aura:iteration items="{!v.quicklinks}" var="ql">
+         		<c:QuickLinkOption quicklink="{!ql}"/>
+            </aura:iteration>
+        </div>  
+    
+
+</aura:component>

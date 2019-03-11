@@ -1,0 +1,130 @@
+<aura:component controller="PRDReg_Controller">
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="prodMap" type="map"/>
+    <aura:attribute name="serviceRequired" type="boolean"/>
+    <aura:attribute name="antennaFlag" type="boolean"/>
+    <aura:attribute name="perAccRequired" type="boolean"/>
+    <aura:attribute name="tvSeries" type="boolean"/>
+    <aura:attribute name="otherSystem" type="boolean" default="false"/>
+    <aura:attribute name="otherSeries" type="boolean" default="false"/>
+    <aura:attribute name="hdSeries" type="boolean" default="false"/>
+    <aura:attribute name="compassProduct" type="boolean" default="false"/>	
+    <aura:attribute name="prodFieldDisabled" type="boolean" default="true"/>
+    <aura:attribute name="prodList" type="List"/>
+    <aura:attribute name="recieverInfoYes" type="boolean"/>
+    <aura:attribute name="selectedProdLine" type="string"/>
+    <aura:attribute name="selectedProd" type="string"/>         
+    <aura:attribute name="recieverInfoRequired" type="boolean"/>
+    <aura:attribute name="customerInfoFlag" type="boolean"/>
+    <aura:attribute name="kvhAUthInfoFlag" type="boolean"/>     
+    <aura:attribute name="billingInfoFlag" type="boolean"/>
+    <!--<aura:attribute name="checkPersonalAcc" type="boolean"/>
+	<aura:attribute name="subsCountry" type="string"/>-->
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.recieverInfoRequired}" action="{!c.handleRecieverInfoRequired}"/>
+    <aura:handler name="change" value="{!v.selectedProdLine}" action="{!c.onPLFieldChange}"/>
+    <!--<aura:handler name="change" value="{!v.subsCountry}" action="{!c.handlePAccChange}"/>-->
+    
+    <lightning:card title="Product Information">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.serviceRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:select aura:id="LTEField" 
+                                      value="{!v.selectedProdLine}"
+                                      label="Product Line" 
+                                      required="true">
+                        <option label="" value=""/>
+                        <option label="Compasses" value="Compasses"/>
+                        <option label="Satellite Television" value="Satellite Television"/>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                    <lightning:select aura:id="LTEField" 
+                                      value="{!v.selectedProd}"
+                                      onchange="{!c.onProdFieldChange}" 
+                                      label="Product" 
+                                      required="true" 
+                                      disabled="{!v.prodFieldDisabled}">
+                        <option label="" value=""/>
+                        <option label="Other" value="Other"/>
+                        <aura:iteration items="{!v.prodList}" var="item">
+                            <option value="{!item.label}">{!item.label}</option>
+                        </aura:iteration>                     
+                    </lightning:select>
+                </div>
+                <aura:if isTrue="{!v.otherSeries}">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">  
+                        <lightning:input aura:id="LTEField" label="Serial No."
+                                         value="{!v.simpleLTEActivation.Serial_No__c}" 
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                    </div>
+                    <aura:if isTrue="{!v.otherSystem}">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                            <lightning:input aura:id="LTEField" label="Other Product Name"
+                                             value="{!v.simpleLTEActivation.Other_System__c}"
+                                             required="true"
+                                             onblur="{!c.systemValidate}"/>                      
+                        </div>
+                    </aura:if>
+                </aura:if>  
+                <aura:if isTrue="{!v.tvSeries}">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                        <lightning:input aura:id="LTEField" label="Antenna Serial No."
+                                         value="{!v.simpleLTEActivation.Antenna_Serial_No__c}" 
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel"> 
+                        <lightning:input aura:id="LTEField" label="TV-Hub Serial No."
+                                         value="{!v.simpleLTEActivation.TV_Hub_Serial_No__c}" 
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.hdSeries}">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                        <lightning:input aura:id="LTEField" label="Antenna Serial No" 
+                                         value="{!v.simpleLTEActivation.Antenna_Serial_No__c}" 
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel"> 
+                        <lightning:input aura:id="LTEField" label="IPACU Serial No." 
+                                         value="{!v.simpleLTEActivation.IPACU_Serial_No__c}"
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.compassProduct}">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                        <lightning:input aura:id="LTEField" label="Serial No."
+                                         value="{!v.simpleLTEActivation.Serial_No__c}" 
+                                         required="true"
+                                         maxlength="9"
+                                         onblur="{!c.systemValidate}"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel"> </div>
+                </aura:if>
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

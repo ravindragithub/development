@@ -1,0 +1,18 @@
+public class myKVH_SupportCenterExportController{
+
+    public List<Case> lstOfCases{get;set;}
+    public string caseType{get;set;}
+    public string caseStatus{get;set;}
+    
+    public myKVH_SupportCenterExportController(){ 
+        List<string> statuslst = new List<string>{apexPages.currentPage().getParameters().get('caseStatus')};
+        casestatus = json.serializePretty(statuslst);            
+        List<string> strList = apexPages.currentPage().getParameters().get('caseType').split(';');
+        caseType = json.serializePretty(strList);
+    }
+    public void loaddata(){  
+        lstOfCases = myKVH_SupportCenterController.getCaseRecords(caseStatus,caseType,'CaseNumber',false);
+    }
+    public void loadDataParent(){         
+    }
+}

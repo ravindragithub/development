@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>ConvertOpportunityToQuote_ConvertFailedMessaged</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>convertOpportunityToQuote_ConvertFailedMessaged</shortDescription>
+        <value>The Opportunity has not been converted into a Quote.</value>
+    </labels>
+    <labels>
+        <fullName>ConvertOpportunityToQuote_NoProducts</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>convertOpportunityToQuote_NoProducts</shortDescription>
+        <value>There are no products associated with the Opportunity.</value>
+    </labels>
+    <labels>
+        <fullName>No_Opportunity_to_Sync_with_quote</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Opportunity to Sync with quote</shortDescription>
+        <value>There is no opportunity to synchronize</value>
+    </labels>
+    <labels>
+        <fullName>Opportunity_Step2_Discount_By_Value_Error_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Opportunity Step2 Discount By Value Error Msg</shortDescription>
+        <value>The Opportunity level discount by value cannot be applied for items that are subscription based. Please apply individual charge level discounts or change your Opportunity/Quote/Order level discount to be percentage based from the Invoice IT Setup tab.</value>
+    </labels>
+    <labels>
+        <fullName>Quote_Cannot_be_Sync</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Quote Cannot be Sync</shortDescription>
+        <value>The quote record cannot be synchronised with the opportunity as the opportunity has been Closed</value>
+    </labels>
+    <labels>
+        <fullName>Quote_and_Opportunity_same_currency</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Quote and Opportunity same currency</shortDescription>
+        <value>Quote and opportunity records that have the same currency can be synchronized.</value>
+    </labels>
+    <labels>
+        <fullName>Quote_is_already_sync</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Quote is already sync</shortDescription>
+        <value>You cannot synchronize this quote with the opportunity as another quote is currently being synchronized with the opportunity record.</value>
+    </labels>
+</CustomLabels>

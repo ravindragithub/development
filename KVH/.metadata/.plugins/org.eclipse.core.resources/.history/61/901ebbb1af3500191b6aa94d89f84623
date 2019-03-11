@@ -1,0 +1,6 @@
+.THIS .slds-input-date{
+    width: 92%!Important;
+}
+.THIS .slds-modal__content{
+    height : 100%;
+}

@@ -1,0 +1,127 @@
+<apex:page id="pg" standardcontroller="Case" showheader="false" extensions="ReportServiceProductProblemController" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+        <apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+        <style>   
+        .picklist {
+            padding: 5px;
+            width:380px; 
+        }
+    </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>         
+        var valueSelect; 
+        function setSelectionLocal(x) 
+        {
+            valueSelect = x;        
+        }
+        
+        function setIt()
+        {
+            setSelection(valueSelect);
+        }
+        
+        function goB()
+        {
+            goBack();
+        }
+        
+        </script>
+        <apex:pagemessages />
+        
+        <apex:actionFunction name="setSelection" action="{!setSelection}" rerender="form">
+            <apex:param name="valueSelect" value="valueSelect" assignTo="{!valueSelected}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+        
+        <apex:pageblock >
+            
+            <style>
+            body {
+            background-color:#f3f3f3;
+            }
+            </style>
+            
+            <div class="partner_portal">
+                
+                <div class="width-20 left">
+                    <ul class="support-sidenav">
+                        <li><a href="{!$Label.Community_URL +  '/s/supportlanding'}" target="_parent">Portal Support Main</a></li>
+                        <li><a href="{!$Label.Community_URL +  '/s/requestinfo'}" target="_parent">Airtime Services Support</a></li>
+                        <li class="active"><a href="{!$Label.Community_URL +  '/s/reportproblem'}" target="_parent">Technical Support</a></li>
+                        <li><a href="{!$Label.Community_URL +  '/s/partnersupportcase'}" target="_parent">Portal Help and Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="width-75 right">
+                    <a href="{!$Label.Community_URL}/s/supportlanding" class="button right">BACK</a>
+                    <h1>Technical Support</h1>
+                    <p>We're sorry you are having a problem with your KVH product or service. With the information you provide to create a case below, our Technical Support department will work quickly to troubleshoot and fix your problem.</p>
+                   <!-- <h3>Case Type:</h3>-->
+                    <apex:actionRegion >
+                        <apex:outputPanel id="thePanel">             
+                           <!-- <apex:selectRadio value="{!valueSelected}" layout="pageDirection" >
+                                <apex:selectOptions value="{!radio6}"/>
+                                <apex:actionSupport action="{!recordTypeSet}" event="onclick" reRender="thePanel"/>
+                            </apex:selectRadio>-->
+                            
+                            <h3 class="pad-top">Case Details:</h3>
+                            <p class="width-70"><strong>Product or Service Type:</strong>
+                            <!--<apex:selectlist value="{!serviceSelected}" size="1" styleClass="picklist" html-placeholder="--Select One--">
+                                <apex:selectOptions value="{!radio8}"/>
+                            </apex:selectlist>-->
+                            <apex:inputField styleClass="picklist" value="{!srvCase.Web_Product_or_Service_Type__c}"/>
+                            </p>
+                        </apex:outputPanel>       
+                    </apex:actionRegion>
+                    
+                    <p class="width-70"><strong>Vessel or Installation Platform:</strong>
+                    <apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" />
+                    </p>
+                    
+                    <p class="width-70"><strong>Case Subject:</strong>
+                    <apex:inputfield value="{!srvCase.Subject}" />
+                    </p>
+                    
+                    <p class="width-70"><strong>Problem/Case Description:</strong>
+                    <apex:inputfield value="{!srvCase.Description}"/>
+                    </p>
+                    
+                    <apex:outputpanel >
+                        Attach File  <span style="font-style: italic; font-size: smaller;"> (attachments must be less than 25Mb)</span>:
+                        <br/>
+                        <br/>
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        <br/>
+                        
+                        <apex:actionRegion id="region">
+                            <div class="button-bar">
+                                <a href="{!$Label.Community_URL}/s/supportlanding" class="button left">BACK</a>
+                                <apex:commandButton value="Submit"  styleClass="button button-blue right" onclick="submitclick('CreateCasePartner()'); return false;"/>
+                                <apex:actionFunction name="CreateCasePartner" action="{!CreateCasePartner}"/>
+                            </div>
+                        </apex:actionRegion>
+                        
+                        <apex:actionStatus for="region">
+                                <apex:facet name="start">
+                                    <apex:outputPanel >
+                                        <img src="/img/loading32.gif" width="25" height="25" />
+                                        <apex:outputLabel value="Loading..."/>
+                                    </apex:outputPanel> 
+                                </apex:facet>
+                            </apex:actionStatus>
+                    </apex:outputpanel>
+                </div>
+            </div>
+        </apex:pageblock>
+       
+    </apex:form>
+    <c:spinner ></c:spinner>
+    <script>
+       
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+        
+    </script>
+</apex:page>

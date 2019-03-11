@@ -1,0 +1,16 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" controller="SelfRegisteredUserWelcomePage_Ctrl" action="{!RedirectActOrder}">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+    </script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+    </script>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+    <script type="text/javascript">
+    var j$ = jQuery.noConflict();
+    </script>
+    <script>
+    j$(function() {
+        if({!lstActivationOrderTable.size>0})
+            window.open( "{!URLFOR($Page.CustomerCommunityHome)}", "_blank", "width=1000,height=1000000");
+    });
+    </script>
+</apex:page>

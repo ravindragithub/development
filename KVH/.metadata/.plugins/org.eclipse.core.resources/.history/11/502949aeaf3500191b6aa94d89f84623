@@ -1,0 +1,131 @@
+<aura:component controller="SubscriptionAssigmentLightningController" implements="force:appHostable">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:attribute name="assetId" type="string" />
+    <aura:attribute name="caseNum" type="Integer" />
+    <aura:attribute name="caseId" type="string" />
+    
+    
+    <aura:attribute name="listSubscription" 
+                    type="SBQQ__Subscription__c[]" />
+    <aura:attribute name="subscriptionIdListMap" type="Map" />
+    <aura:attribute name="subscriptionRecord" type="SBQQ__Subscription__c" />
+    <aura:handler name="oChangeSubsEvent" event="c:ChangeSubscription_Evt" action="{!c.handleChangeSubscriptionEvent}"/>
+    
+    <div class="slds">
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow">
+                        <div class="slds-media__figure">
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate" title="Subscription">Subscription</h1>
+                            <p class="slds-text-body_small slds-line-height_reset">Update subscription list.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="btnClass">
+            <button class="slds-button slds-button--brand" onclick="{!c.returnToCase}" >
+                Return to Case
+            </button>
+        </div>
+        <div class="slds-grid slds-wrap">
+            <aura:if isTrue="{! !empty(v.listSubscription)}">
+                <table class="slds-table slds-table--bordered slds-max-medium-table--stacked">
+                    <thead>
+                        <tr class="slds-text-heading--label">
+                            <th scope="col" class="nobordertop" title="Action">
+                                <div>Select</div>
+                            </th>
+                            <th scope="col" class="nobordertop" title="Quantity">
+                                <div>Quantity</div>
+                            </th>
+                            <th scope="col" class="nobordertop" title="Product">
+                                <div>Product</div>
+                            </th>
+                            <th scope="col" class="nobordertop" title="Asset">
+                                <div>Asset</div>
+                            </th>
+                            <th scope="col" class="nobordertop" title="Start Date">
+                                <div>Start Date</div>
+                            </th>
+                            <th scope="col" class="nobordertop" title="End Date">
+                                <div>End Date</div>
+                            </th>  
+                            <th scope="col" class="nobordertop" title="Price">
+                                <div>Price</div>
+                            </th>  
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.listSubscription}" var="subs" indexVar="index">
+                            <tr>
+                                <td data-label="Select Subscription" role="row">
+                                    
+                                    <label class="slds-radio">
+                                        <ui:inputRadio aura:id="{!subs.id}" text="{!index}" name="prod" click="{!c.handleCheckTask}" />
+                                        <span class="slds-radio--faux"></span>
+                                        <span class="slds-form-element__label"></span>
+                                    </label>
+                                </td>
+                                <td data-label="Quantity">
+                                    <div>{!subs.SBQQ__Quantity__c}</div>
+                                </td>
+                                <td data-label="Product Name">
+                                    <div>{!subs.SBQQ__Product__r.Name}</div>
+                                </td>
+                                <td data-label="Asset">
+                                    <div>{!subs.Asset__r.Name}</div>
+                                </td>
+                                <td data-label="Start Date">
+                                    <div><ui:outputDate value="{!subs.SBQQ__SubscriptionStartDate__c }" format="MM/DD/YYYY"/>
+                                    </div>
+                                </td>
+                                <td data-label="End Date">
+                                    <div><ui:outputDate value="{!subs.SBQQ__SubscriptionEndDate__c }" format="MM/DD/YYYY"/>
+                                    </div>
+                                </td>
+                                <td data-label="Price">
+                                    <div>
+                                        <aura:if isTrue="{! !empty(subs.SBQQ__Product__r.Standard_Pricebook_Price__c)}">
+                                            {!subs.SBQQ__Product__r.Standard_Pricebook_Price__c}
+                                            <aura:set attribute="else">
+                                                0
+                                            </aura:set>
+                                        </aura:if>
+                                        &nbsp;
+                                        {!subs.SBQQ__Product__r.CurrencyIsoCode}</div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                <aura:set attribute="else">
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                        <span class="slds-assistive-text">error</span>
+                        <span class="slds-icon_container slds-icon-utility-ban slds-m-right_x-small" title="Description of icon when needed">
+                            <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#ban'}" />
+                        </span>
+                        <h2>
+                            There is no Subscription related to Case's Asset.
+                        </h2>
+                    </div>
+                </aura:set>
+            </aura:if>
+        </div>
+    </div>
+    <div class="slds">
+        
+        <div aria-hidden="true" role="dialog" class="slds-modal slds-modal--medium slds-fade-in-hide" aura:id="modaldialog">
+            
+            <c:updateSubscriptionsModal_cmp newSubscriptionRecord="{!v.subscriptionRecord}" />
+        </div>
+        <div class="slds-backdrop slds-backdrop--hide" aura:id="backdrop">
+            
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,89 @@
+<apex:page standardController="Case" extensions="MultipleBeamEntries" id="pge">
+    <apex:includeScript value="/xdomain/xdomain.js"/>
+    <apex:includeScript value="/soap/ajax/30.0/connection.js"/>
+    <apex:includeScript value="/support/console/30.0/integration.js"/> 
+    <apex:form id="frm" rendered="{!If(currentCaseUpdate.Beam_Not_Applicable__c==false,true,false)}">
+        <apex:pageBlock id="pb">
+            <apex:variable var="rowNum" value="{!0}"/>
+            <apex:pageBlockTable value="{!multipleBeamEntries}" var="mbe" style="width:100%" id="pbt">
+                <apex:column headerValue="Beam" style="width:170px">
+                    <apex:inputField value="{!mbe.Satellite_Beam_lookup__c}">
+                        <apex:actionSupport event="onchange" action="{!populateCurrentURL}" status="stausHereinputbox" reRender="frm">
+                            <apex:param value="{!mbe.Satellite_Beam_lookup__c}" name="beamID"/>
+                        </apex:actionSupport>
+                        <apex:actionStatus id="stausHereinputbox" >
+                            <apex:facet name="start" >
+                              <img src="/img/loading.gif" />                    
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:inputField>
+                </apex:column>
+                 <apex:column HeaderValue="Beam URL" style="width:300px">
+                    <apex:outputField value="{!mbe.Satellite_Beam_lookup__r.KVH_Website_URL__c}"/>
+                </apex:column>
+                <apex:column HeaderValue="Beam FullName" style="width:300px">
+                    <apex:outputField value="{!mbe.Satellite_Beam_lookup__r.Name}"/>
+                </apex:column>
+                 <apex:column headerValue="Delete" style="width:150px">
+                    <apex:commandButton action="{!addMultipleBeams}" reRender="frm" status="statusImage" value="+"  immediate="true"/>
+                     &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <apex:commandButton action="{!delRow}" reRender="frm" status="statusImage" rendered="{! If(rowNum !=0,true,false) }" value="-" immediate="true">
+                        <apex:param value="{!rowNum}" name="index" />
+                    </apex:commandButton>&nbsp;&nbsp;
+                     <apex:actionStatus id="statusImage" >
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                     </apex:actionStatus>
+                    <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                </apex:column>  
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons location="Bottom">
+                <apex:commandButton value="Save" action="{!saveMultipleBeams}" reRender="frm" status="stausHere"/>
+                <apex:actionStatus id="stausHere" >
+                    <apex:facet name="start" >
+                      <img src="/img/loading.gif" />                    
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <script>
+        function GetIndex(index){
+              var firstname1 = document .getElementById('pge:frm:pb:pbt:'+rowNum+':Name}').value;
+              document .getElementById('pg:form:pageBlockContact:'+index+':Name}').style.backgroundColor = 'yellow';
+              alert('Here is your first name taa daaa '+firstname1 );
+        }
+        </script>
+        <apex:outputPanel rendered="{!refreshPage}"> 
+           <script>
+               if (sforce.console.isInConsole()) { 
+                   RefreshPrimaryTab();
+               }else{
+                   window.top.location='/{!currentCaseID}';
+               }
+           </script>
+        </apex:outputPanel>
+        
+         <script type="text/javascript">
+                function RefreshPrimaryTab(){
+                    sforce.console.getFocusedPrimaryTabId(showTabId);
+                }
+                    
+                var showTabId = function showTabId(result){
+                    var tabId = result.id;
+                    sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+                };
+                           
+                var refreshSuccess = function refreshSuccess(result){
+                    //Report whether refreshing the primary tab was successful
+                    if (result.success == true) {
+                       // alert('Primary tab refreshed successfully');
+                    } 
+                    else {
+                        //alert('Primary did not refresh');
+                    }
+                };
+          </script>
+    </apex:form>
+    
+</apex:page>

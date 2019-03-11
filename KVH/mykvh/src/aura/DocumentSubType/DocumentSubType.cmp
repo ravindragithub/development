@@ -1,0 +1,28 @@
+<aura:component description="DocumentSubType.
+                Component used to display the Document results sectionwise">
+
+    <aura:attribute name="documentSubType"
+                    type="ProductSearchClass.DocumentSubType"
+                    description="Stores the ProductSearchClass.DocumentSubType record.
+                    This is used to show the subheading for document result sections"/>
+    
+	
+    <div class="slds-m-bottom--medium"> 
+        <aura:if isTrue="{!!empty(v.documentSubType.subType)}">
+            <table>
+            <tr>
+                <td colspan="6" class="section-cat">
+                    <h4 style="font-weight:bold;">{!v.documentSubType.subType}</h4>
+                </td>
+            </tr>
+                </table>
+        </aura:if>
+
+        <div class="slds-m-top--medium">
+            <aura:iteration items="{!v.documentSubType.documents}" var="doc" indexVar="index">
+                <c:Document document="{!doc}"/>
+            </aura:iteration>
+        </div>
+    </div>
+
+</aura:component>

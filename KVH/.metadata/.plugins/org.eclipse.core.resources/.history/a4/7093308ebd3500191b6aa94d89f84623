@@ -1,0 +1,36 @@
+<apex:page showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+        <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/> 
+    <apex:stylesheet value="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <body style="background: #f2f2f2;">
+        <div style="padding: 20px;">
+            <div class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" style="background: #ffffff;">
+            <div style="background: #d9d9d9; border: 1px solid #dddddd; color: #333333; font-weight: bold; padding: 15px;">
+                <h2 style="margin-bottom:0">Partner Types Defined</h2>
+            </div>
+            <div id="dialog2" class="ui-dialog-content ui-widget-content" style="padding: 15px;">
+                <p>
+                    <strong>Dealers - </strong>
+                    Dealers must have a knowledgeable, professional sales and technical staff on hand to sell and service the equipment at all times.
+                </p>
+                <p><strong>Representatives - </strong>
+                    Representatives must have a knowledgeable, professional sales staff to sell products and services.
+                    
+                </p>
+                <p>
+                    <strong>Distributors - </strong>
+        			Distributors must have a knowledgeable, professional sales and technical staff on hand to sell and service the equipment at all times.
+                </p>
+                <p>
+                    <strong>Service Providers - </strong>
+                    Service Providers must have a knowledgeable, professional sales and technical staff on hand to sell and service the equipment at all times. In addition, Service Providers must be able to invoice services to the end customers.
+                </p>
+            </div>
+            </div>
+        </div>
+    </body>
+</apex:page>

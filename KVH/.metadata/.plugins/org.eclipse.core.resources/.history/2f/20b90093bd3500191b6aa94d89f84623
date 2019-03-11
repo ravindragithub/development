@@ -1,0 +1,65 @@
+<apex:page showHeader="true" sidebar="false" tabStyle="KVH_Portal_Admin__tab" standardStylesheets="false"  title="KVH Admin Portal">
+    <apex:stylesheet value="{!URLFOR($Resource.customer_portal_styles)}" />
+    <style>
+        .button{
+        background-image : none !important;
+        color : #cc0000 !important;
+        }
+        .box{
+        width : 20%;
+        }
+        
+    </style>
+    <div class="page-content" style="text-align:center; background-color: #f3f3f3;">
+        <h1 style="font-size: 24px;">Admin Options</h1>
+        <br/><br/>
+        <div class="box-row no-space">            
+            <div class="box">
+                <div class="content">
+                    <h1 style="padding-bottom: 10px; font-size: 18px;">Content Management</h1>
+                    <br/><br/><br/>
+                    <a href="{!$Page.uploaddocuments}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Add Content File</a>
+                    <a href="{!$Page.uploadlinks}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Add Content Link</a>
+                    <a href="{!$Page.updatedocument}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Update Content File</a>
+                    <a href="{!$Page.updateLinks}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Update Content Link</a>
+                    <a href="{!$Page.removeDocument}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Remove Content</a>
+                </div>
+            </div>
+            <div class="box">
+                <div class="content">                         
+                    <h1 style="padding-bottom: 10px; font-size: 18px;">Partner Portal Administration</h1>
+                    <br/><br/><br/>
+                    <a href="{!$Page.spolightImageConfiguration}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Upload Spotlight Images</a>
+                    <a href="{!$Page.CreateQL}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Create QuickLink</a>
+                    <a href="{!$Page.RemoveQL}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Remove QuickLink</a>
+                    <!--<a href="#" target="_parent" class="button lower-case">Create ToolKit</a>-->
+                    <a href="{!$Page.ThumbnailforPortal}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Add/Update Thumbnail</a>
+                    <a href="{!$Page.MarketUpdate}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Add/Remove Libraries (Market Relationships)</a>
+                </div>
+            </div>
+            
+        </div>
+        <div class="box-row no-space">            
+            <div class="box">
+                <div class="content">
+                    <h1 style="padding-bottom: 10px; font-size: 18px; ">Manage Terms and Conditions</h1>
+                    <br/><br/><br/>
+                    <a href="{!$Page.CreateTC}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Create New Terms and Conditions</a>
+                    <a href="{!$Page.UpdateTCtable}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Update Terms and Conditions</a>
+                </div>
+            </div>
+            <div class="box">
+                <div class="content">
+                    <h1 style="padding-bottom: 10px; font-size: 18px;">Product Management</h1>
+                    <!--
+						<br/><br/><br/>
+						<a href="{!$Page.CreateNewBundle}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Setup New Product</a>
+						<a href="{!$Page.catalogAddProduct}?retURL=/apex/adminlandingpage" target="_parent" class="button lower-case">Update Product</a>
+					-->
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</apex:page>

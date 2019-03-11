@@ -1,0 +1,24 @@
+<apex:page standardController="Partner_Portal_Access_Request__c" extensions="PartnerRegistrationController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>
+    <body>        
+        <header>
+            <div class="logo">
+                <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+        </header>     
+        <div class="content">
+            <div class="width-80" style="margin:0 auto;">
+                <h1>Thank you for applying to the KVH Partner Portal!</h1>
+                <h3 class="pad-bottom">New portal access requests can take up to three to four business days to process, however we will do our best to respond as quickly as possible.</h3>
+                <p>The KVH Partner Portal is an exclusive resource for KVH's authorized dealers and distributors and their sales and technical staffs. Check back often for the latest sales and technical bulletins, dealer updates, technical support resources, sales aids, and more. This is your one-stop shop for everything a KVH dealer needs to be successful!</p>
+                <p>If you need immediate assistance please email our <a href="mailto:partnerportal@kvh.com">Partner Portal Team</a> and we will respond as soon as possible.</p>
+            </div>
+        </div>  
+</body>
+</apex:page>

@@ -1,0 +1,228 @@
+<apex:component allowDML="true" controller="Act_Contact_Component_Controller">
+    <!-- ** This component is used in Activation_contact,Individual_invoice, Onboard_contact and Antenna_System_Support_Contact Tabs ** -->
+    <script>
+            j$( document ).ready(function() {
+             if('{!actCon.Contact__c}' !=null && '{!actCon.Contact__c}' != ''){
+             	j$('[id$=firstname]').css('background-color','#f1f1f1');
+                j$('[id$=firstname]').prop( "disabled", true );
+             	j$('[id$=lastname]').css('background-color','#f1f1f1');
+                j$('[id$=lastname]').prop( "disabled", true );  
+             	j$('[id$=email]').css('background-color','#f1f1f1');
+                j$('[id$=email]').prop( "disabled", true );          
+             }   
+            });
+    </script>
+    <!-- ** Attributes Used for this component Start ** -->
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact detail record"
+                    type="string" required="required" assignTo="{!ActOrderId}"/>
+    <apex:attribute name="id" description="This is the ID of the component's parent container"
+                    type="string" required="required" assignTo="{!parentContainer}"/>
+    <apex:attribute name="contactRole" description="This is the contact Role of the component"
+                    type="string" required="required" assignTo="{!strContactRole}"/>
+    <apex:attribute name="pageStatus" description="This is the Activation Order Status record for the the Activation Order Master record"
+        type="Activation_Status__c" required="required" assignTo="{!actStatus}"/>
+    <!-- ** Attributes Used for this component End ** -->
+    
+    <div>
+        
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here">
+        </div>
+        <!--** div contain error msg contents -End **--> 
+        <!--** div input field content -Start **-->
+        <div class="clear" style="padding-bottom:20px;"></div>
+        <div class="left two-col">
+            <div class="box-content">
+                <p>
+                    <span class="left" style="width:20%;">
+                        <label>Salutation:</label>
+                        <apex:inputField id="salutation" value="{!actCon.Salutation__c}" html-tabIndex="1" html-data-role="none"/>
+                    </span>
+                    <span class="right" style="width:75%;">
+                        <label>First/Given Name:<span class="req"></span></label>
+                        <apex:inputField id="firstname" styleClass="firstname1"  value="{!actCon.First_Name__c}" html-tabIndex="2" html-data-role="none" />
+                    </span>
+                </p>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Company Name:</label>
+                    <apex:inputField id="ree" value="{!actCon.Account__c}" html-tabIndex="5" html-data-role="none"/>
+                </p>
+                <div class="phone-types" >
+                    <label>Primary Phone Number:<span class="req"></span></label> 
+                    <apex:selectRadio value="{!actCon.Primary_Phone_Type__c}" Id="PPT" styleClass="frm-phonetype-required" tabIndex="7" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField id="ppnumber" value="{!actCon.Primary_Phone__c}" html-tabIndex="8" styleClass="frm-phone-required" html-data-role="none" />
+                    
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                      <span class="tooltiptext">
+                          Country codes are used when dialing an international phone number.<br/><br/>
+                          Click <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">here</a> to find your country code.
+                      </span>
+                    </span>
+                </div>
+                <div class="clear" style="padding-bottom:20px;"></div>
+                <p><label>Role:</label><span class="req"></span>
+                    <apex:inputField value="{!actCon.Job_Function__c}" html-tabIndex="11" id="jobfunction" html-data-role="none"/></p>
+              <!--  <p><label>Address 1:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Address_1__c}" html-tabIndex="13" id="address1"/></p>
+                <p><label>City:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.City__c}" html-tabIndex="15" id="city"/></p>-->
+                 <!-- ** Below Block is rendered on OTHER Tab ** -->
+                <apex:actionRegion >
+                    <p class="Country"><label>Country: </label><span class="req"></span>
+                        <apex:selectList id="country" tabindex="13" value="{!actCon.Country__c}" multiselect="false"  size="1" html-data-role="none">
+                            <apex:actionSupport action="{!componentCountryChangeHandler}" event="onchange" reRender="State_Province__c" onsubmit="showLoadingDiv();" oncomplete="hideLoadingDiv();" />
+                            <apex:selectOptions value="{!CountriesList}" html-data-role="none"/>
+                        </apex:selectList>
+                    </p>
+                </apex:actionRegion>
+                 <!-- ** Above Block is rendered on OTHER Tab ** -->
+            </div>
+        </div>
+        <div class="right two-col">
+            <div class="box-content">
+                <p>
+                    <label>Last/Family Name/Surname:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Last_Name__c}" html-tabIndex="4" id="lastname" html-data-role="none" />
+                </p>
+                <p><label>Email:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Email__c}" html-tabIndex="6" id="email" styleClass="email" html-data-role="none" />
+                </p>
+                <div class="phone-types" >
+                    <label>Secondary Phone Number:</label>
+                    <apex:selectRadio value="{!actCon.Secondary_Phone_Type__c}" Id="SPT" tabIndex="9" html-data-role="none">
+                        <apex:selectOptions value="{!phoneType}" html-data-role="none"/>
+                    </apex:selectRadio>
+                    <apex:inputField value="{!actCon.Secondary_Phone__c}" id="spnumber" html-tabIndex="10" html-data-role="none"/>
+                    <span class="fontTip">(Country Code Required)</span>
+                    <span class="tooltip"><apex:image value="{!$Resource.Activation_Info}" width="10" height="10"/>
+                      <span class="tooltiptext">
+                          Country codes are used when dialing an international phone number.<br/><br/>
+                          Click <a href="http://www.howtocallabroad.com/codes.html"  target="_blank">here</a> to find your country code.
+                      </span>
+                    </span>
+                    <div class="clear" style="padding-bottom:20px;"></div>
+                </div>
+                <p><label>Job Title:</label><!--<span class="req"></span> -->
+                    <apex:inputField value="{!actCon.Job_Title__c}" html-tabIndex="12" id="jtcon" html-data-role="none"/></p>
+                
+            <!--    <p><label>Address 2:</label>
+                    <apex:inputField value="{!actCon.Address_2__c}" html-tabIndex="14" id="address2"/></p>
+                <p><label>Postal/Zip Code:<span class="req"></span></label>
+                    <apex:inputField value="{!actCon.Postal_Zip_Code__c}" html-tabIndex="16" id="postalcode"/></p> -->
+                
+                <p class="state"><label>State/Province/Territory: </label>
+                    <apex:selectList id="State_Province__c" tabindex="14" value="{!actCon.State__c}" multiselect="false" size="1" styleClass="{!IF(StatesList.size>1,'requiredRedMarkFld','')}" html-data-role="none">
+                        <apex:actionSupport action="{!componentStateChangeHandler}" event="onchange" reRender="statecon" >
+                            <apex:param value="{!actCon.State__c}" assignTo="{!dummy}"/> 
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!StatesList}" html-data-role="none"/>
+                    </apex:selectList>
+                </p>
+            </div>
+        </div>
+         <!--** div input field content -End **-->
+        
+         <!--** div button -Start **-->
+        <div class="clear">
+            
+             <!--** panel rendered on Authorized Representative tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer =='contactcomponent'}">
+                <apex:commandLink styleClass="button right" value="Save Authorized Rep" onclick="validateError('{!parentContainer}',true); return false;">
+                </apex:commandLink>
+                <apex:commandLink styleClass="button left" value="Cancel" action="{!gotospecifictab}" onclick="showLoadingDiv();" rerender="contactcomponent" oncomplete="hideLoadingDiv();" > <!--rendered="{!strActivationContact != null}" -->
+                </apex:commandLink>
+            </apex:outputPanel>
+            <!--**  panel rendered on Authorized Representative tab -end **-->
+            
+            <!--** panel rendered on Authorized Representative tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer =='individualcomponent'}">
+                <apex:commandLink styleClass="button right" value="Save Recipient" onclick="validateError('{!parentContainer}',true); return false;">
+                </apex:commandLink>
+                 <apex:commandLink styleClass="button left" value="Cancel" action="{!gotospecifictab}" onclick="showLoadingDiv();" rerender="contactcomponent" oncomplete="hideLoadingDiv();" >
+                </apex:commandLink>
+            </apex:outputPanel>
+            <!--**  panel rendered on Authorized Representative tab -end **-->
+            
+            <!--** panel rendered on onboard Contact tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer =='onboardcontactcomponent'}">
+                <div class="button-bar">
+                    <apex:commandLink styleClass="button left" value="< Back" onclick="validateOnboardContactBack(); return false;" immediate="true">
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="button validateSkipButton"  value="Skip to Next Page" onclick="showLoadingDiv();skipValidate('Antenna_System_Support_Contact'); return false;" rendered="{!isSkipValidation}">
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="button right" value="Next >" onclick="validateError('{!parentContainer}',true); return false;">
+                    </apex:commandLink>
+                </div>
+                <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateError('{!parentContainer}',false); return false;"/> 
+
+            </apex:outputPanel>
+            <!--**  panel rendered on onboard Contact tab -end **-->
+            
+            <!--**  panel rendered on Antenna System Support contact tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer =='antennasystemsupportcontactcomponent'}">
+                <div class="button-bar">
+                    <apex:commandLink styleClass="button left" value="< Back" onclick="validateAntennaSystemSupportContactBack(); return false;" immediate="true">
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="button validateSkipButton"  value="Skip to Next Page" onclick="showLoadingDiv();skipValidate('Dealer_Distributor_Info'); return false;" rendered="{!isSkipValidation}">
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="button right" value="Next >" onclick="validateError('{!parentContainer}',true); return false;">
+                    </apex:commandLink>
+                </div>
+                     <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="validateError('{!parentContainer}',false); return false;"/> 
+ 
+            </apex:outputPanel>
+            <!--**  panel rendered on Antenna System Support contact tab -end **-->
+            
+            <!--** panel rendered on Authorized Representative tab -Start **-->
+            <apex:outputPanel rendered="{!parentContainer =='ContactCorporateComponent'}">
+                <apex:commandLink styleClass="button right" value="Save Authorized Rep" onclick="validateError('{!parentContainer}'); return false;">
+                </apex:commandLink>
+                <apex:commandLink styleClass="button left" value="Cancel" action="{!gotospecifictab}" onclick="showLoadingDiv();" rerender="contactcomponent" oncomplete="hideLoadingDiv();" >
+                </apex:commandLink>
+            </apex:outputPanel>
+            <!--**  panel rendered on Authorized Representative tab -end **-->
+            
+            
+            
+            <!--** div button -Start **-->
+        </div>
+        <!--** div button -Start **-->
+    </div>
+   
+    <apex:actionFunction name="callcontactFromAccountSetup" action="{!SaveFromAccountSetup}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+         <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="callcontactFromInstallationType" action="{!SaveFromInstallationType}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+        <apex:param name="param2" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="callcontactFromCorporateSetup" action="{!SaveFromCorporateSetup}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+         <apex:param name="param3" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="skipValidate" action="{!gototab}" rerender="contactcomponent" oncomplete="hideLoadingDiv();">
+         <apex:param name="param" assignTo="{!selectedTab}" value="" />
+    </apex:actionFunction>
+    <!-- ** remodal popup Start ** -->
+        <apex:outputPanel rendered="{!OR(parentContainer =='onboardcontactcomponent',parentContainer =='antennasystemsupportcontactcomponent')}">
+		
+             <div data-role="popup" id="Insttype" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                                <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                            </div>
+                            <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <apex:commandLink styleClass="button remodal-cancel"   value="Yes" action="{!SaveFromInstallationTypeSaveAndExit}" onclick="showLoadingDiv();" oncomplete="returntohomepage();"/>
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                            </div>
+                        </div>
+            
+		</apex:outputPanel>
+</apex:component>

@@ -1,0 +1,143 @@
+.THIS *{
+    font-size: .8125rem;
+}
+
+.THIS label, 
+.THIS p, 
+.THIS h1, 
+.THIS h2, 
+.THIS h3, 
+.THIS h4, 
+.THIS select,
+.THIS ul,
+.THIS table,
+.THIS button,
+.THIS .slds-input {
+    font-family: arial, san-serif;
+}
+
+/* is this needed? why are these links hidden? */
+.THIS  a {
+  color:white;
+  text-decoration: none;
+}
+
+.THIS .ui-widget {
+    margin:0;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    margin-bottom:20px;
+}
+
+.THIS p {
+    margin-bottom:15px;
+    color:#555;
+}
+
+.THIS a {
+    color:#1984c7;
+}
+
+.THIS a:hover {
+    text-decoration:underline;
+}
+
+.THIS .content-panel {
+    background:#fff;
+    padding:30px;
+}
+
+.THIS .input {
+    border-radius:0;
+    display:block;
+    width:100%;
+    padding: 0 1rem 0 .75rem;
+    line-height: 1.875rem;
+}
+
+.THIS  #error {
+  text-align: center;
+  color:#fff;
+    font-weight:bold;
+    background:#cc0000;
+    margin-bottom: 15px;
+    padding:5px;
+}
+
+/* error of input and select boxes */
+.THIS textarea.error, 
+.THIS select[multiple].error, 
+.THIS input[type="text"].error, 
+.THIS input[type="tel"].error, 
+.THIS input[type="password"].error, 
+.THIS input[type="email"].error, 
+.THIS input[type="search"].error, 
+.THIS .select select.error, 
+.THIS select.error {
+    border: 1px solid #cc0000;
+    color: #cc0000;
+    -webkit-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    -moz-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    -o-box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+    box-shadow: 0 0 5px 0 rgba(255,178,157,0.75);
+}
+
+.THIS button.slds-button,
+.THIS a.button,
+.THIS input[type=submit] {
+    padding:5px 20px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    color:#fff;
+    border-radius:0px;
+    font-size:90%;
+    background:#1984c7;
+    border:none;
+    margin:20px 0;
+}
+
+.THIS  button.sfdc_button {
+    width:50%;
+}
+
+.THIS .uiButton--default {
+    box-shadow:none;
+    text-shadow:none;
+}
+
+.THIS .uiButton--default .label {
+    color:#fff;
+}
+
+@media (max-width: 470px) {
+    .THIS button.sfdc_button {
+        width:100%;
+    }
+}
+  
+.THIS  button:hover {
+  background-color:#3276b1;
+  border-color:#285e8e;
+  cursor:pointer;
+}
+
+.THIS label.uiLabel-hidden {
+  display:none;
+}
+
+.THIS .lte-header {
+    text-align:center;
+}
+
+.THIS .lte-header img {
+    width:40%; 
+    height:auto; 
+    margin-bottom:10px;
+}
+.THIS .slds-spinner {
+    position: fixed;
+}

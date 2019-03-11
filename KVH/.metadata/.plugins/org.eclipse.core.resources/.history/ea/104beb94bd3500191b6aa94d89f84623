@@ -1,0 +1,35 @@
+<apex:page id="forgotPassword" showHeader="false" standardStylesheets="false" controller="myKVH_forgotPassword" title="{!$Label.site.forgot_password}">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.customcss)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MASTERAppsStyles)}"/>
+    <style>
+        .message{
+        background: #FFEB3B;
+        }
+    </style>
+    <apex:form >
+        <div style="max-width:880px; margin:0 auto;background:#fff;padding:10px 20px;font-size:90%;">
+            <h1>Forgot Passwords</h1>            
+            <p>
+                Enter the email address you signed up with and we will send you the password reset instructions.
+            </p>
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <apex:pageMessages id="error" escape="false"/>
+                    <apex:outputLabel value="Email" for="username"/>
+                    <p>
+                        <apex:inputText required="true" id="username" value="{!username}" size="36"/>
+                    </p>
+                    <p>
+                        <apex:commandButton id="submit" styleClass="button" value="{!$Label.site.submit}" action="{!forgotPassword}"/> 
+                    </p>
+                    <!--
+<div style="padding-top: 2rem;">
+<a href="{!$Site.BaseUrl}/s/mykvh-self-register">New to myKVH?</a>
+</div>
+-->
+                </div>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

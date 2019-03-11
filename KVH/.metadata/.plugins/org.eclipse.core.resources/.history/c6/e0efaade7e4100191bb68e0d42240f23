@@ -1,0 +1,21 @@
+<aura:component >
+  <!-- DEPENDENCIES : list all components that might be rendered in the modal -->
+  <aura:dependency resource="markup://c:HTS_status_demo" />
+  <!--EVENT LISTENER -->
+  <aura:handler event="c:HTS_modal_show_evt" action="{!c.showModal}" />
+    <!-- modal -->
+  <div aria-hidden="true" role="dialog" class="slds-modal slds-modal--prompt slds-fade-in-hide" aura:id="modaldialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header slds-theme--info">
+          <h2 class="slds-text-heading--medium">Your Title</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div>
+            <p>{!v.body}</p>
+        </div>
+      </div>
+      <lightning:button variant="brand" label="Close" iconName="action:close" iconPosition="left"  onclick="{!c.hideModal}"/>
+    </div>
+  </div>
+  <div class="slds-backdrop slds-backdrop--hide" aura:id="backdrop" />
+</aura:component>

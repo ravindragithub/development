@@ -1,0 +1,15 @@
+<apex:page controller="platform_record_type_controller">
+	<apex:form >
+	<h1>Select the New Platform Record Type by clicking the link</h1>
+	<br/><br/>
+		<apex:repeat value="{!items}" var="options" id="theRepeat">
+			<apex:outputLink value="/001/e?retURL={!ParentAcct.Id}&acc3={!ParentAcct.Name}&Parent={!ParentAcct.Id}&RecordType={!options.ID}&ent=Account">{!options.Name}</apex:outputLink>
+			<br/>
+			<p/>
+		</apex:repeat>
+		<p/>
+		<apex:outputText value="This will create a Platform Account that is a child of "/>
+		<apex:outputText style="font-style:italic" value="{!ParentAcct.Name}"/><br/>
+		<!-- <apex:outputText value="This is the referring Asset ID {!AssetRef}"/> -->
+	</apex:form>
+</apex:page>

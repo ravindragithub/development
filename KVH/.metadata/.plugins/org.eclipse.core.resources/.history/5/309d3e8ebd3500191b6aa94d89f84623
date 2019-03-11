@@ -1,0 +1,562 @@
+<apex:page standardController="Partner_Portal_Access_Request__c" extensions="PartnerRegistrationController" showHeader="false" standardStylesheets="false" applyBodyTag="false" sidebar="false">
+    <meta charset="UTF-8"/>
+    <title>Partner Portal Login</title>
+    <apex:stylesheet value="{!URLFOR($Resource.gridmargin)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.kvh_comstyle)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.PPstyles)}"/>
+    <apex:stylesheet value="https://use.fontawesome.com/a343804bcf.css"/>
+    <apex:stylesheet value="https://use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css"/>
+    <script type="text/javascript">
+    
+    
+    
+    
+    function popuptype()
+    {
+        var w = window.open('/PartnerPopUpType','name=_blank','height=400,width=400,left=250,top=100')
+        return w;      
+    }
+    function popupinterest()
+    {
+        var w = window.open('/PartnerPopUpInterest','name=_blank','height=400,width=400,left=250,top=100')
+        return w;      
+    }  
+    </script>
+    
+    
+    <!--  Below javascript controls the height and width of anything with style class myMultiClass   -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            setTimeout(function() {
+                $j('select.company_functional_group').each(function(i, val) { 
+                    $j(val).width(130);
+                    $j(val).height(70);
+                
+                })
+            },100);
+        });
+    </script>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        setTimeout(function() {
+            $j('select.salutation').each(function(i, val) { 
+                $j(val).width(80);
+               
+                
+            })
+        },100);
+    });
+    </script> 
+    
+    
+    
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            setTimeout(function() {
+                $j('select.portal_views').each(function(i, val) { 
+                    $j(val).width(280);
+                    $j(val).height(110);
+                
+                })
+            },100);
+        });
+    </script>
+    
+    <!-- The script below will replace the default "--None--" salesforce puts on default picklists-->
+    
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+    <script>
+    $j = jQuery.noConflict();
+    
+    $j(function(){
+        replacePickVals();
+    });
+    
+     function replacePickVals(){
+        $j('option').filter(function () { return $j(this).html() == "--None--"; }).html('-- Select --');
+         $j('option').filter(function () { return $j(this).html() == "Choose One"; }).html('-- Select --');
+         $j('option').filter(function () { return $j(this).html() == "Choose Country First"; }).html('-- Select Country First --');
+    }
+    </script>
+    
+    
+    <body>
+        <header>
+            <div class="logo">
+            <apex:image value="{!URLFOR($Resource.LogoProgressive)}"/>
+            </div>
+            <h1><a>Partner Portal</a></h1>
+        </header>        
+        <apex:form >
+            <apex:pageBlock >
+        <div class="content">
+            <h1>Thanks for Requesting Access to the KVH Partner Portal</h1>
+            
+            <div class="section group">
+                <div class="col span_9_of_12" style="padding-right:30px;">                   
+                    <p>The KVH Partner Portal is an exclusive resource for KVH's authorized dealers and distributors and their sales and technical staffs. Register and login often for the latest sales and technical bulletins, dealer updates, technical support resources, sales aids, and more. This is your one-stop shop for everything a KVH dealer needs to be successful!</p>
+                    
+                    <!-- form -->
+                    <h2 class="pad-top">Contact Information <span class="required-note-inline">All fields in this section are required.</span></h2>
+                    
+                    <div class="section group">
+                        <div class="col span_2_of_12">
+                            <label>Salutation:</label>
+                            <apex:inputField id="salutation" styleClass="requiredRedMarkFld salutation" value="{!Partner_Portal_Access_Request__c.Salutation__c}"/>
+                        </div>
+                        <div class="col span_5_of_12">
+                            <label>First/Given Name:</label>
+                            <apex:inputField required="true" id="firstname" value="{!Partner_Portal_Access_Request__c.First_Name__c}"/>
+                        </div>
+                        <div class="col span_5_of_12">
+                            <label>Last/Family/Surname:</label>
+                            <apex:inputField required="true" id="lastname" value="{!Partner_Portal_Access_Request__c.Last_Name__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Email:</label>
+                            <apex:inputField required="true" id="email" value="{!Partner_Portal_Access_Request__c.Contact_Email__c}" html-placeholder="No group email addresses please"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Contact Phone No.:</label>
+                            <apex:inputField required="true" id="phone" value="{!Partner_Portal_Access_Request__c.Contact_Phone__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Job Title:</label>
+                            <apex:inputField required="true" id="title" value="{!Partner_Portal_Access_Request__c.Job_Title__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Company Functional Group:</label>
+                            <apex:inputField required="true" id="compgroup" value="{!Partner_Portal_Access_Request__c.Company_Functional_Group__c}" styleClass="company_functional_group"/>
+                        </div>
+                    </div>
+                    
+                    <apex:outputPanel id="mcpanel">
+                    <div class="section group">
+                        <div class="radioClass;">
+                        <div class="col span_6_of_12">
+                            <label>I am the main contact for this company:</label>  
+                        </div>
+                        <div class="col span_6_of_12">
+                        <apex:actionRegion >
+                            <apex:selectRadio id="mcradio" layout="lineDirection" value="{!mc}" styleClass="radioClass">
+                                <apex:actionSupport action="{!render1set}" event="onchange" reRender="mcpanel" />                                
+                                <apex:selectOption id="mcyes" itemLabel="Yes" itemValue="Yes" />
+                                <apex:selectOption id="mcno" itemLabel="No" itemValue="No"/>
+                            </apex:selectRadio>  
+                        </apex:actionRegion>
+                        </div>
+                        </div>
+                    </div>   
+                    <apex:outputPanel id="main_contact" rendered="{!render1}">
+                        <div class="callout">
+                        <h4>Add Main Contact Information</h4>
+                        <div class="section group">
+                            <div class="col span_2_of_12">
+                                <label>Salutation:</label>
+                                <apex:inputField required="true" id="mcsalutation" value="{!Partner_Portal_Access_Request__c.MC_Salutation__c}"/>
+                            </div>
+                            <div class="col span_5_of_12">
+                                <label>First/Given Name:</label>
+                                <apex:inputField required="true" id="mcfirstname" value="{!Partner_Portal_Access_Request__c.MC_First_Name__c}"/>
+                            </div>
+                            <div class="col span_5_of_12">
+                                <label>Last/Family/Surname:</label>
+                                <apex:inputField required="true" id="mclastname" value="{!Partner_Portal_Access_Request__c.MC_Last_Name__c}"/>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Email:</label>
+                                <apex:inputField required="true" id="mcemail" value="{!Partner_Portal_Access_Request__c.MC_Email__c}" html-placeholder="No group email addresses please"/>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <label>Contact Phone No.:</label>
+                                <apex:inputField required="true" id="mcphone" value="{!Partner_Portal_Access_Request__c.MC_Phone__c}"/>
+                            </div>
+                        </div>
+                        </div>
+                    </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel id="distributor">                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>My company currently purchases KVH products from a distributor:</label>  
+                        </div>
+                        
+                        <div class="col span_6_of_12">
+                            <apex:actionRegion >
+                            <apex:selectRadio value="{!distr}" styleClass="radioClass">
+                                <apex:actionSupport action="{!render2set}" event="onchange" reRender="distributor" />
+                                <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                <apex:selectOption itemLabel="No" itemValue="No"/>
+                                <apex:selectOption itemLabel="I don't know" itemValue="Idk"/>
+                            </apex:selectRadio>
+                            </apex:actionRegion>
+                        </div>
+                        
+                    </div>
+                    <apex:outputPanel rendered="{!render2}">
+                    <div id="preexist" class="callout" >
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Distributor Name:</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:inputField required="true" id="distr" value="{!Partner_Portal_Access_Request__c.Current_Distributor__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <!-- company info -->
+                    <hr/>
+                    <h2>Company Information <span class="required-note-inline">All fields in this section are required.</span></h2>
+                    
+                    <div class="section group">
+                        <div class="col span_12_of_12">
+                            <div class="ui-widget">
+                              <label for="tags">Company Name: </label>
+                              <apex:inputField required="true" id="compname" value="{!Partner_Portal_Access_Request__c.Company_Name__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Company Address 1:</label>
+                            <apex:inputField required="true" id="add1" value="{!Partner_Portal_Access_Request__c.Company_Address_1__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Company Address 2: <span class="notes">(if applicable)</span></label>
+                            <apex:inputField required="false" id="add2" value="{!Partner_Portal_Access_Request__c.Company_Address_2__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>City:</label>
+                            <apex:inputField required="true" id="city" value="{!Partner_Portal_Access_Request__c.Company_City__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Country:</label>
+                            <apex:actionRegion >
+                                    <apex:selectList id="country"  value="{!country}" multiselect="false" size="1" required="true">
+                                        <apex:actionSupport action="{!componentCountryChangeHandlerBilling}" event="onchange" reRender="state" />
+                                        <apex:selectOptions value="{!CountriesList}"/>
+                                    </apex:selectList>
+                                </apex:actionRegion>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>State/Province/Territory/Region:</label>
+                            <apex:selectList id="state"  value="{!state}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!StatesList}"/>
+                            </apex:selectList>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Zip/Postal Code:</label>
+                            <apex:inputField required="true" id="zip" value="{!Partner_Portal_Access_Request__c.Company_Postal_Zipcode__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Business Phone 1:</label>
+                            <apex:inputField required="true" id="cphone" value="{!Partner_Portal_Access_Request__c.Company_Phone__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Business Phone 2:</label>
+                            <apex:inputField required="false" id="cphone2" value="{!Partner_Portal_Access_Request__c.Company_Phone_2__c}"/>
+                        </div>
+                    </div>
+                    
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Company Email:</label>
+                            <apex:inputField required="true" id="cemail" value="{!Partner_Portal_Access_Request__c.Company_Email__c}"/>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <label>Company Website:</label>
+                            <apex:inputField required="true" id="website" value="{!Partner_Portal_Access_Request__c.Company_Website__c}"/>
+                        </div>
+                    </div>
+                        
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Portal(s) of Interest:</label>
+                            <apex:inputField required="true" id="portals" value="{!Partner_Portal_Access_Request__c.Portal_View_s__c}" styleClass="portal_views"/>                        
+                        </div>
+                    </div>
+                    
+                    <!-- Partner Role and Detail -->
+                    <hr/>
+                    <h2>Partner Role and Detail <span class="required-note-inline">All fields in this section are required.</span></h2>
+                   
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Type of Partner Requested: </label>
+                            <button type="button" onclick="popuptype()" style="border: none; background:#fff"><i class="fa fa-question-circle fa-lg" style="color:#cc0000;"></i></button>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <apex:inputField required="true" id="partrole" value="{!Partner_Portal_Access_Request__c.Partner_Role__c}" html-placeholder="vwrvw"/>
+                        </div>
+                    </div>
+                     <div class="section group"> 
+                        <div class="col span_6_of_12">
+                            <label>Partner Interest:</label>
+                            <button type="button" onclick="popupinterest()" style="border: none; background:#fff"><i class="fa fa-question-circle fa-lg" style="color:#cc0000;"></i></button>
+                        </div>
+                        <div class="col span_6_of_12">
+                            <apex:inputField required="true" id="partint" value="{!Partner_Portal_Access_Request__c.Partner_Interest__c}" html-placeholder="Select One"/>
+                        </div>
+                    </div>
+                    
+                    <!-- service questions -->
+                    <hr/>
+                    <h2>Service Capabilities</h2>
+                    <p>The following questions will provide information about your company’s service capabilities that will be used by KVH’s Tech Support and Field Service Teams to provide our customers with fast, professional support around the Globe.</p>
+                    
+                    <apex:outputPanel id="servques">
+                    <div class="section group">
+                        <div class="col span_6_of_12">
+                            <label>Are you authorized to answer questions about service capabilities for your company?</label>
+                        </div>
+                        <apex:actionRegion >
+                        <div class="col span_6_of_12">
+                            <apex:selectRadio layout="lineDirection" id="quesservice" value="{!servicequestion}" styleClass="radioClass">
+                                <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                <apex:selectOption itemLabel="No" itemValue="No"/>
+                                <apex:actionSupport action="{!render3set}" event="onchange" reRender="servques"/>
+                            </apex:selectRadio>
+                        </div>
+                        </apex:actionRegion>
+                    </div>
+                    
+                    <!-- service manager contact panel -->
+                    <apex:outputPanel rendered="{!render4}">
+                    <div id="service_no" class="callout">
+                        <h4>Add Service Manager Contact Information</h4>
+                        <div class="section group">
+                            <div class="col span_2_of_12">
+                                <label>Salutation:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Manager_Salutation__c}"/>
+                            </div>
+                            <div class="col span_5_of_12">
+                                <label>First/Given Name:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Manager_First_Name__c}"/>
+                            </div>
+                            <div class="col span_5_of_12">
+                                <label>Last/Family/Surname:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Manager_Last_Name__c}"/>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Email:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Manager_Email__c}" html-placeholder="No group email addresses please"/>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <label>Contact Phone No.:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Manager_Phone__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    </apex:outputPanel>
+                        
+                    <apex:outputPanel rendered="{!render3}">
+                    
+                    <!-- service questions that only disply is this user is authorized to answer them -->
+                    <div id="service_yes">
+                        <apex:outputPanel id="servsect">
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Is your company currently performing technical service for other companies?</label>
+                            </div>
+                            
+                            <div class="col span_6_of_12">
+                                <apex:actionRegion >
+                                <apex:selectRadio value="{!currentservice}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes" />
+                                    <apex:selectOption itemLabel="No" itemValue="No" />
+                                    <apex:actionSupport action="{!render5set}" event="onchange" rerender="servsect"/>
+                                </apex:selectRadio>
+                                </apex:actionRegion>
+                            </div>             
+                        </div>
+
+                        <apex:outputPanel rendered="{!render5}">
+                        <div id="service_other" class="callout">
+                            <div class="section group">
+                                <div class="col span_6_of_12">
+                                    <label>Please list companies you are providing technical service for:</label>
+                                </div>
+                                <div class="col span_6_of_12">
+                                    <apex:inputField value="{!Partner_Portal_Access_Request__c.Who_Servicing__c}" />
+                                </div>
+                            </div>
+                        </div>
+                        </apex:outputPanel>
+                        </apex:outputPanel>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>How many service technicians does your company have?</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:inputField html-placeholder="Select One" value="{!Partner_Portal_Access_Request__c.No_of_Service_Techs__c}"/>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Do these technicians need to be trained on KVH products?</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:selectRadio value="{!training}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                    <apex:selectOption itemLabel="No" itemValue="No"/>
+                                </apex:selectRadio>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Do you have a capability to stock service parts?</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:selectRadio value="{!stock}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                    <apex:selectOption itemLabel="No" itemValue="No"/>
+                                </apex:selectRadio>
+                            </div>
+                        </div>
+                        
+
+                        <hr/>
+                        <h2>Service Coverage</h2>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Please identify where your company regularly provides service:</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Locations__c}" html-placeholder="i.e., state(s)/province(s), region(s), country(ies), etc."/>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Please identify the ports where your company regularly provides service:</label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Ports_Serviced__c}"/>
+                            </div>
+                        </div>
+
+                        <apex:outputPanel id="travelling">
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Is your company willing to travel to regions outside of the above to provide service?</label>
+                            </div>
+                            <apex:actionRegion >
+                            <div class="col span_6_of_12">
+                                <apex:selectRadio value="{!travel}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                    <apex:selectOption itemLabel="No" itemValue="No"/>
+                                    <apex:actionSupport action="{!render6set}" event="onchange" rerender="travelling"/>
+                                </apex:selectRadio>
+                            </div>
+                            </apex:actionRegion>
+                        </div>
+
+                        <apex:outputPanel rendered="{!render6}">
+                        <div class="callout" id="travel_int">
+                            <div class="section group">
+                                <div class="col span_6_of_12">
+                                    <label>Are you willing to travel beyond 2 hours and/or internationally if requested?</label>
+                                </div>
+                            <div class="col span_6_of_12">
+                                <apex:selectRadio value="{!travel2}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                    <apex:selectOption itemLabel="No" itemValue="No"/>
+                                </apex:selectRadio>
+                            </div>
+                            </div>
+                        </div>
+                        </apex:outputPanel>
+                        </apex:outputPanel>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Is your company willing to service ALL KVH customers?<br/>
+                                    <span class="notes">(i.e., KVH customers that did not purchase their product through your company)</span></label>
+                            </div>
+                            <div class="col span_6_of_12">
+                                <apex:selectRadio value="{!allcust}" layout="lineDirection" styleClass="radioClass">
+                                    <apex:selectOption itemLabel="Yes" itemValue="Yes"/>
+                                    <apex:selectOption itemLabel="No" itemValue="No"/>
+                                </apex:selectRadio>
+                            </div>
+                        </div>
+
+                        <div class="section group">
+                            <div class="col span_6_of_12">
+                                <label>Please select the markets your company is willing to service:</label>
+                                <apex:inputField value="{!Partner_Portal_Access_Request__c.Service_Markets__c}"/>
+                            </div>
+                            <div class="col span_6_of_12">
+                                 
+                            </div>
+                        </div>
+                    </div>
+                    </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <!-- terms of acceptance -->
+                    <hr/>
+                    <h2>Terms of Acceptance</h2>
+                    
+                    <p>I understand that as a KVH partner, I will receive e-mail notifications from KVH concerning updates, upgrades, and news regarding KVH products and services. These e-mails may include information about product software and hardware upgrades, information on changes in satellite services, technical alerts, notifications of special promotional offers for you and your customers, and more.</p>
+                    
+                    <apex:commandButton onclick="submitclick('submitformfun()');return false;" styleClass="button button-blue" value="Submit Request for Portal Access"/>
+                    <apex:actionFunction name="submitformfun" action="{!saveNewRecord}" />
+                </div>
+                
+                <!-- sidebar -->
+                <div class="col span_3_of_12">
+                    <div class="callout">
+                        <h4>NOTE!</h4>
+                        <p>New portal access requests can take up to <strong>three to four</strong> business days to process, however we will do our best to respond as quickly as possible. </p>
+                    </div>
+                    <div class="border pad-inside pad-top">
+                        <h4>Need immediate assistance creating <br/>an account?</h4>
+                        Contact us: <a href="mailto:partnerportal@kvh.com?Subject=Help with Access to the Partner Portal">partnerportal@kvh.com</a>
+                    </div>
+                </div>
+            </div>
+              
+        </div>
+        </apex:pageBlock>
+        </apex:form>
+    </body>
+    <c:spinner ></c:spinner>
+</apex:page>

@@ -1,0 +1,128 @@
+<aura:component controller="AddProducts_WorkOrderController">
+    <aura:attribute name="workOrderId" type="string" />
+    <aura:attribute name="workOrderNumber" type="string" />
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="wrapperList" 
+                    type="AddProducts_WorkOrderController.DisplayProductList[]" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="oselectedProductEvent" event="c:selectedProductEvent" action="{!c.getSearchRecordValue}"/>
+    <div>
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinner" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+                <div class="textloading">
+                    Loading,Please wait.....
+                </div>
+            </div>
+        </aura:if>
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <c:svgIcon size="medium" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="/resource/SLDS/assets/icons/standard-sprite/svg/symbols.svg#product" />
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-text-heading--label">Work Order - {!v.workOrderNumber}</p>
+                            <div class="slds-grid">
+                                <h1 class="slds-text-heading--medium slds-m-right--small slds-truncate slds-align-middle">Add/Search Product</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row slds-grid slds-wrap" id="updateSub">
+                <div class="slds-col">
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="headerCol" title="Part Number">
+                                <div class="">Search Part Number</div>
+                            </th>
+                            <th scope="col" class="headerCol" title="KVH P/N">
+                                <div class="">KVH P/N</div>
+                            </th>
+                            <th scope="col" class="headerCol" title="Product Description">
+                                <div class="">Product Description</div>
+                            </th>
+                            <th scope="col" class="headerCol" title="Quantity">
+                                <div class="">Quantity</div>
+                            </th>
+                            <th scope="col" class="headerCol" title="Action">
+                                <div class="">Action</div>
+                            </th>
+                        </tr>
+                        <tbody>
+                            <aura:iteration items="{!v.wrapperList}" var="prod" indexVar="index">
+                                <tr class="slds-hint-parent">
+                                    <td data-label="Part Number" scope="col">
+                                        <div class="rowDataClass">
+                                            <div class="rowDataClass">
+                                                <aura:if isTrue="{!prod.prodId == ''}" >
+                                                    <c:customLookup searchObjective="WorkOrder_Product"/>
+                                                    <aura:set attribute="else">
+                                                        <ui:inputText value="{!prod.partNumber}" class="slds-input" disabled="true"/>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </div> 
+                                        </div>
+                                    </td>
+                                    <td data-label="KVH P/N" scope="col">
+                                        <div class="rowDataClass">
+                                            <ui:inputText value="{!prod.ProductCode}" class="slds-input" disabled="true"/>
+                                        </div>
+                                    </td>
+                                    <td data-label="Product Description" scope="col">
+                                        <div class="rowDataClass">
+                                            <ui:inputText value="{!prod.prodDescription}" class="slds-input" disabled="true"/>
+                                        </div>
+                                    </td>
+                                    <td data-label="Quantity" scope="col">
+                                        <div class="rowDataClass">
+                                            <ui:inputNumber value="{!prod.quantity}" class="slds-input" format=".00" placeholder="Enter a quantity..."/>
+                                        </div>
+                                    </td>
+                                    <td data-label="Action" scope="col">
+                                        <div >
+                                            <ui:button press="{!c.addNewRow}" labelClass="{!index}" class="ui-btn">
+                                                <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#add'}" />
+                                                <span class="slds-assistive-text">Close</span>
+                                            </ui:button>
+                                            &nbsp;&nbsp;
+                                            <ui:button press="{!c.removeRow}" labelClass="{!index}" class="ui-btn">
+                                                <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#delete'}" />
+                                                <span class="slds-assistive-text">Close</span>
+                                            </ui:button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                </div>
+                <div class="slds-button-group" style="float:right;">
+                    <button class="slds-button slds-button--neutral" onclick="{!c.submit}" >
+                        Submit
+                    </button>
+                    <button class="slds-button slds-button--neutral" onclick="{!c.movetoWorkOrder}" >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,107 @@
+<aura:component>
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="accountRequired" type="boolean"/>
+    <aura:attribute name="disableFirstName" type="boolean"/>
+    <aura:attribute name="disableLastName" type="boolean"/>
+    <aura:attribute name="disableEmail" type="boolean"/>
+    <aura:attribute name="disablePhone" type="boolean"/>
+    <aura:attribute name="disableCountry" type="boolean"/>
+    <aura:attribute name="disableState" type="boolean"/>
+    <aura:attribute name="countryOptions" type="list"/>
+    <aura:attribute name="countryStateMap" type="Object"/>
+    <aura:attribute name="stateOptions" type="list"/>
+    <aura:attribute name="customerInfoChanged" type="boolean"/>
+    <aura:attribute name="subsciberCountry" type="string"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card title="Customer Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:input aura:id="cusFld"
+                                 label="Main Contact First/Given Name"
+                                 value="{!v.prodRegistration.Subscriber_First_Name__c}"
+                                 required="true" 
+                                 onblur="{!c.callValidateInfo}"   
+                                 disabled="{!v.disableFirstName}"/>
+                <lightning:input aura:id="cusFld"
+                                 label="Main Contact Last/Family Name/Surname"
+                                 value="{!v.prodRegistration.Subscriber_Last_Name__c}"
+                                 required="true" 
+                                 onblur="{!c.callValidateInfo}" 
+                                 disabled="{!v.disableLastName}"/>                  
+                <lightning:input label="Company Name (if applicable)" 
+                                 value="{!v.prodRegistration.Subscriber_Company_Name__c}"/>                    
+                <lightning:input aura:id="cusFld"
+                                 type="email" 
+                                 label="Email" 
+                                 value="{!v.prodRegistration.Subscriber_Email__c}"
+                                 required="true"
+                                 onblur="{!c.callValidateInfo}" 
+                                 disabled="{!v.disableEmail}"/>
+                <lightning:input aura:id="cusFld"
+                                 type="tel" 
+                                 label="Mobile Phone Number" 
+                                 required="true"
+                                 value="{!v.prodRegistration.Subscriber_Phone__c}" 
+                                 onblur="{!c.callValidateInfo}"
+                                 disabled="{!v.disablePhone}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:input aura:id="cusFld"
+                                 label="Address" 
+                                 value="{!v.prodRegistration.Subscriber_Address__c}"
+                                 required="true"
+                                 onblur="{!c.callValidateInfo}"/>
+                <lightning:input aura:id="cusFld"
+                                 label="City"
+                                 value="{!v.prodRegistration.Subscriber_City__c}"
+                                 required="true"
+                                 onblur="{!c.callValidateInfo}"/>
+                
+                <aura:if isTrue="{!v.disableCountry}">
+                    <lightning:input aura:id="cusFld"
+                                     label="Country"
+                                     value="{!v.prodRegistration.Subscriber_Country__c}"
+                                     required="true"
+                                     disabled="true"/>
+                    <aura:set attribute="else">
+                        <lightning:select aura:id="contrySelect"
+                                          label="Country"
+                                          required="true"
+                                          onchange="{!c.onCountrySelect}">
+                            <aura:iteration items="{!v.countryOptions}" var="option">
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:set>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.disableState}">
+                    <lightning:input aura:id="cusFld"
+                                     label="State/Province/Territory"
+                                     value="{!v.prodRegistration.Subscriber_State_Province_Territory__c}"
+                                     required="true"
+                                     disabled="true"/>
+                    <aura:set attribute="else">
+                        <lightning:select aura:id="stateSelect"
+                                          label="State/Province/Territory"
+                                          required="{!v.stateOptions.length>0}"
+                                          onchange="{!c.onStateSelect}">
+                            <option text="" value=""/>
+                            <aura:iteration items="{!v.stateOptions}" var="option">
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:set>
+                </aura:if>
+                
+                <lightning:input aura:id="cusFld"
+                                 label="Postal/Zip Code" 
+                                 value="{!v.prodRegistration.Subscriber_Postal_Zip_Code__c}"
+                                 required="true"
+                                 onblur="{!c.callValidateInfo}"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

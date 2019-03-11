@@ -1,0 +1,47 @@
+<apex:page id="loginPage" showHeader="false" title="{!$Label.site.site_login}" controller="SiteLoginPageController" action="{!isUserLoggedIn}">
+  <apex:composition template="{!$Site.Template}">
+    <apex:define name="body">  
+      <center>
+        <apex:panelGrid columns="1"> 
+          <br/>
+          <br/>
+          <apex:panelGrid width="525" cellpadding="0" cellspacing="0"  columns="1" styleClass="topPanelContainer"> 
+            <br/>
+            <apex:outputPanel layout="block" styleClass="topPanel">
+              <apex:panelGrid width="525" cellpadding="0" cellspacing="0"  columns="1"> 
+                <!-- <apex:image url="{!URLFOR($Resource.SiteSamples, 'img/clock.png')}"/> -->
+                
+                <apex:panelGroup >
+                    
+                    <h1>Welcome to myKVH (DEV)</h1><br/>
+
+                    <i>Please use a modern web browser to log into myKVH</i><br/><br/> 
+                    <ul>
+                    <strong>
+                    <li>Chrome</li>
+                    <li>Internet Explorer 9 or greater</li>
+                    <li>Firefox 22 or greater</li>
+                    <li>Safari: not tested, but should work</li>
+                    </strong>
+                    </ul>
+                    
+                    <ul>
+                    <li><i>Note: IE 8 and below are not supported</i></li>
+                    </ul>
+                  
+                  <!-- <apex:outputText styleClass="title" value="{!$Label.site.login}"/> -->
+                  <c:SiteLogin id="siteLogin"/>
+                  <br/>
+                  KVH Employee? <a href="https://kvh.my.salesforce.com/idp/login?app=0sp13000000CaVf">login here...</a>
+                </apex:panelGroup>
+                
+              </apex:panelGrid> 
+             </apex:outputPanel>
+            <!-- we don't need no powered by.... <c:SitePoweredBy /> -->
+          </apex:panelGrid> 
+       </apex:panelGrid>
+      </center>
+      <br/>
+    </apex:define>
+  </apex:composition>
+</apex:page>

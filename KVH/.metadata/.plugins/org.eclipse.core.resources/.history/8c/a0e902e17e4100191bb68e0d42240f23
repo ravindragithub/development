@@ -1,0 +1,4 @@
+.THIS .quickitem { 
+     border: 1px solid #ddd;
+     color: #1f83ad;
+}

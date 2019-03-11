@@ -1,0 +1,276 @@
+<apex:page standardController="Prod_Documents__c" extensions="UploadDocumentsController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" sidebar="false" title="Add or Update Libraries" >
+    <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        
+        
+    </style>
+    <apex:define name="body">  
+        <apex:sectionHeader title="Content Administration" subtitle="Add/Update Libraries (Market/Sector/Product Relationships)"/>
+        <div id="load-status" style="display:none;">
+            <div class="overlay"></div>
+            <div class="status">                               
+                <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                <span id="load-statustext">File updating in progress...</span>
+            </div>
+        </div>
+        
+        <apex:form id="frm" >
+            <apex:pageBlock >
+                <apex:pageBlockSection collapsible="false" title="Product Document Details" columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel escape="false" value="Product Document Name: <BR/> (please enter if empty)" ></apex:outputLabel>
+                        <apex:outputPanel >
+                            <input style="width: 70%;" id="filename" value="{!prodDoc.Name}"/>
+                            <span id="productname" style="display:none"></span>  
+                            <img id="closeicon" style="display:none;" src="https://cdn2.iconfinder.com/data/icons/flat-icons-web/40/Remove-16.png" onclick="showsearchinput();"/>                  
+                            <apex:actionRegion >
+                                <apex:actionFunction name="fetchProdDocumentObject" action="{!fetchProdDocumentObject}" oncomplete="reloadwithid('{!prodDoc.Id}');">
+                                    <apex:param value="" assignTo="{!productDocId}" name="prodDocID"/>
+                                </apex:actionFunction>
+                                <apex:actionFunction name="blankProd_DocmentObject" action="{!init}" reRender="proddocsection" oncomplete="hidestatus();"/>
+                            </apex:actionRegion>
+                        </apex:outputPanel>    
+                    </apex:pageBlockSectionItem>
+                    <apex:outputField value="{!prodDoc.Title_Display_Name__c}"/>
+                    <apex:outputField value="{!prodDoc.Sub_Title__c}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection rendered="{!!ISNULL(libs)}" collapsible="false" title="Current Product Document Libraries (first 20)" columns="1">
+                    <apex:pageBlockTable rows="20" title="Product Document Libraries" value="{!libs}" var="lib" id="ltable" cellspacing="5px" cellpadding="10px">
+                        <apex:column style="width: 20%;" value="{!lib.PortalView__c}"/>
+                        <apex:column style="width: 15%;" value="{!lib.Market__c}"/>
+                        <apex:column style="width: 15%;" value="{!lib.Sector__c}"/>
+                        <apex:column style="width: 15%;" value="{!lib.Product_Market_Sector__r.Product__r.Product_Line1__c}"/>
+                        <apex:column style="width: 15%;" value="{!lib.Product_Market_Sector__r.Product__r.Product_Series__c}"/>
+                        <apex:column style="width: 20%;" value="{!lib.Product_Market_Sector__r.Product__r.Catalog_Display_Name__c}"/>
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:actionRegion >
+                <apex:pageBlockSection id="fileinformation" columns="1" collapsible="false" title="Market/Sector Selection">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Market"></apex:outputLabel>
+                            <apex:inputField id="Market__c" value="{!marketSector.Market__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Sector"></apex:outputLabel>
+                            <apex:inputField id="Sector__c" value="{!marketSector.Sector__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Line"></apex:outputLabel>
+                            <apex:inputField id="Product_Line__c" value="{!marketSector.Product__r.Product_Line1__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Product Series"></apex:outputLabel>
+                            <apex:inputField id="Product_Series__c" value="{!marketSector.Product__r.Product_Series__c}"/>
+                            </apex:pageBlockSectionItem>
+                                
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value=""></apex:outputLabel>
+                                <input type="button" value="Get Available Products" onclick="fetchProductclick();" /> 
+                                </apex:pageBlockSectionItem>
+                        
+                    </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Product Name" ></apex:outputLabel>
+                        
+                        <apex:outputPanel layout="none">
+                            <apex:outputPanel id="productoptions" layout="none">
+                                <c:MultiselectPicklist leftlistid="AvailableProducts" rightlistid="SelectedProducts" addEvent="productAdded" removeEvent="productRemoved" width="300px" leftLabel="Available Products" rightLabel="Selected Products" showsortingbuttons="false" leftsideOptions="{!productleftOptions}" rightsideOptions="{!productrightOptions}" size="5"></c:MultiselectPicklist>
+                            </apex:outputPanel>
+                            <apex:actionFunction name="fetchProductsaction" action="{!fetchProducts}" oncomplete="hidestatus();" reRender="productoptions,portalviewselectlist">
+                                <apex:param value="" assignTo="{!market}" name="parm1"/>
+                                <apex:param value="" assignTo="{!sector}" name="parm2"/>
+                                <apex:param value="" assignTo="{!productline}" name="parm3"/>
+                                <apex:param value="" assignTo="{!productseries}" name="parm4"/>
+                            </apex:actionFunction>
+                            <apex:actionFunction name="fetchProductPortalviewsFun" action="{!fetchPortalViews}" oncomplete="hidestatus();"  reRender="portalviewselectlist"/>
+                            
+                        </apex:outputPanel>        
+                        
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Portal View" />
+                        <apex:outputPanel >
+                            <apex:outputPanel id="portalviewselectlist" >
+                                <c:MultiselectPicklist leftlistid="AvailablePortals" rightlistid="SelectedPortals" width="300px" leftLabel="Available Portals" rightLabel="Selected Portals" showsortingbuttons="false" leftsideOptions="{!leftOptions}" rightsideOptions="{!rightOptions}" size="5"></c:MultiselectPicklist>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="productportalviews" style="display:none;" ></apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                </apex:actionRegion>
+                <apex:pageBlockButtons location="bottom">
+                    <input type="button" id="upload-button"  style="float: right;" onclick="deleteOld(); return false;" value="Update Libraries"/>             
+                    &nbsp; 
+                    <input type="button" id="back-button"  style="float: right;margin-right:10px" onclick="backbuttonclick()" value="Back"/>
+                </apex:pageBlockButtons>
+                <apex:actionFunction name="startdeleting" action="{!deleteoldlibraries}" oncomplete="returnpage()"/>
+            </apex:pageBlock>
+        </apex:form>
+        <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    	<script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+
+    <script>
+        var filetype;
+    var newFileName;
+    $( function() {    
+        
+        $( "#filename" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax( {
+                    url: "{!$Label.Prod_DocumentSearchPageURL}",         
+                    data: {
+                        term: request.term
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                } );
+            },
+            minLength: 2,
+            select: function( event, ui ) {
+                var productlink = '<a href="/' + ui.item.data + '" target="_blank">' + ui.item.value + '</a>'; 
+                $('[id*="productname"]').html(productlink);          
+                $('[id*="productname"]').show();
+                $('[id*="filename"]').hide();   
+                $('[id*="closeicon"]').show(); 
+                $('[id*="filename"]').addClass("error");    
+                $('[id*="filenameerrormsg"]').remove(); 
+                showstatusmessage('Fetching fields of ' + ui.item.value + ' from salesforce');
+                fetchProdDocumentObject(ui.item.data);
+                
+            }
+        });
+        
+    } );
+    
+    
+    function showstatusmessage(msg){
+        $("#load-statustext").text(msg);
+        $("#load-status").show();
+    }
+    function deleteOld(){
+        if(!formvalidation() ){
+            $("#load-statustext").text("Creating new content relationships...");
+            $("#load-status").show();
+            startdeleting();
+        }      
+    }
+    function productAdded(){
+        
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function productRemoved(){
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        fetchProductPortalviewsFun();
+    }
+    
+    function fetchProductclick(){
+        console.log('123');
+        $("#load-statustext").text("Fetching products...");
+        $("#load-status").show();
+        var market = $('[id*="Market__c"]').val();
+        var Sector = $('[id*="Sector__c"]').val();
+        var Product_Line = $('[id*="Product_Line__c"]').val();
+        var Product_Series = $('[id*="Product_Series__c"]').val();
+        console.log(market + ' # ' + Sector + ' # ' + Product_Line + ' # ' + Product_Series);
+        fetchProductsaction(market,Sector,Product_Line,Product_Series);
+    }
+    
+    function hidestatus(){
+        $("#load-status").hide();
+        $("#load-statustext").text("");
+    }
+    
+    function showsearchinput(){
+        $('[id*="productname"]').hide();
+        $('[id*="filename"]').show(); 
+        $('[id*="filename"]').val('');
+        $('[id*="closeicon"]').hide();
+        $('[id*="portalviewselectlist"]').show(); 
+        $('[id*="productportalviews"]').hide();  
+        $('[id*="productportalviews"]').html(''); 
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        defaultPortalViews();
+    }
+    
+    function formvalidation(){
+        console.log('123');
+        $(".errorMsg").remove();
+        $(".error").removeClass("error"); 
+        var isError = false;
+        if($('[id$="SelectedProducts"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedProducts"]'),'Please select at least one product.');
+        }
+        if($('[id$="SelectedProducts"]').find("option").length > 0 && $('[id$="SelectedPortals"]').find("option").length == 0){
+            isError = true;
+            adderrorMessage($('[id$="SelectedPortals"]'),'Portal view is required for product.');
+        }
+        return isError;
+    }
+    function adderrorMessage(elm,msg){
+        //alert($(elm).attr("id"));
+        $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+        $(elm).addClass("error");
+        var offset = $(elm).offset();
+        offset.left -= 20;
+        offset.top -= 20;
+        $('html, body').animate({
+            scrollTop: offset.top,
+            scrollLeft: offset.left
+        });
+    }
+    function returnpage(){
+        $("#load-statustext").text("Success!!");
+        location.href = '/apex/adminlandingpage';
+    }
+    function reloadwithid(pdid){
+        location.href = '/apex/MarketUpdate?id='+ pdid;
+    }
+    function backbuttonclick(){
+        window.history.back();
+    }
+    </script>
+    </apex:define>
+</apex:page>

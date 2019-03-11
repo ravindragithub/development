@@ -1,0 +1,93 @@
+<aura:component controller="HTS_ltgsvc_asynch_monitor">
+  <aura:attribute name="pollingInterval" type="Integer" default="20000" description="This is the number of milliseconds between each API call to OSS"/>
+  <aura:attribute name="jobId" type="String" description="This is the OSS Job Id returned from a POST to /hts/terminals/async. 
+                                                          When this Attribute is populated, the process runs."/>
+  <aura:attribute name="state" type="String" description="This is used to both control and display the state of the component" default="Initializing" />
+  <aura:attribute name="jobStatus" type="String" description="This is the status of the job, Complete, Not Complete, Unknown, or Not Found!" default="Unknown" />
+  <aura:attribute name="jobResults" type="String" description="This is the result of the job, Success, Failed, or Unknown" default="Unknown" />
+  <aura:attribute name="asynchTerm" type="HTSOSS_hts_terminals_asynch" />
+
+  <!--PUBLISHER -->
+  <aura:registerEvent name="cmpDataUpdated" type="c:HTS_hybrids_component_evt" /><!-- we *might* use a different event for state control -->
+  <aura:registerEvent name="localEvent" type="c:HTS_hybrids_component_evt" /><!-- we *might* use a different event for state control -->
+
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler event="c:HTS_hybrids_application_evt" action="{!c.handleApplicationEvent}"/>
+  <aura:handler name="localEvent" event="c:HTS_hybrids_component_evt" action="{!c.handleLocalEvent}"/>
+  <!-- MARKUP -->
+
+  <aura:if isTrue="{!v.jobId != null}">
+    job Id {!v.jobId}
+    <div class="slds-grid slds-gutters" aura:id="grid">
+      <div class="slds-col slds-size_1-of-6" aura:id="spinner">
+        <div class="slds-form-element">
+          <div class="slds-form-element__static">
+
+            <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_x-small" >
+              <span class="slds-assistive-text">Checking Job Status...</span>
+              <div class="slds-spinner__dot-a"></div>
+              <div class="slds-spinner__dot-b"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col slds-size_1-of-6" aura:Id="state">
+        <div class="slds-form-element">
+          <div class="slds-form-element__static">
+
+            <span><lightning:icon class="warn" iconName="utility:sync" size="x-small" />&nbsp;
+            <ui:outputText value="{!v.state}"/></span>
+
+          </div>
+        </div>
+      </div>
+  
+      <div class="slds-col slds-size_2-of-6">
+        <div class="slds-form-element">
+          <div class="slds-form-element__static" >
+
+            <span>
+              <aura:if isTrue="{!v.jobStatus == 'Unknown'}">
+                <lightning:icon class="warn" iconName="utility:warning" size="x-small" />&nbsp;
+              </aura:if>
+              <aura:if isTrue="{!v.jobStatus == 'Not Complete'}">
+                <lightning:icon class="warn" iconName="utility:warning" size="x-small" />&nbsp;
+              </aura:if>
+              <aura:if isTrue="{!v.jobStatus == 'Complete'}">
+                <lightning:icon class="ok" iconName="utility:success" size="x-small" />&nbsp;
+              </aura:if>
+              Job Status&nbsp;<ui:outputText value="{!v.jobStatus}"/>
+            </span>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col slds-size_2-of-6">
+        <div class="slds-form-element">
+          <div class="slds-form-element__static">
+
+            <span>
+              <aura:if isTrue="{!v.jobResults == 'Unknown'}">
+                <lightning:icon class="warn" iconName="utility:warning" size="x-small" />&nbsp;
+              </aura:if>
+              <aura:if isTrue="{!v.jobResults == 'Failed'}">
+                <lightning:icon class="err" iconName="utility:clear" size="x-small" />&nbsp;
+              </aura:if>
+              <aura:if isTrue="{!v.jobResults == 'Success'}">
+                <lightning:icon class="ok" iconName="utility:success" size="x-small" />&nbsp;
+              </aura:if>
+              Job Results&nbsp;<ui:outputText value="{!v.jobResults}"/>
+            </span>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </aura:if>
+</aura:component>

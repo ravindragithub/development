@@ -1,0 +1,61 @@
+.THIS p {
+    margin-bottom:15px;
+    color:#555;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    margin-bottom:20px;
+}
+
+.THIS h2 {
+    font-size:1.5em;
+    font-weight:lighter;
+    color:#666;
+}
+
+.THIS h3 {
+    font-size:1.3em;
+    font-weight:lighter;
+    margin-bottom:15px;
+}
+
+.THIS h4 {
+    font-size:1em;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.THIS a {
+    color:#1984c7;
+}
+
+.THIS .content-panel {
+    background:#fff;
+    padding:30px;
+}
+
+.THIS .lte-header {
+    text-align:center;
+}
+
+.THIS .lte-header img {
+    width:40%; 
+    height:auto; 
+    margin-bottom:10px;
+}
+
+.THIS .callout {
+    padding:20px;
+    background-color:rgba(25,132,199,.10);
+    margin:30px 0;
+    overflow:auto;
+}
+
+.THIS .callout2 {
+    padding:10px;
+    text-align:center;
+    color:#999;
+    font-size:90%;
+    font-style:italic;
+}

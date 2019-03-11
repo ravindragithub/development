@@ -1,0 +1,74 @@
+<!--
+ - Created by Jai Chaturvedi on 9/03/2017.
+-->
+
+<aura:component description="PartnerMainServicesComponent.https://kvh--jai.cs15.my.salesforce.com/_ui/common/apex/debug/ApexCSIPage#
+This component is used to build the top level row of services on partner portal home page.
+Because the top level services are different in properties and architecture, this separate component is used for top row."
+                controller="CommunityUtilityClass"
+                implements="forceCommunity:availableForAllPageTypes">
+
+    <aura:attribute name="partnerMainServices"
+                    type="Object[]"
+                    description="PartnerMainServiceWrapper list to hold all the available services for top row.
+This is decided based on the custom metadata setting.
+This is useful in building the service blocks with the property like description, background color, icons etc."/>
+
+    <aura:attribute name="serviceLabelfieldApiName"
+                    type="String"
+                    description="Holds the Partner_Portal_Views custom metadata field api names.
+    This is used in building the blocks only for the given field api names.
+Adding or removing the field api names will dynamically places the service blocks " />
+
+    <aura:attribute name="gridClass"
+                    type="String"
+                    description="Used for generating the dynamic grid class value based upon
+    the total number of services available for the selected option.
+This divides the blocks into equal number of parts"/>
+
+    <aura:attribute name="selectedView"
+                    type="String"
+                    description="Stores the selected current portal view"/>
+    
+    <aura:attribute name="backgroundImage"
+                    type="String"
+                    description="background image url"/>
+    <aura:attribute name="bgColor"
+                    type="String"
+                    description="background color"/>
+    <aura:attribute name="bgcss"
+                    type="String"
+                    description="background css if any"/>
+    
+
+    <!--
+   - event handler to get the selected portal option
+   - on handling it will fire the apex class to bring the properties for each options available at top row
+   - e.g. Case Management, Partner Resources
+    -->
+    <aura:handler event="c:PortalViewOptionEvent"
+                  action="{!c.handlePortalViewChangeEvent}"
+                  description="Event handler to get the selected portal option.
+On handling it will fire the apex class to bring the properties for each options available at top row
+Event fired by PortalView component"/>
+	
+    <div class="slds kvhMain">        
+        <div class="slds-grid slds-wrap" style="{! 'background:' + v.bgColor +' url(' + v.backgroundImage + ') ' + v.bgcss + ';background-size: cover;'}">
+            <aura:iteration var="service" items="{!v.partnerMainServices}">
+                <div class="{!v.gridClass}" style="padding:20px;">
+                    <c:SingleServiceComponent serviceLabel="{!service.serviceLabel}"
+                            buttonLabel="{!service.buttonLabel}"
+                            description="{!service.description}"
+                            icon="{!service.icon}"
+                            customicon="{!service.customicon}"
+                            urlLink="{!service.urlValue}"
+                            colorCode="{!service.colorCode}"
+                            colorCodehover="{!service.colorCodehover}"
+                            selectedView="{!v.selectedView}">
+                    </c:SingleServiceComponent>
+                </div>
+            </aura:iteration>
+        </div>
+    </div>
+
+</aura:component>

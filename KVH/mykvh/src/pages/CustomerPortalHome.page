@@ -1,0 +1,57 @@
+<apex:page showChat="false" showheader="false" sidebar="false" standardStylesheets="false" cache="false">
+
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    
+
+     <div class="page-content home">
+        
+        <h1>Welcome to myKVH Support</h1>
+        
+        <h2>What do you need to do?</h2>
+            
+            <div class="block">
+                <a href="apex/OrderNewAirtimeServicePage" target="_parent">
+                <h4>Order a New Airtime Service</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/ChangeExistingAddServicePage" target="_parent">
+                <h4>Change or Add an Existing Airtime Service</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/RequestInfoExistingServicePage" target="_parent">
+                <h4>Request Information on an Existing Airtime Service</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/ReportServiceProductProblemPage" target="_parent">
+                <h4>Report a Problem</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/SubmitProfessionalRequestPage" target="_parent">
+                <h4>Professional Services Request</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/RequestInstallationSupportPage" target="_parent">
+                <h4>Installation Support</h4>
+                </a>
+            </div>
+            
+            <div class="block">
+                <a href="apex/myKVHSupportPage" target="_parent">
+                <h4>myKVH Feedback</h4>
+                </a>
+            </div>
+            
+        </div>
+
+     
+</apex:page>

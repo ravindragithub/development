@@ -1,0 +1,214 @@
+<apex:page id="pg" controller="CatalogAddProductController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" sidebar="false" title="Update Product" >
+ 
+  <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+  <style>
+      .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+      }
+      .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+       
+    }
+    
+    .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+    }
+   
+  </style>
+        <apex:define name="body">  
+         <apex:sectionHeader title="Product Management" subtitle="Update Product"/>
+         
+          <div id="load-status" style="display:none;">
+                <div class="overlay"></div>
+                <div class="status">                               
+                    <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                    <span id="load-statustext"></span>
+                </div>
+           </div>
+           <apex:actionStatus id="actionstatus">
+               <apex:facet name="start">
+                   <div >
+                        <div class="overlay"></div>
+                        <div class="status">                               
+                            <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                            <span id="load-statustext">Please wait...</span>
+                        </div>
+                   </div>
+               </apex:facet>
+           </apex:actionStatus>
+           
+           
+   
+<apex:form id="frm" >
+  
+  <apex:actionFunction name="saveRecords" status="actionstatus" action="{!saveRecords}" reRender="scriptpannel,messagepannel" />
+
+ 
+  <apex:pageBlock id="pgb"  >
+      <apex:outputPanel id="messagepannel">
+          <apex:pageMessages ></apex:pageMessages>
+      </apex:outputPanel>
+      <div id="results"></div>
+
+       <apex:pageBlockSection title="Find Product" columns="1" collapsible="false">
+          <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Product Name" ></apex:outputLabel>
+              <apex:outputPanel >
+                  <input id="filename"/>
+                  <span id="productname" style="display:none"></span>  
+                  <img id="closeicon" style="display:none;" src="https://cdn2.iconfinder.com/data/icons/flat-icons-web/40/Remove-16.png" onclick="showsearchinput();"/>                  
+                 
+              </apex:outputPanel>    
+          </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      
+      <apex:outputPanel layout="none" id="detailsection" >
+          <apex:pageBlockSection rendered="{!productId != ''}" title="Product Detail" columns="2" collapsible="false">
+              <apex:outputField value="{!prod.name}"/>
+              <apex:outputField value="{!prod.Product_ID_18_char__c}"/>
+              <apex:inputField required="true" value="{!prod.Catalog_Display_Name__c}"/>                            
+              <apex:inputField value="{!prod.Product_Line1__c}"/>
+              <apex:inputField value="{!prod.Display_Product__c}"/>
+              <apex:inputField value="{!prod.Product_Series__c}"/>
+              <apex:inputField value="{!prod.Product_Group__c}"/>
+              <apex:inputField value="{!prod.IsActive}"/>
+          </apex:pageBlockSection>          
+      </apex:outputPanel>
+      
+      <apex:pageBlockSection rendered="{!productId != ''}" id="Catalog_Long_Description"  columns="1">
+          <apex:inputField value="{!prod.Catalog_Long_Description__c}"/>
+      </apex:pageBlockSection>
+      
+      <apex:outputPanel layout="none" id="marketsectortable" >
+          <apex:variable value="{!0}" var="count"/>
+          <apex:pageBlockSection rendered="{!productId != ''}"  title="Content Market/Sector/Product Relationships" columns="1">
+              <apex:pageBlockTable value="{!marketSectorlst}" var="ms">
+                  <apex:column headerValue="Action">
+                      <apex:commandLink value="Add" immediate="true" action="{!addnewMarketsector}" status="actionstatus" reRender="marketsectortable"/>
+                      &nbsp;|&nbsp;
+                      <apex:commandLink value="remove" immediate="true" action="{!removeMarketsector}" status="actionstatus" reRender="marketsectortable">
+                          <apex:param value="{!count}" assignTo="{!rownumber}" name="rownumber"/>
+                      </apex:commandLink>
+                  </apex:column>                 
+                  <apex:column headerValue="Market">
+                      <apex:inputField id="market" value="{!ms.Market__c}"/>
+                  </apex:column>
+                  <apex:column headerValue="Sector">
+                      <apex:inputField id="sector" value="{!ms.Sector__c}"/>
+                  </apex:column>
+                  <apex:column headerValue="Portal View">
+                      <apex:inputField value="{!ms.Portal_View__c}"/>
+                      <apex:variable value="{!count+1}" var="count"/>
+                  </apex:column>                           
+              </apex:pageBlockTable>         
+          </apex:pageBlockSection> 
+      </apex:outputPanel> 
+      <apex:pageBlockButtons location="bottom">
+          <input type="button" id="upload-button"  style="float: right;" value="Update Product" onclick="saveRecords();return false;"/>             
+          &nbsp;
+          <input type="button" id="upload-button"  style="float: right;margin-right:10px" onclick="backbuttonclick('{!$CurrentPage.parameters.retURL}')" value="Back"/>             
+      </apex:pageBlockButtons>
+  </apex:pageBlock>
+ 
+</apex:form> 
+</apex:define> 
+  
+  <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+  <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+  
+  <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+  
+  <apex:outputPanel id="scriptpannel">
+      <script>
+          function reloadpage(){
+                alert('Product successfully updated.')
+                location.href = '/apex/adminlandingpage';
+          }
+          var isSuccess = '{!isSuccess}';
+          if(isSuccess == true || isSuccess == 'true'){
+              reloadpage();
+          }
+      </script>
+  </apex:outputPanel>
+  <script>
+  
+   $( function() {   
+ 
+    $( "#filename" ).autocomplete({
+      source: function( request, response ) {
+        $.ajax( {
+          url: "/apex/createBundleSearch",         
+          data: {
+            term: request.term
+          },
+          success: function( data ) {
+            response( data );
+          }
+        } );
+      },
+      minLength: 2,
+      select: function( event, ui ) {
+        var productlink = '<a href="/' + ui.item.data + '" target="_blank">' + ui.item.value + '</a>'; 
+        $('[id*="productname"]').html(productlink);          
+        $('[id*="productname"]').show();
+        $('[id*="filename"]').hide();   
+        $('[id*="closeicon"]').show(); 
+        $('[id*="filename"]').addClass("error");    
+        $('[id*="filenameerrormsg"]').remove(); 
+        showstatusmessage('Fetching product details.');
+        //fetchProductdetails(ui.item.data);
+        location.href = '/apex/catalogAddProduct?productid='+ui.item.data + '&retURL={!retURL}';
+        
+      }
+    });
+    
+  } );
+  
+   
+ function showstatusmessage(msg){
+     $("#load-statustext").text(msg);
+     $("#load-status").show();
+ }
+  
+  function hidestatus(){
+      $("#load-status").hide();
+      $("#load-statustext").text("");
+  }
+  
+  
+    function showsearchinput(){
+        $('[id*="productname"]').hide();
+        $('[id*="filename"]').show(); 
+        $('[id*="filename"]').val('');
+        $('[id*="closeicon"]').hide();        
+        $("#load-statustext").text("Refreshing...");
+        $("#load-status").show();
+        //blankProductObject();
+        location.href = '/apex/catalogAddProduct';
+    }
+    
+    function backbuttonclick(returl){
+        location.href = returl;
+    }
+    
+    
+  </script>
+</apex:page>

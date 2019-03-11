@@ -1,0 +1,36 @@
+<aura:component > 
+    <aura:attribute name="filterList" type="Object[]"/>    
+    <aura:attribute name="filterResult" type="Object[]"/>    
+    <aura:handler name="init"			value="{!this}"			action="{!c.doInit}" />
+    <aura:registerEvent name="cmpEvent" type="c:myKVH_SupportCenterSearchFilterEvent" />
+    <div>
+        <aura:iteration items="{!v.filterList}" var="record">
+            <span style="font-weight:bold;font-size: 12px;font-family: arial,sans-serif;">{!record.label}</span>  
+            <aura:if isTrue="{!record.active}">
+                <lightning:buttonIcon iconName="{!record.iconNameUp}" size="medium" 
+                                      variant="bare" onclick="{!c.toggelDown}" 
+                                      ariaDescribedBy="{!record.label}"/>
+                <aura:set attribute="else">
+                    <lightning:buttonIcon iconName="{!record.iconNameDown}"  size="medium" 
+                                          variant="bare" onclick="{!c.toggelUp}" 
+                                          ariaDescribedBy="{!record.label}"/>
+                </aura:set>
+            </aura:if>
+            &nbsp;
+        </aura:iteration>
+    </div>
+    <div>
+        <aura:iteration items="{!v.filterList}" var="record" indexVar="indexParent"> 
+            <aura:if isTrue="{!record.active}">
+                <aura:iteration items="{!record.valueLst}" var="childRecord" indexVar="indexChild">
+                    <lightning:input type="checkbox" label="{!childRecord.label}" 
+                                     checked="{!childRecord.selected}"
+                                     onchange="{!c.selectFilter}"
+                                     ariaLabelledBy="{!indexParent}"
+                                     ariaDescribedBy="{!indexChild}"/>
+                </aura:iteration>
+            </aura:if>
+        </aura:iteration>
+    </div>
+    <c:myKVH_SupportCenterSearchFilterResult filterResult="{!v.filterResult}"/>
+</aura:component>

@@ -1,0 +1,11 @@
+<!--
+ - Created by Jai Chaturvedi on 7/08/2017.
+ -->
+
+<aura:event type="APPLICATION" description="SendPartners">
+    <aura:attribute name="partners" type="Object[]"/>
+    <aura:attribute name="productId" type="String"/>
+    <aura:attribute name="searchOption" type="String"/>
+    <aura:attribute name="stateCountry" type="String"/>
+    <aura:attribute name="location" type="String"/>
+</aura:event>

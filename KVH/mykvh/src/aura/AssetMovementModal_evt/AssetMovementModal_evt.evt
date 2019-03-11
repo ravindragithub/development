@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="className1" type="String"/>
+    <aura:attribute name="className2" type="String"/>
+    <aura:attribute name="listAssetIdInHierarchy" type="String[]"/>
+    <aura:attribute name="duplicateAssetSelected" type="boolean"/>
+    <aura:attribute name="noProduct" type="boolean"/>
+</aura:event>

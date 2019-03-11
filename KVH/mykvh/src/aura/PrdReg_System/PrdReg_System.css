@@ -1,0 +1,17 @@
+.THIS .ccSecure1 svg{
+    width: 1rem;
+    height: 1rem;
+    margin-top: 15px;
+}
+.THIS .ccSecure2 svg{
+    width: 1rem;
+    height: 1rem;
+}
+.THIS .purchasedate .slds-input__icon_right{
+     z-index: 1 !important;
+}
+.THIS .inputStyle{
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 0;
+}

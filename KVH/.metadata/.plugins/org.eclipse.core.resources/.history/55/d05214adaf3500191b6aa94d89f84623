@@ -1,0 +1,9 @@
+<!--
+ - Created by Jai Chaturvedi on 9/03/2017.
+ -->
+
+<aura:event type="APPLICATION" description="PortalViewOptionEvent">
+    <aura:attribute name="selectedOption" type="String"/>
+    <aura:attribute name="bgOptionImage" type="String"/>
+    <aura:attribute name="bgColor" type="String"/>    
+</aura:event>

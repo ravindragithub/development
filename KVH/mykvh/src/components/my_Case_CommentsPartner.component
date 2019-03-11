@@ -1,0 +1,19 @@
+<apex:component controller="my_Case_Comments_Controller">
+<apex:attribute name="ParentCase" description="Salesforce Id of the Case which is the Parent of the CaseComments" type="Id" assignTo="{!caseId}" />
+<apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    
+<apex:form >
+    
+    <apex:commandButton value="Add Comment" styleClass="button-blue button pad-top pad-bottom" action="{!$Label.Community_URL + '/s/addcomment?recordid=' + caseId}"/>
+    
+    <apex:pageBlock rendered="{!cComments.size>0}"  title="Case Comments">
+        <apex:pageBlockTable value="{!cComments}" var="c"> 
+            <apex:column value="{!c.CreatedDate}" width="20%"/>
+            <apex:column value="{!c.CreatedBy.Name}" width="25%"/>
+            <apex:column value="{!c.commentbody}" width="55%"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    
+</apex:form>
+    
+</apex:component>

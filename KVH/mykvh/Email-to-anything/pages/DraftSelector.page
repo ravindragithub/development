@@ -1,0 +1,120 @@
+<apex:page controller="ortoo_e2a.DraftSelectorController" sidebar="false" showHeader="false" ><!-- tabStyle="Ortoo_mail__tab"> -->
+
+    <script>
+      function confirmFmtChg(html)
+      {
+        var result = false;
+        var format;
+        if (html=='true') 
+          format = 'Html';
+        else 
+          format = 'Text-Only';
+        if ('{!JSENCODE($CurrentPage.parameters.isrichtext)}' != html)
+        {
+          if (window.confirm(format+' draft selected. Editor will switch to this format.\n\nClick OK to continue.')) result = true;
+        } else
+          result = true;
+          
+        return result;
+      }
+      
+      function notifyParent(draftId)
+      {
+        var winMain = window.opener;
+        if (null == winMain)
+        {
+          winMain = window.parent.opener;
+        }
+        winMain.draftPassBack(draftId);
+      }
+      
+      function closeWindow()
+      {
+        var winMain=window.opener;
+        if (null==winMain)
+        {
+          winMain=window.parent.opener;
+        }
+        winMain.closePopup();
+      }
+    </script>
+
+    <apex:form id="draft_dialog_form">
+        <table style="height:50px;background-color:#612144;vertical-align:middle" cellspacing="4" >
+            <tr>
+                <td><apex:image value="{!$Resource.ortoo_e2a__Ortoo_Mail_icon}" width="32" height="32" /></td>
+                <td><h2 style="color:white;vertical-align:middle">Draft&nbsp;Emails</h2></td>
+                <td width="100%">&nbsp;</td>
+            </tr>
+        </table>
+        <apex:tabPanel immediate="true" switchType="client">
+            <apex:tab label="Save Draft" name="saveDraft">
+                <br/>
+                <apex:outputLabel value="Draft Name: " for="draft_email_name"/>
+                <apex:inputText id="draft_email_name" value="{!DraftEmailName}" size="60" maxlength="80"/>
+                <br/><br/>
+                <apex:outputText id="draft_info" value="{!DraftInfoText}" style="color:red">&nbsp;</apex:outputText>
+                <br/><br/>
+                <div style="text-align: right;">
+                    <apex:commandButton value="Save" action="{!SaveDraft}" reRender="draft_info,draft_email_list" disabled="{!CreateIsNotAllowed}"/>
+                    <apex:commandButton value="Replace" action="{!ReplaceDraft}" reRender="draft_info,draft_email_list" disabled="{!EditIsNotAllowed}"/>
+                    <apex:commandButton value="Close" onclick="closeWindow();"/>
+                </div>
+            </apex:tab>
+            <apex:tab label="Retrieve Draft" name="retrieveDraft">
+                <apex:pageBlock title="Draft Emails" id="draft_email_list">
+                    <apex:pageMessages />
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="Delete All" action="{!DeleteAllDraftEmails}" reRender="draft_email_list" disabled="{!DeleteIsNotAllowed}" 
+                                            onclick="if (!window.confirm('Are you sure?')) return false;"/>
+                        <apex:commandButton value="Close" onclick="closeWindow();"/>
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockTable value="{!DraftEmailList}" var="DR">
+                        <apex:column rendered="{!DeleteIsAllowed}">
+                            <apex:facet name="header">
+                                <apex:outputLabel value="Action" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                            <apex:commandLink action="{!DeleteDraftEmail}" immediate="true" reRender="draft_email_list" onclick="if (!window.confirm('Are you sure?')) return false;">
+                                <b>Del</b>
+                                <apex:param name="draftId" value="{!DR.Id}" assignTo="{!SelectedDraftEmailId}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputLabel value="Name" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                            <apex:commandLink value="{!DR.Name}" onclick="if (confirmFmtChg('{!DR.ortoo_e2a__Is_Html__c}')) notifyParent('{!DR.Id}');"/>
+                        </apex:column>
+                        <apex:column value="{!DR.ortoo_e2a__To_Address__c}">
+                            <apex:facet name="header">
+                                <apex:outputLabel value="To Address" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column value="{!DR.ortoo_e2a__Subject__c}">
+                            <apex:facet name="header">
+                                <apex:outputLabel value="Subject" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column value="{!DR.ortoo_e2a__Is_Html__c}">
+                            <apex:facet name="header">
+                                <apex:outputLabel value="Html" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputLabel value="Keep" rendered="{!DraftEmailsExist}"/>
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!DR.ortoo_e2a__Keep__c}" disabled="{!EditIsNotAllowed}">
+                                <apex:actionSupport event="onclick" action="{!KeepDraftEmail}" reRender="">
+                                    <apex:param name="draftemailid" value="{!DR.Id}" assignTo="{!SelectedDraftEmailId}"/>
+                                    <apex:param name="keepstatus" value="{!DR.ortoo_e2a__Keep__c}" assignTo="{!DraftEmailKeepStatus}"/>
+                                </apex:actionSupport>
+                            </apex:inputCheckbox>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <apex:outputText value="no draft emails" rendered="{!DraftEmailsDoNotExist}"/>
+                </apex:pageBlock>
+            </apex:tab>
+        </apex:tabPanel>
+    </apex:form>
+</apex:page>

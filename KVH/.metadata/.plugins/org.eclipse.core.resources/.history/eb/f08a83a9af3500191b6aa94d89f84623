@@ -1,0 +1,7 @@
+<aura:event type="COMPONENT" description="Event template" >
+  <!-- setup attributes that contain the attributes of each of the components firing the event -->
+  <aura:attribute name="stateChange" type="String" default="UNKNOWN" />
+  <aura:attribute name="subscription" type="SBQQ__Subscription__c" />
+  <aura:attribute name="diagnostics" type="HTS_ltgsvc_diagnostics" description="Results of the Service-Side validation" />
+  <aura:attribute name="statusMessage" type="string" description="Status message returned from server" default="Initializing..." />
+</aura:event>

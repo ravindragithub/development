@@ -1,0 +1,358 @@
+<apex:page standardController="Prod_Documents__c" extensions="ThumbnailController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" sidebar="false" title="Add Thumbnail" >
+<link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+    <style>
+        .ui-autocomplete-loading {
+        background: white url("{!URLFOR($Resource.documentupload, 'images/ui-anim_basic_16x16.gif')}") right center no-repeat;
+        }
+        .overlay {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0.7;
+        top: 0px;
+        left: 0px;
+        position: fixed;
+        z-index: 500;
+        
+        }
+        
+        .status {
+        cursor: pointer;
+        -moz-box-shadow: 0 0 15px 5px #DDDDDD;
+        -webkit-box-shadow: 0 0 15px 5px #DDDDDD;
+        box-shadow: 0 0 15px 5px #DDDDDD;  
+        opacity: 1;
+        height: auto;
+        position: fixed;
+        left: 50%;
+        margin-top: 5%;
+        padding: 15px;
+        z-index: 1000;
+        display: block;
+        }
+        
+        
+    </style>
+        <apex:define name="body">  
+            <apex:sectionHeader title="Content Administration" subtitle="Add Thumbnail"/>
+            
+            <div id="load-status" style="display:none;">
+                <div class="overlay"></div>
+                <div class="status">                               
+                    <img src="{!URLFOR($Resource.documentupload, 'images/Cursor_Windows_Vista.gif')}" />
+                    <span id="load-statustext">File uploading in progress...</span>
+                </div>
+            </div>                
+            
+            <apex:form id="frm" >
+                <apex:pageBlock >
+                    <apex:actionFunction name="updateDoc" action="{!updateDoc}" oncomplete="gotorecord();"/>
+                
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div id="results"></div>
+                    <apex:pageBlockSection collapsible="false" title="Search for Product Document" columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Content Name" ></apex:outputLabel>
+                        <apex:outputPanel >
+                            <input style="width: 75%;" id="filename" value="{!prodDoc.Name}"/>
+                            <span id="productname" style="display:none"></span>  
+                            <img id="closeicon" style="display:none;" src="https://cdn2.iconfinder.com/data/icons/flat-icons-web/40/Remove-16.png" onclick="showsearchinput();"/>                  
+                            <apex:actionRegion >
+                                <apex:actionFunction name="fetchProdDocumentObject" action="{!fetchProdDocumentObject}" oncomplete="reloadwithid('{!prodDoc.Id}');">
+                                    <apex:param value="" assignTo="{!productDocId}" name="prodDocID"/>
+                                </apex:actionFunction>
+                                <apex:actionFunction name="blankProd_DocmentObject" action="{!init}" reRender="proddocsection" oncomplete="hidestatus();"/>
+                            </apex:actionRegion>
+                        </apex:outputPanel>    
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Thumbnail File"></apex:outputLabel>
+                            <input type="file" id="file-chooser" onchange="setfiletype();" />  
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection collapsible="false" columns="2" title="Content Information">
+                        <apex:outputField id="Title_Display_Name" value="{!prodDoc.Title_Display_Name__c}"/>
+                        <apex:outputField id="imageurl" value="{!prodDoc.Image_URL__c}"/>
+                        <apex:outputField value="{!prodDoc.Sub_Title__c}"/>
+                        <apex:outputField value="{!prodDoc.Alternate_Text__c}"/>
+                        <apex:outputField label="File Access" id="isPrivate" value="{!prodDoc.File_Access__c}"/>
+                        <apex:outputField value="{!prodDoc.Marketo_URL__c}"/>
+                        <apex:outputField id="FileType" value="{!prodDoc.File_Extension__c}"/>
+                        <apex:outputField value="{!prodDoc.Size_Description__c}"/>
+                        <apex:outputField value="{!prodDoc.Hide_for_Partner_Type__c}"/>
+                        <apex:outputField value="{!prodDoc.Insertion_Code__c}"/>
+                        <apex:outputField value="{!prodDoc.Revision__c}"/>
+                        <apex:outputField value="{!prodDoc.Site_Core_URL__c}"/>
+                        <apex:outputField value="{!prodDoc.Active__c}"/>
+                        <apex:outputField value="{!prodDoc.Language__c}"/>
+                        <apex:outputField value="{!prodDoc.KVH_com__c}"/>
+                        <apex:outputField value="{!prodDoc.Partner_Portal__c}"/>
+                    </apex:pageBlockSection> 
+                    <apex:pageBlockButtons location="bottom">
+                        <input type="button" id="upload-button"  style="float: right;" onclick="createdoc('{!prodDoc.Id}'); return false;" value="Save Thumbnail"/>             
+                        <input type="button" id="back-button"  style="float: right;margin-right: 10px;" onclick="backbuttonclick()" value="Back"/>             
+                    </apex:pageBlockButtons>
+                    <apex:actionRegion >
+                    	<apex:inputHidden id="thumbnail" value="{!prodDoc.Image_URL__c}"/>
+                    </apex:actionRegion>
+                    
+                </apex:pageBlock>
+            </apex:form> 
+        </apex:define> 
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    <apex:outputPanel id="scriptpannel">
+        <script>
+    var thumb = '{!prodDoc.Image_URL__c}';
+    console.log(thumb);
+    console.log( $(".cke_editable"));
+    setTimeout(function(){ 
+        $(".cke_editable").append("{!prodDoc.File_Description__c}"),
+            3000});
+    
+    </script>
+	</apex:outputPanel>
+    
+    <script>
+    var filetype;
+    
+    var newFileName;
+    $( function() {    
+        
+        $( "#filename" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax( {
+                    url: "{!$Label.Prod_DocumentSearchPageURL}",         
+                    data: {
+                        term: request.term
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                } );
+            },
+            minLength: 2,
+            select: function( event, ui ) {
+                var productlink = '<a href="/' + ui.item.data + '" target="_blank">' + ui.item.value + '</a>'; 
+                $('[id*="productname"]').html(productlink);          
+                $('[id*="productname"]').show();
+                $('[id*="filename"]').hide();   
+                $('[id*="closeicon"]').show(); 
+                $('[id*="filename"]').addClass("error");    
+                $('[id*="filenameerrormsg"]').remove(); 
+                showstatusmessage('Fetching fields of ' + ui.item.value + ' from salesforce');
+                fetchProdDocumentObject(ui.item.data);
+                
+            }
+        });
+        
+    } );
+
+    
+    function showstatusmessage(msg){
+        $("#load-statustext").text(msg);
+        $("#load-status").show();
+    }
+    
+    function hidestatus(){
+        $("#load-status").hide();
+        $("#load-statustext").text("");
+    }
+    
+    function createdoc(docId){
+        var thumb = $('[id*="imageurl"]').val();
+        console.log(thumb);
+        console.log(formvalidation());
+        if(!formvalidation() && thumb){
+        	deletefiles(docId);
+        } else if (!formvalidation()){
+            uploadfiles(docId);
+        }
+    }
+    
+    function reloadwithid(pdid){
+        location.href = '/apex/ThumbnailforPortal?id='+ pdid;
+    }
+    
+    function uploadfiles(docId){
+            $("#load-statustext").text("File uploading in progress...");
+            $("#load-status").show();
+            console.log('1');
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ThumbnailController.fetchCredentials}',
+                    function(result, event){
+                        if (event.status) {
+                            AWS.config.region = 'us-east-1'; // 1. Enter your region
+                            console.log('2' + docId);
+                            uploadFile(result.Algorithm__c,result.Key__c,result.Bucket__c, docId);
+                        } else if (event.type === 'exception') {
+                            console.log("Error ==>" + event.message + ' ' + event.where);
+                        } else {
+                            console.log("Message ==>" + event.message);
+                        }
+                    }, 
+                    {escape: true}
+                );
+        }  
+    
+    function uploadFile(key,secret,bucketName, docId){
+        var creds = new AWS.Credentials(key,secret);
+        AWS.config.credentials = creds;
+        console.log('3');
+        var bucket = new AWS.S3({
+            params: {
+                Bucket: bucketName
+            }
+        });
+        
+        var fileChooser = document.getElementById('file-chooser');            
+        var results = document.getElementById('results');
+        
+        var file = fileChooser.files[0];
+        
+        if (file) {
+            console.log('6');
+            results.innerHTML = '';
+            var objKey = docId + '-thumb';
+            var params = {
+                Key: objKey,
+                ContentType: file.type,
+                Body: file,
+                ACL: 'public-read'
+            };
+            
+            bucket.putObject(params, function(err, data) {
+                // add the following debug line                
+                if (err) {
+                    results.innerHTML = 'ERROR: ' + err;
+                }else{                                     
+                    var downloadparams = {Bucket: bucketName, Key: objKey,Expires : 315360000};
+                    
+                    var url = bucket.getSignedUrl('getObject', downloadparams);
+                    console.log(url);
+                    $('[id*="thumbnail"]').val(url);
+                    console.log($('[id*="thumbnail"]').val());
+                    updateDoc();                    
+                }
+            });
+        } else {
+            results.innerHTML = 'Nothing to upload.';
+        }
+        AWS.config.credentials = null;
+    }
+    
+    function showsearchinput(){
+        $('[id*="productname"]').hide();
+        $('[id*="filename"]').show(); 
+        $('[id*="filename"]').val('');
+        $('[id*="closeicon"]').hide();
+        $('[id*="portalviewselectlist"]').show(); 
+        $('[id*="productportalviews"]').hide();  
+        $('[id*="productportalviews"]').html(''); 
+        $("#load-statustext").text("Fetching portal views...");
+        $("#load-status").show();
+        defaultPortalViews();
+    }
+    
+    function reloadpage(){
+        $("#load-statustext").text("Success!!");
+        $("#load-status").show();
+        window.setTimeout(function(){ 
+            location.href = '/apex/uploaddocuments'; }, 1000);
+    }
+
+	function gotorecord(){
+        $("#load-statustext").text("Success!!");
+        $("#load-status").show();
+        window.setTimeout(function(){ 
+            location.href = '/apex/adminlandingpage'; }, 1000);
+    }
+    
+    function formvalidation(){
+        $(".errorMsg").remove();
+        $(".error").removeClass("error"); 
+        var file = document.getElementById('file-chooser').files[0];
+        var isError = false;
+        if(file == undefined){
+            isError = true;
+            adderrorMessage($('[id$="file-chooser"]'),'File is required.');
+        }
+        if(filetype != 'jpg' && filetype != 'jpeg' && filetype != 'png' && filetype != 'gif'){
+            isError = true;
+            adderrorMessage($('[id$="file-chooser"]'),'File Type must be an image file type.');
+        }
+        return isError;
+    }
+
+    function adderrorMessage(elm,msg){
+        $(elm).after('<div class="errorMsg" id="' + $(elm).attr("id") + 'errormsg' +'" ><strong>Error:</strong>' +  msg + '</div>');
+        $(elm).addClass("error");
+    }     
+    
+    function setfiletype(){
+        var fileChooser = document.getElementById('file-chooser');   
+        var file = fileChooser.files[0];
+        var filename = file.name;
+        var selectfiletype = filename.split('.').pop();
+		filetype = selectfiletype.toLowerCase();
+    }
+    
+    function backbuttonclick(){
+        window.history.back();
+    }
+
+	function deletefiles(docId){
+        var pdid = docId;
+        console.log(pdid);
+        $("#load-statustext").text("File uploading in progress...");
+        $("#load-status").show();
+        console.log('1');
+        var thumb1 = thumb.split('/').pop();
+        var thumb2 = thumb1.split('.').shift();
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ThumbnailController.fetchCredentials}',
+                    function(result, event){
+                        if (event.status) {
+                            AWS.config.region = 'us-east-1'; // 1. Enter your region
+                            console.log('2' + thumb2);
+                            deleteFile(result.Algorithm__c,result.Key__c,result.Bucket__c, thumb2);
+                        } else if (event.type === 'exception') {
+                            console.log("Error ==>" + event.message + ' ' + event.where);
+                        } else {
+                            console.log("Message ==>" + event.message);
+                        }
+                    }, 
+                    {escape: true}
+                );
+        }
+
+function deleteFile(key,secert,bucketName, docid) {
+    var creds = new AWS.Credentials(key,secert);
+    AWS.config.credentials = creds;
+    
+    var bucket = new AWS.S3({
+        params: {
+            Bucket: bucketName,                
+        }
+    });    
+    
+    var params = {
+        Bucket: bucketName,
+        Key: docid
+    };
+    bucket.deleteObject(params, function (err, data) {
+        if (data) {
+            console.log(data,err);
+            console.log("File deleted successfully");
+            var downloadparams = {Bucket: bucketName, Key: docid,Expires : 315360000};            
+            uploadFile(key,secert,bucketName, docid, lib);
+        }
+    });
+}
+    </script>
+</apex:page>

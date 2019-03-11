@@ -1,0 +1,113 @@
+<aura:component description="Used as header in myKVH Community" 
+                implements="forceCommunity:availableForAllPageTypes" controller="CustomHeaderController" access="global">
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <aura:registerEvent name="captureUserInfo" type="c:myKVHresult"/> 
+    <aura:attribute name="runningUser" type="User" description="Stores the current logged in user's details.
+                                                                This is further used for detecting the type of User, Name etc" />
+    <aura:attribute name="selectedPortalView" type="String" />
+    <aura:attribute name="applicationheading" type="String" default="Partner Portal" description="Holds the heading value for the Partner Portal community" />
+    <aura:attribute name="currentUserType" type="String" description="Stores the logged in user's type i.e. Dealer/Distributor" />
+    <aura:handler event="aura:locationChange" action="{!c.doInit}"/>
+    
+    
+    <div class="slds-grid " style="height : 60px;background-color: #cc0000;">
+        <div class="slds-size_1-of-12 slds-small-size--1-of-12 slds-medium-size--1-of-12 slds-large-size--1-of-12 slds-col slds-align--absolute-center slds-medium-show"
+             style="background-color: #a00;height: 60px;text-align:center;">
+            
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <div class="slds-size_1-of-1">
+                    <a href="" onclick="{!c.refreshHome}">                        
+                        <img src="{!$Resource.IconmyKVH}" style="width: 35px;margin-top:12px;" />
+                        <!--<img src="/resource/icons/icons8-home-new.svg"/>
+                        <i class="fa fa-home fa-2x" aria-hidden="true" style="padding-left:15px; color:	#FFFFFF;"></i>-->
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-size_12-of-12 slds-small-size--11-of-12 slds-medium-size--10-of-12 slds-large-size--10-of-12  slds-col"
+             style="background-color: #cc0000;">
+            <div class="slds-text-heading--large header1 slds-truncate"
+                 style="color:#fff;padding-top: 17px;
+                        font-weight:400;
+                        display: inline-block;
+                        float:left;width:60%">
+                <a style="color: #fff;text-decoration: none;" href="" onclick="{!c.refreshHome}">
+                    <span style="padding-left:4%">{!v.applicationheading} Customer Portal</span>
+                </a>
+            </div>
+            
+            <aura:if isTrue="{!v.runningUser.ContactId != null}">
+                <div style="float:right;width:39%;padding:.85rem .5rem;text-align: right;" >
+                    
+                    
+                    <div style="display: inline-block;display:-ms-inline-grid;">
+                        <nav class="slds-context-bar__secondary" role="navigation" style="margin-left: 5px;">
+                           
+                            <ul class="slds-grid">
+                                <li class="slds-dropdown-trigger slds-dropdown-trigger_hover">
+                                   
+                                   <div class="slds-context-bar__icon-action slds-p-left_none">
+                                        <!--<lightning:icon iconName="utility:down"
+                                                            variant="inverse"
+                                                            size="small"/>-->
+                                       <img style="width: 32px; height:auto;min-width:25px;" src="/resource/icons/icons8-user_male_circle_new.svg"/>
+                                        <span class="slds-medium-show slds-text-heading_small slds-p-horizontal_xx-small" style="color: #ffffff;vertical-align: bottom;font-size: 14px;">{!v.runningUser.FirstName}&nbsp;{!v.runningUser.LastName}</span>
+                                        <i class="fa fa-caret-down" aria-hidden="true" style="margin-left: 10px;color: #fff;"></i>
+                                        
+                                        
+                                    </div>
+                                    <div class="slds-dropdown slds-dropdown_right removetoppadding" style="min-width: 160px;">
+                                        <ul class="slds-dropdown__list" role="menu">
+                                            <!--
+                                            <li class="slds-dropdown__item" role="presentation">
+                                                <h4 style="background:#f3f3f3; padding:5px; margin-left:8px;margin-right:8px;font-family: arial;font-size: 13px;font-weight: bold;">{!v.currentUserType}</h4>
+                                            </li>
+-->
+                                            <li class="slds-dropdown__item showonlyinsmalldevice slds-text-align--center slds-p-bottom--xx-small slds-p-top--xx-small" role="presentation">
+                                                 <span class=" slds-text-heading_small " style="font-size: 14px;">{!v.runningUser.FirstName}&nbsp;{!v.runningUser.LastName}</span>
+                                            </li>
+                                            <aura:if isTrue="{!v.runningUser.ContactId != null}">
+                                                
+                                                <li class="slds-dropdown__item" role="presentation">
+                                                    <a href="" onclick="{!c.navtoprofile}" role="menuitem" tabindex="-1">
+                                                        <span class="slds-truncate">My Profile</span>
+                                                    </a>
+                                                </li>
+                                                
+                                                <li class="slds-dropdown__item" role="presentation">
+                                                    <a href="" onclick="{!c.navtochangePassword}"
+                                                       role="menuitem" tabindex="-1">
+                                                        <span class="slds-truncate">Change Password</span>
+                                                    </a>
+                                                </li>
+                                                <li class="slds-dropdown__item" role="presentation">
+                                                    <a href="" onclick="{!c.logout}"
+                                                       role="menuitem" tabindex="-1">
+                                                        <span class="slds-truncate">Logout</span>
+                                                    </a>
+                                                </li>
+                                            </aura:if>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </nav>                             
+                    </div>
+                    <!--  <div style="display: inline-block;display:-ms-inline-grid;">
+                           <span class="slds-badge" style="vertical-align: middle;color:#fff;font-size: 11px;background-color: rgba(25, 124, 190, 0.1);">
+                                    {!v.currentUserType}
+                            </span>
+                       </div>-->
+                </div>
+            </aura:if>
+            
+        </div>
+        
+        <div class="slds-size_1-of-12 slds-medium-show"
+             style="background-color: #a00;text-align: center;line-height:60px;">
+            <img style="width:100%;" src="{!$Resource.icons + '/KVHLogo.gif'}" ></img>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,4 @@
+<apex:page >
+    <a href="../idp/login?app=0sp13000000Gmco" target="_blank">myKVH Fleet</a><br/>
+    <a href="../idp/login?app=0sp13000000CaVa" target="_blank">myKVH Fleet (Staging)</a>
+</apex:page>

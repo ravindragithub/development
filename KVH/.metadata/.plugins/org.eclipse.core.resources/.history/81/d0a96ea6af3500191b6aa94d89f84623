@@ -1,0 +1,65 @@
+.THIS, .THIS h2 {
+        font-family: sans-serif;
+}
+.THIS .uiSpinner{
+    background : #fff;
+    text-align:center;    
+}
+.THIS .event{
+    color : #666;
+}
+.THIS .event p{
+    font-size : 14px;
+}
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #444444;
+    border-radius: 0px;
+    font-size: 85%;
+    background : #fff;
+}
+.THIS .button:hover {
+    background:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS .more { 	
+    left: 35px;
+    bottom: 35px;
+}
+.THIS .slds-backdrop_open {   
+    opacity: 0.8;
+}
+
+.THIS .slds-modal__footer, .THIS .slds-modal__header {
+    border-radius:0;
+}
+.THIS .closeicon{
+    position: relative;
+    top: -10px;
+    left: 58%;
+    border: none;
+    padding: 0px;
+    color:#999;
+}
+
+.THIS .slds-backdrop {
+    background : #000;
+}
+.THIS .filter-box::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+    border-radius: 8px;
+}
+.THIS .filter-box::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid #f3f3f3;
+    background-color: rgba(0, 0, 0, .4);
+}
+.THIS .filter-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+}

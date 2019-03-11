@@ -1,0 +1,41 @@
+<apex:page title="Update T&C's" standardController="Terms_and_Conditions__c" extensions="TCController" tabStyle="KVH_Portal_Admin__tab" showHeader="true" standardStylesheets="false" sidebar="false" >
+    
+    <style>
+
+      .box{
+          width : 20%;
+      }
+        
+    </style>
+        <apex:define name="body"> 
+            
+            <apex:form id="frm" styleClass="page-content">
+                <apex:sectionHeader subtitle="Update Terms & Conditions" title="Manage Terms & Conditions"/>
+                <div align="center">
+            <apex:pageBlock > 
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageBlockSection columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Name"></apex:outputLabel>
+                            <apex:inputField required="true" value="{!TC.Name__c}"/>
+                    </apex:pageBlockSectionItem>
+                <br/><br/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Body"></apex:outputLabel>
+                            <apex:inputField value="{!TC.Body__c}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <div style="padding: 0 100px 0 0;">
+                    <apex:commandLink immediate="true" value="Cancel" action="/apex/adminlandingpage"/>
+                    <apex:commandButton style="padding: 5px 5px 5px 5px; margin-left: 20px;" styleClass="button lower-case" value="Update" action="{!updateRecord}"/>
+                    </div>
+            </apex:pageBlock>
+                    </div>
+            </apex:form>                
+        </apex:define>
+    <script>
+    function backbutton(){
+        window.location.href = '/apex/UpdateTCtable';
+        }
+    </script>
+</apex:page>

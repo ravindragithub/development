@@ -1,0 +1,55 @@
+<apex:page cache="false" standardController="Account" extensions="invoiceit_s.ControllerForPayeezyDirectAPIToken" sidebar="false">
+
+<!-- script to disable right click -->
+    <script> 
+        var message="Function Disabled!"; function clickIE4(){ if (event.button==2){ alert(message); return false; } } function clickNS4(e){ if (document.layers||  document.getElementById&&!document.all){ if (e.which==2||e.which==3){ alert(message); return false; } } } if (document.layers){ document.captureEvents(Event.MOUSEDOWN); document.onmousedown=clickNS4; } else if (document.all&&!document.getElementById){ document.onmousedown=clickIE4; } document.oncontextmenu=new Function("alert(message);return false") 
+    
+        function disableTextBoxes() {     
+            var firstname = document.getElementById('{!JSENCODE($Component.form1.firstname)}'); 
+            firstname.setAttribute("autocomplete", "off");
+             
+     
+            var lastname = document.getElementById('{!JSENCODE($Component.form1.lastname)}'); 
+            lastname.setAttribute("autocomplete", "off");
+            
+             var card = document.getElementById('{!JSENCODE($Component.form1.card)}'); 
+            card.setAttribute("autocomplete", "off");
+            
+            var cvv = document.getElementById('{!JSENCODE($Component.form1.cvv)}'); 
+            cvv.setAttribute("autocomplete", "off");
+            
+            var BankAccountNumber = document.getElementById('{!$Component.form1.email}');
+            BankAccountNumber.setAttribute("autocomplete", "off");
+            
+        }
+     </script>
+   
+       <apex:sectionHeader title="Customer Management" subtitle="Generate Transarmor Token" />
+        <apex:form id="form1">
+            <apex:pageblock >
+            <apex:pageMessages />
+                <apex:pageblocksection collapsible="false" title="Please enter your card information to create TA token" columns="1" rendered="{!gateway.invoiceit_s__Gateway_Type__c == 'PAYEEZYDIRECTAPI'}">
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_First_Name__c}" required="true" id="firstname"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_Last_Name__c}" required="true" id="lastname"/>
+                     <apex:inputField value="{!paymentMethod.Billing_Address__c }" required="true"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_City__c}" required="true"/> 
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_State_Province__c}" required="true"/> 
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_Zip_Postal__c}" required="true"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_Country__c}" required="true"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Billing_Email__c}" required="true" id="email"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Name_on_Card__c}" required="true" id="card"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Card_Type__c}" required="true"/>
+                     <apex:inputField value="{!paymentMethod.invoiceit_s__Card_Number__c}" required="true"/>  
+                   <apex:inputField value="{!paymentMethod.invoiceit_s__Card_Expiration_Month__c}" required="true"/> 
+                   <apex:inputField value="{!paymentMethod.invoiceit_s__Card_Expiration_Year__c}" required="true"/> 
+                   <apex:inputsecret value="{!paymentMethod.invoiceit_s__CVV__c}" required="true" id="cvv"/>
+                   <apex:inputField value="{!paymentMethod.invoiceit_s__Default__c}"/>  
+                </apex:pageblocksection>
+                <apex:pageblockbuttons location="Bottom">
+                    <apex:commandbutton value="Generate Transarmor Token" action="{!generateTransarmorToken}" rendered="{!gateway.invoiceit_s__Gateway_Type__c == 'PAYEEZYDIRECTAPI'}"/>
+                    <apex:commandbutton value="Cancel" action="{!Cancel}" />
+                </apex:pageblockbuttons>
+            </apex:pageblock>
+        </apex:form>
+
+    </apex:page>

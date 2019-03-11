@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="component event for passing the selected checkbox value to search component">
+    <aura:attribute name="selectedoption" type="String"/>
+    <aura:attribute name="section" type="String"/>
+</aura:event>

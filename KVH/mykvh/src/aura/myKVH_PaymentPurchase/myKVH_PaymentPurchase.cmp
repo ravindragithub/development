@@ -1,0 +1,98 @@
+<aura:component controller="PRDReg_Controller">    
+    <aura:attribute name="onclickSave" type="Aura.Action"/>
+    <aura:attribute name="submitFormOnce" type="boolean" />
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="attachmentList" type="List"/>
+    <aura:attribute name="purchaseRequired" type="boolean"/>
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg','.pdf','.bmp','.gif','.xls','.xlsx','.doc']"/>
+    <aura:attribute name="multiple" type="Boolean" default="true"/>  
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <lightning:card title="Purchase Details">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.purchaseRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small"> 
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input type="date" label="Purchase Date" style="margin-bottom:0;" class="purchaseDate"
+                                     value="{!v.simpleLTEActivation.Purchase_Date__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel"> 
+                    <lightning:fileUpload  name="fileUploader"
+                                          label= "Proof of Purchase"
+                                          multiple="{!v.multiple}"
+                                          accept="{!v.accept}"
+                                          disabled="{!v.disabled}"
+                                          recordId="{!v.simpleLTEActivation.Id}"
+                                          onuploadfinished="{! c.handleUploadFinished }"/>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12"> 
+                    <aura:if isTrue="{! empty(v.attachmentList)}">
+                        <h3 class="noAttach">No Attachments</h3>
+                        <aura:set attribute="else">
+                            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal" style="border:1px solid #d4d4d4;">
+                                <thead>
+                                    <tr class="slds-text-title_caps">
+                                        <th class="slds-cell-shrink" scope="col">
+                                            <div class="slds-truncate" title="Name">Name
+                                            </div>
+                                        </th>
+                                        <th class="slds-cell-shrink" scope="col">
+                                            <div class="slds-truncate" title="Size">Size
+                                            </div>
+                                        </th>                       
+                                        <th class="slds-cell-shrink" scope="col">
+                                            <div class="slds-truncate" title="Type">Type
+                                            </div>
+                                        </th>   
+                                        <aura:if isTrue="{!!v.readonly}">
+                                            <th class="slds-cell-shrink" scope="col">
+                                                <div class="slds-truncate" title="Remove">Remove
+                                                </div>
+                                            </th>   
+                                        </aura:if>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.attachmentList}" var="attach">
+                                        <tr class="slds-hint-parent">
+                                            <td class="slds-cell-shrink" data-label="Name">
+                                                <div class="slds-truncate" title="Name">{!attach.attachName}</div>
+                                            </td>
+                                            <td class="slds-cell-shrink" data-label="Size">
+                                                <div class="slds-truncate" title="Size">{!attach.attachSize}</div>
+                                            </td>                    
+                                            <td class="slds-cell-shrink" data-label="Type">
+                                                <div class="slds-truncate" title="Type">{!attach.attachType}</div>
+                                            </td>
+                                            <td class="slds-cell-shrink" data-label="Remove">
+                                                <div class="slds-truncate" title="Remove" onclick="{!c.openPicker}" id="{!attach.attachId}">
+                                                    <lightning:icon iconName="utility:delete" size="small" alternativeText="Indicates approval"/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </aura:set>
+                        
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center;">
+            <lightning:button label="Save Product Registration" 
+                              variant="brand" onclick="{!v.onclickSave}" 
+                              class="savebtn" disabled ="{!v.submitFormOnce}"  />
+        </div>
+    </lightning:card>
+</aura:component>

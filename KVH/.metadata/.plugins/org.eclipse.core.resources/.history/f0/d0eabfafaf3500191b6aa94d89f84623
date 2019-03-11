@@ -1,0 +1,56 @@
+({
+	handleSubmit : function(component, event, helper) {
+        var isError = false;
+        if(!component.get("v.subject")){
+            isError = true;
+        }
+        
+         if(!component.get("v.body")){
+            isError = true;
+        }
+        
+        if(!isError){
+            component.set("v.spinner", true);
+            var action = component.get("c.createSupportCase");  
+             action.setParams({
+                    "subject" :  component.get("v.subject"),
+                    "description" : component.get("v.body")
+                });   
+             action.setCallback(this, function(response) {
+                 var state = response.getState();
+                 if (state === "SUCCESS") {
+                                   
+                    component.set("v.spinner", false);  
+                      var toastEvent = $A.get("e.force:showToast");
+                        toastEvent.setParams({
+                            "title": "Success!",
+                            "message": "Support case successfully created.",
+                            "type" : "success"
+                        });
+                        toastEvent.fire();
+                     	component.find("overlayLib2").notifyClose();
+                 }else if (state === "ERROR") {
+                     var errors = response.getError();
+                     if (errors) {
+                         if (errors[0] && errors[0].message) {
+                             console.log("Error message in wheretobuy initialize: " +
+                                         errors[0].message);
+                             window.alert("Error message in wheretobuy initialize: " +
+                                          errors[0].message);
+                         }
+                         window.alert("Unknown error try search again");
+                     } else {
+                         console.log("Unknown error");
+                         window.alert("Unknown error try search again");
+                     }
+                     component.set("v.spinner", false);
+                 }
+             });
+             $A.enqueueAction(action);
+        }
+		
+	},
+    handleCancel : function(component, event, helper) {
+		component.find("overlayLib2").notifyClose();
+	}
+})

@@ -1,0 +1,28 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" standardController="Prod_Documents__c" extensions="DownloadDocumentCtrl">
+    <span>Don't close this window. Download in progress...</span>
+    <apex:pageMessages ></apex:pageMessages>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+    <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+    
+    <script src="{!URLFOR($Resource.documentupload, 'js/aws-sdk-2.21.0.min.js')}"></script>
+    
+    <script>
+        function downloadFile() {  
+        var isPrivate = '{!Prod_Documents__c.File_Access__c}';
+        var conlink = '{!Prod_Documents__c.Content_Link__c}';
+        if(conlink){
+            setTimeout(function(){ window.close(); }, 10000);
+            window.open("{!Prod_Documents__c.Content_Link__c}",'_self');
+        } else if (isPrivate == 'Private'){
+            setTimeout(function(){ window.close(); }, 10000);
+            window.open("{! $Label.Community_URL + '/' + $Label.Community_Prefix + '/sfc/servlet.shepherd/version/download/' + Prod_Documents__c.Internal_Document_Record__c}",'_self');
+        } else{
+            setTimeout(function(){ window.close(); }, 10000);
+            window.open("{!Prod_Documents__c.Hosting_URL__c}",'_self');
+        }
+    }
+
+    downloadFile();
+    </script>
+
+</apex:page>

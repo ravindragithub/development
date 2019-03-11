@@ -1,0 +1,165 @@
+<apex:component controller="PlatformShareCustomComponent" >
+  
+    <script>
+        window.onload=function(){        
+            callCustomMethod();
+        };
+        
+        //Show loading status
+        function startLoading() {
+
+        }
+        
+        //Hide loading status
+        function stopLoading() {
+
+        }
+        
+        function togglePageSelector(paramId) {
+            var e = document.getElementById(paramId);
+            if(e.style.display == 'block')
+                e.style.display = 'none';
+            else
+                e.style.display = 'block';
+        }
+        
+        function validateInput(obj, size) {
+            var inputValue = parseInt(obj.value);
+            if(inputValue == obj.value && inputValue < 1) 
+                obj.value = 1;
+            else if(inputValue == obj.value && inputValue > size)
+                obj.value = size;
+            else if(inputValue == obj.value)
+                obj.value = inputValue;
+            else
+                obj.value = 1;  
+        }
+    </script>
+   
+    <apex:attribute name="xyz" type="ID" assignTo="{!currentID}" required="true" description="List Of Data" />
+  
+    <apex:form id="frm">
+        <apex:actionFunction name="callCustomMethod" action="{!assignCurrentUrlValue}" reRender="frm" />
+        
+        <!-- ********* Start : Action Functions for pagination  *********** -->
+        <apex:actionFunction name="nextPageAF" action="{!nextPage}" rerender="frm" oncomplete="stopLoading();" />
+        <apex:actionFunction name="previousPageAF" action="{!previousPage}" rerender="frm" oncomplete="stopLoading();" />
+        <apex:actionFunction name="firstPageAF" action="{!firstPage}" rerender="frm" oncomplete="stopLoading();" />
+        <apex:actionFunction name="lastPageAF" action="{!lastPage}" rerender="frm" oncomplete="stopLoading();" />
+        <apex:actionFunction name="goToPageAF" action="{!goToPage}" rerender="frm" oncomplete="stopLoading();" >
+            <apex:param name="param2" value="" assignTo="{!intPageNumber}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="resetPageSizeAF" action="{!loadRecords}" rerender="frm" oncomplete="stopLoading();" >
+            <apex:param name="param1" value="" assignTo="{!intPageSizeLimit}" />
+        </apex:actionFunction>
+        <!-- ********* End : Action Functions for pagination  *********** -->
+       
+        <apex:pageBlock id="pb" >
+            <apex:pageBlockTable value="{!lstSPRecords}" var="pfsr" >  
+                <apex:column headerValue="Shared Platform"> 
+                    <apex:commandLink onclick="window.open('/{!pfsr.Shared_Platform__c}','_blank','height=400,location=no,resizable=yes,toolbar=no,status=no,menubar=no,scrollbars=1', 1);">
+                        <apex:outputText >{!pfsr.Shared_Platform__r.Name}</apex:outputText>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="User">
+                    <apex:commandLink onclick="window.open('/{!pfsr.User__c}','_blank','height=400,location=no,resizable=yes,toolbar=no,status=no,menubar=no,scrollbars=1', 1);">
+                        <apex:outputText >{!pfsr.User__r.Name}</apex:outputText>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column value="{!pfsr.Shared_Platform__r.Vessel_IMO__c}" />
+                <apex:column value="{!pfsr.Shared_Platform__r.MMSI__c}" />
+                <apex:column value="{!pfsr.Shared_Platform__r.myKVH_Direct_Link__c}" />
+                <apex:column value="{!pfsr.Shared_Platform__r.Vessel_Radio_Call_Sign__c}" />    
+            </apex:pageBlockTable>
+            <apex:outputpanel rendered="{!IF(lstSPRecords.size > 0, false, true)}" >
+                <span style="top: 10px;position: relative;" >No record found.</span>
+            </apex:outputpanel>    
+        </apex:pageBlock>
+
+        <!-- *********** Start : record Pagination ************* -->
+        <apex:outputpanel rendered="{!IF(lstSPRecords.size > 0, true, false)}" >
+            <div class="bottomNav" style="padding: 5px;" >
+                <div class="paginator" >
+                    <span class="left" >
+                        <span class="selectorTarget" id="recordSelector" onmousedown="togglePageSelector('recordPageSelector');" onmouseover="ListPaginator.hoverSelector(this)" onmouseout="ListPaginator.unhoverSelector(this)" >
+                            <span id="recordPageStartIndex" ></span> - <span id="recordPageEndIndex" ></span> of <span id="recordPageRecordCount" >{!intTotalRecordCount}</span>
+                            <table cellpadding="0" cellspacing="0" class="selector rpp" id="recordPageSelector">
+                                <tbody>
+                                    <tr class="opt {!IF(intPageSizeLimit == 5, 'optSelected', 'optUnselected')}" onmouseover="Sfdc.Dom.addClass(this, 'optHover')" onmouseout="Sfdc.Dom.removeClass(this, 'optHover')" onmousedown="startLoading();resetPageSizeAF(5);">    
+                                        <td>Display</td>    
+                                        <td class="rppOpt" style="padding:4px;" >5</td>    
+                                        <td>records per page</td>
+                                    </tr>
+                                    <tr class="opt {!IF(intPageSizeLimit == 10, 'optSelected', 'optUnselected')}" onmouseover="Sfdc.Dom.addClass(this, 'optHover')" onmouseout="Sfdc.Dom.removeClass(this, 'optHover')" onmousedown="startLoading();resetPageSizeAF(10);">    
+                                        <td>Display</td>    
+                                        <td class="rppOpt" style="padding:4px;" >10</td>    
+                                        <td>records per page</td>
+                                    </tr>
+                                    <tr class="opt {!IF(intPageSizeLimit == 20, 'optSelected', 'optUnselected')}" onmouseover="Sfdc.Dom.addClass(this, 'optHover')" onmouseout="Sfdc.Dom.removeClass(this, 'optHover')" onmousedown="startLoading();resetPageSizeAF(20);">    
+                                        <td>Display</td>    
+                                        <td class="rppOpt" style="padding:4px;" >20</td>    
+                                        <td>records per page</td>
+                                    </tr>
+                                    <tr class="opt {!IF(intPageSizeLimit == 50, 'optSelected', 'optUnselected')}" onmouseover="Sfdc.Dom.addClass(this, 'optHover')" onmouseout="Sfdc.Dom.removeClass(this, 'optHover')" onmousedown="startLoading();resetPageSizeAF(50);">  
+                                        <td>Display</td>        
+                                        <td class="rppOpt" style="padding:4px;" >50</td>   
+                                        <td>records per page</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <img class="selectArrow" src="/s.gif" />
+                        </span>
+                    </span>
+                    <span class="prevNextLinks">
+                        <span class="prevNext" onclick="startLoading();firstPageAF();" >
+                            <apex:outputpanel rendered="{!intPageNumber == 1}">
+                                <img src="/s.gif" class="firstoff" alt="First Page" />
+                            </apex:outputpanel>
+                            <apex:outputpanel rendered="{!intPageNumber > 1}">
+                                <a style="cursor:pointer;" ><img src="/s.gif" title="First Page" alt="First Page" class="first" /></a>
+                            </apex:outputpanel>
+                        </span>
+                        <span class="prevNext" onclick="startLoading();previousPageAF();" >
+                            <apex:outputpanel rendered="{!intPageNumber == 1}">
+                                <img src="/s.gif" class="prevoff" alt="Previous" />Previous
+                            </apex:outputpanel>
+                            <apex:outputpanel rendered="{!intPageNumber > 1}">
+                                <a style="cursor:pointer;" ><img src="/s.gif" title="Previous" alt="Previous" class="prev" />Previous</a>
+                            </apex:outputpanel>
+                        </span>
+                        <span class="prevNext" onclick="startLoading();nextPageAF();" >
+                            <apex:outputpanel rendered="{!OR(intPageCount == 1, intPageNumber == intPageCount)}">
+                                Next <img src="/s.gif" class="nextoff" alt="Next"  />
+                            </apex:outputpanel>
+                            <apex:outputpanel rendered="{!AND(intPageCount > 1, intPageNumber != intPageCount)}">
+                                <a style="cursor:pointer;" >Next <img src="/s.gif" title="Next" alt="Next" class="next" /></a>
+                            </apex:outputpanel> 
+                        </span>
+                        <span class="prevNext" onclick="startLoading();lastPageAF();" >
+                            <apex:outputpanel rendered="{!OR(intPageCount == 1, intPageNumber == intPageCount)}">
+                                <img src="/s.gif" class="lastoff" alt="Last Page" />
+                            </apex:outputpanel>
+                            <apex:outputpanel rendered="{!AND(intPageCount > 1, intPageNumber != intPageCount)}">
+                                <a style="cursor:pointer;" ><img src="/s.gif" title="Last Page" alt="Last Page" class="last" /></a>
+                            </apex:outputpanel> 
+                        </span>
+                    </span>
+                    <span class="right">
+                        Page&nbsp;<input type="text" size="1" style="width:25px;height:12px;" value="{!intPageNumber}" onchange="validateInput(this, {!intPageCount});startLoading();goToPageAF(this.value);" /> of {!intPageCount}
+                    </span>
+                </div>
+                <div class="clearingBox"></div>
+            </div>
+            <script>
+                document.getElementById('recordPageStartIndex').innerHTML = {!intPageNumber -1}*{!intPageSizeLimit} + 1;
+                var endIndex = {!intPageNumber}*{!intPageSizeLimit};
+                if(endIndex > {!intTotalRecordCount}) 
+                    document.getElementById('recordPageEndIndex').innerHTML = {!intTotalRecordCount};
+                else
+                    document.getElementById('recordPageEndIndex').innerHTML = {!intPageNumber}*{!intPageSizeLimit};
+            </script>
+        </apex:outputpanel>
+        <!-- *********** End : record Pagination ************* -->
+        
+    </apex:form>
+</apex:component>

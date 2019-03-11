@@ -1,0 +1,68 @@
+<apex:page controller="ortoo_e2a.EmailServicesFunctionListController">
+<apex:includeScript value="/support/console/33.0/integration.js"/>
+<script type="text/javascript">
+    window.onload = function() 
+    {
+        setTitle(); 
+    }
+    
+    function setTitle()
+    {
+       console.log('setting title');
+       if (sforce.console.isInConsole())
+       {
+        sforce.console.setTabTitle('e2a Email Rules');
+       } 
+    }
+</script>
+    <apex:form >
+        <apex:sectionHeader title="Email Rules"/>
+        <apex:pageBlock id="service_list">
+            <apex:pagemessages />
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!newRule}" value="New"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!ruleList}" var="rule" id="service_list_table">
+                <apex:column headerValue="Action" style="width:60px">
+                    <apex:outputPanel >
+                        <apex:commandLink action="{!editRule}">Edit
+                            <apex:param name="editRule" value="{!rule.relatedFunctionId}" assignTo="{!selectedRuleId}"/>
+                        </apex:commandLink> |&nbsp;
+                        <apex:commandLink action="{!deleteRule}" oncomplete="window.location.reload();" onclick="if (!window.confirm('Please confirm you want to delete the selected Email Rule.')) return false;">Del
+                            <apex:param name="delRule" value="{!rule.relatedFunctionId}" assignTo="{!selectedRuleId}"/>
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Rule Name">
+                    <apex:outputPanel >
+                        <apex:commandLink action="{!Detail}">{!rule.relatedFunctionName}
+                            <apex:param name="detailRule" value="{!rule.relatedFunctionId}" assignTo="{!selectedRuleId}"/>
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Email Service"/>
+                    </apex:facet>
+                    <apex:outputLink rendered="{!rule.apexClassName != ''}" value="/email-admin/services/detailEmailServicesFunction.apexp?id={!rule.functionId}">{!rule.functionName}</apex:outputLink>
+                    <apex:outputText rendered="{!AND(rule.apexClassName == '', rule.errorMessage == '')}" value="">(no email service)</apex:outputText>
+                    <apex:outputLink rendered="{!AND(rule.apexClassName == '',rule.errorMessage != '')}" value="/email-admin/services/detailEmailServicesFunction.apexp?id={!rule.functionId}">[{!rule.errorMessage}]</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Apex Class"/>
+                    </apex:facet>
+                    <apex:outputText value="{!rule.apexClassName}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:outputLabel value="Active"/>
+                    </apex:facet>
+                    <apex:image url="/img/checkbox_checked.gif" rendered="{!rule.isActive == true}"/>
+                    <apex:image url="/img/checkbox_unchecked.gif" rendered="{!rule.isActive == false}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="no email services functions available for Email-to-Anything" rendered="{!functionsExist == false}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

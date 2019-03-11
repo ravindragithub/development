@@ -1,0 +1,26 @@
+<aura:component >
+  <aura:attribute name="newMessage" type="String" 
+                  description="Set the newMessage Attribute to add a status message to the log panel"
+                  default="" />
+  <aura:attribute name="messages" type="List"
+                  description="This array of strings holds the list of status messages displayed"/>
+  <aura:handler name="change" value="{!v.newMessage}" action="{!c.handleValueChange}"/>
+  <div aura:id="logPanel">
+    <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-title--caps">                
+                <th scope="col"><div class="slds-truncate" title="Message">Time Stamp</div></th>
+                <th scope="col"><div class="slds-truncate" title="Message">Status</div></th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.messages}" var="message">
+                <tr>
+                    <td>{!message.timeStamp}</td>
+                    <td>{!message.value}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+  </div>
+</aura:component>

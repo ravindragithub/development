@@ -1,0 +1,18 @@
+<apex:page showHeader="false" sidebar="false" standardController="SBQQ__Subscription__c">
+  <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+      var recordId="{!$CurrentPage.parameters.Id}";
+      $Lightning.use("c:HTS_subscribers_container", function() {
+        $Lightning.createComponent(
+            "c:HTS_subscriptions_cmp",
+            {"identifier": recordId},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+                console.log(recordId);
+                console.log(cmp);
+            });
+        });
+    </script>
+    <div id="lightning"></div>
+</apex:page>

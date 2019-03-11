@@ -1,0 +1,76 @@
+<apex:page id="pg" standardController="product2" extensions="BundlerAppUI" sidebar="false" action="{!populatePackageKinds}" tabStyle="IPMC_Bundler_App__tab">
+     <script>
+         function AlertifChagesDone()
+         {
+            if(document.getElementById('hdnState').value == 'save'){
+                var r=confirm("Are you sure you want to submit the changes in bold?");
+                document.getElementById('hdnState').value == 'ready';
+                return r;
+            }else if(document.getElementById('hdnState').value == 'cancel'){
+                var r=confirm("Are you sure you want to cancel?");
+                document.getElementById('hdnState').value == 'ready';
+                return r;
+            } else {
+                document.getElementById('hdnState').value == 'ready';
+                return false;
+            }
+         }
+         
+         function selectBold(currentEle, headerID, isSelect){
+             if(currentEle.checked){                 
+                 if(isSelect){
+                     document.getElementById(headerID).style.fontWeight = 'normal';
+                     document.getElementById(headerID).style.fontStyle = 'normal';
+                 }else{
+                     document.getElementById(headerID).style.fontWeight = 'bold'; 
+                     document.getElementById(headerID).style.fontStyle='italic';                    
+                 }
+             }else if(isSelect == false){
+                 document.getElementById(headerID).style.fontWeight = 'normal';
+                 document.getElementById(headerID).style.fontStyle = 'normal';                 
+             }else{
+                 document.getElementById(headerID).style.fontWeight = 'bold'; 
+                 document.getElementById(headerID).style.fontStyle='italic';                
+             }
+         }
+     </script>
+     <apex:form id="frm" onsubmit="return AlertifChagesDone();">       
+        <input type="hidden" value="ready" id="hdnState" />
+         
+         <apex:pageblock id="prod">
+            <apex:pageMessages id="messages"></apex:pageMessages>
+             <apex:pageBlockSection >
+                 <!-- <apex:outputField value="{!product2.Name}"/> -->
+                 <apex:selectList value="{!SelectedIPMCProduct}" size="1" label="Product Name">
+                        <apex:selectOptions value="{!IPMCProducts}">
+                           
+                        </apex:selectOptions>
+                         <apex:actionSupport event="onchange" action="{!populatePackageKinds}"/>
+                 </apex:selectList>
+             </apex:pageBlockSection>
+         </apex:pageblock>
+         
+         <apex:pageBlock id="CurrentBlock">
+             <div style="overflow: scroll;column-width:400px;-moz-column-width:400px; /* Firefox */-webkit-column-width:400px; /* Safari and Chrome */">
+             <apex:repeat value="{!AllValuesForColumns}" var="allColoumnValues" id="prodKinds">
+                 <div>
+                     <apex:inputcheckbox value="{!allColoumnValues.ValueBoolean}" onClick="selectBold(this,'{!$Component.panelLabel}',{!allColoumnValues.ValueBoolean})" >
+                     </apex:inputcheckbox>
+                     <apex:actionSupport event="onchange" reRender="prod"/>
+                  <!--   <apex:outputPanel id="panelLabel" style="font-weight:{!IF((allColoumnValues.ValueBoolean),'bold','normal')};" >
+                        <apex:outputText value="{!allColoumnValues.IPMCpackageKind.PackageKind__c}"/>
+                     </apex:outputPanel> -->
+                     <apex:outputPanel id="panelLabel" style="font-weight: 'normal';font-style: normal;" >
+                        <apex:outputText value="{!allColoumnValues.IPMCpackageKind.PackageKind__c}"/>
+                     </apex:outputPanel>
+                 </div>
+             </apex:repeat>
+            </div>
+            
+            <apex:pageblockbuttons location="bottom">
+                <apex:commandButton value="save" disabled="{!saveDisabled}" action="{!SaveWithSelected}" onclick="document.getElementById('hdnState').value = 'save';" reRender="frm"/>
+                <apex:commandButton value="cancel" action="{!populatePackageKinds}" onclick="document.getElementById('hdnState').value = 'cancel';" reRender="frm"/>
+            </apex:pageblockbuttons>
+         </apex:pageBlock>
+     </apex:form>
+</apex:page>

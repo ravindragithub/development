@@ -1,0 +1,37 @@
+<aura:component controller="LTEAct_Controller">
+    <aura:attribute name="isRequired" type="boolean" default="true"/>
+    <aura:attribute name="isRequiredState" type="boolean" default="true"/>
+    <aura:attribute name="onlyCountry" type="boolean" default="false"/>
+    <aura:attribute name="countryLabel" type="string" default="Country"/>
+    <aura:attribute name="componentID" type="string"/>
+    <aura:attribute name="country" type="string"/>
+    <aura:attribute name="state" type="string"/>
+    <aura:attribute name="selectedCountry" type="string" default="United States"/>
+    <aura:attribute name="selectedState" type="string" />
+    <aura:attribute name="countryList" type="List" />
+    <aura:attribute name="stateList" type="List" default ='[{"class":"optionClass","label":"Alabama","value":"Alabama"},{"class":"optionClass","label":"Alaska","value":"Alaska"},{"class":"optionClass","label":"Arizona","value":"Arizona"},{"class":"optionClass","label":"Arkansas","value":"Arkansas"},{"class":"optionClass","label":"California","value":"California"},{"class":"optionClass","label":"Colorado","value":"Colorado"},{"class":"optionClass","label":"Connecticut","value":"Connecticut"},{"class":"optionClass","label":"Delaware","value":"Delaware"},{"class":"optionClass","label":"District of Columbia","value":"District of Columbia"},{"class":"optionClass","label":"Florida","value":"Florida"},{"class":"optionClass","label":"Georgia","value":"Georgia"},{"class":"optionClass","label":"Hawaii","value":"Hawaii"},{"class":"optionClass","label":"Idaho","value":"Idaho"},{"class":"optionClass","label":"Illinois","value":"Illinois"},{"class":"optionClass","label":"Indiana","value":"Indiana"},{"class":"optionClass","label":"Iowa","value":"Iowa"},{"class":"optionClass","label":"Kansas","value":"Kansas"},{"class":"optionClass","label":"Kentucky","value":"Kentucky"},{"class":"optionClass","label":"Louisiana","value":"Louisiana"},{"class":"optionClass","label":"Maine","value":"Maine"},{"class":"optionClass","label":"Maryland","value":"Maryland"},{"class":"optionClass","label":"Massachusetts","value":"Massachusetts"},{"class":"optionClass","label":"Michigan","value":"Michigan"},{"class":"optionClass","label":"Minnesota","value":"Minnesota"},{"class":"optionClass","label":"Mississippi","value":"Mississippi"},{"class":"optionClass","label":"Missouri","value":"Missouri"},{"class":"optionClass","label":"Montana","value":"Montana"},{"class":"optionClass","label":"Nebraska","value":"Nebraska"},{"class":"optionClass","label":"Nevada","value":"Nevada"},{"class":"optionClass","label":"New Hampshire","value":"New Hampshire"},{"class":"optionClass","label":"New Jersey","value":"New Jersey"},{"class":"optionClass","label":"New Mexico","value":"New Mexico"},{"class":"optionClass","label":"New York","value":"New York"},{"class":"optionClass","label":"North Carolina","value":"North Carolina"},{"class":"optionClass","label":"North Dakota","value":"North Dakota"},{"class":"optionClass","label":"Ohio","value":"Ohio"},{"class":"optionClass","label":"Oklahoma","value":"Oklahoma"},{"class":"optionClass","label":"Oregon","value":"Oregon"},{"class":"optionClass","label":"Pennsylvania","value":"Pennsylvania"},{"class":"optionClass","label":"Rhode Island","value":"Rhode Island"},{"class":"optionClass","label":"South Carolina","value":"South Carolina"},{"class":"optionClass","label":"South Dakota","value":"South Dakota"},{"class":"optionClass","label":"Tennessee","value":"Tennessee"},{"class":"optionClass","label":"Texas","value":"Texas"},{"class":"optionClass","label":"Utah","value":"Utah"},{"class":"optionClass","label":"Vermont","value":"Vermont"},{"class":"optionClass","label":"Virginia","value":"Virginia"},{"class":"optionClass","label":"Washington","value":"Washington"},{"class":"optionClass","label":"West Virginia","value":"West Virginia"},{"class":"optionClass","label":"Wisconsin","value":"Wisconsin"},{"class":"optionClass","label":"Wyoming","value":"Wyoming"}]'/>
+    <aura:attribute name="stateMap" type="Map"/>
+    
+    <lightning:select aura:id="InputCountry" 
+                      onchange="{!c.onCountrySelect}"
+                      label="{!v.countryLabel}" 
+                      value="{!v.country}" 
+                      required="{!v.isRequired}">
+        <aura:iteration items="{!v.countryList}" var="item" indexVar="index">
+            <option value="{!index}" selected="{!item.label == 'United States'}">{!item.label}</option>
+        </aura:iteration>
+    </lightning:select>
+    <aura:if isTrue="{! !(v.onlyCountry)}">
+        <lightning:select aura:id="InputState" 
+                          onchange="{!c.onStateChange}"
+                          label="State/Province/Territory" 
+                          value="{!v.state}" 
+                          required="{! and(and(v.isRequired,!v.onlyCountry),v.isRequiredState)}" 
+                          messageWhenValueMissing="Complete this field.">
+            <option value="">-- None --</option>
+            <aura:iteration items="{!v.stateList}" var="item" indexVar="index">	
+                <option value="{!index}" >{!item.label}</option>
+            </aura:iteration>
+        </lightning:select>
+    </aura:if>
+</aura:component>

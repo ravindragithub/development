@@ -1,0 +1,141 @@
+<aura:component controller="myKVH_ProductRegistrationController" implements="forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <aura:attribute name="prodRegistration" type="Object" default="{'sobjectType':'Product_Registration__c'}"/>
+    <aura:attribute name="attachmentList" type="list"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="accountRequired" type="boolean" default="true"/>
+    <aura:attribute name="installationRequired" type="boolean"/>
+    <aura:attribute name="systemRequired" type="boolean"/>
+    <aura:attribute name="providerAccRequired" type="boolean"/>
+    <aura:attribute name="installationIcon" type="boolean" default="true"/>
+    <aura:attribute name="systemIcon" type="boolean" default="true"/>
+    <aura:attribute name="providerAccIcon" type="boolean" default="true"/>
+    <aura:attribute name="countryOptions" type="list"/>
+    <aura:attribute name="countryStateMap" type="Object"/>
+    <aura:attribute name="loadChild" type="boolean"/>
+    <aura:attribute name="vesselTypeMap" type="Object"/>
+    <aura:attribute name="productLineMap" type="Object"/>
+    <aura:attribute name="KVHAuthDealerAddres" type="boolean" default="true"/>
+    <aura:attribute name="customerInfoChanged" type="boolean"/>
+    <aura:attribute name="submitFormOnce" type="boolean" default="false"/>
+    <aura:attribute name="subsciberCountry" type="string"/>
+    <aura:attribute name="isInstaInfoPriorOwner" type="string"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner variant="brand" size="large" alternativeText="Loading Page"/>
+    </aura:if>
+    
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1"/>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="10" class="slds-scope formContainer">
+            <h1 style="float:left;">KVH TracVision and Compass Product Registration</h1>
+            
+            <div style="float:right;">
+                <lightning:button label="Back to Home" class="go-btn" variant="brand" onclick="{!c.onBackHome}"/>
+                <div class="req-note slds-m-top_medium"><span class="required">*</span> indicates required field</div>
+            </div>
+            
+            <div class="clear"></div>
+            <aura:if isTrue="{!v.loadChild}">
+                <lightning:accordion aura:id="accordion" activeSectionName="Account" onsectiontoggle="{!c.onSectionToggle}" class="prdRegAccordion">
+                    <div id="scrollAccount"></div>
+                    
+                    <!--Account Section-->
+                    <lightning:accordionSection name="Account" label="Account">
+                        <aura:set attribute="actions">
+                            <lightning:icon iconName="{!if(v.accountRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon"/>
+                        </aura:set>
+                        <c:PrdReg_CustomerInfo prodRegistration="{!v.prodRegistration}" 
+                                               accountRequired="{!v.accountRequired}"
+                                               countryOptions="{!v.countryOptions}"
+                                               countryStateMap="{!v.countryStateMap}"
+                                               customerInfoChanged="{!v.customerInfoChanged}"
+                                               subsciberCountry="{!v.subsciberCountry}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Next" variant="brand" onclick="{!c.goToInstallation}" class="slds-float_right slds-m-top_small"/>
+                        </div>
+                    </lightning:accordionSection>
+                    
+                    <!--Installation Section-->
+                    <lightning:accordionSection name="Installation" label="Installation">
+                        <aura:set attribute="actions">
+                            <lightning:icon aura:id="installationRequiredIcon" iconName="{!if(v.installationRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                        </aura:set>
+                        <c:PrdReg_Installation prodRegistration="{!v.prodRegistration}" 
+                                               installationRequired="{!v.installationRequired}"
+                                               vesselTypeMap="{!v.vesselTypeMap}"
+                                               countryOptions="{!v.countryOptions}"
+                                               countryStateMap="{!v.countryStateMap}"
+                                               attachmentList="{!v.attachmentList}"
+                                               spinner="{!v.spinner}"
+                                               KVHAuthDealerAddres="{!v.KVHAuthDealerAddres}"
+                                               isInstaInfoPriorOwner="{!v.isInstaInfoPriorOwner}"/>
+                        <div class="button-bar">
+                            <lightning:button label="Back" variant="brand" onclick="{!c.goToAccount}" class="slds-float_left slds-m-top_small"/>
+                            <lightning:button label="Next" variant="brand" onclick="{!c.goToSystem}" class="slds-float_right slds-m-top_small"/>
+                        </div>
+                        
+                    </lightning:accordionSection>
+                    
+                    <!--System Section-->
+                    <lightning:accordionSection name="System" label="System">
+                        <aura:set attribute="actions">
+                            <lightning:icon aura:id="systemRequiredIcon" iconName="{!if(v.systemRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                        </aura:set>
+                        <c:PrdReg_System prodRegistration="{!v.prodRegistration}" 
+                                         systemRequired="{!v.systemRequired}"
+                                         productLineMap="{!v.productLineMap}"
+                                         attachmentList="{!v.attachmentList}"
+                                         spinner="{!v.spinner}"
+                                         countryOptions="{!v.countryOptions}"
+                                         countryStateMap="{!v.countryStateMap}"
+                                         accountRequired="{!v.accountRequired}"
+                                         KVHAuthDealerAddres="{!v.KVHAuthDealerAddres}"
+                                         customerInfoChanged="{!v.customerInfoChanged}"
+                                         subsciberCountry="{!v.subsciberCountry}"
+                                         isInstaInfoPriorOwner="{!v.isInstaInfoPriorOwner}"/>
+                        <aura:if isTrue="{!and(v.prodRegistration.Free_DirectTV_or_DISH_receiver_requested__c=='Yes',v.prodRegistration.Subscriber_Country__c=='United States')}">
+                            <div class="button-bar">
+                                <lightning:button label="Back" variant="brand" onclick="{!c.goToInstallation}" class="slds-float_left slds-m-top_small"/>
+                                <lightning:button label="Next" variant="brand" onclick="{!c.goToProviderAccount}" class="slds-float_right slds-m-top_small"/>
+                            </div>
+                            <aura:set attribute="else">
+                                <div style="text-align:center;">
+                                    <lightning:button label="Save Product Registration" variant="brand" onclick="{!c.checkExistingProdReg}" class="savebtn slds-m-top_small" disabled="{!v.submitFormOnce}"/>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                    </lightning:accordionSection>
+                    
+                    <aura:if isTrue="{!and(v.prodRegistration.Free_DirectTV_or_DISH_receiver_requested__c=='Yes',v.prodRegistration.Subscriber_Country__c=='United States')}">
+                        <!--Provider Account Section-->
+                        <lightning:accordionSection name="ProviderAccount" label="Provider Account">
+                            <aura:set attribute="actions">
+                                <lightning:icon aura:id="providerAccRequiredIcon" iconName="{!if(v.providerAccRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                            </aura:set>
+                            <c:PrdReg_ProviderAccount prodRegistration="{!v.prodRegistration}" 
+                                                      providerAccRequired="{!v.providerAccRequired}"/>
+                            <div class="button-bar">
+                                <lightning:button label="Back" variant="brand" onclick="{!c.goToSystem}" class="slds-float_left slds-m-top_small"/>
+                                <lightning:button label="Next" variant="brand" onclick="{!c.goToAgreement}" class="slds-float_right slds-m-top_small"/>
+                            </div>
+                        </lightning:accordionSection>
+                        
+                        <!--Agreement Section-->
+                        <lightning:accordionSection name="Agreement" label="Agreement">
+                            <c:PrdReg_Agrement prodRegistration="{!v.prodRegistration}"
+                                               onSubmit="{!c.checkExistingProdReg}" 
+                                               submitFormOnce="{!v.submitFormOnce}"/>
+                        </lightning:accordionSection>
+                    </aura:if>
+                </lightning:accordion>
+            </aura:if>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="1"/>
+    </lightning:layout>
+</aura:component>

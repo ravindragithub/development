@@ -1,0 +1,116 @@
+<aura:component  implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:attribute name="TracVisionURL" type="String" access="global"/>
+    <aura:attribute name="miniVSATBroadbandURL" type="String" access="global"/>
+    <aura:attribute name="InmarsatSATCOMSystemsURL" type="String" access="global"/>
+    <aura:attribute name="miniVSATManagerurl" type="String" access="global"/>
+    
+    <aura:attribute name="miniVSATManager" type="String" access="global"/>
+    <aura:attribute name="LTEManager" type="String" access="global"/>
+    <aura:attribute name="LearningCenter" type="String" access="global"/>
+    <aura:attribute name="SupportCenter" type="String" access="global"/>
+    <aura:attribute name="miniVSATActivation" type="String" access="global"/>
+    <aura:attribute name="LTEActivation" type="String" access="global"/>
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <div class="bg-myKVH">
+        <div class="bg-myKVH-title">
+            <h1 style="text-align:center;"> Welcome to myKVH</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eget dui velit. Maecenas et ante ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eget dui velit.</p>
+        </div>
+    </div>
+    <div class="demo-only" >
+        <section role="dialog" tabindex="-1"  aria-labelledby="header43" aria-modal="true" aria-describedby="modal-content-id-1" style="outline:0;">
+            <div>
+                
+                <div class="slds-modal__content slds-app-launcher__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-section slds-is-open">
+                        
+                        <div aria-hidden="false" class="slds-section__content" id="appsContent">
+                            <div class="slds-assistive-text" id="drag-live-region" aria-live="assertive"></div>
+                            <div class="slds-assistive-text" id="drag-instructions">Press space bar to move this app within the list.</div>
+                            <ul class="slds-grid slds-grid_pull-padded slds-wrap">
+                                
+                                <!-- MVB Manager -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.miniVSATAction}">
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconManageProd}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">mini-VSAT Manager</h2>
+                                            <p>Customize your onboard Wi-Fi, see data usage, receive usage alerts, and manage your network for your mini-VSAT Broadband system.</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                                <!-- LTE Manager -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.LTEManagerAction}">
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconProdResources}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">LTE Manager</h2>
+                                            <p>Customize your onboard Wi-Fi, see data usage, receive usage alerts, and manage your network for your TracPhone LTE system.</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                                <!-- Learning Center -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.LCAction}">
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconProdVideos}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">Learning Center</h2>
+                                            <p>Take eLearning courses, watch video tutorials, and register for webinars and hands-on classes</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                                <!-- Support Center -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.SCAction}">
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconSupportCenter}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">Support Center</h2>
+                                            <p>Create or review support cases. Contact KVH with questions regarding portal access and usage.</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                                <!-- MVB Activation -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.miniVSATActAction}"> 
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconCoverageMaps}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">mini-VSAT Activation </h2>
+                                            <p>Activate and register your mini-VSAT Broadband Systems</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                
+                                <!-- LTE Activation -->
+                                <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2" onclick="{!c.LTEActAction}">
+                                    <a aria-describedby="drag-instructions" draggable="true" href="javascript:void(0);" class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                        <div class="slds-app-launcher__tile-figure">
+                                            <img src="{!$Resource.IconProdHelp}"></img>
+                                        </div>
+                                        <div class="slds-app-launcher__tile-body">
+                                            <h2 class="slds-text-link">LTE Activation </h2>
+                                            <p>Activate and register your TracPhone LTE-1</p>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</aura:component>

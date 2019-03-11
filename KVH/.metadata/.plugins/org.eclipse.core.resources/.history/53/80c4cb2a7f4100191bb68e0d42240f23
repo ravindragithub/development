@@ -1,0 +1,264 @@
+<apex:component controller="Act_CREWlink_Component_Ctrl" allowDML="true" id="CREWlink_Id">
+    
+    <script>
+    
+    function CREWlinkValidate(param){
+        var currentcomp  = document.getElementById(param);
+        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+        var Isvalid; 
+        
+        if(j$(currentcomp).find("[Id$='CREWLink_Gateway_Serial_Number__c']").length >0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("[Id$='CREWLink_Gateway_Serial_Number__c']").valid();
+            else
+                Isvalid = j$(currentcomp).find("[Id$='CREWLink_Gateway_Serial_Number__c']").valid() && Isvalid;
+        }
+        
+        if(j$('input[Id*=CrewLinkProductId]').length>0){
+            if(Isvalid == undefined)
+                Isvalid = j$(currentcomp).find("[Id*='CrewLinkProductId']").valid();
+            else
+                Isvalid = j$(currentcomp).find("[Id*='CrewLinkProductId']").valid() && Isvalid;
+        }
+        
+        if(Isvalid != undefined && !Isvalid){
+            var errordiv = currenttabtoshowerror();
+            j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+            var html = "";
+            if(j$(currentcomp).find("[Id*='CrewLinkProductId']").hasClass("error") && (j$(currentcomp).find("[Id*='CrewLinkProductId']").valid() == false)){
+                html += "<li>Enter Minimum Quantity</li>";
+            }
+            if(j$(currentcomp).find("[Id$='CREWLink_Gateway_Serial_Number__c']").hasClass("error") && (j$(currentcomp).find("[Id$='CREWLink_Gateway_Serial_Number__c']").valid() == false)){
+                html += "<li>Enter CREWlink Gateway</li>";
+            }
+            j$(currentcomp).find('.error-box').find('.bullets').html(html);
+            j$(currentcomp).find('.error-box').show();
+        }
+        
+        if(Isvalid == undefined || Isvalid){
+            var param100Product = '';
+            var param100Quantity = '';
+            var param25Product = '';
+            var param25Quantity = '';
+            j$('input[Id*=CrewLinkProductId]').each(function(){
+                //console.log(j$(this).attr("data-name").indexOf('100'));
+                //console.log(j$(this).val());
+                if(parseInt(j$(this).attr("data-name").indexOf('100')) > -1){
+                    param100Quantity = j$(this).val();
+                    param100Product = j$(this).attr("data-value");
+                }
+                
+                if(parseInt(j$(this).attr("data-name").indexOf('25')) > -1){
+                    param25Quantity = j$(this).val();
+                    param25Product = j$(this).attr("data-value");
+                }
+            });
+            
+            if(param25Quantity == ''){
+                param25Product = '';
+            }
+            if(param100Quantity == ''){
+                param100Product = '';
+            }
+            //console.log(param25Product +'--'+ param25Quantity+'--'+param100Product+'--'+param100Quantity);
+            showLoadingDiv();
+            updateActivationServiceCREWlinkbackup(param25Product,param25Quantity,param100Product,param100Quantity);
+        }
+    }
+    
+    function CREWlinkClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmCREWlink]');
+        var instmodel = j$('[data-remodal-id=clearconfirmCREWlink]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmCREWlink").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmCREWlink]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmCREWlink]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    </script>
+    
+    <apex:actionFunction name="updateActivationServiceCREWlinkbackup" action="{!updateActivationServiceCREWlink}" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="CREWlinkId, CREWlinkMainIdButton">
+        <apex:param name="param1" value="" assignTo="{!objActivationService.Crew_Calling_Cards_25_Product__c}" />
+        <apex:param name="param2" value="" assignTo="{!objActivationService.Crew_Calling_Cards_25_Quantity__c}" />
+        <apex:param name="param3" value="" assignTo="{!objActivationService.Crew_Calling_Cards_100_Product__c}" />
+        <apex:param name="param4" value="" assignTo="{!objActivationService.Crew_Calling_Cards_100_Quantity__c}" />
+    </apex:actionFunction> 
+    
+    
+    <apex:outputPanel id="CREWlinkMainId">
+        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                CREWlink Services
+                <apex:outputPanel id="CREWlinkMainIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!AND(objActivationService.Purchase_CREWLink_Calling_Cards__c == false,objActivationOrder.CREWLink_Basic_Selected__c == false, objActivationOrder.CREWLINK_ConnectTwo_Selected__c == false, objActivationOrder.CrewLink_Gateway_Selected__c == false)}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" >
+                            Add
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!OR(objActivationService.Purchase_CREWLink_Calling_Cards__c == true, objActivationOrder.CREWLink_Basic_Selected__c == true, objActivationOrder.CREWLINK_ConnectTwo_Selected__c == true, objActivationOrder.CrewLink_Gateway_Selected__c == true)}" >
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link" >
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>   
+                <p class="collapse-p">A suite of tools and services that provide managed access to KVH mini-VSAT Broadband services to crew and other users to help control costs and data and voice usage.</p>
+                
+            </h2> 
+            <div aria-hidden="true">
+                <apex:outputPanel id="CREWlinkId">
+                    <div class="panel-contents"> 
+                        <!--** div contain error msg contents -Start **-->
+                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                        </div>
+                        <!--** div contain error msg contents -End **-->
+                        
+                        <h2>CREWlink Basic</h2>
+                        <p>A built-in data allocation tool that Enables customers to configure a crew network and assign individual user logins and data allocations to help manage monthly data usage. Available as a standard feature through mini-VSAT Manager on myKVH.com. <a href="http://players.brightcove.net/4677217156001/r1G83xrDe_default/index.html?videoId=5315636073001" target="_blank" class="ui-link">Learn more.</a></p>
+                        <p class="pad-left">
+                            <label>
+                                <apex:inputCheckBox value="{!objActivationOrder.CREWLink_Basic_Selected__c}" html-data-role="none" />
+                                I’m interested! Please contact me with more information.</label>
+                        </p> 
+                        <hr class="pad-top"/>
+                        
+                        <apex:outputPanel layout="none" rendered="{!OR(CONTAINS(UPPER(objActivationService.VSAT_Antenna_Hardware__c), 'V7-IP'),CONTAINS(UPPER(objActivationService.VSAT_Antenna_Hardware__c), 'V11-IP'),CONTAINS(UPPER(objActivationService.VSAT_Antenna_Hardware__c), 'V11'))}">
+                            <h2>CREWlink ConnectTwo</h2>
+                            <p>Enables a single TracPhone antenna system to offer two separate mini-VSAT Broadband airtime plans, each with its own data and voice channel.  Requires consultation and configuration by KVH Application Engineering. <a href="http://www.kvh.com/ViewAttachment.aspx?guidID={E2FDC47F-119D-46B7-8A90-3626D7513AEF}" target="_blank" class="ui-link">Learn more.</a></p>
+                            <p class="pad-left">
+                                <label>
+                                    <apex:inputCheckBox value="{!objActivationOrder.CREWLINK_ConnectTwo_Selected__c}" html-data-role="none" />
+                                    I’m interested! Please contact me for a consultation.</label>
+                            </p>
+                            <hr class="pad-top"/>
+                        </apex:outputPanel>
+                        
+                        <h2>CREWlink Gateway &amp; Calling Cards</h2>
+                        <p>Ideal for customers who require a prepaid calling solution for crew or guests.  Using the CREWlink Gateway device (purchased separately), provides an additional VoIP line accessible only using physical or virtual prepaid calling cards and PINs. <a href="http://www.kvh.com/~/media/FCAF2CC56B914B628636C60E6DB6404B.aspx" target="_blank" class="ui-link">Learn more.</a></p>
+                        <p class="pad-left">
+                            <label>
+                                <apex:inputCheckBox id="Purchase_CREWLink_Calling_Cards__c" onchange="showLoadingDiv();" value="{!objActivationService.Purchase_CREWLink_Calling_Cards__c}" html-data-role="none" >
+                                    <apex:actionSupport event="onclick" oncomplete="hideLoadingDiv();" action="{!updateActivationServicePurchaseCREWlinkCallingCards}" reRender="CREWlinkId, CREWlinkMainIdButton"/>
+                                </apex:inputCheckBox>
+                                Purchase CREWLink Calling Cards for CREWLink Gateway.</label>
+                        </p>
+                        <p class="pad-left">
+                            <label>
+                                <apex:inputCheckBox value="{!objActivationOrder.CrewLink_Gateway_Selected__c}" html-data-role="none" />
+                                Please contact me with more information.</label>
+                        </p>
+                        
+                        <apex:outputPanel layout="none" rendered="{!objActivationService.Purchase_CREWLink_Calling_Cards__c}" id="PurchaseCREWLinkCallingCardsBlock">
+                            <div class="two-col left pad-left" style="margin-bottom: 0px">
+                                <p><label>CREWlink Gateway:<br/></label>
+                                    <apex:inputText id="CREWLink_Gateway_Serial_Number__c" value="{!objActivationService.CREWLink_Gateway_Serial_Number__c}" html-data-role="none" /> <!-- styleClass="requiredRedMarkFld"  -->
+                                </p>
+                            </div>
+                            <div class="two-col left pad-left">
+                                <p><label>CREWlink Calling Cards:</label></p>
+                                <table class="collapse-panels1" style="margin-top:0;">
+                                    <tbody>
+                                        <tr>
+                                            <td class="row-hdr">Denomination</td>
+                                            <td class="row-hdr width-30 text-center">Quantity</td>
+                                        </tr>
+                                        <apex:repeat value="{!lstwrapCrewLinkProductTable}" var="objwrapCrewLinkProductTables">
+                                            <tr>
+                                                <td class="text-left">{!objwrapCrewLinkProductTables.strPlanProductName}</td>
+                                                <td><input type="Text" data-role="none" id="CrewLinkProductId{!objwrapCrewLinkProductTables.strPlanProductId}" minquantity="{!objwrapCrewLinkProductTables.intMinQuantity}" data-value="{!objwrapCrewLinkProductTables.strPlanProductId}" data-name="{!objwrapCrewLinkProductTables.strPlanProductName}" value="{!objwrapCrewLinkProductTables.intQuantity}" placeholder="{!objwrapCrewLinkProductTables.intMinQuantity} minimum" /></td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </apex:outputPanel>
+                        <div class="clear"></div>
+                        <!--  <hr class="clear pad-top"/> -->
+                        
+                        <div style="width:40%; text-align:right;" class="right">
+                            <apex:commandLink styleClass="pad-right ui-link" id="CREWlinkclearBtn" value="Clear Form" onclick="CREWlinkClearValidate('{!$Component.CREWlinkId}'); return false;">
+                            </apex:commandLink>
+                            <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="CREWlinkBackBtn" value="Save" onclick="CREWlinkValidate('{!$Component.CREWlinkId}'); return false;">
+                                <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+                            </apex:commandLink>
+                        </div>
+                        
+                        <div class="clear"></div>
+                    </div>
+                    
+                    <script>
+                    j$( document ).ready(function() {
+                        if(j$("[Id$='CREWLink_Gateway_Serial_Number__c']").length>0){
+                            j$("[Id$='CREWLink_Gateway_Serial_Number__c']").rules("add",{
+                                required: false,
+                                messages: {
+                                    required: ""
+                                }
+                            });
+                        }
+                        
+                        if(j$('input[id*=CrewLinkProductId]').length>0){
+                            j$('[id*=CrewLinkProductId]').rules("add",{
+                                required: false,
+                                number: true,
+                                minimumQuantity: true,
+                                messages: {
+                                    required: ""
+                                }
+                            });
+                        }
+                        
+                        j$.validator.addMethod("minimumQuantity", function(value, element, arg){
+                            if(value == '' || value == null){
+                                j$(element).parent().find('label.valid').remove();
+                                j$(element).removeClass("kvh-selecterror");
+                                return true;
+                            }
+                            else if(value < parseInt(j$(element).attr('minquantity'))){
+                                j$(element).parent().find('label.valid').remove();
+                                j$(element).addClass("kvh-selecterror");
+                                return false;
+                            }
+                                else{
+                                    j$(element).parent().find('label.valid').remove();
+                                    j$(element).removeClass("kvh-selecterror");
+                                    return true;
+                                } 
+                        }, "Miminum Quantity is required");
+                    });
+                    </script>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:outputPanel>
+    <!-- /popup contents --> 
+    <div data-role="popup" id="CREWlink-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">Iridium OpenPort Terms</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <ul class="pad-left terms">
+                <li>Available as backup to mini-VSAT Broadband service only.</li>
+                <li>Calls to other satellite networks are $9.99/minute.</li>
+                <li>Incoming calls are not charged to vessel.</li>
+                <li>In order to operate within Russia, Iridium devices must be registered with Iridium’s Russian affiliate (Iridium Communications OOO).&nbsp; Users may register their Iridium SIM card at <a href="http://www.iridium-russia.com" target="_blank" class="ui-link">www.iridium-russia.com</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /popup contents --> 
+    
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmCREWlink" id="clearconfirmCREWlink"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmCREWlink"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!clearActivationService}" onclick="showLoadingDiv(); " oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="CREWlinkId, CREWlinkMainIdButton">
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+</apex:component>

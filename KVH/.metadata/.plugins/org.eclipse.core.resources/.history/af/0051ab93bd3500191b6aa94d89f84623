@@ -1,0 +1,101 @@
+<apex:page standardcontroller="Case" extensions="myKVHSupportController" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var $j = jQuery.noConflict();
+        
+        $j(document).ready(function()
+        {
+            console.log(valueSelect);
+            var radios = $j("input[type='radio']");
+            radios.attr('name', 'singleRadio');
+            
+            //if none selected select the first..
+            if(valueSelect==undefined && radios.size()>0 )
+            { 
+                radios[0].checked=true;
+                valueSelect='Browser problem - myKVH website does not work correctly';
+            }
+            
+            //$j('.btn').removeClass('btn').addClass('kvhbtn');
+            
+        }); 
+    
+        var valueSelect; 
+        function setSelectionLocal(x) 
+        {
+            valueSelect = x;        
+        }
+        
+        function setIt()
+        {
+            setSelection(valueSelect);
+        }
+        
+        function goB()
+        {
+            goBack();
+        }
+        
+    </script>
+    <apex:pagemessages />
+        
+        <apex:actionFunction name="setSelection" action="{!setSelection}" rerender="form">
+            <apex:param name="valueSelect" value="valueSelect" assignTo="{!valueSelected}" />
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+        
+        <apex:pageblock rendered="{!firstpage}">
+            <div class="page-content">
+                 <h1>myKVH Feedback</h1>
+                            <br></br>
+                            <p>Thank you for reporting an issue or providing feedback.</p>
+                            <br></br>
+                            <p>The myKVH Support Team will work quickly to address what you have submitted.</p>
+                            <br></br>
+                            <h2>Please select from the following options:</h2>
+                            <br></br><br></br>
+                <table>
+                    <tbody>
+                        <!--<tr>
+                            <td class="header-row">
+                                <h3></h3>
+                            </td>
+                        </tr>-->
+                        <tr>
+                            <td>
+                                <apex:selectRadio onclick="setSelectionLocal(this.value);" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio1}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <apex:commandbutton value="Next" onclick="setIt(); return false;"/><br/><br/>
+            </div>
+            
+        </apex:pageblock>
+    
+        <apex:pageblock rendered="{!IF(firstpage==false,true,false)}">
+            <div class="page-content">
+                <h1>myKVH Feedback</h1><br/>
+                <h5>{!valueSelected}</h5><br/><br/>
+                <h2>Please enter a subject for your Case:</h2>
+                <p><apex:inputfield value="{!srvCase.Subject}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please add any additional details::</h2>
+                <p><apex:inputfield style="width:380px; height:200px; padding:5px;" value="{!srvCase.Description}"/></p>
+                <br/>
+                <apex:outputpanel >
+                        <apex:outputText value="Attach a File:" />
+                        &nbsp;&nbsp;
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/> (max. file size 10MB)
+                        <br/>
+                        <p style="text-align:right;width:390px"><apex:commandButton value="Previous" styleClass="left" onclick="goB(); return false;"/><apex:commandButton value="Finish"  action="{!CreateCase}"/></p>
+                </apex:outputpanel>
+            </div>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,174 @@
+/* footer 
+---------------------------------------------------- */
+
+.THIS.footer {
+    
+    background:#555;
+    padding:25px;
+  
+   
+    Width: 100%;
+    display: block;
+    font-size: 100%;
+    font-family: sans-serif;
+    vertical-align: baseline;
+    box-sizing: border-box;  
+    margin-bottom: 0px;
+}
+.THIS .push {
+  height: 120px;
+}
+.THIS .col {
+    display: block;
+    float: left;
+    margin: 0;
+}
+.THIS .span_6_of_12 {
+    width: 50%;
+}
+.THIS .section {
+    clear: both;
+    padding: 0px;
+    margin: 0px;
+}
+.THIS .group {
+    zoom: 1;
+}
+
+.THIS .list {
+    display:inline;
+    margin:0 0 0 20px;
+    font-size: 10.88px;
+}
+.THIS .right{
+    float: right;
+    
+}
+
+.THIS .right1{
+    
+    position: relative;
+  	top: -30px;
+    left: 70px;
+   	overflow: auto;
+   
+}
+
+.THIS .right2{
+    
+    position: relative;
+  	top: -30px;
+}
+
+
+
+.THIS .topright {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    font-size: 18px;
+}
+
+.THIS .another {
+    
+    text-decoration: none;
+    color:#ddd;
+    line-height: 125%;
+    cursor: auto;
+    padding-left:7px;
+}
+
+.THIS .another1 {
+    padding-left:7px;
+    text-decoration: none;
+    color:#ddd;
+    line-height: 125%;
+    cursor: auto;
+    float: right;
+    
+}
+
+.THIS .clear {
+    clear: both;
+}
+.THIS .uplist{
+    list-style: none;
+    list-style-position: inside;
+    margin-bottom: 20px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+.THIS .button-red {
+    background: #cc0000;
+    color: #fff;
+    border: transparent;
+   
+}
+.THIS .button {
+    
+    padding: 10px 10px;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 85%;
+  
+}
+.THIS .pad-top{
+    margin-top: 5px;
+}
+
+.THIS .pad-links{
+    margin-top: 5px;
+}
+
+.THIS .pad-bottom{
+    margin-bottom: 70px;
+}
+
+.THIS .para {
+    text-decoration: none;
+    color:#ddd;
+    line-height: 125%;
+    margin-bottom: 15px;
+    margin: 0;
+    padding: 0 0 10px 0;
+    border: 0;
+	font-size: 10.88px;
+    vertical-align: baseline;
+}
+.THIS .division{
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.THIS .index {
+    color:#999;
+    padding-right:10px;
+}
+.THIS .font-85 {
+    font-size: 85%;
+}
+
+
+.THIS .testing {
+    
+    float: right;
+ 	   
+}
+.THIS .right-align{
+    float : right;
+}
+@media (max-width: 480px)  {
+   .THIS .right-align{
+        float : left;
+    }    
+}
+.THIS .another{
+    cursor: pointer;
+}

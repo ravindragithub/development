@@ -1,0 +1,71 @@
+<apex:component controller="Act_Billing_picklist_component_ctrl">
+   <head>
+        <style type="text/css">
+        select[disabled] { 
+            color: gray !important;
+            background-color: #f1efef !important; 
+            }
+    </style>
+    </head>
+   
+   <script>
+   var defaultselected = 'Choose One';
+   j$(document).ready(function(){
+       //FOR TO Differentiate picklist subscriber and activation contact colours 
+       j$('select[id$=SubscriberOrContact]').children().each(function (){
+           var string = j$(this).html();
+           j$(this).html(string.replace(/,/g , ', '));
+       });
+      
+       if('{!$CurrentPage.parameters.conActID}' != null && '{!$CurrentPage.parameters.conActID}' != '')
+           defaultselected = '{!$CurrentPage.parameters.conActID}';
+       
+       console.log(defaultselected);
+       j$("select[id$=SubscriberOrContact] option").filter(function() {
+           var currentval = j$(this).val();
+           if(defaultselected == currentval)
+               return true;
+           else if(currentval == j$("[id$='CurrentrecordIdBill']").val()){
+               return true;
+           }else 
+               return false;
+       }).prop('selected', 'selected');
+   });
+   
+   function changeeventhandler(){
+       console.log(j$("select[id$=SubscriberOrContact]").val());
+       showLoadingDiv();
+       if('billingSelection' == '{!parentContainer}'){
+           console.log("{!parentContainer}");
+           var evt = document.createEvent('Event');
+           evt.initEvent('billpartreload', true, true);
+           evt.value = j$("select[id$=SubscriberOrContact]").val();
+           evt.filterType = 'billpartreload';
+           document.dispatchEvent(evt);
+       }else{
+           selectedrecord(j$("select[id$=SubscriberOrContact]").val());
+       }
+   }
+   </script>
+   <apex:actionFunction action="{!SelectedSubscriberOrContactId}" name="selectedrecord" reRender="theFrom">
+       <apex:param name="param" assignTo="{!strSelectedSubscriberOrContactId}" value=""/>
+   </apex:actionFunction>
+   <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Subscribers And Activation Contacts picklist generating"
+                   type="string" required="required" assignTo="{!ActOrderId}"/>
+   <apex:attribute name="id" description="This is the ID of the component's parent container"
+                   type="string" required="required" assignTo="{!parentContainer}"/>
+   
+   <div class="left two-col" style="margin-bottom: 0px !important;">
+       <div class="box-content">
+           <apex:outputPanel layout="block" rendered="{!IF(SameAsBillingList.size > 1, true, false)}"> 
+               <apex:outputText style="float:left;font-weight:bold;margin-bottom: 10px !important" value="Select From Existing Contact(s):" /><br/>
+               <div style="float:left;width: 100%;">
+                   <apex:selectList id="SubscriberOrContact" tabindex="1" value="{!strSelectedSubscriberOrContactId}" onchange="changeeventhandler();" multiselect="false"  size="1" style="padding: 3px 5px 3px;border: 1px solid #c7c7c7; " disabled="{!DisablePicklist}" html-data-role="none">
+                      <apex:selectOptions value="{!SameAsBillingList}" id="listId" html-data-role="none"/>
+                   </apex:selectList>
+               </div>
+           </apex:outputPanel>
+       </div>
+   </div>
+   <div class="clear" style="float:clear;" ></div>
+</apex:component>

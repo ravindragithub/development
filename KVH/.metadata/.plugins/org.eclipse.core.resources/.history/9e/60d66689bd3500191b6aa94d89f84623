@@ -1,0 +1,175 @@
+<apex:component >
+    
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact records"
+                    type="string" required="required" /> 
+    <apex:attribute name="state" description="Renders Activation Order Status as a sidebar" type="Activation_Status__c" required="false"/>
+    <!--    Each List Item within the <ul> tag behaves in accordance with the Activation Order Status sObject passed in... -->
+    
+    <style>
+        #sidebar {
+        background-color: #f3f3f3;
+        -webkit-box-shadow: inset -1px 0px 2px 0px #dadada;
+        -moz-box-shadow: inset -1px 0px 2px 0px #dadada;
+        box-shadow: inset -1px 0px 2px 0px #dadada;
+        width: 20%;
+        }
+        #sidebar li.nav-header {
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: bold;
+        font-size: 90%;
+        color: #6699cc;
+        }
+        #sidebar li.dim::after {
+        color: #888;
+        }
+        #sidebar li {
+        text-shadow: none;
+        text-transform: none;
+        font-weight: normal;
+        padding: 10px 25px 15px 20px;
+        text-align: right;
+        font-size: 1.2em;
+        }
+        #sidebar li.nav-header::after {
+        content: " ";
+        margin-left: 3px;
+        color: #43ab0c;
+        }
+        #sidebar li::after {
+        color: #43ab0c;
+        }
+        #sidebar li::after, #sidebar li.dim::after, #sidebar li.active::after {
+        content: "\25CF ";
+        margin-left: 10px;
+        }
+        #sidebar li.active::after {
+        color: #7FA1C3;
+        }
+        #sidebar li.active {
+        background: #e8e8e8 url('/resource/Activation_System/serial_numbers/images/arrow_white.png') no-repeat center right;
+        font-weight: bold;
+        color: #7FA1C3;
+        }
+        .nav-section {
+        border-top: 1px solid #ccc;
+        }
+        #sidebar li.dim, #sidebar a.dim {
+        color: #888;
+        }
+        
+        #sidebar a {
+        color: #000;
+        font-weight: normal;
+        }
+        .ui-page-theme-a a:visited, html .ui-bar-a a:visited, html .ui-body-a a:visited, html body .ui-group-theme-a a:visited {
+        color: #38c;
+        }
+        .ui-page-theme-a a, html .ui-bar-a a, html .ui-body-a a, html body .ui-group-theme-a a {
+        color: #38c;
+        font-weight: 700;
+        }
+        .inactive-button {
+        background-color: #ccc;
+        }
+        .sidebar-button {
+        font-size: 1.2em;
+        padding: 15px;
+        margin: 20px 30px;
+        }
+        
+        li.completedlink{
+        color : darkgrey !important;
+        }
+    </style>
+    <div id="">
+        <div style="margin-top:50px;">
+            <ul>
+                <li class="nav-header">Account Details</li>
+                <li class="{!IF(state.Account_Setup_page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'Account Setup', 'active', IF(state.Account_Setup_page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Subsciption Account" rendered="{!IF(state.Account_Setup_page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Account_Setup,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.Account_Setup_page__c <> 'inhibited', state.Account_Setup_page__c != 'complete'), 'true', 'false')}">
+                        Subscription Account
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.Account_Setup_page__c = 'complete', 'true', 'false')}">
+                        Subscription Account
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.Installation_Type_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'Installation Type', 'active', IF(state.Installation_Type_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Installation" rendered="{!IF(state.Installation_Type_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Installation_Type,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.Installation_Type_Page__c <> 'inhibited', state.Installation_Type_Page__c != 'complete'), 'true', 'false')}">
+                        Installation
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.Installation_Type_Page__c = 'complete', 'true', 'false')}">
+                        Installation 
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.System_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'System', 'active', IF(state.System_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="System" rendered="{!IF(state.System_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.ActivationSystemInfo,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.System_Page__c <> 'inhibited', state.System_Page__c != 'complete'), 'true', 'false')}">
+                        System
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.System_Page__c = 'complete', 'true', 'false')}">
+                        System 
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.First_Review_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'First Review', 'active', IF(state.First_Review_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Review" rendered="{!IF(state.First_Review_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Review_Activation_Order_1,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.First_Review_Page__c <> 'inhibited', state.First_Review_Page__c != 'complete'), 'true', 'false')}">
+                        Review
+                    </apex:outputLink>
+                    <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.First_Review_Page__c = 'complete', 'true', 'false')}">
+                        Review 
+                    </apex:outputText>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <ul>
+                <li class="nav-header">Service Details</li>
+                <li class="{!IF(state.Services_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'Subscriptions', 'active', IF(state.Services_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Subscriptions" rendered="{!IF(state.Services_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Services,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.Services_Page__c <> 'inhibited', state.Services_Page__c != 'complete'), 'true', 'false')}">
+                        Subscriptions 
+                    </apex:outputLink>
+                    <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.Services_Page__c = 'complete', 'true', 'false')}">
+                        Subscriptions
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.OneCare_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'OneCare', 'active', IF(state.OneCare_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="OneCare" rendered="{!IF(state.OneCare_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.ActivationOneCare,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.OneCare_Page__c <> 'inhibited', state.OneCare_Page__c != 'complete'), 'true', 'false')}">
+                        OneCare
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.OneCare_Page__c = 'complete', 'true', 'false')}">
+                        OneCare 
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.Contract_Details_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'Contract Details', 'active', IF(state.Contract_Details_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Contract Details" rendered="{!IF(state.Contract_Details_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Contract_Details,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.Contract_Details_Page__c <> 'inhibited', state.Contract_Details_Page__c != 'complete'), 'true', 'false')}">
+                        Contract Details
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.Contract_Details_Page__c = 'complete', 'true', 'false')}">
+                        Contract Details
+                    </apex:outputText>
+                </li>
+                
+                <li class="{!IF(state.Activate_Page__c = 'inhibited', 'dim', IF(state.Active_Page__c = 'Review Activation Order', 'active', IF(state.Activate_Page__c = 'complete','completedlink','')))}">
+                    <apex:outputText value="Review Activation Order" rendered="{!IF(state.Activate_Page__c = 'inhibited', 'true', 'false')}"/>
+                    <apex:outputLink value="{!URLFOR($Page.Review_Activation_Order,null,['order'=pageOrderID])}" target="_top" html-data-role="none" rendered="{!IF(AND(state.Activate_Page__c <> 'inhibited', state.Activate_Page__c != 'complete'), 'true', 'false')}">
+                        Review Activation Order
+                    </apex:outputLink>
+                     <apex:outputText value="" html-data-role="none" html-data-title="This section is complete!" rendered="{!IF(state.Activate_Page__c = 'complete', 'true', 'false')}">
+                        Review Activation Order
+                    </apex:outputText>
+                </li> 
+            </ul>
+        </div>
+    </div>
+</apex:component>

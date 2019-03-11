@@ -1,0 +1,46 @@
+<aura:component >
+    <aura:attribute name="title" type="String"  />
+    <aura:attribute name="AssetRec" type="sObject"  />
+    <aura:attribute name="MainContentFlag" type="boolean" default="true" />
+    <aura:attribute name="AddAssetSectionFlag" type="boolean" default="false" />
+    <aura:attribute name="ReplacementType" type="string"/>
+    <aura:attribute name="caseId" type="string" />
+    <aura:registerEvent name="appEvent" type="c:AssetMovementModal_evt"/>
+    <aura:registerEvent name="cmpEvnt" type="c:Update_AssetSubscription_Evt"/>
+    <aura:handler name="cmpEvnt" event="c:Update_AssetSubscription_Evt" action="{!c.handleComponentEvent}"/>
+    
+    <div class="slds-modal__container">		
+        <div class="slds-modal__header">
+            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                <c:svgIcon size="x-small" category="standard" class="slds-input__icon slds-icon_x-small" xlinkHref="{!$Resource.SLDS102 + '/assets/icons/utility-sprite/svg/symbols.svg#close'}" />
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 id="header43" class="slds-text-heading--medium">{!v.title}</h2>		
+        </div>
+        <div aura:id="contentsection" class="slds-modal__content slds-p-around--medium">  
+            <aura:if isTrue="{!v.MainContentFlag}">
+                <div> 
+                    <h3 id="mainContent" class="slds-text-heading--medium mainContent">Asset Name : {!v.AssetRec.Name}</h3>	
+                </div>
+            </aura:if>
+            <!-- Replace/Add Asset Section -->
+            <aura:if isTrue="{! and(!(v.MainContentFlag),!empty(v.ReplacementType))}">                  		
+                <div> 
+                    <c:SearchAsset_cmp ReplacementType="{!v.ReplacementType}"/>
+                </div>
+            </aura:if>
+        </div>
+        <!-- Add Asset Section Code Ends-->
+        <!-- Footer Section -->
+        <div class="slds-modal__footer">
+            <aura:if isTrue="{!v.MainContentFlag}">
+                <button aura:id="replace" class="slds-button slds-button--neutral" onclick="{!c.replaceAsset}">Replace Asset</button>
+                <button class="slds-button slds-button--neutral" onclick="{!c.removeAsset}">Remove Asset</button>
+                <button aura:id="add" class="slds-button slds-button--neutral" onclick="{!c.addAsset}">Add Asset</button>
+                <!--<aura:set attribute="else">-->
+                    <!--</aura:set>-->
+            </aura:if>
+        </div>		
+        <!-- Footer Section Ends-->
+    </div>	
+</aura:component>

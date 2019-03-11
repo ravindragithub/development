@@ -1,0 +1,43 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <div style="max-width:1100px; margin:0 auto;">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+            
+            <div class="slds-col slds-medium-size_10-of-12 content-panel">
+                
+                <div class="lte-header lte-header-custom">
+                    <img src="https://progressive.kvh.com/myKVH_Files/lte/prod_LTE1.png" />
+                    <h1>Thanks for Registering!</h1>
+                </div>
+                
+                <p>Check the InBox of the email address you entered when registering your myKVH account for a link to continue the TracPhone LTE&#8209;1 activation process.</p>
+ 				<p>Remember to look in your spam folder, where automated messages sometimes filter.</p>
+                
+                <div class="slds-grid slds-wrap slds-gutters callout">
+                    <div class="slds-col slds-medium-size_3-of-12">
+						<h4>Didn't receive the email from KVH Airtime Services? Contact us:</h4>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12">
+                        <p>
+                            <strong>KVH Airtime Services</strong><br />
+                            Hours: 6:00 PM Sunday to 5:00 PM Friday (ET)<br />
+                            Phone: +1 401.851.3862<br />
+                            Email: <a href="mailto:airtimeservices@kvh.com">airtimeservices@kvh.com</a>
+                        </p>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="callout2"><lightning:icon iconName="utility:lock" size="x-small"/> <span style="padding:8px 0 0 5px;">This is a two step process for your account's security</span></div>
+            </div>
+            
+            <div class="slds-col slds-medium-size_1-of-12">
+            </div>
+        </div>
+    </div>
+    
+   
+</aura:component>

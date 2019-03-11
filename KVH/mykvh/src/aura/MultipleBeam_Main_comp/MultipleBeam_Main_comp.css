@@ -1,0 +1,66 @@
+.THIS .slds-col{
+    padding: .5rem;
+}
+.THIS .table{
+    border: 1px solid rgb(217, 219, 221)!important;
+}
+.THIS .tbleClass{
+    padding-top: .5rem;
+}
+.THIS .slds-truncate{
+    font-size: 75%;
+}
+.THIS .ui-btn{
+    padding: .2rem; 
+    background: transparent!important;
+}
+.THIS .ui-btn:hover{
+    background: rgba(217, 219, 221, 0.58)
+}
+.THIS .header-subsciption{
+    padding: 1% 1% 1% 1%;
+    margin-bottom: 8px;
+    font-size: 14px;
+    background-color: #0070d2!important;
+    color: white;
+    border-radius: 4px;
+}
+.THIS .rowDataClass{
+    font-size: 84%;
+    text-align: left;
+    padding: 10px;
+}
+.THIS .subsClass{    
+    border: 1px solid rgba(128, 128, 128, 0.29);
+}
+.THIS .headerCol{
+    border: 1px solid rgba(128, 128, 128, 0.12);
+    background: rgb(240, 248, 252)!important;
+    border-width: 0 0 1px 1px;
+    border-color: #e0e3e5;
+    color: #000;
+    font-size: .9em;
+    font-weight: bold;
+    padding: 5px 2px 4px 5px;
+    text-transform: none;
+    white-space: inherit!important;
+}
+.THIS tr{
+    border-bottom: 1px solid #dadada;
+    background-color: white;
+}
+.THIS .slds-spinner_container{
+    background-color: rgba(113, 113, 113, 0.9)!important;
+}
+.THIS .textloading{
+    position: absolute;
+    top: 58%;
+    left: 45%;
+    font-size: 11px;
+    color: white;
+}
+.THIS .slds-input__icon slds-icon_x-small{
+    border: 1px solid #e0e3e5;
+    width: 1rem;
+    cursor: pointer;
+}

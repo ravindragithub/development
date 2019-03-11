@@ -1,0 +1,60 @@
+<apex:page controller="ProductAttributesCreate_Controller" standardStylesheets="false">
+    <apex:slds />
+    <style>
+    </style>
+    <apex:form id="theForm">
+        <apex:pageBlock title="Add JSON" id="pbTable">            
+            <div class="slds-grid">
+                <div class="slds-col">                    
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="json3">Total Products Found in JSON : </label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText value="{!totalProductJSON}" disabled="true" id="json3" styleclass="slds-input"/><br/><br/>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="text-input-id-1">Total Unique Products from JSON with Attributes:</label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText value="{!totalProduct}" disabled="true" id="json" styleclass="slds-input"/><br/><br/>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="json2">Total Attributes Found in JSON : </label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText value="{!totalProdAttFound}" disabled="true" id="json2" styleclass="slds-input"/><br/><br/>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="json2">Total Attributes Insert DML in JSON : </label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText value="{!totalProdAttInsert}" disabled="true" id="json4" styleclass="slds-input"/><br/><br/>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col" style="padding: 1rem;">
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="text-input-id-1">OUTPUT JSON :</label>
+                        <div class="slds-form-element__control">
+                            <apex:inputTextarea value="{!retriveJSON}" id="myTextArea" cols="50" rows="10"  disabled="disabled" />  <br/><br/> 
+                        </div>
+                    </div>
+                    <div class="slds-col slds-form-element">
+                        <label class="slds-form-element__label" for="text-input-id-1">No Found Product :</label>
+                        <div class="slds-form-element__control">
+                            <apex:inputTextarea id="myTextArea2" cols="50" rows="10" value="{!abc}"  />  <br/><br/>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!ProductAttributesCreate_Method}" value="Get JSON" reRender="pbTable" status="waitStatus"/>
+                <apex:actionStatus id="waitStatus" style="align:center;">      
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" title="Processing..."/>
+                    </apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

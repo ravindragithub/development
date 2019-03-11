@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Activate and deactivate spinner" >
+    <aura:attribute name="showSpinner" type="Boolean"/>
+</aura:event>

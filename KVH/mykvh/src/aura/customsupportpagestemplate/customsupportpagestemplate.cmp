@@ -1,0 +1,26 @@
+<aura:component implements="forceCommunity:layout" access="global"
+                description="customsupportlayout">
+	<aura:attribute name="header" type="Aura.Component[]" required="false" access="global"/>
+    <aura:attribute name="content" type="Aura.Component[]" required="false" access="global"/>   
+   
+    <aura:attribute name="miniheight" type="string" access="global"/>
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    <style>
+        iframe{    
+         min-height : {!v.miniheight} !important;
+        }
+    </style>
+    
+   
+    <div class="slds slds-scrollable_none"  style="{!'background:#ffffff; width: 100%; min-height: ' + v.miniheight + ';'}">
+            <div class="slds-grid ">
+                <div class=" slds-size--1-of-1">{!v.header}</div>
+            </div>
+        	<div class="slds-grid slds-wrap content slds-scrollable_none" style="background:#ffffff; height: 100% !important; width: 100%;">
+                <div id="containerdiv" class="slds-size--1-of-1 slds-scrollable_none" style="background:#ffffff; width: 100%;">
+                    {!v.content}</div>
+            </div>
+    </div>
+    
+    
+</aura:component>

@@ -1,0 +1,99 @@
+.THIS .white-bg {
+    background:#fff;
+}
+.THIS .pad-inside {
+    padding:20px;
+}
+.THIS h1 {
+    margin-bottom:15px;
+    line-height:normal;
+}
+
+.THIS h1 {
+    font-weight:lighter;
+}
+
+.THIS h1 {
+    font-size:1.7em;
+    padding-bottom:10px;
+    font-family: Arial;
+    margin-bottom: 15px;
+    line-height: normal;
+}
+/* dashboard - tables 
+---------------------------------------------------- */
+
+.THIS table.dashboard {
+    width:100%;
+    margin-bottom:50px;
+}
+
+.THIS table.dashboard td, .THIS table.dashboard th {
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+}
+
+.THIS table.dashboard th {
+    font-weight:bold;
+    padding:5px 10px;
+    font-size:85%;
+}
+
+.THIS table.dashboard td.row-header {
+    border:none;
+}
+
+.THIS table.dashboard a.button {
+    color:#cc0000;
+    font-weight:bold;
+    border:1px solid #ddd;
+}
+
+.THIS table.dashboard img {
+    width:100%;
+}
+.THIS h2 {
+    font-size: 1.5em;
+    font-weight: lighter;
+    color: #666;
+    font-family: Arial;
+    margin-bottom: 15px;
+    line-height: normal;
+}
+.THIS{
+   font-family: Arial;
+}
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #cc0000;
+    border-radius: 3px;
+    font-size: 95%;
+}
+
+.THIS .button-blue {
+    background: #1f83ad;
+    color: #fff;
+    border: transparent;
+}
+.THIS .right {
+    float: right;
+}
+.THIS .width-25 {
+    width: 25%;
+}
+.THIS .left {
+    float: left;
+}
+.THIS .clear {
+    clear: both;
+}
+.THIS small {
+    font-size: smaller;
+}

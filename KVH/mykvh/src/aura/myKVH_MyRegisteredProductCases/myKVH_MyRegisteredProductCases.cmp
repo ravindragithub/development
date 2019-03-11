@@ -1,0 +1,55 @@
+<aura:component >
+    <aura:attribute name="cases" type="Object[]"/>
+   <div class="slds-grid slds-wrap slds-m-top_x-small" style="overflow: auto;">
+       <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12" >
+        <b>Support Cases for this product:</b>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped slds-m-top_x-small">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th class="slds-text-title_caps" scope="col">
+                <div class="slds-truncate" title="Case Number">Case Number</div>
+              </th>
+              <th class="slds-text-title_caps" scope="col">
+                <div class="slds-truncate" title="Subject">Subject</div>
+              </th>
+              <th class="slds-text-title_caps" scope="col">
+                <div class="slds-truncate" title="Serial Number">Serial Number</div>
+              </th>
+              <th class="slds-text-title_caps" scope="col">
+                <div class="slds-truncate" title="Date Opened">Date Opened</div>
+              </th>
+              <th class="slds-text-title_caps" scope="col">
+                <div class="slds-truncate" title="Status">Status</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+              <aura:iteration items="{!v.cases}" var="case">   
+                  <tr class="slds-hint-parent">
+                      <th data-label="Case Number" scope="row">
+                          <div class="slds-truncate" title="Cloudhub"><a href="{!'./mykvh-case-view?recordid='+case.Id}" tabindex="-1">{!case.CaseNumber}</a></div>
+                      </th>
+                      <td data-label="Subject">
+                        <div class="slds-truncate" title="Cloudhub">{!case.Subject}</div>
+                      </td>
+                      <td data-label="Serial Number">
+                        <div class="slds-truncate" title="4/14/2015">xyz</div>
+                      </td>
+                      <td data-label="Date Opened">
+                        <div class="slds-truncate" title="Prospecting">
+                            <ui:outputDate value="{!case.CreatedDate}" />
+                        </div>
+                      </td>
+                      <td data-label="Status">
+                        <div class="slds-truncate" title="20%">
+                            <ui:outputText value="{!case.Status}"/>
+                        </div>
+                      </td>     
+                    </tr>
+              </aura:iteration>           
+           
+          </tbody>
+        </table>
+       </div>
+  </div>
+</aura:component>

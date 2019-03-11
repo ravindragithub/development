@@ -1,0 +1,78 @@
+.THIS .mainHierarchy{
+    height: 250px;
+    overflow: auto;
+    padding: 1% 1% 1% 1%;
+}
+.THIS .slds-spinner_container{
+    background-color: rgba(113, 113, 113, 0.9)!important;
+}
+.THIS .textloading{
+    position: absolute;
+    top: 59%;
+    left: 45%;
+    font-size: 15px;
+    color:white;
+}
+.THIS .alertPopUp{
+    font-size: 1.2rem;
+}
+.THIS .subList{
+    padding: 0% 1.5% 0% 1.5%;
+}
+.THIS .btnClass{
+    padding-top: 2%;
+}
+.THIS .slds-page-header{
+    background: rgba(93, 173, 243, 0.63);
+    color: black;
+    border-bottom: 3px solid #0070D2;
+    border-radius: 4px;
+}
+.THIS .headerClass{
+    font-size: 15px;
+}
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+.THIS .buttongrp{
+    padding: 6px 0px 6px 0px;
+    text-align: center;
+}
+.THIS .firstPanel{
+    padding: 2% 6% 2% 6%;
+    border-bottom: 1px solid #d5d5d5;
+}
+.THIS .header-subsciption2{
+    font-size: 14px;
+    background-color: #96c8f4!important;
+    color: #0a0a0a;
+    padding-left: 10px;
+    border-radius: 4px;    
+    margin-bottom: 6px;
+    border-bottom: 2px solid #0070D2;
+}
+.THIS .header-subsciption{
+    font-size: 14px;
+    background-color: #96c8f4!important;
+    color: #0a0a0a;
+    padding-left: 10px;
+    border-radius: 4px;    
+    margin: 0 0 0 0!Important;
+    border-bottom: 2px solid #0070D2;
+}
+.THIS .slds-button--brand[disabled]{
+    color: grey;
+    cursor: not-allowed;
+}
+.THIS .hideSP{
+    display:none;
+}
+.THIS .sDate{
+    width: 86%;
+}
+.THIS .alertModalPopUp{
+    font-size: 16px;
+    color: red;
+    font-weight: 900;
+}

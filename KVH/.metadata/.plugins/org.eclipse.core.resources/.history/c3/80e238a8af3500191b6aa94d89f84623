@@ -1,0 +1,13 @@
+<aura:component controller="HTS_ltgsvc_contract_controls">
+  <aura:attribute name="identifier" type="String" default="" description="This is the record ID of the contract to which the subscriptions are attached." />
+  <aura:attribute name="subscriptions" type="SBQQ__Subscription__c[]" description="This is the list of ALL Subscriptions related to the Contract" />
+  
+<!-- PUBLISHER -->
+
+<!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="change" value="{!v.subscriptions}" action="{!c.handleSubscriptionsChange}" />
+
+<!-- MARKUP -->
+  {!v.body}
+</aura:component>

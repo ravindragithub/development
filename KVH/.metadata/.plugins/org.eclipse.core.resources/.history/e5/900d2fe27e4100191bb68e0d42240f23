@@ -1,0 +1,348 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="CustomHeaderController" 
+                access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:attribute name="hasMyKVHrole" type="boolean" access="global"/>  
+    <aura:attribute name="profUrl" type="String"/>
+    <aura:attribute name="showPopover" type="boolean" default="false"/>
+    <aura:attribute name="showPopoverMob" type="boolean" default="false"/>
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>      
+    <div>
+        <!-- header boxes -->
+        <div class="bg-myKVH" style="{! 'background-image:url(' + v.profUrl + ')'}">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <div class="header-box">
+                        <img src="{!$Resource.IconManageProd}" class ="icon-img"/>
+                        <h2>My Products</h2>
+                        <p>View all the details on each of your registered KVH Products.</p>
+                        <lightning:button variant="Neutral" label="Go" 
+                                          onclick="{! c.goMyProducts }" class="button header-btn"/>
+                        <!--<div class="slds-grid slds-wrap">
+                            <aura:if isTrue="{!!v.hasMyKVHrole}">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-align_absolute-center">
+                                    <lightning:button variant="Neutral" label="mini-VSAT Manager" 
+                                                      onclick="{! c.handleVSATManager }" class="button header-btn closeMarginBtn"/>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.hasMyKVHrole}">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-float_left">
+                                    <lightning:button variant="Neutral" label="mini-VSAT Manager" 
+                                                      onclick="{! c.handleVSATManager }" class="button header-btn closeMarginBtn"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-float_right">
+                                    <lightning:button variant="Neutral" label="LTE Manager" 
+                                                      onclick="{! c.handleLTEManager }" class="button header-btn closeMarginBtn"/>
+                                </div>
+                            </aura:if>
+                        </div>-->
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <div class="header-box">
+                        <img src="{!$Resource.IconSupportCenter}" class ="icon-img"/>
+                        <h2>Support Center</h2>
+                        <p>Create or review support cases for your hardware or services. Contact KVH with questions regarding the customer portal.</p>
+                        <lightning:button variant="Neutral" label="Go" 
+                                          onclick="{! c.navSCAction }" class="button header-btn"/>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <div class="header-box">
+                        <img src="{!$Resource.IconProdResources}" class ="icon-img"/>
+                        <h2>Product Resources</h2>
+                        <p>Access service and support documents, colleteral, and software. Search by product or resource type.</p>
+                        <lightning:button variant="Neutral" label="Go"
+                                          onclick="{! c.handleProductResource }" class="button header-btn"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- lower part of page -->
+        
+        <div class="slds-grid slds-wrap">
+            
+            <!-- Quick links -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                <div class="white-panel">
+                    <div class="slds-page-header">                          
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <h1 class="slds-page-header__title slds-truncate slds-align-middle">Quick Links</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-panel-content">
+                        <lightning:layout multipleRows="true">
+                        	<div class="slds-size_12-of-12" onmouseover="{!c.handleShowPopover}" onmouseout="{!c.closePopover}" ontouchstart="{!c.handleShowPopover}" ontouchend="{!c.closePopover}">
+                                <lightning:layout multipleRows="true" class="quickBtn">
+                                    <lightning:layoutItem size="12" smallDeviceSize="10" mediumDeviceSize="10" largeDeviceSize="10">
+                                         <h3 class="slds-m-around_none" style="color:#fff;"><img src="{!$Resource.IconManageProd}" class="icon-img"/> mini-VSAT Manager</h3>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="12" smallDeviceSize="2" mediumDeviceSize="2" largeDeviceSize="2">
+                                        <lightning:button variant="Neutral" label="GO"
+                                                          onclick="{! c.handleVSATManager }" class="quickgobtn quickgoLightBlue"/>
+                                    </lightning:layoutItem>
+                                </lightning:layout>
+                            </div>
+                            <aura:if isTrue="{!v.hasMyKVHrole}">
+                                <div class="slds-size_12-of-12" onmouseover="{!c.handleShowPopover}" onmouseout="{!c.closePopover}" ontouchstart="{!c.handleShowPopover}" ontouchend="{!c.closePopover}">
+                                    <lightning:layout multipleRows="true" class="quickBtn">
+                                        <lightning:layoutItem size="12" smallDeviceSize="10" mediumDeviceSize="10" largeDeviceSize="10">
+                                            <h3 class="slds-m-around_none" style="color:#fff;"><img src="{!$Resource.IconManageProd}" class="icon-img"/> LTE Manager</h3>
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="12" smallDeviceSize="2" mediumDeviceSize="2" largeDeviceSize="2">
+                                            <lightning:button variant="Neutral" label="GO"
+                                                              onclick="{! c.handleLTEManager }" class="quickgobtn quickgoLightBlue"/>
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </div>
+                            </aura:if>
+                            <lightning:layoutItem size="12">
+                                <lightning:layout multipleRows="true" class="dark-buttons">
+                                    <lightning:layoutItem size="12" smallDeviceSize="10" mediumDeviceSize="10" largeDeviceSize="10">
+                                        <h3 class="slds-m-around_none" style="color:#fff;"><img src="{!$Resource.IconCoverageMaps}" class="icon-img"/> Coverage Maps</h3>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="12" smallDeviceSize="2" mediumDeviceSize="2" largeDeviceSize="2">
+                                        <lightning:button variant="Neutral" label="GO"
+                                                          onclick="{! c.navigateConverageMap }" class="quickgobtn quickgoLightGrey"/>
+                                    </lightning:layoutItem>
+                                </lightning:layout>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12">
+                                <lightning:layout multipleRows="true" class="dark-buttons">
+                                    <lightning:layoutItem size="12" smallDeviceSize="10" mediumDeviceSize="10" largeDeviceSize="10">
+                                        <h3 class="slds-m-around_none" style="color:#fff;"><img src="{!$Resource.IconSpecOffers}" style="max-height: 35px;"/> Special Offers</h3>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="12" smallDeviceSize="2" mediumDeviceSize="2" largeDeviceSize="2">
+                                        <lightning:button variant="Neutral" label="GO"
+                                                          onclick="{! c.navigateSpecialOffer }" class="quickgobtn quickgoLightGrey"/>
+                                    </lightning:layoutItem>
+                                </lightning:layout>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        
+                        <!--<div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1" onclick="{!c.navigateSpecialOffer}">
+                                <div class="slds-media">
+                                    <img src="{!$Resource.IconSpecOffers}" class="slds-media__figure" style="max-width:25px;" />
+                                    <span class="slds-media__body">
+                                        <h4>Special Offers</h4>
+                                        <p>Learn more about the latest offers for your product</p>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 dark-buttons" onclick="{!c.navigateConverageMap}">
+                                <div class="slds-media">
+                                    <img src="{!$Resource.IconCoverageMaps}" class="slds-media__figure"/>
+                                    <span class="slds-media__body">
+                                        <h4>Coverage Maps</h4> 
+                                        <p>TracVision and TracPhone coverage maps</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                    <aura:if isTrue="{!v.showPopover}">
+                        <section aura:id="popoverSection" class="slds-popover slds-nubbin_left slds-popover_small" role="dialog" aria-label="Dialog Title" aria-describedby="dialog-body-id-24">
+                            <lightning:buttonIcon onclick="{!c.closePopover}" class="slds-float_right slds-popover__close slds-button_icon-inverse" iconName="utility:close" variant="inverse" alternativeText="close" />
+                            <div class="slds-popover__body" id="dialog-body-id-24">
+                                <div class="slds-media">
+                                    <div class="slds-media__body">
+                                        <p class="slds-text-heading_small" style="color:#fff;">Quick access to your system's Managers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </aura:if>
+                    <aura:if isTrue="{!v.showPopoverMob}">
+                        <section aura:id="popoverSection" class="slds-popover slds-nubbin_top-left slds-popover_small" role="dialog" aria-label="Dialog Title" aria-describedby="dialog-body-id-24">
+                            <lightning:buttonIcon onclick="{!c.closePopover}" class="slds-float_right slds-popover__close slds-button_icon-inverse" iconName="utility:close" variant="inverse" alternativeText="close" />
+                            <div class="slds-popover__body" id="dialog-body-id-24">
+                                <div class="slds-media">
+                                    <div class="slds-media__body">
+                                        <p class="slds-text-heading_small" style="color:#fff;">Quick access to your system's Managers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </aura:if>
+                </div>
+            </div>
+            
+            <!-- Learning Center -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                <div class="white-panel">
+                    <div class="slds-page-header">                            
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <h1 class="slds-page-header__title slds-truncate slds-align-middle">Learning Center</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-panel-content">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12" >
+                                        <img src="{!$Resource.IconProdVideos}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-p-horizontal_small" >
+                                        <h4>Products Videos</h4>
+                                        <p>How-to videos, tours, and overviews of KVH products</p>   
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12" >
+                                        <lightning:button variant="Neutral" label="GO"
+                                                          onclick="{! c.navProductsVideos }" class="go-btn"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12" >
+                                        <img src="{!$Resource.IconProdHelp}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-p-horizontal_small" >
+                                        <h4>Product Help Systems</h4>
+                                        <p>In-depth product help for KVH products</p>    
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12" >
+                                        <lightning:button variant="Neutral" label="GO"
+                                                          onclick="{! c.handleProductHelpSystem }" class="go-btn button"/>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activation & Registration -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                <div class="white-panel">
+                    <div class="slds-page-header">                       
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <h1 class="slds-page-header__title slds-truncate slds-align-middle">Activation &amp; Registration</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-panel-content">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12">
+                                        <img src="{!$Resource.IconRegActivate}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12 slds-p-horizontal_small">
+                                        <p>TracPhone LTE-1</p>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                        <lightning:button variant="Neutral" label="REGISTER &amp; ACTIVATE"
+                                                          onclick="{!c.navLTEActivation}" class="go-btn"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12">
+                                        <img src="{!$Resource.IconRegActivate}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12 slds-p-horizontal_small">
+                                        <p>mini-VSAT Broadband SATCOM System</p>
+                                    </div>                                       
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                        <lightning:button variant="Neutral" label="REGISTER &amp; ACTIVATE"
+                                                          onclick="{!c.navminiVSATBroadband}" class="go-btn"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12">
+                                        <img src="{!$Resource.IconRegActivate}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12 slds-p-horizontal_small">
+                                        <p>Inmarsat SATCOM Systems</p>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12" >
+                                        <lightning:button variant="Neutral" label="REGISTER &amp; ACTIVATE"
+                                                          onclick="{!c.navInmarsat}" class="go-btn"/>
+                                    </div>
+                                </div>                                    
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap slds-m-bottom_small slds-p-bottom_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12">
+                                        <img src="{!$Resource.IconRegister}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12 slds-p-horizontal_small">
+                                        <p>TracVision Satellite TV Systems and Compass Products</p>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                        <lightning:button variant="Neutral" label="REGISTER"
+                                                          onclick="{!c.navProductReg}" class="go-btn" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-myKVH">
+            <div class="slds-grid slds-wrap">
+                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12">
+                    <div class="white-panel">
+                        <div class="slds-page-header">                          
+                            <div class="slds-media">
+                                <div class="slds-media__body ">
+                                    <h1 class="slds-page-header__title slds-truncate slds-align-middle">KVH News</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-panel-content">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-1" >
+                                    <c:myKVH_News_cmp/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12">
+                    <div class="white-panel">
+                        <div class="slds-page-header">                          
+                            <div class="slds-media">
+                                <div class="slds-media__body">
+                                    <h1 class="slds-page-header__title slds-truncate slds-align-middle">KVH Events</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-panel-content">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-1" >
+                                    <c:myKVH_EventPortal/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

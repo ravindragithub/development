@@ -1,0 +1,19 @@
+<apex:page standardController="Case" standardStylesheets="false">
+<apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+<apex:form >
+    <div align="center">
+        <apex:commandButton value="Add Comment" styleClass="btn" action="/mykvh/00a/e?parent_id={!case.id}&retURL=/mykvh/my_Case_View?id={!case.id}" />
+    </div>
+    <br/>
+    <apex:pageBlock title="Case Comments">
+<!--        <apex:pageBlockButtons > -->
+<!--            <apex:commandButton value="Add Comment" action="/mykvh/00a/e?parent_id={!case.id}&retURL=/mykvh/my_Case_View?id={!case.id}" /> -->
+<!--        </apex:pageBlockButtons> -->
+        <apex:pageBlockTable value="{!case.casecomments}" var="c">
+            <apex:column value="{!c.CreatedDate}"/>
+            <apex:column value="{!c.CreatedBy.Name}"/>
+            <apex:column value="{!c.commentbody}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

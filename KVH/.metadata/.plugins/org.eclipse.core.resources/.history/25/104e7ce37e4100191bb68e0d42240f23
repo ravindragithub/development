@@ -1,0 +1,368 @@
+.THIS {
+    font-family: Arial;
+}
+/* Breadcrumbs 
+---------------------------------------------------- */
+
+.THIS ul.breadcrumb {
+    padding-bottom: 10px;
+    list-style: none;
+    text-transform: uppercase;
+    font-weight:normal;
+    font-size:85%;
+}
+
+.THIS ul.breadcrumb li {
+    display: inline;
+    color:#999;
+}
+
+.THIS ul.breadcrumb li+li:before {
+    padding: 10px;
+    color: black;
+    content: "\f0da";
+    font-family: FontAwesome;
+    color:#ccc;
+}
+
+.THIS ul.breadcrumb li a:hover {
+    color: #01447e;
+    text-decoration: underline;
+}
+
+.THIS .breadcrumb a {
+    text-decoration: none;
+}
+/* Breadcrumbs End
+---------------------------------------------------- */
+.THIS .pad-inside {
+    padding: 20px;
+}
+.THIS h1,.THIS h2,.THIS h3,.THIS h4,.THIS p,.THIS li {
+    margin-bottom: 15px;
+    line-height: normal;
+    font-family: Arial;
+}
+.THIS h1, .THIS h2,.THIS h4 {
+    font-weight: lighter;
+}
+.THIS h1 {
+    font-size: 1.7em;
+    padding-bottom: 10px;
+    
+}
+.THIS h3 {
+    font-size: 1.3em;
+    font-weight: lighter;
+}
+.THIS .button {
+    padding:10px 15px;
+    border:1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    color:#cc0000;
+    font-size:95%;
+}
+
+.THIS a.button-red {
+    background:#cc0000;
+    color:#fff;
+    border: transparent;
+}
+
+.THIS a.button-red:hover {
+    background-color: #9e0000;
+    border:transparent;
+}
+/* CSS Boilerplate 
+---------------------------------------------------- */
+
+.THIS .left {
+    float:left;
+}
+
+.THIS .right {
+    float:right;
+}
+
+.THIS .center {
+    text-align:center;
+}
+
+.THIS .clear {
+    clear: both;
+}
+
+.THIS .hidden {
+    display: none;
+}
+
+.THIS .text-left {
+    text-align:left;
+}
+
+.THIS .text-right {
+    text-align:right;
+}
+
+.THIS .font-110 {
+    font-size:110%;
+}
+
+.THIS .font-85 {
+    font-size:85%;
+}
+
+.THIS .font-75 {
+    font-size:75%;
+}
+
+.THIS .white-text {
+    color:#fff;
+}
+
+.THIS .pad-left {
+    margin-left:20px;
+}
+
+.THIS .pad-right {
+    margin-right:20px;
+}
+
+.THIS .pad-top {
+    margin-top:20px;
+}
+
+.THIS .pad-bottom {
+    margin-bottom:20px;
+}
+
+.THIS .pad-inside {
+    padding:20px;
+}
+
+.THIS .pad-15 {
+    padding:15px;
+}
+
+.THIS .pad-20 {
+    padding:20px;
+}
+
+.THIS .pad-top-10 {
+    padding-top:10px;
+}
+
+.THIS .no-pad {
+    padding:0 !important;
+}
+
+.THIS .no-margin {
+    margin:0;
+}
+
+.THIS .width-100 {
+    width:100%;
+}
+
+.THIS .width-90 {
+    width:90%;
+}
+
+.THIS .width-85 {
+    width:85%;
+}
+
+.THIS .width-80 {
+    width:80%;
+}
+
+.THIS .width-70 {
+    width:70%;
+}
+
+.THIS .width-65 {
+    width:65%;
+}
+
+.THIS .width-60 {
+    width:60%;
+}
+
+.THIS .width-50 {
+    width:50%;
+}
+
+.THIS .width-48 {
+    width:48%;
+}
+
+.THIS .width-45 {
+    width:45%;
+}
+
+.THIS .width-40 {
+    width:40%;
+}
+
+.THIS .width-35 {
+    width:35%;
+}
+
+.THIS .width-30 {
+    width:30%;
+}
+
+.THIS .width-25 {
+    width:25%;
+}
+
+.THIS .width-20 {
+    width:20%;
+}
+
+.THIS .width-15 {
+    width:15%;
+}
+
+.THIS .width-10 {
+    width:10%;
+}
+
+.THIS .width-5 {
+    width:5%;
+}
+
+.THIS .bg-50 {
+    background:rgba(0,0,0,.5);
+}
+
+.THIS .bg-40 {
+    background:rgba(0,0,0,.4);
+}
+
+.THIS .bg-30 {
+    background:rgba(0,0,0,.3);
+}
+
+.THIS .bg-20 {
+    background:rgba(0,0,0,.2);
+}
+
+.THIS .bg-15 {
+    background:rgba(0,0,0,.15);
+}
+
+.THIS .bg-10 {
+    background:rgba(0,0,0,.1);
+}
+
+.THIS .bg-5 {
+    background:rgba(0,0,0,.05);
+}
+
+.THIS .relative {
+    position: relative;
+}
+
+.THIS .curve {
+border-radius: 3px;
+}
+
+.THIS .border {
+    border:1px solid #ddd;
+}
+
+
+.THIS ul.nav-bar li {
+    display:block !important;
+}
+
+.THIS .comments {
+    color:magenta;
+    font-size:85%;
+    font-style: italic;
+}
+
+.THIS .not-bold {
+    font-weight:normal;
+}
+
+.THIS .alert {
+    background:#f28405;
+    color:#fff;
+    padding:10px;
+    border-radius:3px;
+    margin:0 0 15px 0;
+}
+
+.THIS .alert p,
+.THIS .alert a {
+    color:#fff;
+}
+
+/* Documents Table 
+---------------------------------------------------- */
+
+.THIS table.documents {
+    border-collapse: collapse;
+}
+
+.THIS .documents td.heading {
+    background:#ddd;
+}
+
+.THIS .documents h3,.THIS  .documents h4 {
+   margin:0; 
+}
+
+.THIS .documents th {
+    background:#f3f3f3;
+    font-weight:bold;
+    padding:5px 10px;
+    font-size:85%;
+    text-align:left;
+}
+
+.THIS .documents td {
+    padding:10px;
+    vertical-align: top;
+    border:none;
+}
+
+.THIS .documents img {
+    width:100%;
+}
+
+.THIS .documents img.prod-search {
+    width:20%;
+    height:auto;
+}
+
+.THIS td.section-cat {
+    font-weight:normal;
+    padding-left:15px;
+    color:#999;
+    border-bottom: 1px solid rgba(31, 131, 173, 0.3);
+}
+
+.THIS table.small-padding td {
+    padding:5px;
+}
+.THIS h4 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+}
+.THIS .white-bg{
+    background : #fff;
+}
+.THIS .required{
+	box-shadow: 0 0 5px #cc0000;    
+    border: 1px solid #cc0000;
+}
+.THIS .errormsg{
+    color : #cc0000;    
+}

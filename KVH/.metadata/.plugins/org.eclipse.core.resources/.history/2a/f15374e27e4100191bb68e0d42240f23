@@ -1,0 +1,108 @@
+({
+    doInit: function(component, event, helper) {
+        component.set("v.spinner", true);
+        helper.getProductRegHelper(component, event, helper);     
+        //helper.getCountryHelper(component, event, helper);
+        //helper.getStateHelper(component, event, helper);
+        //helper.getContactHelper(component, event, helper);     
+    },    
+    onBackHome : function(component, event, helper) {
+        var urlEvent = $A.get("e.force:navigateToURL");
+        urlEvent.setParams({
+            "url": '/'
+        });
+        urlEvent.fire();
+    },
+    handleSaveProdReg : function(component, event, helper) {
+        component.set("v.spinner", true); 
+        component.set("v.submitFormOnce", true);
+        
+        console.log('Object ::'+ JSON.stringify(component.get("v.simpleProdRegActivation")));
+        if(helper.validateLTEForm(component)) {    
+            component.set("v.simpleProdRegActivation.Status__c", "Submitted");
+            helper.SaveProductRegistration(component, event, helper);   
+        }else{
+            component.set("v.submitFormOnce", false);
+            component.set("v.spinner", false);
+        }
+    },
+    handleNextVessel: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'Installation');
+        component.set('v.installAccordion', false);        
+        var xdiv = document.getElementById('scrollInstallation');
+        helper.setScroller(component,xdiv);
+    },
+    handlePreviousAccount: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'Account');     
+        var xdiv = document.getElementById('scrollAccount');
+        helper.setScroller(component,xdiv);
+    },  
+    handleNextSystem: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'SystemInformation');
+        component.set('v.systemAccordion', false);        
+        var xdiv = document.getElementById('scrollSystem');
+        helper.setScroller(component,xdiv);
+    },    
+    handlePreviousInstall: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'Installation');
+        var xdiv = document.getElementById('scrollInstallation');
+        component.set('v.installAccordion', false);        
+        helper.setScroller(component,xdiv);
+    },    
+    handleNextPAcc: function (component, event, helper) {
+        if(component.get("v.recieverInfoRequired")){
+            component.find("accordion").set('v.activeSectionName', 'ProviderAccount');
+            component.set('v.ProviderAccountAccordion', false);        
+            var xdiv = document.getElementById('scrollPAcc');
+            helper.setScroller(component,xdiv);
+        }else{            
+            component.find("accordion").set('v.activeSectionName', 'Agreement');
+            var xdiv = document.getElementById('scrollAgreement');
+            helper.setScroller(component,xdiv);
+        }
+    },
+    handlePreviousSystem: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'SystemInformation');
+        var xdiv = document.getElementById('scrollSystem');
+        helper.setScroller(component,xdiv);
+    },
+    handleNextAgreement: function (component, event, helper) {
+        component.find("accordion").set('v.activeSectionName', 'Agreement');
+        var xdiv = document.getElementById('scrollAgreement');
+        helper.setScroller(component,xdiv);
+    },
+    handleSectionToggle: function(component, event){
+        var openSections = event.getParam('openSections');
+        if(openSections=='Installation'){
+            component.set('v.installAccordion', false);
+        }else if(openSections=='SystemInformation'){
+            component.set('v.systemAccordion', false);
+        }else if(openSections=='ProviderAccount'){
+            component.set('v.ProviderAccountAccordion', false);
+        }
+    },
+    checkReqFields: function(component){
+        var prodReg = component.get("v.simpleProdRegActivation");
+        if(prodReg.Free_DirectTV_or_DISH_receiver_requested__c=='No'){
+            component.set("v.payInfoRequired",true);
+            component.set("v.cont1Required",true);
+        }
+        
+        component.set("v.systemRequired",true);
+        if(!component.get("v.serviceRequired") && !component.get("v.purchaseRequired") && !component.get("v.tvSeries")){
+            component.set("v.systemRequired",false);
+        }else if(!component.get("v.serviceRequired") && !component.get("v.purchaseRequired") && component.get("v.tvSeries")){
+            if(component.get('v.subsCountry')!='United States'){
+                component.set("v.systemRequired",false);
+            }else if(component.get('v.subsCountry')=='United States'){
+                if(prodReg.Free_DirectTV_or_DISH_receiver_requested__c=='No'){
+                    component.set("v.systemRequired",false);
+                }else if(prodReg.Free_DirectTV_or_DISH_receiver_requested__c=='Yes'){
+                    if(!component.get("v.payInfoRequired") && !component.get("v.cont1Required")){
+                        component.set("v.systemRequired",false);
+                    }
+                }
+            }
+        }
+    }
+})

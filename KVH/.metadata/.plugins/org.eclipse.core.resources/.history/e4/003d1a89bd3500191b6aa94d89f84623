@@ -1,0 +1,189 @@
+<apex:component controller="Act_CommBox_Component_Controller" allowDML="true" id="CommBox_Comp_Id">
+    
+    <apex:attribute name="CommBoxActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <script> 
+    function selectedProductRatePlanComm(ProductNameId, ProductFeatureType){
+        j$("#"+ProductNameId).addClass("selected");
+        j$("#"+ProductNameId).find('input').val('Selected');
+        showLoadingDiv();
+        updateServiceMethodcomm(ProductNameId, ProductFeatureType);
+    }
+
+    function CommBoxValidate(param){
+        var Isvalidparent = false ;
+        var Isvalidchild;
+        var currentcomp  = document.getElementById(param);
+        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+        j$(currentcomp).find(".commBoxparent").each(function(){
+            if(j$(this).val() == 'Selected'){
+                Isvalidparent = true;
+            }
+        });
+        if(j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]").length >0){
+            if(Isvalidchild == undefined)
+                Isvalidchild = j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]").valid();
+            else
+                Isvalidchild = j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]").valid() && Isvalid;
+            
+            if(j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]:checked").length == 0){
+                Isvalidchild = false;
+            }
+        }else{
+            Isvalidchild = true;
+        }
+       
+        if(!Isvalidparent){
+            var msg = 'Select CommBox Plan';
+            showgenericpopup(msg);
+        }
+        if(!Isvalidchild){
+            var errordiv = currenttabtoshowerror();
+            j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+            var html = "";
+            if((j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]").hasClass("error") && (j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]").valid() == false)) || j$(currentcomp).find("input[type=radio][name$=commboxEnterRadio]:checked").length == 0){
+                html += "<li>Select Hub Type</li>";
+            }
+            j$(currentcomp).find('.error-box').find('.bullets').html(html);
+            j$(currentcomp).find('.error-box').show();
+        }
+        if( Isvalidparent && Isvalidchild){
+            showLoadingDiv();
+            updateServiceMethodcommsave();
+        }
+    }
+    
+    function CommBoxClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmCommbox]');
+        var instmodel = j$('[data-remodal-id=clearconfirmCommbox]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmCommbox").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmCommbox]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmCommbox]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    </script>
+     
+    <apex:actionFunction name="updateServiceMethodcommsave" action="{!updateActivationService}" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="commboxId, commboxMainIdButton">
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="updateServiceMethodcomm" action="{!updateActivationServiceValueCommBox}" oncomplete="hideLoadingDiv();" reRender="commboxId, commboxMainIdButton">
+        <apex:param name="param1" assignTo="{!strSelectedProductName}" value="" />
+        <apex:param name="param2" assignTo="{!strSelectedRatePlanTemp}" value="" />
+    </apex:actionFunction> 
+
+    <apex:outputPanel id="commboxMainId">
+        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                CommBox
+                <apex:outputPanel id="commboxMainIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!objActivationService.CommBox_Selected__c == false}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link" rendered="{!!objActivationService.CommBox_Selected__c}" >
+                            Add
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!objActivationService.CommBox_Selected__c == true}">
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link" rendered="{!objActivationService.CommBox_Selected__c}" >
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <p class="collapse-p">KVH’s CommBox Ship/Shore Network Manager is the most complete network management tool available for mariners, offering superior flexibility and reliability to competing hardware- and software-only solutions.</p>
+                
+            </h2> 
+            <div aria-hidden="true">
+                <apex:outputPanel id="commboxId">
+                    <div class="panel-contents"> 
+                        <p class="">The CommBox Network Manager offers an array of value-added capabilities available through a series of “Quick” software modules. <a href="#commbox_more" data-rel="popup" data-position-to="window" data-transition="fade" aria-haspopup="true" aria-owns="commbox_more" aria-expanded="false" class="ui-link">Learn more about the Standard and Enterprise Bundles.</a></p>
+                        <!--** div contain error msg contents -Start **-->
+                        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                        </div>
+                        <!--** div contain error msg contents -End **-->
+                        <c:Activation_RatePlanTable className="collapse-panels1" currentTab="commBox_plans" SelectedProductName="{!objActivationService.CommBox_Product__c}" selectedProductBundle="CommBox Bundles" selectedRatePlan="{!strFeatureIds}" planType="CommBox"  activationServices="{!objActivationService}" planTypepopupId="CommBox"/> 
+                        <apex:outputPanel rendered="{!boolHubShow}" id="commBoxhub">
+                            <table class="collapse-panels2" id="invoiceTable">
+                                <tbody>
+                                    <tr>
+                                        <th class="requiredRedMarkFld">Hub Type</th>
+                                        <td style="width: 40%;text-align: center;">—</td>
+                                        <td>
+                                            <div style="text-align: initial;padding-left: 15%;"> 
+                                                <apex:selectRadio id="commboxEnterRadio" value="{!objActivationService.CommBox_Hub_Hosting_Id__c}" layout="pageDirection" html-data-role="none">
+                                                    <apex:selectOptions value="{!lstSelectOptionEnterprise}" html-data-role="none"/>
+                                                </apex:selectRadio>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </apex:outputPanel>
+             
+                        <div style="width:40%; text-align:right;" class="right">
+                             <apex:commandLink styleClass="pad-right ui-link" id="contractclearBtn" value="Clear Form" onclick="CommBoxClearValidate('{!$Component.commboxId}'); return false;">
+                            </apex:commandLink>
+                            <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="contractBackBtn" value="Save" onclick="CommBoxValidate('{!$Component.commboxId}'); return false;">
+                                <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+                            </apex:commandLink>
+                        </div>
+                        
+                        <div class="clear"></div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:outputPanel>
+    
+    <!-- /popup contents --> 
+  <!--  <div data-role="popup" id="commbox-terms" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">CommBox Terms</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <ul class="pad-left terms">
+                <li>CommBox features shall be enabled within seven (7) days from activation date</li>
+                <li>CommBox software shall be subject to KVH’s CommBox Software Maintenance Support Subscription conditions.</li>
+            </ul>
+        </div>
+    </div> -->
+    
+    <div data-role="popup" id="commbox_more" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+            <h1 class="ui-title" role="heading" aria-level="1">More About Standard and Enterprise Software Bundles</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <div class="two-col left">
+                <p>
+                    <strong>Standard Bundle</strong><br/>
+                    The Standard Bundle includes least-cost routing, onboard firewall, bandwidth management, URL and content filtering, web caching, and ad removal.
+                </p>
+            </div>
+            <div class="two-col right">
+                <p>
+                    <strong>Enterprise Bundle</strong><br/>
+                    The Enterprise Bundle includes everything in the Standard Bundle plus VPN, automated file transfers, email server, email compression, webmail client, roaming crew e-mail, web access accounts and fleet-wide crew data allocation.
+                </p>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <!-- /popup contents --> 
+    
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmCommbox" id="clearconfirmCommbox"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmCommbox"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!clearActivationService}" onclick="showLoadingDiv();" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="commboxId, commboxMainIdButton">
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+
+</apex:component>

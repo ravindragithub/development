@@ -1,0 +1,10 @@
+.THIS.kvhMain{
+	font-family: sans-serif;
+}
+
+.THIS .kvhDescription{
+	color:rgba(255,255,255,.7);
+	height: 50px;
+	font-size: 12px;
+	text-align: center;
+}

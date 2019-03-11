@@ -1,0 +1,149 @@
+<apex:component controller="Act_Service_Info_Component_Controller" allowDML="true" id="static_IP_Comp_Id">
+    
+    <apex:attribute name="activationServices" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    
+    <script>
+    
+    function IpServiceClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmIPSerice]');
+        var instmodel = j$('[data-remodal-id=clearconfirmIPSerice]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmIPSerice").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmIPSerice]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmIPSerice]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    
+    function InboundIPsranges(){
+        j$("input[type=radio][name=hosts]").each(function(){
+            if(j$(this).attr("id") == 'InboundIPsranges' && '{!objActivationService.Inbound_IPs_ranges__c}' != '' && '{!objActivationService.Inbound_IPs_ranges__c}' != null){
+                j$(this).parent().find("textarea").addClass("requiredRedMarkFld").removeClass("kvh-disabledcss").removeAttr('disabled');
+                j$(this).prop('checked','checked');
+            }else if(j$(this).attr("id") != 'InboundIPsranges' && '{!objActivationService.Inbound_IPs_ranges__c}' == ''){
+                j$(this).prop('checked','checked');
+                j$(this).parent().find("textarea").removeClass("requiredRedMarkFld").addClass("kvh-disabledcss").attr('disabled','disabled');
+            }
+        });
+    }
+    
+    function InboundApplications(){
+        var boolcheck = false;
+        j$("input[type=checkbox][name$=Inbound_Applications]").each(function(){
+            if(j$(this).val().indexOf('Other') >=0 && j$(this).prop('checked')){
+                boolcheck = true;
+            }
+        });
+        if(boolcheck){
+            j$("[id$=Other_Inbound_Applications__c]").addClass("requiredRedMarkFld").removeClass("kvh-disabledcss").removeAttr('disabled');
+        }else{
+            j$("[id$=Other_Inbound_Applications__c]").val("");
+            j$("[id$=Other_Inbound_Applications__c]").removeClass("requiredRedMarkFld").addClass("kvh-disabledcss").attr('disabled','disabled');
+        }
+    }
+    
+    j$(function (){
+        InboundIPsranges();
+        InboundApplications();
+        j$("input[type=radio][name=hosts]").change(function(){
+            j$("[Id$='Inbound_IPs_ranges__c']").removeClass('error');
+            if(j$(this).attr("id") == 'InboundIPsranges'){
+                j$(this).parent().find("textarea").addClass("requiredRedMarkFld").removeClass("kvh-disabledcss").removeAttr('disabled');
+                j$(this).prop('checked','checked');
+            }else{
+                j$(this).parent().find("textarea").removeClass("requiredRedMarkFld").addClass("kvh-disabledcss").attr('disabled','disabled');
+                j$(this).parent().find("textarea").val("");
+            } 
+        });
+        
+        j$("input[type=checkbox][name$='Inbound_Applications']").change(function(){
+            j$("[Id$='Other_Inbound_Applications__c']").removeClass('error');
+            InboundApplications();
+        });
+    });
+    </script>
+    <apex:actionFunction name="updateServiceMethodInfo" action="{!updateActivationServiceInformation}" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" reRender="frm">
+    </apex:actionFunction>
+    
+    <h3>Contact &amp; Service Information</h3>
+    
+    <apex:outputPanel id="Ipservicecompblock">
+        
+        <!--** div contain error msg contents -Start **-->
+        <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+        </div>
+        <!--** div contain error msg contents -End **-->
+        
+        
+        <div class="two-col left">
+            <p><label class="requiredRedMarkFld">Select the world region where you would like your internet access to originate:</label><br/>
+                <span class="notes">The region chosen is usually the home port of the vessel or where the vessel normally operates.</span></p>
+            
+            <apex:selectRadio id="Regions" value="{!objActivationService.World_Region__c}" layout="pageDirection" html-data-role="none">
+                <apex:selectOptions value="{!Regions}" html-data-role="none"/>
+            </apex:selectRadio>
+        </div>
+        <div class="two-col right">
+            <p><label>Specify the Internet hosts or IP addresses you authorize for inbound access to your vessel from the Internet:</label></p> 
+            <input id="none" name="hosts" type="radio" value="none" data-role="none" /> <label>None</label><br/>
+            <input id="InboundIPsranges" name="hosts" type="radio" value="list" data-role="none" /> <label>List IP Addresses/Ranges</label>
+            <apex:inputTextArea rows="2" id="Inbound_IPs_ranges__c" html-data-role="none" styleClass="pad-left" value="{!objActivationService.Inbound_IPs_ranges__c}" html-placeholder="Use a comma (,) between multiple addresses" />
+        </div>
+        <div class="clear pad-top"></div>
+        <apex:outputPanel id="InboundApplicationsBlock">
+            <div class="two-col left">
+                <p><label class="requiredRedMarkFld">Select the applications you authorize for inbound access to your vessel from the Internet (check all that apply):</label></p>
+                <apex:selectcheckboxes layout="pageDirection"  value="{!selectedInboundApplications}" label="" id="Inbound_Applications">                   
+                    <apex:selectoptions value="{!InboundApplications}" html-data-role="none" > </apex:selectoptions>
+                </apex:selectcheckboxes>
+                <apex:outputPanel id="othertextbox" > 
+                    <apex:inputTextArea rows="2" id="Other_Inbound_Applications__c" html-data-role="none" styleClass="pad-left" value="{!objActivationService.Other_Inbound_Applications__c}" />
+                </apex:outputPanel>
+            </div>
+            
+        </apex:outputPanel> 
+        <div class="two-col right">
+            <label>Select the individual who can assist network operations with setup and testing:</label>
+            <apex:selectList id="IpServiceContacts" html-data-role="none" tabindex="1" value="{!objActivationService.Activation_Contact__c}" multiselect="false"  size="1" styleClass="requiredRedMarkFld">
+                <apex:selectOptions value="{!allContactLists}" id="listIdIPservice" />
+            </apex:selectList>
+        </div> 
+        <div class="clear pad-top"></div>
+        <div class="">
+            <p>
+                <label>
+                    <apex:inputCheckBox value="{!objActivationService.More_than_one_global_static_IP_addresses__c}" html-data-role="none" />
+                    A maximum of five global static IP addresses are available per modem. If you require more than one, check here and a KVH representative will contact you.</label>
+            </p>
+        </div>
+        <div class="clear pad-top"></div>
+        <p><lable>Additional Comments:</lable></p>
+        <apex:inputField value="{!objActivationService.Additional_Comments__c}" html-data-role="none" />
+        
+        <div style="text-align:right;" class="right pad-top">
+            <apex:commandLink styleClass="pad-right ui-link" id="contractclearBtn" value="Clear Form" onclick="IpServiceClearValidate('{!$Component.Ipservicecompblock}'); return false;">
+            </apex:commandLink>
+            <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="contractBackBtn" value="Save" onclick="ServiceInfoValidate('{!$Component.Ipservicecompblock}'); return false;">
+                <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+            </apex:commandLink>
+        </div>
+        <div class="clear"></div>
+    </apex:outputPanel> 
+    
+    
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmIPSerice" id="clearconfirmIPSerice"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmIPSerice"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!clearActivationService}" oncomplete="btnSelectednavigateNext('Additional_Plans_and_Services');" onclick="showLoadingDiv();" reRender="frm">
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+</apex:component>

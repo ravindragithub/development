@@ -1,0 +1,42 @@
+<apex:page controller="IITClassRunUnpaidInvoices" tabStyle="invoiceit_s__Job__c">
+  <apex:form >
+      <apex:pageMessages />
+      <apex:sectionHeader title="AR Realtime and Account closing"/>
+      <apex:outputText value="Please note : Process will pick all the Unpaid Posted Invoices and UnAllocated Completed Payments based on the Account closing date or Realtime date.
+Say for example if you are running as of today then it will pick all the Unpaid Posted Invoices which has invoice date less than or equals to today. Basically it will not pick up the invoices which has invoice date as tomorrow or future." />
+
+      <br/>
+      <apex:pageBlock title="If you would like to run the report for January, 2015 then select the date as 31st, Jan 2015">
+          <apex:pageBlockSection columns="2" title="Legal Entity">
+              <apex:outputText label="Legal Entity"></apex:outputText>
+              <apex:selectList value="{!legalEntity}" size="1">
+                  <apex:selectOption itemValue="VMI" itemLabel="VMI"></apex:selectOption>
+                  <apex:selectOption itemValue="VMA" itemLabel="VMA"></apex:selectOption>
+                  <apex:selectOption itemValue="Both" itemLabel="Both"></apex:selectOption>
+              </apex:selectList>
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection columns="2" title="Accounts Closing">       
+              <apex:inputField value="{!invoice.invoiceit_s__Invoice_Date__c}" label="Accounts Closing Date"/>
+              <apex:pageBlockSectionItem >
+                  <apex:commandButton value="Initiate Accounting Close Batch" action="{!runUnpaidInvoices}"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+
+          <apex:pageBlockSection columns="2" title="Real Time Snapshot Data">
+              <apex:outputText value="{!YEAR(TODAY())}-{!MONTH(TODAY())}-{!DAY(TODAY())}" label="Real Time Snapshot "/>
+              <apex:pageBlockSectionItem >
+                  <apex:commandButton value="Initiate Real Time Batch" action="{!runRealTimeData}"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+
+           <apex:pageBlockSection columns="2" title="Delete">       
+              <apex:inputText value="{!name}" label="Name "/>
+              <apex:pageBlockSectionItem >
+                  <apex:commandButton value="Count" action="{!count}"/>
+                  <apex:commandButton value="Delete" action="{!deleteARRecords}"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="ShowProductDetail">
+    <aura:attribute name="product" type="String"/>
+    <aura:attribute name="prodid" type="String"/>
+</aura:event>

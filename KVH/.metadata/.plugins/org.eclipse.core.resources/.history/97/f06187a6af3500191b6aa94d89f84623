@@ -1,0 +1,31 @@
+.THIS .buttonicon{
+    background-color:#e3e3e3;
+    padding: 2px 10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    float : left;
+}
+.THIS .pad-2{
+    padding: 3px 10px;
+}
+.THIS .filter-box{
+
+    overflow: auto;
+    background: #fff;
+}
+
+
+.THIS .filter-box::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+    border-radius: 8px;
+}
+.THIS .filter-box::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid #f3f3f3;
+    background-color: rgba(0, 0, 0, .4);
+}
+.THIS .filter-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+}

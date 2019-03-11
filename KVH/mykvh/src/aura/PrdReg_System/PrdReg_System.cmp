@@ -1,0 +1,337 @@
+<aura:component >
+    
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="productLineMap" type="Object"/>
+    <aura:attribute name="systemRequired" type="boolean"/>
+    <aura:attribute name="prodList" type="list"/>
+    <aura:attribute name="isTv" type="boolean"/>
+    <aura:attribute name="isHd" type="boolean"/>
+    <aura:attribute name="isSerial" type="boolean"/>
+    <aura:attribute name="showFreeReceiver" type="boolean"/>
+    <aura:attribute name="attachmentList" type="list"/>
+    <aura:attribute name="spinner" type="boolean"/>
+    <aura:attribute name="countryOptions" type="list"/>
+    <aura:attribute name="countryStateMap" type="Object"/>
+    <aura:attribute name="stateOptions" type="list"/>
+    <aura:attribute name="stateOptions2" type="list"/>
+    <aura:attribute name="accountRequired" type="boolean"/>
+    <aura:attribute name="disableBillingState" type="boolean"/>
+    <aura:attribute name="disableShipingState" type="boolean"/>
+    <aura:attribute name="KVHAuthDealerAddres" type="boolean"/>
+    <aura:attribute name="customerInfoChanged" type="boolean"/>
+    <aura:attribute name="customerInfoFlg" type="boolean"/>
+    <aura:attribute name="attRequired" type="boolean"/>
+    <aura:attribute name="subsciberCountry" type="string"/>
+    <aura:attribute name="isInstaInfoPriorOwner" type="string"/>
+    
+    <aura:handler name="change" value="{!v.customerInfoChanged}" action="{!c.onCustomerInfoChange}"/>
+    <aura:handler name="change" value="{!v.KVHAuthDealerAddres}" action="{!c.onKVHAuthDealerAddresChange}"/>
+    <aura:handler name="change" value="{!v.attRequired}" action="{!c.validateFields}"/>
+    <aura:handler name="change" value="{!v.subsciberCountry}" action="{!c.onSubsciberCountryChange}"/>
+    <aura:handler name="change" value="{!v.isInstaInfoPriorOwner}" action="{!c.onInstaInfoChange}"/>
+    
+    <lightning:card title="Product Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:select value="{!v.prodRegistration.Product_Line__c}"
+                                  label="Product Line"
+                                  onchange="{!c.onProductLineChange}"
+                                  required="true">
+                    <option text="" value=""/>
+                    <option text="Compasses" value="Compasses"/>
+                    <option text="Satellite Television" value="Satellite Television"/>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+            	<lightning:select value="{!v.prodRegistration.Product__c}"
+                                  onchange="{!c.onProductChange}" 
+                                  label="Product" 
+                                  required="true" 
+                                  disabled="{!v.prodList.length==0}">
+                    <option text="" value=""/>
+                    <aura:iteration items="{!v.prodList}" var="opt">
+                        <option text="{!opt.label}" value="{!opt.value}"/>
+                    </aura:iteration>
+                    <option text="Other" value="Other"/>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <aura:if isTrue="{!and(v.isSerial,v.prodRegistration.Product_Line__c=='Compasses')}">
+                    <lightning:input label="Serial No."
+                                     value="{!v.prodRegistration.Serial_No__c}" 
+                                     required="true"
+                                     maxlength="9"
+                                     minlength="9"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+                
+                <aura:if isTrue="{!or(v.isTv,v.isHd)}">
+                    <lightning:input label="Antenna Serial No."
+                                     value="{!v.prodRegistration.Antenna_Serial_No__c}" 
+                                     required="true"
+                                     maxlength="9"
+                                     minlength="9"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+                <aura:if isTrue="{!and(v.isSerial,v.prodRegistration.Product_Line__c=='Satellite Television')}">
+                    <lightning:input label="Antenna Serial No."
+                                     value="{!v.prodRegistration.Antenna_Serial_No__c}" 
+                                     required="true"
+                                     maxlength="9"
+                                     minlength="9"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <aura:if isTrue="{!v.isTv}">
+                    <lightning:input label="TV-Hub Serial No."
+                                     value="{!v.prodRegistration.TV_Hub_Serial_No__c}" 
+                                     required="true"
+                                     maxlength="9"
+                                     minlength="9"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.isHd}">
+                    <lightning:input label="IPACU Serial No." 
+                                     value="{!v.prodRegistration.IPACU_Serial_No__c}"
+                                     required="true"
+                                     maxlength="9"
+                                     minlength="9"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.prodRegistration.Product__c=='Other'}">
+                    <lightning:input label="Other Product Name"
+                                     value="{!v.prodRegistration.Other_System__c}"
+                                     required="true"
+                                     onblur="{!c.validateFields}"/>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small purchasedate">
+            	<lightning:input type="date" 
+                                 label="Purchase Date"
+                                 value="{!v.prodRegistration.Purchase_Date__c}" 
+                                 required="true" 
+                                 onblur="{!c.validateFields}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <lightning:input type="date" 
+                                 label="Scheduled Installation Date (if applicable)"
+                                 value="{!v.prodRegistration.Scheduled_Installation_Date__c}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+            	<lightning:input label="Purchased from"
+                                 value="{!v.prodRegistration.Purchased_From__c}"
+                                 required="true" 
+                                 onblur="{!c.validateFields}"  />
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                <c:PrdReg_UploadFile label="Proof of Purchase*"
+                                     productRegId="{!v.prodRegistration.Id}" 
+                                     attachmentList="{!v.attachmentList}"
+                                     suffix="_POP"
+                                     spinner="{!v.spinner}"
+                                     attRequired="{!v.attRequired}"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    
+    <aura:if isTrue="{!and(v.prodRegistration.Installer_Information__c!='Prior Owner',v.prodRegistration.Subscriber_Country__c=='United States')}">
+        <aura:if isTrue="{!v.showFreeReceiver}">
+            <lightning:card title="Receiver Information">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="8" class="slds-p-horizontal_small">
+                        <label class="slds-form-element__label">
+                            Free DIRECTV OR DISH Receiver Requested? ($29 shipping and handling fee applies)
+                            <abbr class="slds-required" title="required">*</abbr>
+                        </label>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-horizontal_small">
+                        <lightning:input type="radio"
+                                         label="Yes" 
+                                         name="receiver" 
+                                         onchange="{!c.onChangeFreeReceiver}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-horizontal_small">
+                        <lightning:input type="radio" 
+                                         label="No" 
+                                         name="receiver" 
+                                         onchange="{!c.onChangeFreeReceiver}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:card>
+        </aura:if>
+    </aura:if>
+    
+    <aura:if isTrue="{!and(v.prodRegistration.Free_DirectTV_or_DISH_receiver_requested__c=='Yes',v.prodRegistration.Subscriber_Country__c=='United States')}">
+        <lightning:card title="Credit Card Information">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <div aura:id="ccSecure" class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right ccSecure1">
+                        <lightning:icon iconName="utility:lock" alternativeText="Secure" class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"/>
+                        <label class="slds-form-element__label">
+                            Credit Card No.
+                            <abbr class="slds-required" title="required">*</abbr>
+                        </label>
+                        <ui:inputText aura:id="PrimaryCC"
+                                      required="true"
+                                      value="{!v.prodRegistration.Credit_Card_No__c}"
+                                      blur="{!c.validateCCNo}"
+                                      class="inputStyle"/>
+                    </div>
+                    
+                    <lightning:input label="Name on Card"
+                                     value="{!v.prodRegistration.Name_on_Card__c}"
+                                     onblur="{!c.validateFields}" 
+                                     required="true"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <label class="slds-form-element__label">
+                        Expiration Date
+                        <abbr class="slds-required" title="required">*</abbr>
+                    </label>
+                    <ui:inputText aura:id="ccExpDate"
+                                  value="{!v.prodRegistration.Exp_Date__c}"
+                                  blur="{!c.validateExpDate}" 
+                                  required="true"
+                                  placeholder="(MM/YYYY)"
+                                  class="inputStyle"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+        <lightning:card title="Credit Card Billing Address">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-left_small">
+                    <label class="slds-form-element__label">
+                        Same as:
+                        <abbr class="slds-required" title="required">*</abbr>
+                    </label>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="10">
+                    <lightning:input label="Customer Information" 
+                                     type="checkbox"
+                                     class="slds-p-top_xx-small"
+                                     onchange="{!c.updateCCBillingAdd}"
+                                     checked="{!v.customerInfoFlg}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                    <lightning:input aura:id="billingAddFld"
+                                     label="Address" 
+                                     required="true" 
+                                     value="{!v.prodRegistration.Billing_Address__c}"
+                                     onblur="{!c.validateFields}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <lightning:input aura:id="billingAddFld"
+                                     label="City" 
+                                     required="true" 
+                                     value="{!v.prodRegistration.Billing_City__c}"
+                                     onblur="{!c.validateFields}"/>
+                    
+                    <lightning:input aura:id="billingAddFld"
+                                     label="Postal/Zip Code" 
+                                     required="true" 
+                                     value="{!v.prodRegistration.Billing_Postal_Zip_Code__c}"
+                                     onblur="{!c.validateFields}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <lightning:select aura:id="contrySelect"
+                                      label="Country"
+                                      required="true"
+                                      onchange="{!c.onCountrySelect}">
+                        <aura:iteration items="{!v.countryOptions}" var="option">
+                            <option text="{!option.label}" value="{!option.value}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                    
+                    <aura:if isTrue="{!v.stateOptions.length>0}">
+                        <lightning:select aura:id="stateSelect"
+                                          label="State/Province/Territory"
+                                          required="{!v.stateOptions.length>0}"
+                                          value="{!v.prodRegistration.Billing_State_Province_Territory__c}"
+                                          onchange="{!c.validateFields}"
+                                          disabled="{!v.disableBillingState}">
+                            <option text="" value=""/>
+                            <aura:iteration items="{!v.stateOptions}" var="option">
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:if>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+        <lightning:card title="Receiver Shipping Location">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="2" class="slds-p-left_small">
+                    <label class="slds-form-element__label">
+                        Same as:
+                        <abbr class="slds-required" title="required">*</abbr>
+                    </label>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="3">
+                    <lightning:input aura:id="CustomerInfo"
+                                     label="Customer Information" 
+                                     type="checkbox"
+                                     class="slds-p-top_xx-small"
+                                     onchange="{!c.updateCCShipingAdd}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="7">
+                    <lightning:input aura:id="KVHAuthDealer"
+                                     label="KVH Authorized Dealer/Distributor Information" 
+                                     type="checkbox" 
+                                     class="slds-p-top_xx-small"
+                                     onchange="{!c.updateCCShipingAdd}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" class="slds-p-horizontal_small">
+                    <lightning:input aura:id="shipingAddFld"
+                                     label="Addressee" 
+                                     required="true"	
+                                     value="{!v.prodRegistration.Shipping_Addressee__c}" 
+                                     onblur="{!c.validateFields}"/>
+                    <lightning:input aura:id="shipingAddFld"
+                                     label="Address" 
+                                     required="true"
+                                     value="{!v.prodRegistration.Shipping_Address__c}" 
+                                     onblur="{!c.validateFields}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <lightning:input aura:id="shipingAddFld"
+                                     label="City" 
+                                     required="true" 
+                                     value="{!v.prodRegistration.Shipping_City__c}"
+                                     onblur="{!c.validateFields}"/>
+                    <lightning:input aura:id="shipingAddFld"
+                                     label="Postal/Zip Code" 
+                                     required="true" 
+                                     value="{!v.prodRegistration.Shipping_Postal_Zip_Code__c}"
+                                     onblur="{!c.validateFields}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" class="slds-p-horizontal_small">
+                    <lightning:select aura:id="contrySelect2"
+                                      label="Country"
+                                      required="true"
+                                      onchange="{!c.onCountrySelect2}">
+                        <aura:iteration items="{!v.countryOptions}" var="option">
+                            <option text="{!option.label}" value="{!option.value}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                    
+                    <aura:if isTrue="{!v.stateOptions2.length>0}">
+                        <lightning:select aura:id="stateSelect2"
+                                          label="State/Province/Territory"
+                                          required="{!v.stateOptions2.length>0}"
+                                          value="{!v.prodRegistration.Shipping_State_Province_Territory__c}"
+                                          onchange="{!c.validateFields}"
+                                          disabled="{!v.disableShipingState}">
+                            <option text="" value=""/>
+                            <aura:iteration items="{!v.stateOptions2}" var="option">
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:if>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+    </aura:if>
+</aura:component>

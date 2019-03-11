@@ -1,0 +1,52 @@
+<apex:page standardController="Case" showheader="false" sidebar="false" standardStylesheets="false">
+<apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    <style>
+        body {
+       background-color:#f3f3f3;
+        }
+    .label{
+        text-align: left;
+        }
+    </style>
+    <div class="partner_portal">
+        <div class="case-info" style="text-align: left; align-content: left;">
+            <apex:outputLink target="_parent" value="{!$Label.Community_URL +  '/s/supportlanding'}" styleClass="button right">Back to Cases</apex:outputLink>
+            <apex:pageBlock >
+                <h1>
+                    Case Detail
+                </h1>
+                <apex:pageBlockSection columns="2" title="Case Information:" >
+                    <apex:outputField style="text-align: left;" styleClass="left" value="{!Case.CaseNumber}"/>
+                    <apex:outputField label="Parent Case" value="{!Case.Parent_Case__c}"/>
+                    <apex:outputField value="{!Case.Contact_Name__c}"/>
+                    <apex:outputField label="Platform" value="{!Case.New_Vessel_or_Platform__c}"/>
+                    <apex:outputField value="{!Case.Asset_Name__c}"/>
+                    <apex:outputField value="{!Case.Type}"/>
+                    <apex:outputField value="{!Case.Product_or_Service__c}"/>
+                    <apex:outputField value="{!Case.Status}"/>
+                    <apex:outputField value="{!Case.Subject}"/>
+                    <apex:outputField value="{!Case.Case_Symptom__c}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection columns="1" title="Description:">
+                    <apex:outputText id="desc" label="" style="width: 10%;" value="{!Case.Description}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Web Information:" columns="2">
+                    <apex:outputField value="{!Case.CreatedDate}"/>
+                    <apex:outputField value="{!Case.ClosedDate}"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </div>
+        <div class="case-comments pad-top" style="margin-bottom:40px;">
+            <c:my_Case_CommentsPartner ParentCase="{!Case.Id}"/>
+        </div> 
+     </div>
+     <script>
+        var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+       
+        childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+        //alert(containerdiv);
+        
+    </script>
+</apex:page>

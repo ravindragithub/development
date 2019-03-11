@@ -1,0 +1,281 @@
+<apex:page controller="AccountAirtimeSubcriber" tabStyle="Case" sidebar="false" id="page">
+    <script>
+        function CustomCancel(){
+           var final = confirm("Are you sure you want to cancel?");
+           if (final == true) {
+               var CurrentPageCancelID = '{!accID}';
+               window.location.href = '/'+CurrentPageCancelID;
+           }
+        }
+        
+        function editSubscriber(){
+            var r = confirm("If you need to Edit the address on this account, you will need to ensure that you have first created a Contact/Role for the Airtime Account.\n\nAre you sure you want to edit this account?");
+            if (r == true) {
+               updatingSecondBlock();
+            }
+        }
+        
+        function callBillToFunction(){
+            if(document.getElementById('page:frm:TPB:BS:BSS:BS_To').value == 'Corporate'){
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").checked = true;
+            }else{
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").checked = false;
+            }
+        }
+        
+        function callMailToFunction(){
+            if(document.getElementById('page:frm:TPB:BS:BSS:MA_To').value == 'Customer'){
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").checked = false;
+            }else{
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").checked = true;
+            }
+        }
+        
+        
+        function ConfirmSelectedSubscriber(){
+            var r = confirm("Are you sure you want to update subscriber in WebtopServices?");
+            if (r == true) {
+               CallWebService_JS();
+            }
+        }
+        
+        function disableOnSubmit(input) {
+          console.log('input ');
+            setTimeout('disableAfterTimeout(\'' + input.id + '\');', 50);
+        }
+        function disableAfterTimeout(id) {
+            var toDisable = document.getElementById( id );
+            console.log('toDisable : '+id);
+            toDisable.disabled = 'disabled';
+            toDisable.className = 'btnDisabled';
+            toDisable.value = "Saving..."
+        }
+        
+        
+        function enableCheckBox(){
+            if(document.getElementById('page:frm:TPB:BS:BSS:BT').value == 'See Corporate'){
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").disabled = false;
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").disabled = false;
+            }else{
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").checked = false;
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").checked = false;
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").disabled = true;
+                document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").disabled = true;
+            }
+        }  
+        
+    </script>
+    <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/28.0/apex.js"/>
+    <apex:includeScript value="/apex/pw_ccpro__CountriesJavaScript?core.apexpages.devmode.url=1" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__CountryCompleteResources, '/javascript/CountryAutoComplete.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.pw_ccpro__AddressCompleteResources, '/javascript/AddressComplete.js')}" />
+    <apex:includeScript value="{!$Resource.SearchForSubscriber_VFPage_JS}"/>
+    <apex:includeScript value="{!$Resource.Prowen_Works}"/>
+    <apex:form id="frm">
+        <apex:pagemessages ></apex:pagemessages>
+        <apex:actionFunction name="updatingSecondBlock" action="{!EditSubscriber}" reRender="frm" status="intialLoad"/>
+        <apex:actionFunction name="CallWebService_JS"  action="{!CallWebService}" status="intialLoad" reRender="frm"/>
+        <apex:outputPanel rendered="{!firstBlock}">
+            <apex:pageblock title="Selected Subscriber">
+                <apex:pageblocksection columns="2">
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Name}" label="Account Name:"/> 
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Account_Type__c}" label="Account Type:"/> 
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Custom_Call_Acct_ID__c}" label="Custom Call Account ID:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.KVH_Sales_Office__c}" label="KVH Sales Office:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.recordtype.name}" label="Account Record Type:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Market__c}" label="Market:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Account_Status__c}" label="Account Status:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Market_Sector__c}" label="Market Sector:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Account_Effective_Date__c}" label="Account Effective Date:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Revenue_Category__c}" label="Revenue Category:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.ownerID}" label="Account Owner:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.Commission_Dealer__c}" label="Commission Dealer:"/>
+                      <apex:outputField value="{!SelectedSubscriberDisplay.parent.name}" label="Parent Account:"/>
+                      <apex:outputText />
+                      <apex:outputField value="{!SelectedSubscriberDisplay.CC_Reseller_Account_ID__c}" label="CC Reseller ID" rendered="{!ifExisting}"/>
+                      <apex:outputText />
+                      <apex:outputField value="{!SelectedSubscriberDisplay.CC_Prospect_Acct_ID__c}" label="CC Prospect Acct ID" rendered="{!ifExisting}"/>
+                      <apex:outputText />
+                      <apex:outputField value="{!SelectedSubscriberDisplay.CC_Integration_Errors__c}" label="CC Integration Errors" rendered="{!ifExisting}"/>
+                       <apex:outputText /> 
+                       
+                       <apex:pageblocksection columns="1" title="Billing Settings">
+                       </apex:pageblocksection>
+                       <apex:pageblocksection columns="1" title="">
+                       </apex:pageblocksection>
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Billing_Cycle_picklist__c}"/>
+                         <apex:outputText rendered="{!!billCorporate}"/>
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Bill_To_Corporate__c}" rendered="{!billCorporate}"/>
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Home_Hub__c}" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c=='Customer',true,false)}"/>
+                         
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Bill_to__c}" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c!='Customer',true,false)}"/>
+                         
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Mail_to_Corporate__c}" rendered="{!mailCorporate}"/>
+                         <apex:outputText rendered="{!!billCorporate}"/>
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Mail_to__c}" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c!='Customer',true,false)}"/>
+                         <apex:outputText rendered="{!!billCorporate}"/>
+                         
+                         <apex:outputField value="{!SelectedSubscriberDisplay.Bill_Type__c}" rendered="{!homeHub}"/> 
+                         <apex:outputText rendered="{!homeHub}"></apex:outputText>
+                       <apex:pageblocksection columns="1" title="Subscriber Address"> 
+                        </apex:pageblocksection>  
+                       <apex:pageblocksection columns="1" title="Billing Address"> 
+                         </apex:pageblocksection>        
+                        <apex:outputText rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c=='Customer',true,false)}"/>
+                        <apex:outputText value="{!Attention}" label="Attention" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c=='Customer',true,false)}"/>                   
+                        <apex:outputtext value="{!billingAddress1}" label="Address1"  id="Add1S_A"/>                           
+                        <apex:outputtext value="{!address1}" label="Address1"  id="B_A_Add1"/>
+                        <apex:outputtext value="{!billingAddress2}" label="Address2"  id="Add2S_A"/>   
+                        <apex:outputtext value="{!address2}" label="Address2" id="B_A_Add2"/>
+                        <apex:outputtext value="{!billingCity}" label="City" id="BCS_A"/>                           
+                        <apex:outputField value="{!SelectedSubscriberDisplay.BillingCity}" label="City" id="B_A_BCb"/>
+                        <apex:outputText value="{!billingState}" label="State/Province"  id="BSTS_A"/>
+                        <apex:outputField value="{!SelectedSubscriberDisplay.Billingstate}" label="State/Province" id="B_A_BSTb"/>
+                        <apex:outputText value="{!billingCountry}" label="Country" id="BillingCountryS_A" />
+                        <apex:outputField value="{!SelectedSubscriberDisplay.BillingCountry}" label="Country" id="B_A_BillingCountry" />
+                        <apex:outputText value="{!billingZipCode}" label="Zip/Postal Code" id="BPCS_A"/>
+                        <apex:outputField value="{!SelectedSubscriberDisplay.BillingPostalCode}" label="Zip/Postal Code"  id="B_A_BPC"/>
+                        <apex:outputtext value="{!billingISOCode}" label="ISO Code"  id="Sub_ISO_Code"/> 
+                        <apex:outputtext value="{!subscriberISOCode}" label="ISO Code"  id="BIll_ISO_Code"/> 
+                </apex:pageblocksection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Edit Subscriber" onclick="editSubscriber(); return false;" reRender="frm"/>
+                    <apex:commandButton value="Update Subscriber in Webtop" onClick="ConfirmSelectedSubscriber(); return false;" reRender="frm"/>
+                    <apex:commandButton value="Cancel" onclick="CustomCancel();" rerender="Final"/> 
+                    <apex:actionStatus id="intialLoad" stopText="">
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                   
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockButtons>
+            </apex:pageblock>
+        </apex:outputPanel> 
+        
+         
+        <apex:outputPanel id="FourthBlockRender" rendered="{!secondBlock}">
+        <!-------------------------------------------Page block NewSubscriber------------------------------------------------------------------------->    
+            <apex:pageblock id="TPB">
+               <apex:pageblocksection columns="2" id="TBS" title="NewSubscriber/UpdateSubscriber"> 
+                   <apex:pageblocksection columns="1" id="parentID">                  
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Name}" required="true"/> 
+                        <apex:outputField value="{!SelectedSubscriberDisplay.Custom_Call_Acct_ID__c}" label="Custom Call Account ID:" rendered="{!if($Profile.Name !='System Administrator',TRUE,FALSE)}"/>
+                        <apex:outputField value="{!SelectedSubscriberDisplay.Custom_Call_Acct_ID__c}" label="Custom Call Account ID:" rendered="{!if($Profile.Name =='System Administrator',TRUE,FALSE)}"/>                      
+                        <apex:outputtext value="{!DefaultRecordType}" label="Account Record Type:"/>                           
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Account_Status__c}" label="Account Status:" />  
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Account_Effective_Date__c}" label="Account Effective Date:" rendered="{!billCorporate}"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.ownerID}" label="Account Owner"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.ParentID}" label="Parent Account" rendered="{!ifExisting}" onchange="callPopulateFunction1();" id="parentAccountID"/>
+                   </apex:pageblocksection>
+                   <apex:pageblocksection columns="1" id="ASection">    
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Account_Type__c}" label="Account Type:" required="true" id="Atype"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.KVH_Sales_Office__c}" required="true"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Market__c}" label="Market:" required="true"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Market_Sector__c}" label="Market Sector:" required="true"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Revenue_Category__c}" label="Revenue Category:" required="true"/>
+                        <apex:inputField value="{!SelectedSubscriberDisplay.Commission_Dealer__c}" label="Commission Dealer:" required="true"/>
+                                   
+                       <!-- <apex:inputField value="{!SelectedSubscriberDisplay.Custom_Call_Acct_ID__c}" label="Custom Call Account ID:" required="true"/>-->
+                  </apex:pageblocksection>
+                </apex:pageblocksection>
+                
+                 <apex:pageblocksection columns="2" title="Billing Settings" id="BS"> 
+                   <apex:pageblocksection columns="1" id="BSS">    
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Billing_Cycle_picklist__c}" required="true"/>
+                         <!--<apex:selectList size="1" value="{!selectedBillingCycle}" >
+                             <apex:selectOptions value="{!BillingCycle}"/>
+                         </apex:selectList>
+                         -->
+                         
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Bill_to__c}" id="BS_To" onchange="callBillToFunction();" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c!='Customer',true,false)}" required="true"/>
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Mail_to__c}" id="MA_To" onchange="callMailToFunction();" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c!='Customer',true,false)}" required="true"/>
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Home_Hub__c}" rendered="{!homeHub}" required="true"/> 
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Bill_Type__c}" rendered="{!billType}" required="true" onchange="enableCheckBox();" id="BT"/>            
+                         
+                   </apex:pageblocksection>
+                   <apex:pageblocksection columns="1" id="BSC">   
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Bill_To_Corporate__c}" id="BSC_Bill_Corp" rendered="{!billCorporate}"/>
+                         <apex:inputField value="{!SelectedSubscriberDisplay.Mail_to_Corporate__c}" id="BSC_Mail_Corp" rendered="{!mailCorporate}"/>
+                         <script>
+                             document.getElementById("page:frm:TPB:BS:BSC:BSC_Bill_Corp").disabled = true;
+                             document.getElementById("page:frm:TPB:BS:BSC:BSC_Mail_Corp").disabled = true;
+                         </script>
+                  </apex:pageblocksection>
+                </apex:pageblocksection>
+                    
+                    <apex:pageblocksection columns="2" id="TBS1">                       
+                        <!-- <apex:actionSupport event="onchange" action="{!populateAddress}"  reRender="BS,BC,BST,BillingCountry,BPC"/>-->                       
+                       <apex:pageblocksection columns="1" id="address" title="Subscriber Address">  
+                            <apex:inputCheckBox value="{!SubscriberBillingAddress}" Label="This is also the Billing Address:" selected="true" onclick="EnableBillingAddress();" onkeyup="EnableBillingAddress();" onchange="EnableBillingAddress();" id="disableCheckBox"/>
+                            <apex:inputtextArea value="{!billingAddress1}" label="Address1" required="true" id="Add1" onkeyup="EnableBillingAddress();"/>                           
+                            <apex:inputtextArea value="{!billingAddress2}" label="Address2" id="Add2" onkeyup="EnableBillingAddress();" />                           
+                        <!-- <apex:inputField value="{!SelectedSubscriberDisplay.BillingStreet}" id="BS"/> -->
+                            <apex:inputText value="{!billingCity}" label="City" id="BC" onkeyup="EnableBillingAddress();" />                           
+                            <apex:inputText value="{!billingCountry}" label="Country" required="true" id="BillingCountry" onclick="EnableBillingAddress();" onkeyup="EnableBillingAddress();" onchange="EnableBillingAddress();"/>
+                            <apex:inputText value="{!billingState}" label="State/Province"  id="BST" onclick="EnableBillingAddress();" onkeyup="EnableBillingAddress();" onchange="EnableBillingAddress();"/>
+                            <apex:inputText value="{!billingZipCode}" label="Zip/Postal Code" id="BPC"  onclick="EnableBillingAddress();" onkeyup="EnableBillingAddress();" onchange="EnableBillingAddress();" required="true"/>
+                            
+                        </apex:pageblocksection> 
+                        <apex:pageblocksection columns="1" id="BA" title="Billing Address">  
+                             <apex:inputText value="{!Attention}" label="Attention" rendered="{!IF(SelectedSubscriberDisplay.Account_Type__c=='Customer',true,false)}"/>
+                             <apex:inputtextArea value="{!address1}" label="Address1" required="true" id="BA_Add1"/>            
+                             <apex:inputtextArea value="{!address2}" label="Address2" id="BA_Add2"/>
+                             <apex:inputField value="{!SelectedSubscriberDisplay.BillingCity}" label="City" id="BA_BC"/>
+                             <apex:inputField value="{!SelectedSubscriberDisplay.BillingCountry}" label="Country" required="true" id="BA_BillingCountry" onblur="OnComplete();"/>
+                             <apex:inputField value="{!SelectedSubscriberDisplay.Billingstate}" label="State/Province" id="BA_BST"/>
+                             <apex:pageBlockSectionItem id="ZPC">
+                                 <apex:outputLabel value="Zip/Postal Code"/>
+                                 <apex:outputPanel >
+                                     <div class = "requiredInput">
+                                        <div class = "requiredBlock"></div>
+                                     <apex:inputField value="{!SelectedSubscriberDisplay.BillingPostalCode}" label="Zip/Postal Code"  id="BA_BPC" required="true"/>                        
+                                     </div>
+                                 </apex:outputPanel>
+                             </apex:pageBlockSectionItem>
+                       </apex:pageblocksection> 
+                    </apex:pageblocksection> 
+        <script>
+            OnComplete();     
+        </script>
+           
+        <apex:pageblockButtons Location="both">
+            <apex:commandButton value="Save" action="{!finalSaveFunction}" reRender="frm" status="actStatusId" onclick="disableOnSubmit(this);"/>
+            <apex:commandButton value="Cancel" onclick="CustomCancel();" rerender="Final" status="final"/>
+            <apex:actionstatus id="actStatusId">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #DCD6D6;height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Saving...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+        </apex:pageblockButtons> 
+            </apex:pageblock> 
+              <!-------------------------------------------Page block NewSubscriberEnds-------------------------------------------------------------->  
+             <!------------------------------Script for disabled fields on page load----------------------------------------------------------------->
+             <script>
+                sforce.connection.sessionId = "{!$Api.Session_ID}";
+                var accessLevel = document.getElementById("page:frm:TPB:TBS1:address:disableCheckBox").checked;
+                
+                if(accessLevel == false){
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_Add1").disabled = false;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_Add2").disabled = false;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BC").disabled = false;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BST").disabled = false;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BillingCountry").disabled = false;
+                    document.getElementById("page:frm:TPB:TBS1:BA:ZPC:BA_BPC").disabled = false;
+                }else{
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_Add1").disabled = true;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_Add2").disabled = true;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BC").disabled = true;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BST").disabled = true;
+                    document.getElementById("page:frm:TPB:TBS1:BA:BA_BillingCountry").disabled = true;
+                    document.getElementById("page:frm:TPB:TBS1:BA:ZPC:BA_BPC").disabled = true;
+                }
+             </script>
+         <!-------------------------------------------Page block NewSubscriber Ends------------------------------------------------------------------->
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

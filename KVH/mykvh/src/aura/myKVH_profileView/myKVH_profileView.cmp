@@ -1,0 +1,173 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global"  >
+
+    
+    <aura:attribute name="showThankyou" type="Boolean" description="show profile thankyou section." default="true" />
+    <aura:attribute name="userdetail"
+                    type="myKVHprofileController.ProfileWrapper"
+                    description="User Details"/>
+    
+	<div class="white-bg pad-inside" style="max-width:880px; margin:auto;">
+
+            <ul class="breadcrumb">
+                <li><a href="{!$Label.c.myKVH_community_url }" >  Home</a></li>
+                <li>My Profile</li>
+            </ul>
+
+            <div class="content">
+                <aura:if isTrue="{!v.showThankyou}">
+                    <h1>Thank You for Updating Your Profile!</h1>
+                    <aura:set attribute="else">
+                        <h1>My Profile</h1>
+                    </aura:set>
+                </aura:if> 
+                
+                <aura:if isTrue="{!v.showThankyou}">
+                    <h2 class="pad-top">Contact Information</h2>
+                </aura:if>
+                
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Salutation:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	{!v.userdetail.con.Salutation}
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>First/Given Name:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	{!v.userdetail.con.FirstName}
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Last/Family/Surname:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	{!v.userdetail.con.LastName}
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Email:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.Email}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Phone Number:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.Phone}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Job Title:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.Title}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Job Function:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.Job_Function__c}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Address:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.MailingStreet}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>City:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.MailingCity}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Country:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.MailingCountry}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>State/Province/Territory/Region:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.MailingState}</p>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap slds-border_bottom">
+            		<div class="slds-col slds-medium-size_3-of-12 slds-p-horizontal_medium">
+                        <label>Zip/Postal Code:</label>
+                    </div>
+                    <div class="slds-col slds-medium-size_9-of-12 slds-p-horizontal_medium slds-p-top_small">
+                    	<p>{!v.userdetail.con.MailingPostalCode}</p>
+                    </div>
+                </div>
+                
+                
+                
+                <div style="text-align:center;">
+                    <a href="javascript:void(0);" onclick="{!c.showeditsection}" class="button button-blue pad-top" style="margin-right:30px;">Edit Profile</a>
+                    <a href="{!$Label.c.myKVH_community_url +  'mykvh-changepassword'}" class="button button-blue pad-top">Change your password</a>
+                </div>
+                
+                <!-- sidebar -->
+                <div class="col span_3_of_12">
+                    <!--
+                    <div class="callout">
+                        <h4 class="pad-bottom">Your Company</h4>
+                        <p>
+                            <strong>{!v.userdetail.accountName}</strong><br/>
+                            {!v.userdetail.accAddressStreet}<br/>
+                            {!v.userdetail.accAddressCity}, {!v.userdetail.accAddressState}  {!v.userdetail.accAddressPostalCode}<br/>
+                            {!v.userdetail.accAddressCountry}
+                        </p>
+                        <p>
+                            Phone: {!v.userdetail.accPhone}<br/>
+                            E-mail: {!v.userdetail.accEmail}
+                        </p>
+                        <div class="side-callout">
+                            <p><strong>Updates to this info?</strong></p>
+                            <a href="" onclick="{!c.techSupportRedirect}">Let us know!</a>
+                        </div>
+                    </div>
+                    <aura:if isTrue="{!v.showThankyou}">
+                        <a href="{!$Label.c.myKVH_community_url + 'mykvh-changepassword'}" class="button pad-top" style="width:100%;text-align: center;">Change your password</a>
+                    </aura:if>
+                -->
+                </div>
+            </div>
+              
+        </div>
+            
+</aura:component>

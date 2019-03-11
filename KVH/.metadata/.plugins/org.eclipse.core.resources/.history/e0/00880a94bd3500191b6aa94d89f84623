@@ -1,0 +1,146 @@
+<apex:page controller="myKVH_edit_user" standardStylesheets="false"  sidebar="false" tabStyle="myKVH_Users__tab">
+
+<style type="text/css">
+	
+	input[type="submit"]:disabled {background:#C1C1C1;}
+	
+
+	input[type="button"] {
+		width:15%;
+		margin:0px 0px;
+	}
+</style>
+
+<head>
+	<link href="{!URLFOR($Resource.jquery_tablesorter, 'themes/blue/style.css')}" rel="stylesheet"/>
+	<apex:stylesheet value="{!URLFOR($Resource.myKVH_Users2)}" />
+</head>
+
+<apex:form id="theForm">
+	<c:LoadingBox />
+	<apex:inputHidden id="hiddenAcctId" value="{!fleetId}" />
+	<div>
+		<apex:outputPanel id="error" rendered="{! !hasUserId}">
+			<h2>User details not available....</h2>
+		</apex:outputPanel>
+		
+		<apex:outputPanel rendered="{!hasUserId}">
+			
+			<div class="box-content">
+				<div class="center"><h1>Edit User</h1></div>
+				<p ><span style="white-space: nowrap;"><label>Email:<span class="req">*</span></label>
+					<apex:outputField value="{!myKVHContact.Email__c}" /></span></p>
+				<p><label>First Name:<span class="req">*</span></label>
+					<apex:inputField value="{!myKVHContact.First_Name__c}"/></p>
+				<p><label>Last Name:<span class="req">*</span></label>
+					<apex:inputField value="{!myKVHContact.Last_Name__c}"/></p>
+				<p><label>Mobile:&nbsp;</label>
+					<apex:inputField value="{!myKVHContact.Mobile__c}"/></p>
+				<p><label>Phone:&nbsp;</label>
+					<apex:inputField value="{!myKVHContact.Phone__c}"/></p>
+				<p><label>Network Notifications Type:&nbsp;</label>
+					<apex:inputField value="{!myKVHContact.Network_Outage_Type__c}"/></p>
+<!-- 			<p><label>Receive Network Service Notifications:&nbsp;</label> -->
+<!-- 				<apex:inputField value="{!myKVHContact.Receive_Network_Service_Notifications__c}"/></p> -->
+				<p><label>Job Function:&nbsp;</label>
+					<apex:inputField value="{!myKVHContact.Job_Function__c}"/></p>
+			</div>
+		
+			<apex:outputPanel id="grid" layout="block">
+
+				<br/>
+				<div class="center" id="caption">
+					<h1>Permissions</h1>
+				</div>
+				
+				<apex:dataTable value="{!MatrixRows}" var="row"  rules="all" cellpadding="2%" id="table" styleClass="myKVHtablesorter" align="center">
+
+					<!-- Columns start here... -->
+					<apex:column >
+						<apex:facet name="header">First<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="firstName" value="{!row.PortalUser.FirstName}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Last<br/>Name&nbsp;</apex:facet>
+						<apex:outputText id="lastName" value="{!row.PortalUser.LastName}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Username&nbsp;</apex:facet>
+						<apex:outputText id="username" value="{!row.PortalUser.Username}"/>&nbsp;<br/>
+					</apex:column>
+					
+					<apex:column style="text-align:center; vertical-align:middle;" >
+						<apex:facet name="header">
+							<apex:outputPanel title="Allows User access to myKVH">
+								Active&nbsp;
+							</apex:outputPanel>
+						</apex:facet>
+						<apex:inputCheckbox value="{!row.isNotFrozen}" id="chkBoxFreeze" disabled="{!isSelfEditing}"
+							title="{!IF(isSelfEditing, 'You cannot change this setting for yourself','')}"/>
+					</apex:column>
+					
+					<apex:column style="vertical-align:middle;" >
+						<apex:facet name="header">Fleet or<br/>Vessel</apex:facet>
+						<apex:outputText id="acct" value="{!row.PortalUser.Contact.Account.Name}"/>&nbsp;
+					</apex:column>
+					
+					<apex:column style="text-align:center; vertical-align:middle;" >
+						<apex:facet name="header">
+							<apex:outputPanel title="{!CustAdminToolTip}">
+								Admin&nbsp;
+<!-- 								<a href="#admin"><img src="/img/alohaSkin/help_grey.png" /></a> -->
+							</apex:outputPanel>
+						</apex:facet>
+						
+						<apex:inputCheckbox value="{!row.isCustomerAdmin}" id="chkBoxAdmin" disabled="{!isSelfEditing}" 
+							title="{!IF(isSelfEditing, 'You cannot change this setting for yourself','')}"/>
+					</apex:column>
+					
+					<apex:repeat value="{!row.portalUsersRolesExt}" var="column">
+						<apex:column style="text-align:center; vertical-align:middle;">
+							<div>
+								<apex:inputCheckbox value="{!column.hasRole}" id="chkBox" />
+							</div>
+						</apex:column>
+					</apex:repeat>
+					
+					<!--Define the headers here and hide the empty cells that are created -->
+					<apex:repeat value="{!ExtendedRolesList}" var="erl" id="MatrixColumns">
+						
+						<apex:column styleClass="empty-column-content" >
+							<apex:facet name="header">
+								<apex:outputPanel title="{!erl.Tool_Tip_Text__c}">
+									<apex:outputText escape="false" value="{!erl.Column_Header__c}" style="float:left;"/>
+								</apex:outputPanel>
+							</apex:facet>
+						</apex:column>
+					</apex:repeat>
+					
+					<apex:facet name="footer">
+						<apex:outputPanel >
+							<apex:commandButton value="Cancel" action="{!Cancel}" rerender="theForm" immediate="true" styleClass="left"/>
+							<apex:commandButton value="Save" action="{!Save}" status="loadStatus" rerender="theForm" styleClass="right"/>
+						</apex:outputPanel>
+					</apex:facet>
+				</apex:dataTable>
+			</apex:outputPanel>
+			
+			<apex:outputPanel layout="block" style="width: 350px; margin: auto;">
+				
+				If you need to change:
+				<ul>
+					<li>The Username or Email</li>
+					<li>The Fleet or Vessel association</li>
+				</ul>
+				or anything else about this user that you can't change here, 
+				please <a href="./myKVH_Edit_User_Case?user={!UserId}" >click this link and let us know</a>
+			</apex:outputPanel>
+		</apex:outputPanel>
+		<div class="box-content">
+			<div class="required"><span class="req" style="font-size: 1.1em; font-weight: bold;">*</span> indicates required field</div>
+		</div>
+	</div>
+</apex:form>
+</apex:page>

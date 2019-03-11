@@ -1,0 +1,437 @@
+<apex:page sidebar="false" standardstylesheets="false" showheader="false" doctype="html-5.0" controller="ortoo_e2a.EmailStorageDetailPageLiteEditController" id="thePage">
+ <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<head>
+		<title>Central Detail Page View</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/> 
+		<link rel="stylesheet" href="{!URLFOR($Resource.slds, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>
+		<link rel="stylesheet" href="{!URLFOR($Resource.fonts, '/font/css/font-awesome.min.css')}"/>
+		<style>
+			.dont-break-out 
+			{
+
+			/* These are technically the same, but use both */
+				overflow-wrap: break-word;
+				word-wrap: break-word;
+
+				-ms-word-break: break-all;
+				/* This is the dangerous one in WebKit, as it breaks things wherever */
+				word-break: break-all;
+				/* Instead use this non-standard one: */
+				word-break: break-word;
+
+				/* Adds a hyphen where the word breaks, if supported (No Blink) */
+				-ms-hyphens: auto;
+				-moz-hyphens: auto;
+				-webkit-hyphens: auto;
+				hyphens: auto;
+
+			}
+			.wrapText
+		    {
+			white-space: pre-wrap; /* css-3 */
+			white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+			white-space: -pre-wrap; /* Opera 4-6 */
+			white-space: -o-pre-wrap; /* Opera 7 */
+			word-wrap: break-word; /* Internet Explorer 5.5+ */
+			 
+			} 
+			#spinner 
+			{
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				background: url({!URLFOR($Resource.loader)}) 50% 50% no-repeat rgb(249,249,249);
+			}
+		</style>
+		<script type="text/javascript">
+
+
+		    function init() 
+		    {   
+		    	var editor_instance = document.getElementById('{!$Component.thePage.htmlbody}');
+				console.log(editor_instance);
+				if(editor_instance != null)
+				{
+			    	if({!JSENCODE(htmlBody) != null})
+			    	{   	
+				    	editor_instance.innerHTML = tidyHtml('{!JSENCODE(htmlBody)}');
+				   	}
+
+		    	}
+		        
+		    } 
+    
+		    
+		    //Tidy Html
+		    //I have call it on id HtmlBodyViewId by removing previous dynamic component
+		    
+		    function tidyHtml(html) 
+		    {
+			    var html = html.trim().replace(/>[^<]+</gm, function ($1) {
+			        return '>' + $1.substr(1, $1.length - 2).trim() + '<';
+			    }).replace(/>\s+</gm, '><');
+			    var containerElement = document.createElement('div');
+			    containerElement.innerHTML = html;
+			    var result = containerElement.innerHTML;
+			    
+			    return result;
+			}
+		    
+		 document.addEventListener('DOMContentLoaded', init, false);   
+		</script> 
+	</head>
+	<body>
+		<div id="spinner" ></div>
+		<div class="slds">
+			<fieldset class="slds-form--compound slds-has-divider--bottom">
+				<div class="form-element__group">
+					
+                    <div class="slds-grid slds-grid--align-center">
+							<div class="slds-button-group" role="group" data-aljs="icon-group">
+								<!-- <a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" id="edit">
+									<i class="fa fa-pencil"></i>
+									 
+								</a> -->
+								<a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="deleteRecord();">
+									<i class="fa fa-trash-o"></i>
+									
+								</a>
+								<a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="reply();">
+									<i class="fa fa-reply"></i>
+									
+								</a>
+								<a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="replyAll();">
+									<i class="fa fa-reply-all"></i>
+									
+								</a>
+								<a style="font-size: 24px" class="slds-button slds-button--neutral slds-is-selected" onclick="forward();">
+									<i class="fa fa-share"></i>
+									
+								</a>
+							</div>
+						</div>
+					
+				</div>
+			</fieldset>
+			
+				
+			<fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				<div class="form-element__group">
+					<div class="slds-form-element__row">
+						<label class="slds-form-element__label slds-size--1-of-12" for="from">From:</label>
+	                    <div class="slds-size--10-of-12">
+	                        <span class="dont-break-out" id="from">{!emaildetail.From_Address__c}</span>
+	                    </div>
+	                    <div class="slds-size--1-of-12 slds-text-align--right">
+	                    	<a href="#" onclick="addItem(); return false;" id="downarrow">
+								<svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+								 	<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevrondown')}"></use>
+								</svg>
+							</a>
+							<a href="#" onclick="addItem(); return false;" id="uparrow">
+								<svg aria-hidden="true" class="slds-icon--x-small slds-text-align--right slds-button__icon">
+									 	<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#chevronup')}"></use>
+								</svg>
+							</a>
+	                    </div>
+					</div>
+				</div>
+			</fieldset>
+			<div id="additionalFields">
+				 <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="to">To:</label>
+				 			<div class="slds-size--11-of-12">
+		                        <span class="dont-break-out" id="to">{!emaildetail.To_Address__c}</span>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				  <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="cc">CC:</label>
+				 			<div class="slds-size--11-of-12">
+		                        <span class="dont-break-out" id="cc">{!emaildetail.Cc_Address__c}</span>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				  <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--1-of-12" for="bcc">BCC:</label>
+				 			<div class="slds-size--11-of-12">
+		                        <span class="dont-break-out" id="bcc">{!emaildetail.Bcc_Address__c}</span>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				 <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--4-of-12" for="date">Message Date:</label>
+				 			<div class="slds-size--8-of-12">
+		                        <span class="dont-break-out" id="date">{!emaildetail.Message_Date__c}</span>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+				 <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<label class="slds-form-element__label slds-size--4-of-12" for="owner">Owner Object:</label>
+				 			<div class="slds-size--8-of-12">
+		                         <a onclick="viewImage('/{!JSENCODE(ownerObjectId)}')" StyleClass="dont-break-out" rendered="{!noLinkForOwnerObject =='1'}">{!ownerObjectRecordName}</a>
+		                         <apex:outputText styleClass="slds-form-element__static dont-break-out" value="{!ownerObjectRecordName}" rendered="{!noLinkForOwnerObject =='0'}"></apex:outputText>
+				       			<span class="dont-break-out" id="ownernolink"></span>
+		                    </div>
+				 		</div>
+				 	</div>
+				 </fieldset>
+			</div>
+			<fieldset class="slds-form--compound slds-has-divider--bottom">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<div class="slds-size--1-of-1">
+		                        <span class="slds-form-element__static dont-break-out" id="subject" style="font-weight: bold;">{!emaildetail.Subject__c}</span>
+		                    </div>
+				 		</div>
+				 	</div>
+		    </fieldset>
+		    <fieldset class="slds-form--compound slds-has-divider--bottom" style="margin-top:10px;">
+				 	<div class="form-element__group">
+				 		<div class="slds-form-element__row">
+				 			<div class="slds-size--1-of-1">
+		                        <apex:outputText value="{!textBody}" id="textbody" styleClass="slds-form-element__static wrapText dont-break-out" rendered="{!AND(textBody != null,htmlBody == null)}"/>
+		                    	<apex:outputText value="{!htmlBody}" id="htmlbody" styleClass="slds-form-element__static dont-break-out" rendered="{!htmlBody != null}"/>
+		                    </div>
+				 		</div>
+				 	</div>
+		    </fieldset>
+			 <div >
+			 	 <form name="resultForm" novalidate="true" style="margin-left:5px;margin-right:5px;">
+			 	 				
+					<div id="attachment" style="margin-top:10px;">
+					<apex:repeat value="{!allAttachments.messageAttachment}" var="item"> 
+						
+						<apex:outputpanel rendered="{!item.attachmentType ='Attachment'}">
+							<div class="slds-page-header" role="banner" style="background-color:#dde0ee;border:1px solid #aab3d4;margin-bottom:5px;">
+								<div class="slds-media">
+									<div class="slds-media__figure">
+										<svg aria-hidden="true" class="slds-icon">
+											<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#link')}"></use>
+										</svg>
+									</div>
+									<div class="slds-media__body">
+										<p class="slds-truncate slds-align-middle">{!item.attachmentName}&nbsp;&nbsp;&nbsp;<a onclick="viewImage('/servlet/servlet.FileDownload?file={!item.attachmentId}')">
+											View</a>
+										</p>
+									</div>
+								</div>
+							</div>
+						</apex:outputpanel>
+						<apex:outputpanel rendered="{!item.attachmentType ='File'}">
+							<div class="slds-page-header" role="banner" style="background-color:#dde0ee;border:1px solid #aab3d4;margin-bottom:5px;">
+								<div class="slds-media">
+									<div class="slds-media__figure">
+										<svg aria-hidden="true" class="slds-icon">
+											<use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#link')}"></use>
+										</svg>
+									</div>
+									<div class="slds-media__body">
+										<p class="slds-truncate slds-align-middle">{!item.attachmentName}&nbsp;&nbsp;&nbsp;<a onclick="viewImage('/sfc/servlet.shepherd/version/download/{!item.attachmentId}')">
+											View</a>
+										</p>
+									</div>
+								</div>
+							</div>
+						</apex:outputpanel>
+					</apex:repeat>
+					<apex:outputpanel rendered="{!noAttachment ='0'}">
+						<div class="slds-media">
+							<div class="slds-media__body">
+								<p> No attachment found.
+								</p>
+							</div>
+					 	</div>
+					</apex:outputpanel>
+				 	</div>
+										
+			 	 </form>
+			 	<apex:form >
+			 		<apex:actionfunction name="replyEmail" action="{!reply}" reRender=""> 
+						<apex:param name="messageId" value=""/>
+					</apex:actionfunction>
+					<apex:actionfunction name="replyAllEmail" action="{!replyAll}" reRender=""> 
+						<apex:param name="messageIdReplyall" value=""/>
+					</apex:actionfunction>
+					<apex:actionfunction name="forwardEmail" action="{!forward}" reRender=""> 
+						<apex:param name="messageIdForward" value=""/>
+					</apex:actionfunction>
+			 	</apex:form>
+			 </div>
+		</div>
+		
+		<script src="{!URLFOR($Resource.aljs, '/jquery/jquery-1.11.1.min.js')}"></script>
+		<script src="{!URLFOR($Resource.aljs, '/moment/moment.js')}"></script>
+		<script src="{!URLFOR($Resource.aljs, '/jquery/jquery.aljs-all.min.js')}"></script>
+		<script type="text/javascript">
+            $(window).load(function() {
+				$("#spinner").fadeOut("slow");
+			});
+		</script>
+		<script>
+		    function viewImage(path)
+		    {
+		    	if(!navigator.onLine)
+				{
+					alert('No internet connection');
+					return;
+				}
+				goToURL(path);
+				
+		    }
+		    function getQueryStringValue (key) 
+		    {  
+  				return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
+			}  
+			function addItem() {
+				$( "#additionalFields" ).toggle();
+				$( "#downarrow" ).toggle();
+				$( "#uparrow" ).toggle();
+			 }
+
+			$(document).ready(function(){
+				$("#additionalFields").hide();
+				$("#uparrow").hide();
+				var id = getQueryStringValue("id");
+				document.getElementById("edit").setAttribute('href', "/apex/ortoo_e2a__CentralEmailStorageDetailPageLiteEdit?id="+id+'&isrichtext={!isRichText}');
+				//getEmaiMessage(); 
+			});
+			
+			function reply()
+			{
+                if(!navigator.onLine)
+				{
+					alert('No internet connection');
+					return;
+				}
+				
+                $("#spinner").show();
+				var id = getQueryStringValue("id");
+				ortoo_e2a.EmailStorageDetailPageLiteEditController.reply(id, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						goToURL(result);
+					}
+					else
+					{ 
+						alert(event.message);
+					}
+					
+					
+					
+				}, {escape:false});
+				//replyEmail(id);
+			} 
+			function replyAll()
+			{
+                if(!navigator.onLine)
+				{
+					alert('No internet connection');
+					return;
+				}
+                $("#spinner").show();
+				var id = getQueryStringValue("id");
+				ortoo_e2a.EmailStorageDetailPageLiteEditController.replyAll(id, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						goToURL(result);
+					}
+					else
+					{ 
+						alert(event.message);
+					}
+					
+					
+					
+				}, {escape:false});
+				//replyAllEmail(id);
+			} 
+			
+			function forward()
+			{
+                if(!navigator.onLine)
+				{
+					alert('No internet connection');
+					return;
+				}
+                $("#spinner").show();
+				var id = getQueryStringValue("id");
+				ortoo_e2a.EmailStorageDetailPageLiteEditController.forward(id, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						goToURL(result);
+					}
+					else
+					{ 
+						alert(event.message);
+					}
+					
+					
+					
+				}, {escape:false});
+				//forwardEmail(id);
+			}
+			function goToURL(url)
+			{
+				if(typeof sforce == 'undefined')
+				{ 
+					window.location.href = url;
+				}
+				else
+				{
+					sforce.one.navigateToURL(url);
+				}
+			}
+			function deleteRecord()
+			{
+				if(!navigator.onLine)
+				{
+					alert('No internet connection');
+					return;
+				}
+				var id = getQueryStringValue("id");
+				ortoo_e2a.EmailStorageDetailPageLiteEditController.deleteEmailMessage(id, 
+				function(result, event)
+				{
+					if (event.status && event.result)
+					{
+						alert('Message is successfully deleted.');
+						goToURL("/"+result);
+					}
+					else
+					{ 
+						alert(event.message);
+					}
+					
+					
+					
+				}, {escape:false});
+			}
+			
+		</script>
+	</body>
+ </html>	
+</apex:page>

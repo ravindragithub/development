@@ -1,0 +1,285 @@
+<apex:component controller="Product_Registration_Review_Ctrl" allowDML="true">
+    <style>
+        .notentered {
+        font-weight: normal !important;
+        font-style: italic;
+        }
+        .span_3_of_12 {
+        width: 25%;
+        }
+        .span_4_of_12 {
+        width: 25%;
+        }
+        .labelcls{
+        margin: 0px !important;
+        }
+    </style>
+    <script>
+    j$( document ).ready(function(){
+        j$('#reviewtab').find('label').addClass("labelcls");
+    });
+    </script>
+    <div style="font-size: small;" id="reviewtab">
+        <h2>Review and Submit</h2>
+        <p class="pad-bottom">Please review the information below, and if necessary make any updates or additions by clicking on the associated tab. Then, click the appropriate "SAVE" button to register your product.</p>
+        
+        <apex:repeat value="{!lstwrapAllRegisteredProductsDetail}" var="objwrapAllRegisteredProductsDetail" >
+            <div class="section group">
+                <h3>{!objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c} <!-- <a class="button small-button font-75" href="#" onclick="showLoadingDiv();gotoeditpage('{!objwrapAllRegisteredProductsDetail.objActivationOrder.Id}');">Edit</a>--></h3>
+                <apex:outputPanel layout="none" rendered="{!objwrapAllRegisteredProductsDetail.objActivationOrder.Activation_Type__c != 'Self Registration'}">
+                    <div class="col {!IF(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications','span_3_of_12' ,'span_4_of_12')} matchheight">
+                        <div class="info-box">
+                        <h4>Main Customer Contact</h4>
+                        <div class="content">
+                            <ul>
+                       
+                                <li><small>Name:</small><br/> <strong>
+                                    <apex:outputLabel >
+                                    {!objwrapAllRegisteredProductsDetail.objActivationmainContact.First_Name__c} {!objwrapAllRegisteredProductsDetail.objActivationmainContact.Last_Name__c}
+                                    </apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Company Name:</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationmainContact.Account__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationmainContact.Account__c)),objwrapAllRegisteredProductsDetail.objActivationmainContact.Account__c, 'Not Entered')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Email:</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationmainContact.Email__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationmainContact.Email__c)),objwrapAllRegisteredProductsDetail.objActivationmainContact.Email__c, 'Not Entered')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Primary Phone Number:</small><br/> <strong>
+                                    <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationmainContact.Primary_Phone__c} ({!objwrapAllRegisteredProductsDetail.objActivationmainContact.Primary_Phone_Type__c})
+                                    </apex:outputLabel>
+                                    </strong></li>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationmainContact.Secondary_Phone__c != '', true, false)}">
+                                    <li><small>Secondary Phone Number:</small><br/> <strong>
+                                        <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationmainContact.Secondary_Phone__c} ({!objwrapAllRegisteredProductsDetail.objActivationmainContact.Secondary_Phone_Type__c})
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationmainContact.Job_Function__c != '', true, false)}">
+                                    <li><small>Role:</small><br/> <strong>
+                                        <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationmainContact.Job_Function__c}
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationmainContact.Job_Title__c != '', true, false)}">
+                                    <li><small>Title:</small><br/> <strong>
+                                        <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationmainContact.Job_Title__c}
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationSubscriber.Address__c != '', true, false)}">
+                                    <li><small>Address 1:</small><br/> <strong>
+                                        <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationSubscriber.Address__c}
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationSubscriber.Subscriber_Address_Line_2__c != '', true, false)}">
+                                    <li><small>Address 2:</small><br/> <strong>
+                                        <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationSubscriber.Subscriber_Address_Line_2__c}
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationSubscriber.City__c != '', true, false)}">
+                                    <li><small>City:</small><br/> <strong>
+                                       <apex:outputLabel > {!objwrapAllRegisteredProductsDetail.objActivationSubscriber.City__c} 
+                                        </apex:outputLabel>
+                                        </strong></li>
+                                </apex:outputPanel>
+                                <li><small>Postal/Zip Code:</small><br/> <strong>
+                                    <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationSubscriber.Postal_Zip_Code__c} 
+                                    </apex:outputLabel>
+                                    </strong></li>
+                                <li><small>State/Province/Territory:</small><br/> <strong>
+                                    <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationSubscriber.State_Province__c} 
+                                    </apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Country:</small><br/> <strong>
+                                    <apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationSubscriber.Country_Name__c} 
+                                    </apex:outputLabel>
+                                    </strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                </apex:outputPanel>
+                
+                <div class="col {!IF(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications','span_3_of_12' ,'span_4_of_12')} matchheight">
+                    <div class="info-box">
+                        <h4>Product Information</h4>
+                        <div class="content">
+                            <ul>
+                                <li><small>Installation Type:</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(selectedMarketType),'notentered', '')}" value="{!IF(NOT(ISBLANK(selectedMarketType)),selectedMarketType, 'Not Entered')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Product Line:</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c)),objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c, 'Not Entered')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Product:</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c)),objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Catalog_Name__c, 'Not Entered')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Serial Number(s):</small><br/> <strong>
+                                    <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Antenna_Serial_Number__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Antenna_Serial_Number__c)),objwrapAllRegisteredProductsDetail.objActivationHardware.Antenna_Serial_Number__c, 'Not Entered')}"></apex:outputLabel>
+                                    <apex:outputLabel value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationHardware.Below_Decks_Serial_Number__c)), ', '+objwrapAllRegisteredProductsDetail.objActivationHardware.Below_Decks_Serial_Number__c, '')}"></apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Purchase Date:</small><br/> <strong>
+                                    <apex:outputLabel >
+                                    <apex:outputText value="{0,date,dd'-'MMM'-'yyyy}">
+                                        <apex:param value="{!objwrapAllRegisteredProductsDetail.objActivationHardware.Purchase_Date__c}" /> 
+                                    </apex:outputText>
+                                    </apex:outputLabel>
+                                    </strong></li>
+                                <li><small>Proof of Purchase:</small><br/>
+                                    <apex:outputPanel layout="none" rendered="{!objwrapAllRegisteredProductsDetail.objActivationHardware.Have_Proof_of_Purchase__c}">
+                                        I do not have Proof of Purchase
+                                    </apex:outputPanel>
+                                    <apex:outputLabel >
+                                    <apex:repeat value="{!objwrapAllRegisteredProductsDetail.lstAttachment}" var="objAttachment" rendered="{!!objwrapAllRegisteredProductsDetail.objActivationHardware.Have_Proof_of_Purchase__c}">
+                                        <strong> 
+                                            <apex:outputLink value="{!URLFOR($Action.Attachment.Download, objAttachment.Id)}" target="_blank">{!objAttachment.name}</apex:outputLink>
+                                        </strong>
+                                        <br/><br/>
+                                    </apex:repeat>
+                                    </apex:outputLabel>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col {!IF(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications','span_3_of_12' ,'span_4_of_12')} matchheight">
+                    <div class="info-box">
+                        <apex:outputPanel rendered="{!CONTAINS(UPPER(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Info__c),'VESSEL')}">
+                            <h4>Vessel Details</h4>
+                            <div class="content">
+                                <ul>
+                                    <li><small>Vessel Name:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Name),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Name)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Name, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Vessel Type:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Vessel Detail:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Vessel IMO Number:</small><br/> <strong>
+                                        <apex:outputLabel rendered="{!objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c == 'Yes'}" styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c),'notentered', '')}" escape="false" >I have a Vessel IMO number</apex:outputLabel>
+                                        <apex:outputLabel rendered="{!objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c != 'Yes'}" styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c),'notentered', '')}" escape="false" >I don't have a Vessel IMO number</apex:outputLabel>
+                                        </strong></li>
+                                    <apex:outputPanel layout="none" rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c == 'Yes', true,false)}">
+                                        <li><small>IMO Number:</small><br/> <strong>
+                                            <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_IMO__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_IMO__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_IMO__c, 'Not Entered')}"></apex:outputLabel>
+                                            </strong></li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel layout="none" rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationPlatform.Having_IMO__c != 'Yes', true,false)}">
+                                        <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Radio_Call_Sign__c != '', true, false)}">
+                                            <li><small>Radio Call Sign: </small><br/><strong><apex:outputLabel > {!objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Radio_Call_Sign__c}</apex:outputLabel>
+                                                </strong></li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(objwrapAllRegisteredProductsDetail.objActivationPlatform.MMSI__c != '', true, false)}">
+                                            <li><small>MMSI:</small><br/><strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationPlatform.MMSI__c}</apex:outputLabel>
+                                                </strong> </li>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    <li><small>Flag:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                </ul>
+                            </div>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel rendered="{!CONTAINS(UPPER(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Info__c),'VEHICLE')}">
+                            <h4>Vehicle/Platform Details</h4>
+                            <div class="content">
+                                <ul>
+                                    <li><small>Vehicle/Platform Type:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Industry_Designation__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Vehicle/Platform Detail:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Platform_Detail__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Vehicle Make/Model:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vehicle_Make_Model__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vehicle_Make_Model__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Vehicle_Make_Model__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                    <li><small>Country of Registration:</small><br/> <strong>
+                                        <apex:outputLabel styleClass="{!IF(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c)),objwrapAllRegisteredProductsDetail.objActivationPlatform.Flag__c, 'Not Entered')}"></apex:outputLabel>
+                                        </strong></li>
+                                </ul>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+                <div class="col {!IF(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications','span_3_of_12' ,'span_4_of_12')} matchheight">
+                    <div class="info-box">
+                        <h4>Purchase Details</h4>
+                        <div class="content">
+                            <h5>Purchase</h5>
+                            <ul>
+                                <li><small>Purchasing Dealer Name:</small><br/> <strong>{!objwrapAllRegisteredProductsDetail.objActivationDealer.Company__c}</strong></li>
+                                <apex:outputPanel rendered="{!IF(CONTAINS($Label.No_Dealer,objwrapAllRegisteredProductsDetail.objActivationDealer.Dealer_Distributor_Company__c), true,false)}">
+                                    <li><small>Purchasing Dealer Country:</small><br/>
+                                        <strong>
+                                          <apex:outputLabel >  {!objwrapAllRegisteredProductsDetail.objActivationDealer.Country__c}
+                                            </apex:outputLabel>
+                                        </strong>
+                                    </li>
+                                    <li><small>Purchasing Dealer State/Province/Territory:</small><br/>
+                                        <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.State__c}
+                                            </apex:outputLabel>
+                                        </strong>
+                                    </li>
+                                    <li><small>Purchasing Dealer Phone Number:</small><br/>
+                                        <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.Dealer_Phone__c}
+                                            </apex:outputLabel></strong>
+                                    </li>
+                            </apex:outputPanel>
+                                </ul>
+                            <h5>Installation</h5>
+                            <ul>
+                                <li><small>Installed By:</small><br/> <strong>{!objwrapAllRegisteredProductsDetail.objActivationOrder.Installed_By__c}</strong></li>
+                                <apex:outputPanel rendered="{!IF(AND(CONTAINS(objwrapAllRegisteredProductsDetail.objActivationOrder.Installed_By__c,'Authorized Dealer'),!objwrapAllRegisteredProductsDetail.objActivationDealer.Same_as_Purchase_Dealer__c), true,false)}">
+                                    <li><small>Installing Dealer Name:</small><br/> <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.Installing_Dealer_Name__c}</apex:outputLabel></strong></li>
+                                    <li><small>Installing Dealer Country:</small><br/> <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.Installing_Dealer_Country__c}</apex:outputLabel></strong></li>
+                                    <li><small>Installing Dealer State/Province/Territory:</small><br/> <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.Installing_Dealer_State__c}</apex:outputLabel></strong></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(CONTAINS(objwrapAllRegisteredProductsDetail.objActivationOrder.Installed_By__c,'Factory Install'), true,false)}">
+                                    <li><small>
+                                        <apex:outputPanel layout="none" rendered="{!CONTAINS(UPPER(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Info__c),'VESSEL')}" >Boat Builder:</apex:outputPanel>
+                                        <apex:outputPanel layout="none" rendered="{!CONTAINS(UPPER(objwrapAllRegisteredProductsDetail.objActivationPlatform.Vessel_Info__c),'VEHICLE')}">Vehicle Manufacturer:</apex:outputPanel>
+                                        </small><br/> <strong><apex:outputLabel >{!objwrapAllRegisteredProductsDetail.objActivationDealer.Installed_By_Boat_Builder__c}</apex:outputLabel></strong></li>
+                                </apex:outputPanel>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <apex:outputPanel layout="none" rendered="{!objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications'}">
+                    <div class="col {!IF(objwrapAllRegisteredProductsDetail.objActivationHardware.Product_Line__c == 'Satellite_Communications','span_3_of_12' ,'span_4_of_12')} matchheight">
+                        <div class="info-box">
+                            <h4>Authorized Representatives</h4>
+                            <apex:outputLabel rendered="{!objwrapAllRegisteredProductsDetail.lstActivationContact.size == 0}" styleClass="notentered">
+                                <br/>
+                                <ul>
+                                    <li style="padding-left: 10px;"><br/>Not Entered</li>
+                                </ul>
+                            </apex:outputLabel>
+                            <apex:repeat value="{!objwrapAllRegisteredProductsDetail.lstActivationContact}" var="objContact">
+                                <div class="content">
+                                    <ul>
+                                        <li><small>Name:</small><br/> <strong>{!objContact.First_Name__c} {!objContact.Last_Name__c}</strong></li>
+                                        <li><small>Company Name:</small><br/> <strong>
+                                            <apex:outputLabel styleClass="{!IF(ISBLANK(objContact.Account__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objContact.Account__c)),objContact.Account__c, 'Not Entered')}"></apex:outputLabel>
+                                            </strong></li>
+                                        <li><small>Email:</small><br/> <strong>{!objContact.Email__c}</strong></li>
+                                        <li><small>Phone Number:</small><br/> <strong>{!objContact.Primary_Phone__c}</strong></li>
+                                        <li><small>Country:</small><br/> <strong>{!objContact.Country__c}</strong></li>
+                                        <li><small>State/Province/Territory:</small><br/> <strong>
+                                            <apex:outputLabel styleClass="{!IF(ISBLANK(objContact.State__c),'notentered', '')}" value="{!IF(NOT(ISBLANK(objContact.State__c)),objContact.State__c, 'Not Entered')}"></apex:outputLabel>
+                                            </strong></li>
+                                    </ul>
+                                </div>
+                            </apex:repeat>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </apex:repeat>
+    </div>
+ 
+</apex:component>

@@ -1,0 +1,32 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="PortalNewsDetailController" >
+    <aura:attribute name="releaseid" type="String" />    
+    <aura:attribute name="responsehtml" type="String" />
+    <aura:attribute name="newwtitle" type="String" />
+    <aura:attribute name="newsdate" type="String" />
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="max-width:1000px;padding: 25px;margin:auto;background:#fff">
+        <nav role="navigation" aria-label="Breadcrumbs">
+            <ol class="slds-breadcrumb slds-list--horizontal"  style="float: left;">
+                <li class="slds-breadcrumb__item slds-text-title--caps">
+                    <a style="color: #1f83ad;" href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}">
+                        HOME
+                    </a>
+                </li>
+                <li class="slds-breadcrumb__item slds-text-title--caps">
+                    <a href="#" style="color:#999;font-family:sans-serif">
+                        Press Release
+                    </a>
+                </li>
+            </ol>
+        </nav>        
+        <a class="button" href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}" style="float: right;" >BACK</a> 
+        <div style="clear:both;"></div>
+        <h1 style="margin-top:20px;">{!v.newwtitle}</h1>
+        <p>Date: {!v.newsdate}</p>
+        
+        <aura:unescapedHtml value="{!v.responsehtml}"/>
+    </div>
+    
+</aura:component>

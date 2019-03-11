@@ -1,0 +1,375 @@
+<apex:page controller="Add_New_Global_StaticIPImplentation" sidebar="false">
+
+      <apex:includeScript value="{!$Resource.AssetWindowJquery}"/>
+      
+      <script src="/soap/ajax/30.0/connection.js" type="text/javascript"></script>
+      <script src="/support/console/30.0/integration.js" type="text/javascript"></script> 
+      <script src="/xdomain/xdomain.js" type="text/javascript"></script>
+      
+      <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/jquery-1.11.1.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/jquery.dataTables.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowJS/dataTables.jqueryui.js')}"/>
+      
+          
+      <apex:stylesheet value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowCSS/dataTables.jqueryui.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.AssetLibraryFiles, '/AssetWindow/AssetWindowCSS/jquery-ui.css')}"/>
+    
+    <style>
+        <!--.right1 {
+            padding-left: 30%;
+            background-color: #E8E8E8;
+            height: 100px;
+            padding-top: 5%;
+         }
+         -->
+         .right1 {
+            padding-left: 20%;
+            padding-top: 2%;
+         }
+         h1 {
+            font-size: 15px;
+            color: blue;
+         }
+         p.ex {
+            color: rgb(0,0,255);
+         }
+         h2 {
+            font-size: 125%;
+            color: blue;
+         }
+         .pbTitle {
+            white-space: nowrap;
+         }
+    </style>
+  
+    <script>
+        function testCloseTab() {
+            //First find the ID of the current tab to close it
+            sforce.console.getEnclosingTabId(closeSubtab);
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            window.top.location='/console';
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+        
+        function CustomCancel(result){
+            var final = confirm("Are you sure you want to cancel?");
+            if(final == true){
+                if (sforce.console.isInConsole()) {
+                    var CurrentPageCancelID = '{!CaseID}';
+                }else{
+                    var CurrentPageCancelID = '{!CaseID}';
+                    window.location.href = '/'+CurrentPageCancelID; 
+                }
+            }  
+        }
+        
+        function returnToCase(){
+           var final = confirm("Are you sure you want to return to the case without replacing assets?");
+           if (final == true) {
+               var CurrentPageCancelID = '{!CaseID}';
+               window.location.href = '/'+CurrentPageCancelID;
+           }
+        }
+        
+        function returnToCaseWithOutSubmit(){
+           var final = confirm("Are you sure you want to cancel adding the Global Static IP and return  to the case?");
+           if (final == true) {
+               var CurrentPageCancelID = '{!CaseID}';
+               window.location.href = '/'+CurrentPageCancelID;
+           }
+        }
+        
+        function InstallConfig(){
+           var final = confirm("Are you sure you want to Proceed?");
+           if (final == true) {
+               CreateInstallConfig();
+           }
+        }
+        
+        function AssetSubmit(){
+            var final = confirm("Are you sure you want submit?");
+            if (final == true) {
+               assetupsertion();
+            }
+        }
+        
+        function callCheckBox(assetID){
+            passAssetID(assetID);
+        }
+        
+        function assetRemove(assetID){
+             var final = confirm("Are you sure that you want to remove this Global/VSAT Static IP?");
+             if (final == true) {
+                 removeasset(assetID);
+             }
+        }
+        
+        function replaceFinalAsset(){
+            var final = confirm("Are you sure you want Replace Asset?");
+            if (final == true) {
+                finalAssetReplacement();
+            }
+        }
+       
+    </script>
+    <script>
+     
+        function newGlobalStatic(){
+            var r = confirm('Are you sure want to add Global static IP?');
+             if (r == true) {
+                 callNewFunction();
+                 return true;
+             }
+        }
+        
+        function removeGlobalStatic(){
+            var r = confirm('Are you sure want to remove Global/VSAT static IP?');
+             if (r == true) {
+                 callRemoveFunction();
+                 return true;
+             }
+        }
+    
+    
+   </script>
+   
+   
+   
+    <apex:form id="frm">
+        
+        <apex:actionfunction name="callNewFunction" action="{!NewFunction}" rerender="frm" status="IC"/>
+        <apex:actionfunction name="callRemoveFunction" action="{!RemoveFunction}" rerender="frm" status="IC"/>
+        
+        
+        <apex:actionFunction name="CreateInstallConfig" action="{!CreateInstallConfigRecord}" status="IC" reRender="frm"/>
+        <apex:actionFunction name="assetupsertion" action="{!saveAsset}" status="IC" reRender="frm"/>
+        <apex:actionFunction name="passAssetID" action="{!replacementAsset}" status="IC" reRender="frm">
+            <apex:param name="firstParam" assignTo="{!enteredText1}" value="" />
+        </apex:actionFunction>
+        
+        
+        <apex:actionFunction name="removeasset" action="{!removeAsset}" rerender="frm" status="IC">
+            <apex:param name="Assetremove"  value=""/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="finalAssetReplacement" action="{!finalReplacementAsset}" status="IC" reRender="finalMessage"/>
+        
+        <apex:actionstatus id="IC">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                    <div class="waitingHolder" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        <!--<apex:pagemessages ></apex:pagemessages>-->
+        
+        
+        <apex:pageBlock title="Select Action">
+            <b>
+                <div align="center">
+                    <input type="radio" value="new" name="radiogroup" onclick="newGlobalStatic();"/>
+                    <label for="new">Add a new Global Static IP to the Assets</label>
+                    <input type="radio" value="newupdate" name="radiogroup" onclick="removeGlobalStatic();"/>
+                    <label for="newupdate">Remove an existing Global/VSAT Static IP and make the Install  Config Inactive</label>
+                </div>
+            </b>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Step 1 - Region Selection"  rendered="{!regionSelection}">
+            <apex:pageBlockSection >
+                    <apex:selectList value="{!selectedRegion}" size="1" label="Select Region:">
+                        <apex:selectOptions value="{!multipleRegion}"/>
+                    </apex:selectList>
+            </apex:pageBlockSection>
+            <div class="right1">
+                <apex:commandButton value="Find Private static IP" action="{!searchNextPrivateStaticIP}" status="IC" rerender="frm" disabled="{!installConfig}"/>
+                <apex:commandButton value="Cancel" onclick="CustomCancel(); return false;" disabled="{!installConfig}"/>
+            </div>
+        </apex:pageBlock>
+        
+        
+        
+        <apex:pageBlock title="Step 2 - Next Static IP" rendered="{!privateStaticIP}">
+            <apex:pageBlockTable value="{!psip}" var="staticIP">
+                <apex:column value="{!staticIP.Name}"/>
+                <apex:column value="{!staticIP.Subnet__c}"/>
+                <apex:column value="{!staticIP.Gateway__c}"/>
+                <apex:column value="{!staticIP.Region__c}"/>
+                <apex:column value="{!staticIP.Static_IP_Type__c}"/>
+                <apex:column headerValue="Status">
+                    <apex:outputText value="{! IF((staticIP.InActive__c == true), 'InActive', 'Active') }"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Proceed" onclick="InstallConfig(); return false;" disabled="{!installConfig}"/>
+                <apex:commandButton value="Cancel" onclick="CustomCancel(); return false;" disabled="{!installConfig}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:pageBlock rendered="{!installConfig}">
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlock title="Step 3 - Install & Config" rendered="{!installConfig}">
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!IC.Name}"/>
+                        <apex:outputField value="{!IC.Asset__c}"/>
+                        <apex:outputField value="{!IC.Account_Name__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection >
+                        <apex:Repeat value="{!privatePublicIps}" var="pips">
+                            <table width="250%" border="1">
+                              <thead>
+                                <tr>
+                                  <th>Public IP</th>
+                                  <th>Region</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>{!pips.Name}</td>
+                                  <td>{!pips.Region__c}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </apex:Repeat>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                
+                <apex:pageBlock title="Step 4 - New/Update Global IP Asset" rendered="{!globalIPAsset}">
+                    <apex:pageBlockSection columns="1">
+                        <apex:inputField value="{!findGlobalAsset.Name}"/>
+                        <apex:inputField value="{!findGlobalAsset.Parent_Asset__c}"/>
+                        <apex:inputField value="{!findGlobalAsset.Product2ID}"/>
+                        <apex:inputField value="{!findGlobalAsset.Item__c}"/>
+                        <apex:inputField value="{!findGlobalAsset.InstallDate}"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="submit" onclick="AssetSubmit(); return false;"/>
+                        <apex:commandButton value="Cancel" onclick="returnToCaseWithOutSubmit(); return false;"/>
+                    </apex:pageBlockButtons>
+                </apex:pageBlock>
+                
+                <apex:pageBlock title="Step 4 - Global IP Asset" rendered="{!!globalIPAsset}">
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!findGlobalAsset.Name}"/>
+                        <apex:outputField value="{!findGlobalAsset.Parent_Asset__c}"/>
+                        <apex:outputField value="{!findGlobalAsset.Product2ID}"/>
+                        <apex:outputField value="{!findGlobalAsset.Item__c}"/>
+                        <apex:outputField value="{!findGlobalAsset.InstallDate}"/>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:outputPanel id="treeView" rendered="{!assetHirarchy}">
+            <apex:outputPanel >
+                <apex:pageBlock title="Final Step - Asset Hierarchy">
+                    <apex:outputPanel rendered="{!typeOfUpdation}"><h2>Select Asset to Replace if Necessary</h2></apex:outputPanel>
+                    <apex:outputPanel rendered="{!!typeOfUpdation}"><h2>Select the Global Static IP to remove</h2></apex:outputPanel>
+                    <div class="treeNode">
+                    <apex:repeat value="{!ObjectStructure}" var="pos" >
+                        <apex:repeat value="{!pos.levelFlag}" var="flag" first="0">
+                            <apex:image url="/img/tree/empty.gif" height="16" width="20" rendered="{!IF(flag,false,true)}"/>
+                            <apex:image url="/s.gif" alt="" width="3" height="16" rendered="{!IF(flag,true,false)}"/>
+                            <apex:image url="/img/tree/chain.gif" height="16" width="20" rendered="{!IF(flag,true,false)}"/>
+                        </apex:repeat>
+            
+                        <span height="16" v="top">
+            
+                        <apex:outputText rendered="{!IF(pos.nodeType=='start',true,false)}">
+                            <apex:image id="tree_start" url="/img/tree/minusStart.gif" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                            <apex:image id="Icon_start" url="/img/icon/custom51_100/globe16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                            <apex:image id="Icon_start_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF(OR(pos.nodeType=='parent',pos.nodeType=='parent_end'),true,false)}">
+                            <apex:image id="Tree_parent" url="/img/tree/minus.gif" rendered="{!IF(pos.nodeType=='parent',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                            <apex:image id="Tree_parent_end" url="/img/tree/minusEnd.gif" rendered="{!IF(pos.nodeType=='parent_end',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>                
+                            <apex:image id="Icon_parent" url="/img/icon/factory16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                            <apex:image id="Icon_parent_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF(OR(pos.nodeType=='child',pos.nodeType=='child_end'),true,false)}">
+                            <apex:image id="Tree_child" url="/img/tree/node.gif" rendered="{!IF(pos.nodeType=='child',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                            <apex:image id="Tree_child_current" url="/img/tree/nodeEnd.gif" rendered="{!IF(pos.nodeType=='child_end',true,false)}" height="16" width="20" title="Click to expand/collapse nested items." onClick="TreeNodeElement.prototype.toggle(this,'{!pos.nodeId}')"/>
+                            <apex:image id="Icon_child" url="/img/icon/desk16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>    
+                            <apex:image id="Icon_child_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF(pos.nodeType=='end',true,false)}">
+                            <apex:image id="Tree_end" url="/img/tree/nodeEnd.gif" height="16" width="20"/>&nbsp;
+                            <apex:image id="Icon_end" url="/img/icon/desk16.png" width="16" height="16" rendered="{!IF(pos.currentNode,false,true)}"/>
+                            <apex:image id="Icon_end_current" url="/img/icon/star16.png" width="16" height="16" rendered="{!IF(pos.currentNode,true,false)}"/>
+                        </apex:outputText>
+                        <!-- Change Below -->
+                        <!-- Changed for Revision 1 and 2 "Assets" -->
+                        <!-- Display the sequence number first (if there is one!) -->
+                        
+                        <apex:outputPanel rendered="{!typeOfUpdation}">
+                            <input type="radio" name="selectRadio" id="radio" onchange="callCheckBox('{!pos.asset.id}'); return false;" value="{!pos.asset.id}" style="{!IF(pos.currentNode,'display:none;','')}"/> 
+                        </apex:outputPanel>  
+                        
+                        <apex:outputPanel rendered="{!IF((pos.asset.Item_Description__c == 'Global Static IP' || CONTAINS(pos.asset.Item_Description__c, 'VSAT Static IP')) && (!typeOfUpdation) , true, false)}">
+                            <input type="radio" name="selectRadio" id="radio" onchange="assetRemove('{!pos.asset.id}'); return false;" value="{!pos.asset.id}" style="{!IF(pos.currentNode,'display:none;','')}"/>
+                        </apex:outputPanel>
+                        
+                        <apex:outputText id="seqNo" style="{!IF(pos.currentNode,'font-weight: bold;','')}" value="{!pos.asset.Sequence_No__c} ," rendered="{!IF(pos.asset.Sequence_No__c != '', true, false)}"/>
+                        <!-- Display the link to the Asset detail page next... -->
+                        <em><apex:outputLink value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!pos.asset.id}','{!pos.asset.Name}', false)" rendered="{!NOT(ISNULL(pos.asset.id))}">{!pos.asset.name}</apex:outputLink></em>    
+                        <!-- <em><apex:outputLink value="/{!pos.asset.id}" style="{!IF(pos.currentNode,'font-weight: bold;','')}" styleClass="columnHeadActiveBlack" target="_top">{!pos.asset.name}</apex:outputLink></em>-->
+                        <!-- Display the Item Description -->
+                        <apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", {!pos.asset.Item_Description__c}" rendered="{!IF(pos.asset.Item_Description__c != '', true, false)}"/>
+                        <!-- Display installation date if there is one... -->
+                        <apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Installed {0,date,short}" rendered="{!IF(NOT(ISBLANK(pos.asset.InstallDate)), true, false)}">
+                            <apex:param value="{!pos.asset.InstallDate}"/>
+                        </apex:outputText>
+                        <!-- ***OR*** indicate that the field is missing -->
+                        <mark><apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Installation date *UNKNOWN*" rendered="{!IF(ISBLANK(pos.asset.InstallDate), true, false)}"/></mark>
+            
+                        <!-- Display the Date removed if there is one... -->
+                        <mark><apex:outputText style="{!IF(pos.currentNode,'font-weight: bold;','')}" value=", Removed {0,date,short}" rendered="{!IF(NOT(ISBLANK(pos.asset.Date_Removed__c)), true, false)}">
+                            <apex:param value="{!pos.asset.Date_Removed__c}"/>
+                        </apex:outputText></mark>
+            
+                        <!-- Stop -->
+                        </span>
+                        <div> </div>
+                        <apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),false,true)}">
+                            <div id='{!pos.nodeId}'></div>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF(OR(pos.nodeType=='child_end',pos.nodeType=='child'),true,false)}">
+                            <div id='{!pos.nodeId}'><apex:image url="/s.gif" alt="" width="1" height="1"/></div>
+                        </apex:outputText>
+                        <apex:repeat value="{!pos.closeFlag}" var="close">
+                        </apex:repeat>   
+                    </apex:repeat>
+                    <br/><br/><br/>
+                    </div>
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="Return To Case" onclick="returnToCase(); return false;"/>
+                    </apex:pageBlockButtons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <apex:pagemessages id="finalMessage"></apex:pagemessages>
+        <apex:pageBlock title="Replacement Asset details" rendered="{!replaceAssetSection}">
+            <apex:pageblocksection columns="2" id="onlyAsset">
+                 <apex:pageblocksection title="Replaced Values" columns="1">
+                     <apex:outputText styleClass="ReplacedAsset" value="{!replacements.Name}" label="Replaced Asset"/>
+                     <apex:outputText value="{!replacements.Product2.Name}" label="Replaced Product"/>
+                 </apex:pageblocksection>
+                 <apex:pageblocksection title="Replacemet Values" columns="1">
+                     <apex:outputText value="{!findGlobalAsset.Name}" label="Replacemet Asset"/>
+                     <apex:outputText value="{!findGlobalAsset.Product2.Name}" label="Replacement Product"/>
+                 </apex:pageblocksection>
+             </apex:pageblocksection>
+             <apex:pageBlockButtons >
+                 <apex:commandButton value="Replace Asset" onclick="replaceFinalAsset(); return false;"/>
+                 <apex:commandButton value="Cancel" onclick="CustomCancel(); return false;"/>
+             </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

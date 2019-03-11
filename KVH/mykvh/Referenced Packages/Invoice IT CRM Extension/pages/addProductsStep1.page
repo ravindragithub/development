@@ -1,0 +1,344 @@
+<apex:page standardController="Opportunity" extensions="invoiceit_crmx.CreateOpportunityProductsController">
+    <style type="text/css">
+    .custPopup{
+        background-color: white;
+        border-width: 2px;
+        border-style: solid;
+        z-index: 9999;
+        left: 50%;
+        padding:10px;
+        position: absolute;
+        <!-- Scroll bar for rate plan charge pop up , INVOICEIT-348 -->
+        overflow-y:scroll;
+        overflow-x:hidden;
+        height: 350px;
+        /* These are the 3 css properties you will need to change so the popup 
+        displays in the center of the screen. First set the width. Then set 
+        margin-left to negative half of what the width is. You can add 
+        the height property for a fixed size pop up if you want.*/
+        width: 890px;
+        margin-left: -380px;
+        top:75px;
+    }
+    .popupBackground{
+        background-color:black;
+        opacity: 0.20;
+        filter: alpha(opacity = 20);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+    }
+    </style>
+    <script>
+        function confirmCancel() {
+            var isCancel = confirm("{!$Label.invoiceit_s__CancellingthiswoulddiscardthechangesPleaseconfirm}");
+            if (isCancel) return true;
+            return false;
+        }
+        function addProduct(id,name){
+            addProduct(id,name);
+            var searchstring = document.getElementById("searchstring");
+            searchstring.value = ""
+        }
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            $j("#dialog").dialog({  autoOpen: false, modal: true, position: 'center', width: 190, 
+                                   height:70, dialogClass: "ui-dialog-no-titlebar ui-dialog-no-padding", resizable: true});
+        });
+        /*Function to show the modal dialog for jquery*/
+        function showDialog(){
+            $j("#dialog").dialog("open");
+            $j('#dialog').dialog('option', 'position', 'center');
+            return false;
+        }
+        /*Function to hide the modal dialog for jquery*/
+        function closeDialog(){
+            $j("#dialog").dialog("close");
+            return false;
+        }
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                 
+            for(var i=0; i<inputCheckBox.length; i++){         
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                    
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+        
+        function unSelectMainCheckbox(){
+            $j(".unSelectMain").attr('checked', false);  
+        }
+    </script>
+    <apex:outputField value="{!Opportunity.invoiceit_crmx__CurrencyL__c}" rendered="false"/>
+    <apex:outputField value="{!Opportunity.Name}" rendered="false"/>
+    <apex:sectionHeader title="Step 1 of 2" subtitle="{!opportunity.Name}" />
+    <apex:form >
+        <apex:actionStatus id="status" onstart="return showDialog()" onstop="return closeDialog()" />
+        <apex:actionFunction name="changeOfCurrency" action="{!changeCurrencySelection}" status="status" reRender="searchItems,render"/>
+        <apex:actionFunction name="addProduct" action="{!getRatePlansForProduct}"
+            rerender="ratePlanSelect,quoterateplancharges,ratePlanSelect,popupProductCharges" status="status">
+            <apex:param name="productId" value="" />
+            <apex:param name="productName" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!step2}" value="{!$Label.invoiceit_s__ButtonNext}" />
+                <apex:commandButton action="{!cancel}" value="{!$Label.invoiceit_s__ButtonCancel}" onclick="return confirmCancel()" immediate="true" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Opportunity Information" id="render">
+                <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.invoiceit_crmx__OpportunityStep1}" var="fieldAPI">   
+                    <apex:inputField value="{!opportunity[fieldAPI]}" rendered="{!fieldAPI != 'invoiceit_crmx__CurrencyL__c'}" required="{!OR(fieldAPI.required, fieldAPI.dbrequired)}"/>
+                    <apex:inputField value="{!opportunity[fieldAPI]}" onChange="changeOfCurrency()" rendered="{!fieldAPI == 'invoiceit_crmx__CurrencyL__c'}" required="{!OR(fieldAPI.required, fieldAPI.dbrequired)}"/>
+                </apex:repeat> 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.invoiceit_s__Search_Products}"/>
+     <apex:outputPanel id="searchItems">      
+        <table>                
+           <td style="float:left;">
+                    <apex:outputLabel value="{!$Label.invoiceit_s__Search_Products}" />
+                    <apex:inputText value="{!searchstring}" id="searchString">
+                        <c:autoComplete objectname="{!objectname}" searchfields="{!searchfields}"
+                            displayfields="{!displayfields}" orderfield="{!orderfield}"
+                            autocomplete_textbox="{!$Component.searchstring}" products_Filters="{!sFilterCriteria}" products_Limit="{!sProductsLimit}"/>
+                    </apex:inputText>
+                    <img src="/s.gif" alt="Help" class="helpIcon" title="{!$Label.invoiceit_s__SearchProductsHelpText}"/>
+           </td>
+           
+           <td style="float:right; margin-right:-60%">
+                    <apex:outputLabel value="{!$Label.invoiceit_s__Search_Product_Bundles}" rendered="{!displayProductBundle}"/>
+                    <apex:inputText value="{!searchstring}" id="searchStringPB" rendered="{!displayProductBundle}">
+                        <c:autoComplete objectname="{!objectnameForProductBundle}" searchfields="{!searchfieldsForProductBundle}"
+                            displayfields="{!displayfieldsForProductBundle}" orderfield="{!orderfieldForProductBundle}"
+                            autocomplete_textbox="{!$Component.searchStringPB}" products_Filters="{!sFilterCriteriaForProductBundle}" products_Limit="{!sProductsLimit}"/>
+                    </apex:inputText>
+                    <apex:image url="/s.gif" alt="Help" styleClass="helpIcon" title="{!$Label.invoiceit_s__SearchProductsHelpText}" rendered="{!displayProductBundle}"/>
+           </td>
+           
+           
+          </table>      
+    </apex:outputPanel>     
+            <apex:pageblockSection id="ratePlanSelect">
+                <apex:pageBlockTable value="{!listProductRatePlans}" var="rateplan" rendered="{!isMultipleRatePlans}"
+                    style="overflow:auto;height:100px; width:1000px;" id="ratePlansTable">
+                    <apex:column >
+                        <apex:commandLink styleClass="btn" style="padding:2px 5px 2px 5px; text-decoration:none;"
+                            value="{!$Label.invoiceit_s__ButtonSelect}" action="{!getRatePlanChargesForRatePlan}"
+                            rerender="popupProductCharges,quoterateplancharges,quoteClass,ratePlansTable,ratePlanSelect" status="status">
+                            <apex:param name="ratePlanId" value="{!rateplan.Id}" />
+                        </apex:commandLink>
+                    </apex:column>
+                    <apex:column value="{!rateplan.Name}" />
+                    <apex:column value="{!rateplan.invoiceit_s__Description__c}" />
+                </apex:pageBlockTable>
+            </apex:pageblockSection>
+         </apex:pageBlock>
+         <apex:pageBlock title="{!$Label.invoiceit_s__QuoteStep2_PB_SelectedProducts}" id="quoterateplancharges">
+            <apex:pageMessages id="messages" />           
+            <table cellspacing="0" cellpadding="0" border="0" class="list">
+                    <thead class="rich-table-thead">
+                    <tr class="headerRow">
+                        <th colspan="1" scope="col" class="headerRow">
+                          <div>
+                          </div>
+                        </th>
+                        <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Product__c.FieldSets.invoiceit_crmx__ProductFieldsInStep1}" var="fieldAPI">
+                            <th colspan="1" scope="col" class="headerRow">
+                                <div>
+                                    {!fieldAPI.Label}
+                                </div>
+                            </th> 
+                        </apex:repeat>
+                        <th colspan="1" scope="col" class="headerRow">
+                          <div>
+                          {!$Label.invoiceit_s__Quantity}
+                          </div>
+                        </th>
+                        <apex:variable value="{!3}" var="rowNum"/>
+                        <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Rate_Plan_Charge__c.FieldSets.invoiceit_crmx__OpportunityProds_Wizard_Step1}" var="fieldAPI">
+                            <th colspan="1" scope="col" class="headerRow">
+                                <div>
+                                    {!fieldAPI.Label}
+                                </div>
+                            </th>
+                          <apex:variable var="rowNum" value="{!rowNum + 1}"/>   
+                        </apex:repeat>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!opportunityClass.opportunityProducts}" var="opportunityproduct">
+                        <apex:repeat value="{!opportunityproduct.OpportunityRatePlans}" var="opportunityrateplan">
+                            <apex:repeat value="{!opportunityrateplan.OpportunityRatePlanCharges}" var="opportunityrateplancharge">
+                                <tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);}" onmouseover="if (window.hiOn){hiOn(this);}" class="dataRow even odd first">
+                                    <td colspan="1" class="dataCell">
+                                       <apex:commandLink styleClass="btn" style="padding:2px 5px 2px 5px; text-decoration:none;" rendered="{!opportunityrateplancharge.opportunityRatePlanCharge.invoiceit_crmx__Sequence_No__c <= 1 && opportunityrateplancharge.displayRemove == true}"
+                                           value="{!$Label.invoiceit_s__ButtonRemove}" action="{!removeCharges}" rerender="quoterateplancharges" status="status" >
+                                        <apex:param name="opportunityproductId" value="{!opportunityproduct.Opportunityproduct.Id}" />
+                                        <apex:param name="opportunityproductcounter" value="{!opportunityproduct.OpportunityProductCounter}" />
+                                        <apex:param name="productBundleId" value="{!opportunityproduct.Opportunityproduct.invoiceit_crmx__Bundle_SequenceNumber__c}" />
+                                        </apex:commandLink>
+                                    </td>  
+                                    <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Product__c.FieldSets.invoiceit_crmx__ProductFieldsInStep1}" var="fieldAPI">
+                                        <td colspan="1" class="dataCell">
+                                            <!--
+                                            Modified By     : Rama Krishna.v
+                                            Modified Date   : 01-4-2014
+                                            JIRA Task       : INVOICEIT-336
+                                            Comments        :  added style attribute to below two lines.
+                                            -->
+                                            <apex:inputField value="{!opportunityproduct.Opportunityproduct[fieldAPI]}" rendered="{!opportunityrateplancharge.opportunityRatePlanCharge.invoiceit_crmx__Sequence_No__c <= 1}" style="{!IF(fieldAPI == 'Name', widthOfProductNameText, '')}"/>
+                                        </td>
+                                    </apex:repeat>
+                                    <td colspan="1" class="dataCell">
+                                        <apex:inputField value="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Quantity__c}" required="true" rendered="{!opportunityrateplancharge.isQuantityEditable == true}" style="width:70px">
+                                            <apex:param value="{0,number,0}" />
+                                        </apex:inputField>
+                                        
+                                         <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Quantity__c}" rendered="{!opportunityrateplancharge.isQuantityEditable != true}" style="width:70px">
+                                            <apex:param value="{0,number,0}" />
+                                        </apex:outputField>
+                                        
+                                    </td>
+                                    <apex:repeat value="{!$ObjectType.invoiceit_crmx__Opportunity_Rate_Plan_Charge__c.FieldSets.invoiceit_crmx__OpportunityProds_Wizard_Step1}" var="fieldAPI">
+                                        <td colspan="1" class="dataCell">
+                                            <!--<apex:inputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}" rendered="{!(fieldAPI == 'Name') || (fieldAPI =='invoiceit_crmx__Status__c') || (fieldAPI == 'invoiceit_crmx__Unit_Price__c' && opportunityrateplancharge.opportunityrateplancharge.Is_Product_Editable__c == true)}"/>
+                                            <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}" rendered="{!(fieldAPI != 'Name' && fieldAPI != 'invoiceit_crmx__Unit_Price__c' && fieldAPI !='invoiceit_crmx__Status__c') || (fieldAPI == 'invoiceit_crmx__Unit_Price__c' && opportunityrateplancharge.opportunityrateplancharge.Is_Product_Editable__c == false)}"/>-->
+                                             <!--
+                                                Modified By     : Rama Krishna.v
+                                                Modified Date   : 01-4-2014
+                                                JIRA Task       : INVOICEIT-336
+                                                Comments        :  added style attribute to below two lines.
+                                            -->
+                                            <apex:inputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}" rendered="{!( ((fieldAPI == 'invoiceit_crmx__Unit_Price__c' || fieldAPI == 'invoiceit_crmx__Percentage_of_other_Charges__c' || fieldAPI == 'invoiceit_s__Cost_Price__c') && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c == true && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c != 'Percentage Pricing' && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c != 'Tiered Pricing' && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c != 'Volume Pricing') || (fieldAPI == 'Name') || (!BEGINS(fieldAPI,'invoiceit_crmx__')) )}" style="{!IF(fieldAPI == 'Name', widthOfChargeNameText, '')}"/>
+                                            <apex:outputField value="{!opportunityrateplancharge.opportunityrateplancharge[fieldAPI]}" rendered="{! (!(((fieldAPI == 'invoiceit_crmx__Unit_Price__c' || fieldAPI == 'invoiceit_crmx__Percentage_of_other_Charges__c' || fieldAPI == 'invoiceit_s__Cost_Price__c') && opportunityrateplancharge.opportunityrateplancharge.Is_Product_Editable__c == true && opportunityrateplancharge.opportunityrateplancharge.Price_Format__c != 'Percentage Pricing' && opportunityrateplancharge.opportunityrateplancharge.Price_Format__c != 'Tiered Pricing' && opportunityrateplancharge.opportunityrateplancharge.Price_Format__c != 'Volume Pricing') || (fieldAPI == 'Name') || (!BEGINS(fieldAPI,'invoiceit_crmx__'))) )}" style="{!IF(fieldAPI == 'Name', widthOfChargeNameText, '')}"/>
+                                                                                        
+                                            <apex:commandButton value="{!$Label.invoiceit_s__ButtonViewTier}" action="{!showPopup}" style="float:right;" reRender="tstpopup" rendered="{!fieldAPI == 'invoiceit_crmx__Unit_Price__c' && (opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c == 'Tiered Pricing' || opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c == 'Volume Pricing') && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c != true}">            
+                                               <apex:param value="{!opportunityrateplancharge.opportunityRatePlanChargeCounter}"  name="opportunityRatePlanChargeCounterForTier"/>
+                                            </apex:commandButton>
+                                            
+                                            <apex:commandButton value="Update Price" action="{!showPopup}" style="float:right;" reRender="tstpopup" rendered="{!fieldAPI == 'invoiceit_crmx__Unit_Price__c' && (opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c == 'Tiered Pricing' || opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Price_Format__c == 'Volume Pricing') && opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c == true}">            
+                                               <apex:param value="{!opportunityrateplancharge.opportunityRatePlanChargeCounter}"  name="opportunityRatePlanChargeCounterForTier"/>
+                                            </apex:commandButton>
+                                        </td>
+                                    </apex:repeat>
+                                </tr>   
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:repeat>
+                </tbody>
+            </table>
+         </apex:pageBlock>
+        
+        <!-- this is for pop up -->
+      <apex:outputPanel id="tstpopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/> 
+        <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+        <apex:commandButton style="Float:Right" action="{!saveAndClosePopup}" rerender="tstpopup" image="{!URLFOR($Resource.invoiceit_s__InvoiceIt, '/images/Close_Box_Red.png')}"/>
+        <apex:pageBlock >
+           <apex:pagemessages id="pm"/>
+           <apex:pageblockSection title="{!$Label.invoiceit_s__Tiers}" >
+              <apex:repeat value="{!opportunityClass.opportunityProducts}" var="opportunityproduct">
+                <apex:repeat value="{!opportunityproduct.OpportunityRatePlans}" var="opportunityrateplan">
+                    <apex:repeat value="{!opportunityrateplan.OpportunityRatePlanCharges}" var="opportunityrateplancharge">
+                        <apex:outputPanel rendered="{!TEXT(opportunityrateplancharge.opportunityRatePlanChargeCounter) == opportunityRatePlanChargeCounterForTier}">
+                             <center> 
+                              <!--
+                                Modified By     : Anil Pinto
+                                Modified Date   : 19 June 2013
+                                JIRA Task       : INVOICEIT-61
+                                Comments        : This new method saveAndClosePopup created as a validations required while saving the tiers
+                              -->
+                              
+                                <apex:commandButton value="{!$Label.invoiceit_s__ButtonSaveAndClose}" action="{!saveAndClosePopup}" rerender="tstpopup" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}" />
+                                
+                                <apex:commandButton action="{!newTier}" value="Add" reRender="tstpopup" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                <apex:commandButton value="Close" action="{!closePopup}" rerender="tstpopup" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                             </center><br/>
+                             
+                             <apex:pageBlockTable value="{!opportunityrateplancharge.opportunityRatePlanChargeTiers}" var="oppTier">
+                                <apex:column headerValue="{!$Label.invoiceit_s__StartUnit}">
+                                    <apex:inputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Start_Unit__c}" required="true" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/> 
+                                    <apex:outputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Start_Unit__c}" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/> 
+                                </apex:column>    
+                                
+                                <apex:column headerValue="{!$Label.invoiceit_s__EndUnit}">
+                                    <apex:inputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__End_Unit__c}" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}" />
+                                    <apex:outputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__End_Unit__c}" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                </apex:column> 
+                                
+                                <apex:column headerValue="{!$Label.invoiceit_s__UnitPrice}">
+                                    <apex:inputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Unit_Price__c}" required="true" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                    <apex:outputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Unit_Price__c}" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                </apex:column> 
+                                
+                                <apex:column headerValue="{!$Label.invoiceit_s__UnitCostPrice}">    
+                                    <apex:inputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Unit_Cost_Price__c}" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                    <apex:outputField value="{!oppTier.opportunityRatePlanChargeTier.invoiceit_crmx__Unit_Cost_Price__c}" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                </apex:column>     
+                                
+                                <apex:repeat value="{!opportunityTierApiNames}" var="key">
+                                    <apex:column headerValue="{!key}">    
+                                        <apex:variable var="api" value="{!opportunityTierApiNames[key]}"/>
+                                        <apex:inputField value="{!oppTier.opportunityRatePlanChargeTier[api]}" rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                        <apex:outputField value="{!oppTier.opportunityRatePlanChargeTier[api]}" rendered="{!!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}"/>
+                                    </apex:column>
+                                </apex:repeat>
+                                
+                                <apex:column rendered="{!opportunityrateplancharge.opportunityrateplancharge.invoiceit_crmx__Is_Product_Editable__c}">    
+                                    <apex:commandButton value="{!$Label.invoiceit_s__ButtonRemove}" action="{!removeTier}" immediate="true"  reRender="tstpopup">            
+                                       <apex:param value="{!oppTier.opportunityRatePlanChargeTier.Id}"     name="opportunityTierIdToDelete"/>
+                                       <apex:param value="{!oppTier.opportunityRatePlanChargeTierCounter }" name="opportunityTierCountertoDelete"/>
+                                       <apex:param value="{!opportunityrateplancharge.opportunityRatePlanChargeCounter}" name="opportunityRatePlanChargeCounterForTier"/>
+                                    </apex:commandButton>
+                                </apex:column>     
+                            </apex:pageBlockTable>
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </apex:repeat>
+              </apex:repeat>
+           </apex:pageblockSection>              
+        </apex:pageBlock>                         
+        </apex:outputPanel>
+     </apex:outputPanel>
+    <!-- End Of popUp --> 
+    
+     <!-- this is for pop up for displaying the product charges, INVOICEIT-348 -->
+      <apex:outputPanel id="popupProductCharges">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopupForProductRPC}"/> 
+        <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopupForProductRPC}">
+        <apex:commandButton style="Float:Right" action="{!closePopupForProductRPC}" rerender="popupProductCharges,quoterateplancharges" image="{!URLFOR($Resource.invoiceit_s__InvoiceIt, '/images/Close_Box_Red.png')}" onclick="unSelectMainCheckbox();"/>
+        <apex:pageBlock >
+           <apex:pagemessages id="pm"/>
+           <apex:pageblockSection >
+             <apex:outputField value="{!listOfClassSelectProductCharge[0].productCharge.invoiceit_s__Product_Rate_Plan__r.invoiceit_s__Product__r.Name}"/>
+             <apex:outputField value="{!listOfClassSelectProductCharge[0].productCharge.invoiceit_s__Product_Rate_Plan__r.invoiceit_s__Product__r.invoiceit_s__Product_Code__c}"/>
+             <apex:outputField value="{!listOfClassSelectProductCharge[0].productCharge.invoiceit_s__Product_Rate_Plan__r.Name}"/>   
+            </apex:pageblockSection>
+           <apex:pageblockSection title="Select Product Rate Plan Charges" collapsible="false"/>
+              <apex:pageBlockTable value="{!listOfClassSelectProductCharge}" var="innerClassSelectProductCharge">
+                  <apex:column >
+                      <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" styleClass="unSelectMain"/>
+                      </apex:facet>
+                      <apex:inputCheckbox value="{!innerClassSelectProductCharge.isSelected}" id="inputId"/>
+                  </apex:column>                  
+                   <apex:repeat value="{!$ObjectType.invoiceit_s__Product_Rate_Plan_Charge__c.FieldSets.invoiceit_s__ModelPopUpFields}" var="fieldAPI">
+                      <apex:column value="{!innerClassSelectProductCharge.productCharge[fieldAPI]}" /> 
+                  </apex:repeat>  
+              </apex:pageBlockTable>
+              <apex:pageBlockButtons >
+                   <apex:commandButton value="Add" action="{!saveAndCloseProductRPCPopup}" rerender="popupProductCharges,quoterateplancharges" onclick="unSelectMainCheckbox();"/>   
+              </apex:pageBlockButtons>              
+        </apex:pageBlock>                         
+        </apex:outputPanel>
+     </apex:outputPanel>
+    <!-- End Of popUp, INVOICEIT-348 --> 
+    
+    <!-- This div holds the image that is opened as a popup during processing -->
+    <div id="dialog">
+        <apex:image value="{!URLFOR($Resource.invoiceit_s__jQuery,'/css/smoothness/images/please_wait.gif')}" />
+    </div>
+   </apex:form>
+</apex:page>

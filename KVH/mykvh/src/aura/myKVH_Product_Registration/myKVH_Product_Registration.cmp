@@ -1,0 +1,63 @@
+<aura:component controller="myKVH_Product_RegistrationController" implements="forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <aura:attribute name="prodRegistration" type="Object" default="{'sobjectType':'Product_Registration__c'}"/>
+    <aura:attribute name="attachmentList" type="list"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="accountRequired" type="boolean" default="true"/>
+    <aura:attribute name="installationRequired" type="boolean"/>
+    <aura:attribute name="systemRequired" type="boolean"/>
+    <aura:attribute name="providerAccRequired" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner variant="brand" size="large" alternativeText="Loading Page"/>
+    </aura:if>
+    
+    <div class="slds-scope content-panel">
+        <h1 style="float:left;">KVH TracVision and Compass Product Registration</h1>
+        
+        <div style="float:right;">
+            <lightning:button label="Back to Home" class="go-btn" variant="brand" onclick="{!c.onBackHome}"/>
+            <div class="req-note slds-m-top_medium"><span class="required">*</span> indicates required field</div>
+        </div>
+        
+        <div class="clear"></div>
+        <lightning:accordion aura:id="accordion" activeSectionName="Account" onsectiontoggle="{!c.onSectionToggle}" class="prdRegAccordion">
+            <div id="scrollAccount"></div>
+            <lightning:accordionSection name="Account" label="Account">
+                <aura:set attribute="actions">
+                    <lightning:icon iconName="{!if(v.accountRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon"/>
+                </aura:set>
+                <c:PrdReg_CustomerInfo prodRegistration="{!v.prodRegistration}" accountRequired="{!v.accountRequired}"/>
+            </lightning:accordionSection>
+            <lightning:accordionSection name="Installation" label="Installation">
+                <aura:set attribute="actions">
+                    <lightning:icon aura:id="installationRequiredIcon" iconName="{!if(v.installationRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                </aura:set>
+                <c:PrdReg_Installation prodRegistration="{!v.prodRegistration}" installationRequired="{!v.installationRequired}"/>
+            </lightning:accordionSection>
+            <lightning:accordionSection name="System" label="System">
+                <aura:set attribute="actions">
+                    <lightning:icon aura:id="systemRequiredIcon" iconName="{!if(v.systemRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                </aura:set>
+                <c:PrdReg_System prodRegistration="{!v.prodRegistration}" systemRequired="{!v.systemRequired}"/>
+            </lightning:accordionSection>
+            <lightning:accordionSection name="ProviderAccount" label="Provider Account">
+                <aura:set attribute="actions">
+                    <lightning:icon aura:id="providerAccRequiredIcon" iconName="{!if(v.providerAccRequired,'action:remove','action:approval')}" size="xx-small" class="reqIcon notStarted"/>
+                </aura:set>
+                <c:PrdReg_ProviderAccount prodRegistration="{!v.prodRegistration}" providerAccRequired="{!v.providerAccRequired}"/>
+            </lightning:accordionSection>
+            <lightning:accordionSection name="Agreement" label="Agreement">
+                <c:PrdReg_Agrement/>
+            </lightning:accordionSection>
+        </lightning:accordion>
+        
+        <div style="text-align:center;">
+        	<lightning:button label="Save Product Registration" variant="brand" onclick="{!c.onSaveSubmit}" class="savebtn"/>
+        </div>
+    </div>
+    <c:myKVH_ProductRegistration/>
+</aura:component>

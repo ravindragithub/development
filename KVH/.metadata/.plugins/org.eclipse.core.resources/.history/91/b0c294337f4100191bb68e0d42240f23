@@ -1,0 +1,70 @@
+<!--
+/***********************************************************************************************************************
+ Name: productWindow
+ Copyright © 2014 KVH Industries | Salesforce Instance : 
+========================================================================================================================
+ Purpose: 1) This is used to popup product records denpend on identifier selected on Add_Identifier_Product page
+          2) selected product value placed in Add_Identifier_Productpage  
+------------------------------------------------------------------------------------------------------------------------
+ Utilized in(Called in):
+-----------------------
+                                           
+========================================================================================================================
+ REQUIREMENT INFORMATION & DEVELOPMENT INFORMATION:                                                        
+------------------------------------------------------------------------------------------------------------------------
+ VERSION    AUTHOR              DATE             DETAIL                                Mercury Request #
+------------------------------------------------------------------------------------------------------------------------
+   1.0     Gopi Kishore. K      16/06/2014       Initial Development                                   
+***********************************************************************************************************************/
+
+-->
+<apex:page controller="ProductWindow" title="Search" showHeader="false" sideBar="false" tabStyle="Contact" id="pg">
+ 
+  <apex:form >
+  <apex:outputPanel id="page" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+    <apex:tabPanel switchType="client" selectedTab="name1" id="tabbedPanel">
+ 
+      <!-- SEARCH TAB -->
+      <apex:tab label="Search" name="tab1" id="tabOne">
+        <apex:actionRegion >  
+         <apex:outputPanel id="top" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+            <apex:outputLabel value="Search" style="font-weight:Bold;padding-right:10px;" for="txtSearch"/>
+            <apex:inputText id="txtSearch" value="{!searchString}" />
+              <span style="padding-left:5px"><apex:commandButton id="btnGo" value="Go" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+          </apex:outputPanel>
+          <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block">
+            <apex:pageBlock id="searchResults"> 
+              <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+                <apex:column >
+                  <apex:facet name="header">
+                    <apex:outputPanel >Name</apex:outputPanel>
+                  </apex:facet>
+                   <apex:outputLink value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.id))}">{!a.Name}</apex:outputLink>     
+                </apex:column>
+                <apex:column >
+                  <apex:facet name="header">
+                    <apex:outputPanel >KVH P/N</apex:outputPanel>
+                  </apex:facet>
+                   <apex:outputtext value="{!a.ProductCode}"></apex:outputtext>     
+                </apex:column>
+                <apex:column >
+                  <apex:facet name="header">
+                    <apex:outputPanel >Product Description</apex:outputPanel>
+                  </apex:facet>
+                   <apex:outputtext value="{!a.Description}"></apex:outputtext>     
+                </apex:column> 
+                <apex:column >
+                  <apex:facet name="header">
+                    <apex:outputPanel >Product Family</apex:outputPanel>
+                  </apex:facet>
+                   <apex:outputtext value="{!a.Family}"></apex:outputtext>     
+                </apex:column>                              
+              </apex:pageBlockTable>
+            </apex:pageBlock>
+          </apex:outputPanel>
+        </apex:actionRegion> 
+      </apex:tab>  
+    </apex:tabPanel>
+  </apex:outputPanel>
+  </apex:form>
+</apex:page>

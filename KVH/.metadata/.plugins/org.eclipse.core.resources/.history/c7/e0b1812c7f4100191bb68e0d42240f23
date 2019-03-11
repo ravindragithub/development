@@ -1,0 +1,637 @@
+<apex:page controller="ActivationOneCare_Ctrl" sidebar="false" showHeader="false" standardStyleSheets="false">
+    <html>
+        <head>
+            <meta charset="UTF-8"/> 
+            <title>Online Activation Order - OneCare</title> 
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js">
+            </script>
+            <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js">
+            </script>
+            <script src="https://use.fontawesome.com/0633ed32ab.js">
+            </script>
+            <link href="https://use.fontawesome.com/0633ed32ab.css" media="all" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/reset.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/css/styles.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/tabs/css/style.css')}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.myKVH_tabs)}" rel="stylesheet"/>
+            <link href="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.css')}" rel="stylesheet"/>
+            <apex:includeScript value="{!$Resource.ActivationStatusJS}"/>
+            <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            function loadComponent(param){
+                if(param == 'KVH-show-inside-onecare'){
+                    j$(".KVH-show-inside-onecare").toggle( "slow" );
+                }
+            }
+            
+            </script>
+            <!-- Load jQuery plug-ins, use minimized libs -->
+            <!-- Library for Modal windows.... -->
+            <script src="{!URLFOR($Resource.ActivationOrders, 'www/assets/remodal/jquery.remodal.min.js')}" type="text/javascript"></script>
+            <!-- Library for jQuery Validator... -->
+                <script src="{!URLFOR($Resource.jquery_validation, 'dist/jquery.validate.js')}" type="text/javascript"></script>
+            <script>
+            var validator;
+            j$( document ).ready(function() {                
+                validator = j$("[id$='theForm']").validate({ignore: ":disabled"});
+                j$("input[name=line1][value='Selected']").prop('checked', true);
+                if(j$('[id$=Antenna_Serial_Number__c]').length>0){
+                    j$('[id$=Antenna_Serial_Number__c]').rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+                if(j$('[id$=SIM_Card_Number__c]').length>0){
+                    j$('[id$=SIM_Card_Number__c]').rules("add",{
+                        required: true,
+                        messages: {
+                            required: ""
+                        }
+                    });
+                }
+                
+            });
+            
+            
+            function currenttabtoshowerror(){
+                var errordiv= "<div class='error-box' id='globalErrorBOX' style='display:none !important'>"; 
+                errordiv += "<h1><img src='/resource/cautionImage' height='20' width='20' />";
+                errordiv += "Please correct the errors indicated below and try again. </h1> <ul class='bullets'></ul> </div>";
+                return errordiv;
+            }
+            function validateError(param, param1){
+                var Isvalid; 
+                var currentcomp  = j$("[id$="+param+"]");
+                j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+                if(j$(currentcomp).find('[id$=Antenna_Serial_Number__c]').length>0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find('[id$=Antenna_Serial_Number__c]').valid();
+                    else
+                        Isvalid = j$(currentcomp).find('[id$=Antenna_Serial_Number__c]').valid() && Isvalid;
+                }
+                if(j$(currentcomp).find('[id$=SIM_Card_Number__c]').length >0){
+                    if(Isvalid == undefined)
+                        Isvalid = j$(currentcomp).find('[id$=SIM_Card_Number__c]').valid();
+                    else
+                        Isvalid = j$(currentcomp).find('[id$=SIM_Card_Number__c]').valid() && Isvalid;
+                }
+                
+                if(Isvalid){
+                    searchroootasset();
+                }else{
+                    var errordiv = currenttabtoshowerror();
+                    j$(currentcomp).find('.kvh-show-errormsg-here').append(errordiv);
+                    var html = "";
+                    if(j$(currentcomp).find('[id$=Antenna_Serial_Number__c]').hasClass("error") && (j$(currentcomp).find("[id$=Antenna_Serial_Number__c]").valid() == false)){
+                        html += "<li>Antenna Serial Number Required</li>";
+                    }
+                    
+                    if(j$(currentcomp).find('[id$=SIM_Card_Number__c]').hasClass("error") && (j$(currentcomp).find("[id$=SIM_Card_Number__c]").valid() == false)){
+                        html += "<li>SIM Card Number Required</li>";
+                    }
+                    
+                    j$(currentcomp).find('.error-box').find('.bullets').html(html);
+                    j$(currentcomp).find('.error-box').show();
+                    hideLoadingDiv();
+                }
+            }
+            function currenttabtoshowAsseterror(){
+                var errordiv= "<div class='error-box' id='globalErrorBOX' style='display:none !important'>"; 
+                errordiv += "<ul class='bullets'></ul> </div>";
+                return errordiv;
+            }
+            function validateTechnicalAssistancePackage(param){
+                if('{!strOnecareProduct}' != ''){
+                    btnSelectednavigateNext(param);
+                }else{
+                    var msg = 'Please Select Technical Assistance Package';
+                    showgenericpopup(msg);
+                }
+            }
+            /* To remove duplidate popup window initialized -Start */
+            function removeduplicatepopup(popupID){
+                while(j$(popupID).length >1){
+                    j$(popupID).last().remove();
+                }
+                while(j$('.remodal-wrapper').find(popupID).length >1){
+                    j$('.remodal-wrapper').find(popupID).last().remove();
+                }
+            }
+            /* To remove duplidate popup window initialized -End */
+            
+            /* Generic popup window -Start */
+            var options = {hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false};
+            function showgenericpopup(msg, width){
+                var setcontent = msg;
+                removeduplicatepopup('[data-remodal-id=OneCareInfo]');
+                var instmodel = j$('[data-remodal-id=OneCareInfo]').remodal(options);
+                j$("#kvh-remodelcontentmessageOneCareInfo").html(setcontent);
+                instmodel.open();
+                j$('[data-remodal-id=OneCareInfo]').find('.remodal-close').hide();
+                j$('[data-remodal-id=OneCareInfo]').css('width', (width != null ? width : '350px')).css('padding', '20px 20px').find('div:first').css('width', '100%');
+                hideLoadingDiv();
+            }
+            function buttonReturnHome(param){
+                j$( "#saveExit" ).popup( "open" ); 
+            }
+            
+            function returntohomepage(){
+                window.top.location = '/home/home.jsp';
+            }
+            </script>
+        </head>
+        <style type="text/css">
+            .phone-types fieldset{
+            display: inline;
+            float: right;
+            margin-right: 2%;
+            }
+            .rich-tabpanel-content{
+            box-shadow: none;
+            }
+            .rich-tab-bottom-line {
+            border-bottom: 1px solid #c7c7c7;
+            }
+            #main {
+            background: white;
+            padding-left: 20%;
+            }
+            #main {
+            float: left;
+            width: 100%;
+            }
+            
+            select {
+            width: 100%;
+            padding: 2px 2px 5px;
+            border: 1px solid #c7c7c7;
+            background-color: #fff;
+            }
+            
+            .phone-types table{
+            width:105%;
+            }
+            
+            .loadingStatus {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            list-style: none;
+            z-index: 9999;
+            }
+            
+            .button {
+            color: #fff !important;
+            padding: 7px 27px 8px;
+            margin: 15px 0;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: -moz-inline-stack;
+            display: inline-block;
+            zoom: 1;
+            _overflow: hidden;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            background: #6699cc;
+            border: 0;
+            text-shadow: none !important;
+            }
+            
+            .diableClassStyle{
+            color: gray !important;
+            background-color: #f1efef !important;
+            }
+            
+            .loadingStatus .img {
+            width: 32px;
+            margin: 0 auto;
+            }
+            
+            .loadingBox {
+            display: none;
+            background: #000000;
+            opacity: 0.45;
+            filter: alpha(opacity=45);
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: 9999;
+            }
+            
+            .selecterror{
+            border : 1px solid #cc0000;
+            box-shadow : 0 0 5px 0 rgb(204, 0, 0);
+            }
+            
+            .error{
+            border-top: 1px solid #cc0000 !important;
+            border-bottom: 1px solid #cc0000 !important;
+            color: #cc0000 !important;
+            }
+            
+            label.error{
+            border-top: 0px solid #cc0000 !important;
+            border-bottom: 0px solid #cc0000 !important;
+            color: #cc0000 !important;
+            }
+            
+            .requiredRedMarkFld{
+            border-left: 4px solid #cc0000 !important;;padding-left: 4px !important;
+            }
+            
+            .error-box
+            { border:1px solid #cc0000; width:47%; color:#cc0000; border-radius:3px; margin-bottom:20px; }
+            
+            .error-box h1
+            { background:#cc0000; color:#fff !important; font-size:1em !important; padding:5px; margin-bottom:10px; font-weight:bold; }
+            
+            .error-box li
+            { margin-left:20px; } 
+            
+            img {
+            float: left; 
+            }
+            
+            .tooltip {
+            display: inline-block;
+            }
+            
+            .fontTip {
+            font-size: 10px;
+            }
+            
+            .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: white;
+            border: 1px solid black;
+            color: block;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            }
+            
+            .tooltip:hover .tooltiptext {
+            visibility: visible;
+            }
+            p.skipVR {
+            font-family: "Times New Roman";
+            font-size: 15px;
+            color: #cc0000;
+            }
+            
+            .remodalAgain{
+            max-width: 350px !important;
+            min-width: 350px !important;
+            min-height: 0 !important;
+            margin: 20px auto !important;
+            border-radius: 6px !important;
+            padding: 20px 20px !important;
+            }
+            
+            ::-webkit-input-placeholder {
+            font-style: italic;
+            }
+            :-moz-placeholder {
+            font-style: italic;  
+            }
+            ::-moz-placeholder {
+            font-style: italic;  
+            }
+            :-ms-input-placeholder {  
+            font-style: italic; 
+            }
+            .remodalAgains{
+            max-width: 700px !important;
+            min-width: 700px !important;
+            min-height: 200px !important;
+            margin: 0px auto !important;
+            border-radius: 6px !important;
+            padding: 0px 0px !important;
+            }
+            
+            table.collapse-panels {
+            width:100%;
+            margin:0 auto 20px 0;
+            border:1px solid #ddd;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            border-collapse:separate;
+            line-height:normal;
+            }
+            
+            table.collapse-panels th {
+            background:#f3f3f3;
+            text-align:left;
+            font-weight:bold !important;
+            color:#444;
+            padding:10px;
+            border-bottom:1px solid #ddd;
+            }
+            
+            table.collapse-panels th.plan-type {
+            text-align: left;
+            vertical-align: top;
+            background:transparent;
+            }
+            
+            table.collapse-panels td {
+            text-align:center;
+            border-bottom:1px solid #ddd;
+            padding:10px;
+            }
+            
+            table.collapse-panels td.plan-name {
+            background:#ecf5fc;
+            }
+            
+            table.collapse-panels td.row-hdr {
+            background:#ddd;
+            text-align: left;
+            padding:3px 3px 3px 5px;
+            font-size:80%;
+            text-transform: uppercase;
+            font-weight:bold;
+            color:#444;
+            text-shadow: none;
+            }
+            
+            .total {
+            font-weight:bold;
+            font-size:115%;
+            border-top:3px solid #ccc;
+            }
+            
+            td.width-50, th.width-70 {
+            width:70%;
+            }
+            
+            td.width-50, th.width-50 {
+            width:50%;
+            }
+            
+            td.width-40, th.width-40 {
+            width:50%;
+            }
+            
+            td.width-30, th.width-30 {
+            width:30%;
+            }
+            
+            td.width-20, th.width-20 {
+            width:20%;
+            }
+            
+            td.width-15, th.width-15 {
+            width:15%;
+            }
+            
+            td.width-10, th.width-10 {
+            width:10%;
+            }
+            
+            td.width-5, th.width-5 {
+            width:5%;
+            }
+            td.text-left, th.text-left {
+            text-align: left !important;
+            }
+            li{
+            list-style-type: disc  !important;
+            }
+            
+        </style>
+        
+        <body class="ui-mobile-viewport ui-overlay-a" style="zoom: 1;">
+            <div data-role="page" style="overflow: hidden;"  tabindex="0" class="ui-page ui-page-theme-a ui-page-active">
+                
+                <!-- ** Form tag Start ** -->
+                <apex:form id="theForm">
+                    <div class="loadingStatus" id="loadingDiv">
+                        <div class="">
+                            <div class="img "><img src="/img/loading.gif"/></div>
+                        </div>
+                    </div>
+                    <div id="loadingBox" class="loadingBox"></div>
+                    
+                    
+                    <!-- ** Top header Start **-->
+                    
+                    <c:Activation_Header />
+                    <!-- ** Top header End **-->
+                    
+                    <!-- ** Sidebar Start **-->
+                    <div id="sidebar">
+                        <c:Activation_Status state="{!ActivationStatus}" pageOrderID="{!ActivationOrderId}"/> 
+                    </div>
+                    <!-- ** Sidebar End **--> 
+                    
+                    <div id="main">
+                        <apex:actionFunction name="btnSelectednavigateNext" action="{!goToTab}" oncomplete="hideLoadingDiv();" reRender="wrapper">
+                            <apex:param name="param1" assignTo="{!selectedTab}" value="" />
+                        </apex:actionFunction>
+                        <apex:actionFunction name="callsaveService" action="{!saveService}" oncomplete="hideLoadingDiv();" reRender="wrapper">
+                            <apex:param name="param1" assignTo="{!ProdId}" value="" />
+                        </apex:actionFunction>
+                        <apex:outputPanel layout="block" id="wrapper" styleClass="wrapper">
+                            <div style="float:left;">  <h1 class="title">OneCare</h1></div>
+                            <div class="required"><span class="requiredRedMarkFld"></span> = Required field</div> 
+                            <!-- ** TabPanel Start **-->
+                            <div id="horizontalTab">
+                                <apex:tabPanel switchType="client" value="{!selectedTab}" id="theTabPanel" > 
+                                    <apex:tab label="Technical Assistance Package" name="Technical_Assistance_Package" id="Technical_Assistance_Package" labelWidth="230px" disabled="{!IF((mapdisableActivationOneCareTabs['Technical_Assistance_Package'] > ActivationStatus.OneCare_Last_Active_Tab_Index__c),true,false)}"  onTabEnter="showLoadingDiv(); btnSelectednavigateNext('Technical_Assistance_Package');">
+                                        <apex:outputPanel >
+                                            <div>
+                                                <h2 class="mainTitle">OneCare Technical Assistance Packages</h2>
+                                            </div>
+                                            <apex:outputPanel >
+                                                <p style="">Select one of three cost-effective packages tailored to ensure the right level of technical support for every solution.</p>
+                                                <!--** div contain error msg contents -Start **-->
+                                                <div class="kvh-show-errormsg-here" style="padding-top:10px;" >
+                                                </div>
+                                                <!--** div contain error msg contents -End **-->
+                                                <div class="clear" ></div>
+                                                
+                                                <table class="collapse-panels">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th class="plan-type width-30">
+                                                                <a href="#onecare_terms" data-rel="popup" data-position-to="window" data-transition="fade"><i class="fa fa-plus fa-lg" aria-hidden="true"></i>View Terms</a> 
+                                                            </th>
+                                                            <apex:variable value="{!1}" var="checkfirst" />
+                                                            <apex:repeat value="{!lstPricekeycheck}" var="objPricekeycheck">
+                                                                <td class="{!IF(checkfirst == 1, 'plan-name width-20 req-field requiredRedMarkFld', 'plan-name width-20')}">
+                                                                    <h3>{!objPricekeycheck}</h3>
+                                                                    <input name="{!IF(strOnecareProduct == objPricekeycheck ,'Selected', 'Select')}" type="button" id="Select" style="cursor: pointer;min-width: 90px !important;{!IF(strOnecareProduct == objPricekeycheck, 'background-color: #3ead00; font-weight: bold; color: #fff;' , '')}" value="{!IF(strOnecareProduct == objPricekeycheck,'Selected', 'Select')}" onclick="showLoadingDiv();callsaveService('{!objPricekeycheck}');" data-role="none" />
+                                                                </td>    
+                                                                <apex:variable value="{!checkfirst+1}" var="checkfirst" />
+                                                            </apex:repeat>
+                                                        </tr>
+                                                        <apex:repeat value="{!Wrap.rowtype}" var="wrp">
+                                                            <tr>
+                                                                <td colspan="4" class="text-left row-hdr"><h4>{!wrp}</h4></td> </tr>
+                                                            <apex:repeat value="{!wrap.mpRows[wrp]}" var="mprows">
+                                                                <tr>
+                                                                    <apex:outputPanel rendered="{!BEGINS(mprows, '(A)')}"><tr>
+                                                                        <td colspan="4" class="text-left" style="text-align:left;"><em>Integrated products purchased and installed with above:</em></td>
+                                                                        </tr></apex:outputPanel>   
+                                                                    <th class="text-left">{!mprows}</th>
+                                                                    <apex:repeat value="{!wrap.mpchk[mprows]}" var="lstchk">
+                                                                        <td class="width-20"><apex:outputPanel rendered="{!lstchk}">✓</apex:outputPanel></td>
+                                                                    </apex:repeat>
+                                                                </tr>
+                                                            </apex:repeat>
+                                                        </apex:repeat>  
+                                                        <tr>
+                                                            <th class="text-left total">$/Month</th>
+                                                            <apex:repeat value="{!lstPricekeycheck}" var="objPricekeycheck">
+                                                                <td class="total"><strong>${!MapOnecareProductPrice[objPricekeycheck]}</strong></td>
+                                                            </apex:repeat>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <!-- onecare terms pop-up -->
+                                                <div data-role="popup" id="onecare_terms" data-overlay-theme="b" style="width:930px">
+                                                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                                                    <div data-role="header">
+                                                        <h1>OneCare Terms</h1>
+                                                    </div>
+                                                    <div role="main" class="ui-content">
+                                                        <p><strong>General Technical Assistance Package Terms</strong></p>
+                                                        <ul class="pad-left terms">
+                                                            <li>Over the air, plus non-IP belowdecks equipment updated during Preventative Maintenance Check (PMC).</li>
+                                                            <li>Annual Service review includes airtime account review, report and recommendations, plus scheduling for Preventative Maintenance Check (PMC). PMC cost is $1,250 USD.</li>
+                                                        </ul>
+                                                        <p><strong>Additional Global Package Terms</strong></p>
+                                                        <ul class="pad-left terms">
+                                                            <li>Only products with in force warranty coverage are eligible for remote port service.</li>
+                                                            <li>Third Party products and services must be sold through KVH distribution in order to be eligible for support.</li>
+                                                            <li>Includes limited allowance of $10,000 USD per service event or $25,000 USD annually for, technician travel and lodging, work time, wait time, two-way economy air freight, import duties, and rigging/tender/crane as required.</li>
+                                                            <li>Excludes U.S. Government-denied countries, where safety of personnel and/or equipment cannot be guaranteed, there are work visa entry issues, import restrictions, or necessary equipment is not available as required for the service event. </li>
+                                                        </ul>
+                                                        <p><strong>Additional Premium Package Terms</strong></p>
+                                                        <ul class="pad-left terms">
+                                                            <li>Third Party products and services must be sold through KVH distribution in order to be eligible for support.</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel><br/><br/>
+                                        <apex:outputPanel rendered="{!IF(OR(strOnecareProduct == 'Premium',strOnecareProduct == 'Global'),true,false)}">
+                                            <div class="button-bar clear"></div>  <br/>
+                                            <h3>Integrated Products Information</h3>
+                                            <p class="pad-bottom">Enter information on products installed with the terminal (“TracPhone Product Integrated Solution”) for coverage under the Premium or Global Technical Assistance Package. </p>
+                                            <apex:outputPanel id="tablecontactlist" >
+                                                <c:ActivationOneCare_Productlist pageOrderID="{!ActivationOrderId}" currentPage="Technical_Assistance_Package" rendered="{!(ActivationStatus.OneCare_Active_Tab__c== 'Technical_Assistance_Package')}" />
+                                            </apex:outputPanel> 
+                                            <a Class="button left invoiceshowhide" value="Add Product" onclick="loadComponent('KVH-show-inside-onecare');" >+ Add Product</a> 
+                                            <div style="{!IF(strProduct!=null,'','display:none;')}" class="clear KVH-show-inside-onecare">
+                                                <div class="button-bar clear"></div>
+                                                <c:ActivationOneCare_Component pageOrderID="{!ActivationOrderId}" id="TechnicalAssistancePackage" rendered="{!(ActivationStatus.OneCare_Active_Tab__c== 'Technical_Assistance_Package')}"/>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <div class="clear" style="padding-bottom:10px;"></div>
+                                        <div class="button-bar clear">
+                                            <apex:commandLink styleClass="button left" id="OneCareback" value="< Back to Subscriptions" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                <!-- Use the Name attribute of the previous tab -->
+                                                <apex:param value="Additional_Plans_and_Services" assignTo="{!selectedTab}" /> 
+                                            </apex:commandLink>
+                                            <apex:commandLink styleClass="button right"  id="OneCarenext" value="Next >" onclick="showLoadingDiv();validateTechnicalAssistancePackage('Extended_Warranty');return false;" ></apex:commandLink>
+                                        </div>
+                                        <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="buttonReturnHome(this); return false;" />
+                                    </apex:tab>
+                                    
+                                    <apex:tab label="Extended Warranty" name="Extended_Warranty" id="Extended_Warranty" labelWidth="200px" disabled="{!IF((mapdisableActivationOneCareTabs['Extended_Warranty'] > ActivationStatus.OneCare_Last_Active_Tab_Index__c),true,false)}" onTabEnter="showLoadingDiv(); btnSelectednavigateNext('Extended_Warranty');">
+                                        <apex:outputPanel >
+                                            <div>
+                                                <h2 class="mainTitle">Extended Warranty</h2>
+                                            </div>
+                                            <apex:outputPanel >
+                                                <p style="">Extend the protection of KVH's 2-year Parts/2-year Labor Standard Warranty by up to five years by adding an Extended Warranty period. </p>
+                                                <!--** div contain error msg contents -Start **-->
+                                                <div class="kvh-show-errormsg-here" style="padding-top:10px;">
+                                                </div>
+                                                <!--** div contain error msg contents -End **-->
+                                                <div class="clear" ></div>
+                                                <p>Select an Extended Warranty period option: </p>
+                                                <div class="two-col pad-bottom">
+                                                    <table class="collapse-panels" >
+                                                        <tbody><tr>
+                                                            <th>Term</th>
+                                                            <th>Cost</th>
+                                                            </tr>
+                                                            <apex:repeat value="{!mapWarrantyPrice}" var="key">
+                                                                <tr>
+                                                                    <td class="text-left"><input name="line1" type="radio" value="{!if(mapWarrantyOption[key] == lstActivationServices[0].Extended_Warranty_Product__c,'Selected' , 'none')}" checked=""  onclick="showLoadingDiv();callsaveService('{!key}');" data-role="none"/> {!key}</td>
+                                                                    <td class="text-left">${!mapWarrantyPrice[key]} </td>
+                                                                </tr>
+                                                            </apex:repeat>
+                                                        </tbody></table>
+                                                    <apex:commandLink value="Clear Selection" style="text-decoration: underline;" onclick="showLoadingDiv();" action="{!clear}"  oncomplete="hideLoadingDiv();">
+                                                    </apex:commandLink>
+                                                </div><br/><br/>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        <div class="clear" style="padding-bottom:10px;"></div>
+                                        <div class="button-bar clear">
+                                            <apex:commandLink styleClass="button left" id="Warrantyback" value="< Back" onclick="showLoadingDiv();" action="{!goToTab}">
+                                                <apex:param value="Technical_Assistance_Package" assignTo="{!selectedTab}" /> 
+                                            </apex:commandLink>
+                                            <apex:commandLink styleClass="button right"  id="Warrantynext" value="Continue to Contract Details >" onclick="showLoadingDiv();" action="{!goToTab}" >
+                                                <apex:param value="Contract_Details" assignTo="{!selectedTab}" /> 
+                                            </apex:commandLink>
+                                        </div>
+                                        <apex:commandLink styleClass="clear right"   value="Save & Exit" onclick="buttonReturnHome(this); return false;" />
+                                    </apex:tab>
+                                </apex:tabPanel> 
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                    <!-- ** remodal popup Start ** -->
+                    <div data-role="popup" id="saveExit" style="min-width:400px !important; max-width:600px !important;" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                            <h1 class="ui-title" role="heading" aria-level="1">Save and Exit</h1>
+                        </div>
+                        <div role="main" class="ui-content center">
+                            <span>Are you sure you want to exit the activation order? <div class="notes">This activation order will be saved.</div></span>
+                            <div class="center">
+                                <a href="#" class="button remodal-cancel" onclick="showLoadingDiv();returntohomepage();">Yes</a> 
+                                <a href="#" class="pad-left ui-link" data-rel="back">Continue Activation Order</a>                           
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ** remodal popup End ** -->
+                    
+                </apex:form>
+                <!-- ** remodal popup Start ** -->
+                <div class="remodal" data-remodal-id="OneCareInfo" id="OneCareInfo"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+                    <div style="display: inherit; width:100%;text-align:center;" >
+                        <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+                        <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageOneCareInfo"></div>
+                    </div>
+                    <div style="text-align:center;">
+                        <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >OK</a>
+                    </div>
+                </div>
+                <!-- ** remodal popup End ** -->
+            </div>
+        </body>
+    </html>
+</apex:page>

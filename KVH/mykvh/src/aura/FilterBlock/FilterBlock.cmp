@@ -1,0 +1,42 @@
+<aura:component description="FilterBlock. Used to construct the selection box on Product search page"
+                access="global">
+
+    <aura:attribute name="sectiontitle"
+                    type="String" description=""/>
+
+    <aura:attribute name="methodName"
+                    type="String" />
+    <aura:attribute name="hidesection"
+                    type="String" default="slds-is-expanded" />
+    <aura:attribute name="iconname"
+                    type="String" default="chevron-down" />
+
+    <aura:attribute name="filterCollection" type="Product_Catalogue__c[]" />
+
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-around--small slds-size--1-of-1" style="border-radius: 0px;">
+
+            <div class="slds-docked-composer__header" style="background-color:#e3e3e3;border-radius: 0px;border-bottom: 0px solid !important;">
+                <h2 onclick="{!c.showhidesection}"
+                    style="color:#666; font-weight: bold; font-size: 1em;">
+                    <i class="{!'buttonicon fa fa-' + v.iconname}" aria-hidden="true"></i>
+                    {!v.sectiontitle}        
+                </h2>
+                
+            </div>
+            <div class="{!v.hidesection}"  id="{!v.sectiontitle}">
+            <div class="{!'slds-docked-composer__body slds-col slds-grid slds-grid--vertical slds-nowrap slds-size--1-of-1' + v.hidesection}">
+                <div class="slds-p-around--x-small  slds-scrollable" style="max-height:300px;" >
+                        <div class="filter-box">
+                        <c:FilterOptions methodName="{!v.methodName}"
+                                         parentSection="{!v.sectiontitle}"
+                                         filterCollection="{!v.filterCollection}">
+                        </c:FilterOptions>
+                        </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</aura:component>

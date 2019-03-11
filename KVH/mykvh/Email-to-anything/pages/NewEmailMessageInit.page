@@ -1,0 +1,7 @@
+<apex:page standardController="ortoo_e2a__EmailMessage__c" extensions="ortoo_e2a.NewEmailMessageInitController" id="page" action="{!pageLoad}">
+<apex:includeScript value="/support/console/33.0/integration.js"/> 
+<apex:includeScript value="/soap/ajax/29.0/connection.js"/>
+<apex:includeScript value="/soap/ajax/29.0/apex.js"/>
+
+<apex:pageMessages />
+</apex:page>

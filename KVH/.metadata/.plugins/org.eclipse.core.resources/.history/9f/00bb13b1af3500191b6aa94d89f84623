@@ -1,0 +1,19 @@
+<aura:component >
+    
+    <aura:attribute name="vesselObj" type="Object"/>
+    <aura:attribute name="arrowIcon" type="String" default="utility:chevrondown"/>
+    
+     <aura:handler event="c:mykvh_MyRegisteredProductCollapsAllEvent" action="{!c.handleCollapseAllEvent}"  />
+    
+	 <div class="slds-grid slds-wrap slds-m-top_x-small">
+         <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12 vesselname slds-truncate" title="Vessel Name" >
+             <lightning:buttonIcon iconName="{!v.arrowIcon}"  size="medium" variant="bare-inverse" onclick="{!c.toggelDetails}" />
+             <span class="productNameText">{!v.vesselObj.vesselName}</span>
+         </div>              
+    </div>
+    <aura:if isTrue="{!v.arrowIcon == 'utility:chevrondown'}">
+        <aura:iteration items="{!v.vesselObj.assetlist}" var="assetObj">
+            <c:mykvh_MyRegisteredProductsAssetCmp assetObj="{!assetObj}"/>
+        </aura:iteration>
+    </aura:if>
+</aura:component>

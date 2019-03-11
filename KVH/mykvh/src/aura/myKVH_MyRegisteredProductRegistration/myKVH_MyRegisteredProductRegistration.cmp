@@ -1,0 +1,3 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes">
+	 <c:mykvh_MyRegistereedProductRegistrationPrint productRegId="{!v.productRegId}" autoPrint="false"></c:mykvh_MyRegistereedProductRegistrationPrint>
+</aura:component>

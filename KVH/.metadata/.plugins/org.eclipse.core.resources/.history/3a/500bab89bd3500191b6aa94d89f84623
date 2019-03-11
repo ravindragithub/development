@@ -1,0 +1,27 @@
+<apex:component controller="myKVH_Case_Comments">
+<apex:attribute name="showAddComment" type="boolean" description="show comment button or not"/>
+<apex:attribute name="ParentCase" description="Salesforce Id of the Case which is the Parent of the CaseComments" type="Id" assignTo="{!caseId}" />
+<apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+    
+<apex:form >
+   
+     <apex:outputPanel rendered="{!showAddComment}">
+        <apex:commandButton value="Add Comment" styleClass="button-blue button pad-top pad-bottom" action="{!$Site.BaseUrl}/s/mykvh-add-comment?recordid={!caseId}"/>
+    </apex:outputPanel>
+    
+    <apex:pageBlock rendered="{!IF(AND(NOT(ISBLANK(cComments)),cComments.size>0),true,false)}"  title="Case Comments">
+        <apex:pageBlockTable value="{!cComments}" var="c"> 
+            <apex:column value="{!c.CreatedDate}" width="20%"/>
+            <apex:column value="{!c.CreatedBy.Name}" width="25%"/>
+            <apex:column value="{!c.commentbody}" width="55%"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+     <apex:outputPanel rendered="{!not(showAddComment)}">
+        <div class="case-comments pad-top" style="margin-bottom:40px;">
+            To add a comment to the case, please visit the <a href="{!$Label.myKVH_community_url}mykvh-support-landing">Support Center</a> or contact <a href="mailto:mykvhsupport@kvh.com">mykvhsupport@kvh.com</a>.                
+        </div> 
+    </apex:outputPanel>
+    
+</apex:form>
+    
+</apex:component>

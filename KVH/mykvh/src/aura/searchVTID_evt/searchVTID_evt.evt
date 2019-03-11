@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="Event is fired when VTID search is initiated (used to clear tables/attributes)" >
+  <aura:attribute name="searching" type="String" description="Simple string to accompany event" default="Searching for VTID..."/>
+</aura:event>

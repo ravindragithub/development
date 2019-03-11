@@ -1,0 +1,21 @@
+<apex:page standardController="User" extensions="myKVH_role_for_user_ctrlEXT" wizard="true">
+
+<!-- This Page is intended to be embedded in any User detail page -->
+<!-- It looks for a myKVH Role Name that corresponds to the user.myKVH_Role__c and displays the Role name -->
+<!-- When adding to a User detail page, set the height to 23 pixels for best results -->
+	<apex:form id="theForm">
+		<apex:pageBlock mode="maindetail">
+			<apex:pageBlockSection columns="1" showHeader="false">
+				<apex:pageBlockSectionItem labelStyle="text-align:right; width: 34%; max-width: 34%;" dataStyle="text-align:left; width: 66%; max-width: 66%;">
+					<apex:outputText value="myKVH Role"/>
+					<apex:outputLabel value="{!myUser.myKVH_Role__c}"/>
+				</apex:pageBlockSectionItem>
+				<apex:commandButton value="Save Changes" disabled="{! !Dirty}" action="{!saveRoleChanges}"/>
+				<apex:selectRadio value="{!myKVH_Role_Id}" layout="pageDirection">
+					<apex:actionsupport event="onchange" action="{!onClickAction}" rerender="theForm"/>
+					<apex:selectOptions value="{!Roles}"/> 
+				</apex:selectRadio>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

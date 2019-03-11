@@ -1,0 +1,145 @@
+<apex:component allowDML="true" controller="Act_Invoice_list_component_controller">
+    <style>
+        .KVH-table {
+        border: solid 1px #DDEEEE;
+        border-collapse: collapse;
+        border-spacing: 0;
+        font: normal 13px Arial, sans-serif;
+        width: 100%;
+        }
+        .KVH-table thead th {
+        background-color: #DDEFEF;
+        border: solid 1px #DDEEEE;
+        color: #336B6B;
+        padding: 10px;
+        text-align: left;
+        text-shadow: 1px 1px 1px #fff;
+        }
+        .KVH-table tbody td {
+        border: solid 1px #DDEEEE;
+        color: #333;
+        padding: 10px;
+        text-shadow: 1px 1px 1px #fff;
+        }
+        .KVH-table-horizontal tbody td {
+        border-left: none;
+        border-right: none;
+        }
+        
+    </style>
+    <script>
+    j$( document ).ready(function() {
+        j$('#Confirmation').find('.remodal-close').hide();
+        j$('#WIP').find('.remodal-close').hide();
+    });
+    
+    j$(document).on('click', '#removeinvoicerecord', function(){ 
+        var recordId = j$(this).closest(".remodal").find("input[type='hidden'].passsedrecordId").val();
+        var passRoles = j$(this).closest(".remodal").find("input[type='hidden'].passsedroles").val();
+        showLoadingDiv();
+        UpdateRole(recordId,passRoles);
+    });
+    
+    </script>
+    
+    <apex:attribute name="pageOrderID" description="This is the Activation Order Master record for the Activation Contact records"
+                    type="string" required="required" assignTo="{!ActOrderId}"/> 
+    
+    <apex:actionFunction name="populateActInvoice" action="{!Edit}" reRender="theForm" oncomplete="hideLoadingDiv();">
+        <apex:param name="strInvoiceId" value="" assignTo="{!selectedRecordId}"/>
+        <apex:param name="strInvoiceRoles" value="" assignTo="{!selectedRecordRoles}"/>
+    </apex:actionFunction> 
+    
+    <apex:actionFunction name="UpdateRole" action="{!UpdateRole}" reRender="tableId" oncomplete="hideLoadingDiv();"> 
+        <apex:param name="selectedRecordId" value="" assignTo="{!selectedRecordId}"/>
+        <apex:param name="strRoles" value="" assignTo="{!selectedRecordRoles}"/>
+    </apex:actionFunction>
+    
+    <apex:outputPanel rendered="{!IF(InvoiceWrapList.size > 0,true,false)}" id="tableId">
+        <script>
+        function selectedInvoiceid(selectedId, selectedRoles, thisparam){
+            // console.log('selectedRoles'+selectedRoles);
+            if(parseInt('{!InvoiceWrapList.size}')==1){
+                var instmodel1 = j$('[data-remodal-id=onlyoneIR]').remodal({hashTracking: false, closeOnOutsideClick: false,closeOnEscape: false});
+                var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+selectedId+"' />"
+                setcontent1 += "There must be at least one Invoice Recipient.<br/><div>If you'd like to remove this recipient,first add a new one, then remove this recipient.</div>";
+                j$("#kvh-remodelinvoicemessageonlyoneIR").html(setcontent1);
+                instmodel1.open();
+                j$('[data-remodal-id=onlyoneIR]').find('.remodal-close').hide();
+            }else{
+                var instmodel = j$('[data-remodal-id=Confirmation]').remodal({ closeOnOutsideClick: false});
+                var setcontent1 = "<input type='hidden' class='passsedrecordId' value='"+selectedId+"' />"
+                setcontent1 += "<input type='hidden' class='passsedroles' value='"+selectedRoles+"' />"
+                setcontent1 += "Are you sure you want to remove this contact as an Invoice Recipient?";
+                j$("#kvh-remodelinvoicemessage").html(setcontent1);
+                instmodel.open();
+                j$('[data-remodal-id=Confirmation]').find('.remodal-close').hide();
+            }
+        }
+        </script>
+        <table class="KVH-table KVH-table-horizontal" id="invoiceTable">
+            <thead>
+                <tr>
+                    <!--<th width="10%">Invoices</th>-->
+                    <th width="5%" class="edithide"></th>
+                    <th width="20%">Name</th>
+                    <th width="20%">Primary Phone Number</th>
+                    <th width="20%">Email Address</th>
+                    <th width="20%">Role(s)</th>
+                    <th width="15%" style="text-align: center;">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:Repeat value="{!InvoiceWrapList}" var="InvoiceWrap" id="repeatId" >
+                    <tr>
+                        <!--<td width="10%"><apex:inputCheckbox value="{!InvoiceWrap.IsInvoiceRecipient}" onclick="showLoadingDiv();" onchange="UpdateRoleofselectedRecord(this);" />
+                        <apex:inputHidden value="{!InvoiceWrap.idRecord}" />
+                        </td>-->
+                        <td width="5%">
+                            <apex:outputLabel rendered="{!IF(OR(InvoiceWrap.strRoles == 'Group Invoice Recipient', InvoiceWrap.strRoles == 'Invoice Recipient'), true, false)}"> 
+                                <a href="javascript:;" onclick="showLoadingDiv();populateActInvoice('{!InvoiceWrap.idRecord}','{!InvoiceWrap.strRoles}');" >Edit</a>
+                            </apex:outputLabel>
+                        </td>
+                        <td width="20%">{!InvoiceWrap.strName}</td>
+                        <td width="20%">{!InvoiceWrap.strPhone}</td>
+                        <td width="20%">{!InvoiceWrap.strEmail}</td> 
+                        <td width="20%"><apex:outputText value="{!SUBSTITUTE(JSENCODE(InvoiceWrap.strRoles),',','<br/>')}" escape="false"/></td>
+                        <!--<td width="10%"><a href="javascript:;" onclick="showLoadingDiv();selectedInvoiceid('{!InvoiceWrap.idRecord}','{!InvoiceWrap.strRoles}',this);" >Edit</a></td>-->
+                        <!--<td width="15%" align="center"><a href="javascript:;" onclick="showLoadingDiv();UpdateRoleofselectedRecord(this);" >[X]</a>
+                        <apex:inputHidden value="{!InvoiceWrap.idRecord}" />
+                        </td>-->
+                        <td width="15%" align="center"><a href="cursor: pointer;" onclick="selectedInvoiceid('{!InvoiceWrap.idRecord}','{!InvoiceWrap.strRoles}',this); return false;">[X]</a>
+                            <apex:inputHidden value="{!InvoiceWrap.idRecord}" />
+                        </td>
+                    </tr>
+                    
+                </apex:Repeat>
+                <!-- popup contents --> 
+                
+                <div class="remodal remodalAgain" data-remodal-id="Confirmation" id="Confirmation" >
+                    <div style="display: inherit;">
+                        <span> <img id="thecautionImage" style="margin-right: 5%;" src="http://www.iconpng.com/png/brankic1979/warning.png" width="40" height="40"/></span>
+                        <span id="kvh-remodelinvoicemessage"></span>
+                    </div>
+                    <div style="text-align:center;padding-bottom:5px;">
+                        <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="removeinvoicerecord">Yes</button>
+                    </div>
+                    <div style="text-align:center;">
+                        <a data-remodal-action="cancel" id="Cancelbuttonremodelinvoice" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >Cancel</a>
+                    </div>
+                </div>
+                
+                <div class="remodal remodalAgain" data-remodal-id="onlyoneIR" id="onlyoneIR" >
+                    <div style="display: inherit;">
+                        <span> <img id="thecautionImage" style="margin-right: 5%;" src="http://www.iconpng.com/png/brankic1979/warning.png" width="40" height="40"/>
+                        <div id="kvh-remodelinvoicemessageonlyoneIR" class="WIP" style="display: table;"></div></span>
+                    </div>
+                    <div style="text-align:center;">
+                        <button data-remodal-action="confirm" class="button remodal-confirm" style="margin-bottom: 10px;" id="Cancelbuttonremodelinvoice">OK</button>
+                    </div>
+                </div>
+            </tbody>
+        </table>
+    </apex:outputPanel>
+    
+</apex:component>

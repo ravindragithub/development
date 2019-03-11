@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>ReadWrite</externalSharingModel>
+    <fields>
+        <fullName>First_Manual_Schedule_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>First Manual Schedule Date</label>
+        <summarizedField>Revenue_Recognition_Schedule__c.Schedule_Date__c</summarizedField>
+        <summaryForeignKey>Revenue_Recognition_Schedule__c.Revenue_Recognition_Rule__c</summaryForeignKey>
+        <summaryOperation>min</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>First_Manual_Schedule_Month__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>First Manual Schedule Month #</label>
+        <summarizedField>Revenue_Recognition_Schedule__c.Month__c</summarizedField>
+        <summaryForeignKey>Revenue_Recognition_Schedule__c.Revenue_Recognition_Rule__c</summaryForeignKey>
+        <summaryOperation>min</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>No_of_Manual_Schedules__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>No of Manual Schedules</label>
+        <summaryForeignKey>Revenue_Recognition_Schedule__c.Revenue_Recognition_Rule__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Recognition_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Recognition Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <controllingField>Recognition_Type__c</controllingField>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Service Activation Date</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Service End Date</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Revenue Recognition Date</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Invoice Date</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+            <valueSettings>
+                <controllingFieldValue>Daily Recognition Over Time</controllingFieldValue>
+                <controllingFieldValue>Monthly Recognition Over Time</controllingFieldValue>
+                <controllingFieldValue>Full Recognition on Specific Date</controllingFieldValue>
+                <controllingFieldValue>Weighted Monthly Recognition Over Time</controllingFieldValue>
+                <valueName>Service Activation Date</valueName>
+            </valueSettings>
+            <valueSettings>
+                <controllingFieldValue>Daily Recognition Over Time</controllingFieldValue>
+                <controllingFieldValue>Monthly Recognition Over Time</controllingFieldValue>
+                <controllingFieldValue>Full Recognition on Specific Date</controllingFieldValue>
+                <controllingFieldValue>Weighted Monthly Recognition Over Time</controllingFieldValue>
+                <valueName>Revenue Recognition Date</valueName>
+            </valueSettings>
+            <valueSettings>
+                <controllingFieldValue>Full Recognition on Specific Date</controllingFieldValue>
+                <controllingFieldValue>Weighted Monthly Recognition Over Time</controllingFieldValue>
+                <valueName>Service End Date</valueName>
+            </valueSettings>
+            <valueSettings>
+                <controllingFieldValue>Full Recognition on Specific Date</controllingFieldValue>
+                <controllingFieldValue>Weighted Monthly Recognition Over Time</controllingFieldValue>
+                <valueName>Invoice Date</valueName>
+            </valueSettings>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Recognition_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Recognition Type</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Daily Recognition Over Time</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Full Recognition on Specific Date</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Manual Recognition</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Monthly Recognition Over Time</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Weighted Monthly Recognition Over Time</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Revenue_Recognition_Schedule_Total__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Revenue Recognition Schedule - Total %</label>
+        <summarizedField>Revenue_Recognition_Schedule__c.Revenue_Percent__c</summarizedField>
+        <summaryForeignKey>Revenue_Recognition_Schedule__c.Revenue_Recognition_Rule__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <label>Revenue Recognition Rule</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Recognition_Type__c</columns>
+        <columns>Recognition_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <label>Revenue Recognition Rule Name</label>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Revenue Recognition Rules</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>RevRec_Schedules_only_for_Manual</fullName>
+        <active>true</active>
+        <errorConditionFormula>!ISPICKVAL(Recognition_Type__c, &apos;Manual Recognition&apos;)
+&amp;&amp;
+No_of_Manual_Schedules__c &gt; 0</errorConditionFormula>
+        <errorMessage>Revenue Recognition Schedules can be created only for Revenue Recognition Rule of type &apos;Manual Recognition&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>RevRec_Schedules_total_cant_exceed_100</fullName>
+        <active>true</active>
+        <description>The total % rollup from the manual schedules should be &lt;= 100%</description>
+        <errorConditionFormula>Revenue_Recognition_Schedule_Total__c &gt; 1</errorConditionFormula>
+        <errorMessage>The total % from the all the Revenue Recognition Schedules for your Revenue Recognition Rule cannot exceed 100%</errorMessage>
+    </validationRules>
+</CustomObject>

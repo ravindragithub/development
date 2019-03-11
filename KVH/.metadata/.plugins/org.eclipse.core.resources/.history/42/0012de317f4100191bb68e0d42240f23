@@ -1,0 +1,18 @@
+<apex:page standardController="Case" sidebar="false" showHeader="false" >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+
+    <script>
+        $Lightning.use("c:MultipleBeam_Main_app", function() {
+            $Lightning.createComponent(
+                "c:MultipleBeam_Main_comp",
+                {"caseId" : '{!Case.Id}',"serviceDetail" : '{!Case.Product_or_Service_Detail__c}',"ContactId" : '{!Case.ContactId}'},
+                "lightning",
+                function(cmp) {
+                    console.log("Component created!");
+                });
+            });
+    </script>
+    <body style="background-color: #f8f8f8;">
+    <div id="lightning"></div>
+    </body>
+</apex:page>

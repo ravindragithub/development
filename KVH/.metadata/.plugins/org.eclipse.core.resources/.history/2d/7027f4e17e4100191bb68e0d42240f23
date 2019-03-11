@@ -1,0 +1,8 @@
+<aura:event type="COMPONENT" description="Event is fired when lookupVTID returns a map of string,string" >
+  <aura:attribute name="VTIDmap" type="Map"
+                  default="{obj_id: 'EMPTY:',
+                            obj_revision: 'EMPTY:',
+                            VTID_id: 'EMPTY:',
+                            asset_id: 'EMPTY:'}"/>
+
+</aura:event>

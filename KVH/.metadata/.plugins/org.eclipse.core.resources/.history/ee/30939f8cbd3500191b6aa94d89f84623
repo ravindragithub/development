@@ -1,0 +1,18 @@
+<apex:page showHeader="true" sidebar="false" >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+      var recordId="{!$CurrentPage.parameters.contract_id}";
+      $Lightning.use("c:HTS_hybrids_wizard_container", function() {
+        $Lightning.createComponent(
+            "c:HTS_hybrids_wizard_cmp",
+            {"identifier": recordId},
+            "lightning",
+            function(cmp) {
+                console.log("Component created!");
+                console.log(recordId);
+                console.log(cmp);
+            });
+        });
+    </script>
+    <div id="lightning"></div>
+</apex:page>

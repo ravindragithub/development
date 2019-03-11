@@ -1,0 +1,26 @@
+<aura:component >
+  <aura:attribute name="identifier" type="String" default=""/>
+  
+  <!--PUBLISHER -->
+  <aura:registerEvent name="showModal" type="c:HTS_modal_show_evt" />
+
+  <!--EVENT LISTENER -->
+
+  <form class="slds-form--horizontal">
+    <c:HTS_modal_container />
+    <p class="slds-m-around--small">
+      <ui:outputText value="{!v.identifier}" />
+    </p>
+    <p class="slds-m-around--small">
+      <div class="slds-form-element">
+          <lightning:button variant="brand" label="Status" iconName="action:update_status" iconPosition="left" onclick="{!c.launchStatus}" />
+      </div>
+    </p>
+    <p class="slds-m-around--small">
+      <div class="slds-form-element">
+          <lightning:button variant="brand" label="Rebuild (asynch)" iconName="utility:custom_apps" iconPosition="left" onclick="{!c.launchRebuild}" />
+      </div>
+    </p>
+
+  </form>
+</aura:component>

@@ -1,0 +1,54 @@
+/**
+  * Created by Jai Chaturvedi on 15/03/2017.
+  */
+.THIS .kvhButton{
+	background:rgba(255,255,255,.3);
+	border:0;
+	color:#fff;
+}
+.THIS .width-80{
+    width: 80%;
+}
+
+.THIS.kvhMain{
+	font-family: sans-serif;
+}
+
+.THIS .kvhDescription{
+	color:#fff;
+	position:relative;
+	font-size: 12px;
+	text-align: center;
+}
+.THIS .customicon{
+    float: center; 
+    width: 10%;
+    vertical-align: center;
+    padding: 5px 0px 0px 0px;
+}
+.THIS .lighticon{
+    float: center; 
+    vertical-align: center;
+    padding: 3px 0px 0px 0px;
+}
+.THIS .iconcir{
+    text-align: center;
+    background-color: rgba(255,255,255,.2);
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+    border-radius: 60px;
+}
+.THIS .kvhButton {
+    color: #fff !important;
+    margin: 0;
+    background: rgba(255,255,255,.3);
+    border: 0;   
+    padding-left: 30px;
+    padding-right: 30px;
+    font-weight: bold;
+    border-radius: 0;
+}
+.THIS .kvhButton:hover{    
+    background: rgba(255,255,255,.5);
+}

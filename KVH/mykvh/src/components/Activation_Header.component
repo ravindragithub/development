@@ -1,0 +1,7 @@
+<apex:component >
+<div id="header">
+<!-- 	<img style="height:41px;vertical-align:middle;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/kvh_logo.png')}"/> -->
+	<img style="height:41px;vertical-align:middle;" src="https://d3jq3t74hzt5uu.cloudfront.net/assets/logo-ffc2e0007e57b03f13ea50e547e9937d.png"/>
+	<h1 style="height:41px;vertical-align:middle">Airtime Activation Order</h1>
+</div>
+</apex:component>

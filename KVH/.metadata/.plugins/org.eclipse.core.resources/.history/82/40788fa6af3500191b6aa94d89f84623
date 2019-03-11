@@ -1,0 +1,49 @@
+<!--
+ - Created by Jai Chaturvedi on 4/04/2017.
+ -->
+
+<aura:component description="FilterBlock. Used to construct the selection box on Product search page for single selection"
+                access="global">
+
+    <aura:attribute name="defaultproductId"
+                    type="String" description=""/>
+    <aura:attribute name="sectiontitle"
+                    type="String" description=""/>
+
+    <aura:attribute name="methodName"
+                    type="String" />
+    <aura:attribute name="hidesection"
+                    type="String" default="slds-is-expanded" />
+    <aura:attribute name="iconname"
+                    type="String" default="minus" />
+
+    <aura:attribute name="filterCollection" type="Product_Catalogue__c[]" />
+
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-horizontal--small slds-size--1-of-1">
+
+            <div class="slds-docked-composer__header"
+                 style="background-color:#e3e3e3; bold;border-radius:0px;border-bottom: 0px solid !important">
+                <h2 onclick="{!c.collapseexpand}"
+                    style="color:black;font-weight: bold;border-radius:0px;font-size: 12px;font-family:Arial">{!v.sectiontitle}
+                    <i class="{!'fa fa-' + v.iconname + 'buttonicon'}" onclick="{!c.showhidesection}" aria-hidden="true"></i>
+                </h2>
+                
+            </div>
+            <div class="slds-docked-composer__body slds-col slds-grid slds-grid--vertical slds-nowrap slds-size--1-of-1" style="border: 1px solid;border-color:#ddd">
+                <div class="slds-p-around--x-small" >
+                    <div class="{!v.hidesection}" id="{!v.sectiontitle}">
+                        <div class="filter-box" style="border-color: #ddd;">
+                        <c:FilterOptionSingleSelect methodName="{!v.methodName}"
+                                         parentSection="{!v.sectiontitle}"
+                                         filterCollection="{!v.filterCollection}" defaultproductId="{!v.defaultproductId}">
+                        </c:FilterOptionSingleSelect>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</aura:component>

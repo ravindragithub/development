@@ -1,0 +1,99 @@
+<aura:component controller="PRDReg_Controller">
+    <aura:attribute name="simplePRDregistration" type="Object"/> 
+    
+    <aura:attribute name="platformMap" type="map"/>
+    <aura:attribute name="marketMap" type="map"/>
+    <aura:attribute name="marketList" type="List"/>
+    <aura:attribute name="sectorList" type="List"/>
+    <aura:attribute name="selectedPT" type="string"/>
+    <aura:attribute name="selectedSector" type="string"/>
+    <aura:attribute name="selectedAppType" type="string"/>
+    <aura:attribute name="landSelected" type="boolean" default="False"/>
+    <aura:attribute name="marineSelected" type="boolean" default="False"/>
+    <aura:attribute name="otherSelected" type="boolean" default="False"/>
+    <aura:attribute name="selectedVesselType" type="string"/>
+    <aura:attribute name="vesselInfoRequired" type="boolean"/>
+    <aura:attribute name="isDependentDisable1" type="boolean" default="true" />
+    <aura:attribute name="isDependentDisable2" type="boolean" default="true" />
+    <aura:attribute name="options" type="List"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    
+    <lightning:card title="">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.vesselInfoRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <p class="slds-text-heading_small slds-p-left_small">
+            Installation Type
+        </p>
+        <div class="slds-p-horizontal--small">     
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                    <span class="slds-form-element__label" >
+                        Platform Type
+                        <abbr title="required" class="slds-required"  style="float: none;">*</abbr>
+                    </span> &nbsp;
+                </div> 
+                <aura:iteration items="{!v.options}" var="stage">                    
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12">
+                        <lightning:input type="radio" label="{!stage}" 
+                                         name="others" onchange="{!c.handleVesselTypeValue}"/>
+                    </div>
+                </aura:iteration>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel"> 
+                    <lightning:select aura:id="LTEField" 
+                                      value="{!v.selectedSector}"
+                                      label="Application"
+                                      onchange="{!c.onControllerFieldChange}" 
+                                      disabled="{!v.isDependentDisable1}"
+                                      required="true">
+                        <option label="" value=""/>
+                        <aura:iteration items="{!v.marketList}" var="item">
+                            <option value="{!item.label}">{!item.label}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">                    
+                    <lightning:select aura:id="LTEField" 
+                                      value="{!v.selectedAppType}"
+                                      label="Application Type" 
+                                      onchange="{!c.onDependentFieldChange}"
+                                      disabled="{!v.isDependentDisable2}"
+                                      required="true">        
+                        <option label="" value=""/>
+                        <aura:iteration items="{!v.sectorList}" var="item">
+                            <option value="{!item.label}" >{!item.label}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">                    
+                    <aura:if isTrue="{!v.otherSelected}">
+                        <lightning:input aura:id="LTEField" label="Other"
+                                         value="{!v.simplePRDregistration.Other_Installation__c}"/>    
+                    </aura:if>
+                    <aura:if isTrue="{!v.landSelected}">
+                        <lightning:input aura:id="LTEField" label="RV or Vehicle Make/Model"
+                                         value="{!v.simplePRDregistration.RV_or_Vehicle_Make_Model__c}" 
+                                         onblur="{!c.vesselInfoValidation}" required="true"/>     
+                    </aura:if>  
+                    <aura:if isTrue="{!v.marineSelected}">
+                        <lightning:input aura:id="LTEField" label="Vessel Name"
+                                         value="{!v.simplePRDregistration.Vessel_Name__c}" 
+                                         onblur="{!c.vesselInfoValidation}" required="true"/>     
+                    </aura:if>  
+                </div>                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 "></div>
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

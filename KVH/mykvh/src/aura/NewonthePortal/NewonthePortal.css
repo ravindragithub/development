@@ -1,0 +1,106 @@
+.THIS, .THIS h2 {
+    font-family: sans-serif;
+}
+.THIS .info-box {
+    background: #fff;
+}
+.THIS .ital{
+    font-style: italic;
+}
+.THIS .nodis{
+    display: none;
+}
+.THIS .dis {
+    display: block;
+}
+.THIS  .content {
+    padding: 10px;
+}
+.THIS table{
+    border-collapse: collapse;
+    font-size: 100%;
+    font: arial;
+    vertical-align: baseline;
+}
+.THIS .col {
+    margin: 0;
+}
+.THIS .dashboard {
+    width: 100%;
+    margin-bottom: 50px;
+}
+.THIS tbody {
+    display: table-row-group;
+}
+.THIS tr{
+    display: table-row;
+}
+.THIS th {
+    font-weight: 600;
+    padding: 5px 10px;
+    font-size: 85%;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    display: table-cell;
+}
+.THIS tr {
+    display: table-row;
+}
+.THIS td{
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    font-size: 100%;
+    font-weight: 200;
+}
+.THIS .doc-type {
+    color: #999;
+    font-weight: 550;
+    line-height: 1.5em;
+    text-transform: uppercase;
+    font-size: 85%;
+}
+.THIS a {
+    color: #1f83ad;
+    line-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-decoration: underline;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #444;
+    border-radius: 0px;
+    font-size: 85%;
+    margin-bottom: 20px;
+    margin-left: 15px;
+}
+
+.THIS .button:hover {
+    background:#f3f3f3;
+    border:1px solid #f3f3f3;
+}
+.THIS .filter-box::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+    border-radius: 8px;
+}
+.THIS .filter-box::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid #f3f3f3;
+    background-color: rgba(0, 0, 0, .4);
+}
+.THIS .filter-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+}

@@ -1,0 +1,13 @@
+<!--
+ - Created by Jai Chaturvedi on 12/03/2017.
+ -->
+
+<aura:event type="APPLICATION"
+            description="PlaceAvailableServicesEvent.
+            This is used to show and hide available services for selected portal option.
+            This event will be handled by other services component.">
+
+    <aura:attribute name="serviceName" type="String"/>
+    <aura:attribute name="serviceAvailable" type="Boolean"/>
+	<aura:attribute name="kvhUserRole" type="String"/>
+</aura:event>

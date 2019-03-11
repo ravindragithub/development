@@ -1,0 +1,52 @@
+<aura:component description="DocumentType.
+                Component used to display the Document results sectionwise">
+
+    <aura:attribute name="documentType"
+                    type="ProductSearchClass.DocumentType"
+                    description="Stores the ProductSearchClass.DocumentType record.
+                    This is used to show the heading for document result sections"/>
+    <aura:attribute name="iconname"
+                    type="String" default="chevron-right" />
+    <aura:attribute name="hidesection"
+                    type="String" default="slds-is-collapsed" />
+    <aura:attribute name="docNumber"
+                    type="Integer"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="slds-m-bottom--medium documents section group">
+        <div class="slds-m-bottom--small">
+            <h3 class="slds-section-title--divider heading" onclick="{!c.showhidesection}" >
+                    {!v.documentType.doctype} 
+                <i class="{!'buttonicon fa fa-' + v.iconname}" aria-hidden="true"></i>
+            </h3>
+        <div class="{!v.hidesection}">
+            <aura:if isTrue="{!v.documentType.description != null}">
+            <div class="desc">
+                <ui:outputRichText value="{!v.documentType.description}"/>
+            </div>
+                <div class="whitemiddle"></div>
+                </aura:if>
+            <div class="slds-grid slds-wrap">
+        <table class="documents" style="margin-bottom:0; margin-top:0;">
+                        <tr>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 10%;"></th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 35%;">Description</th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 15%;">Date</th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 10%;">Language</th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 10%;">Revision</th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 10%;">File</th>
+                            <th class="slds-col tabelheader" style="padding: 5px; width: 10%;">Sales Aids</th>
+                        </tr>
+        </table>
+                </div>
+        <div class="slds-has-dividers--top-space slds-has-dividers--bottom-space">
+            <aura:iteration items="{!v.documentType.docSubs}" var="doc" indexVar="index">
+                <c:DocumentSubType documentSubType="{!doc}"/>
+            </aura:iteration>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</aura:component>

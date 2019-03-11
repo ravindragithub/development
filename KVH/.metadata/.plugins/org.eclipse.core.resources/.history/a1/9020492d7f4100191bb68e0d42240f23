@@ -1,0 +1,22 @@
+<apex:page standardController="Case" extensions="AgilePlans_Attach_SiteSurveyCtrl">
+  <apex:sectionHeader title="Case" subtitle="Attach Site Survey"/>
+  <apex:form >
+      <apex:pageBlock rendered="{!case.AgilePlans_Site_Survey_Attached__c}">
+          <apex:pageMessage severity="WARNING" strength="2" summary="Site survey already attached."></apex:pageMessage>
+          <apex:commandButton value="back" action="{!back}"/>
+      </apex:pageBlock>
+      <apex:pageBlock rendered="{!!case.AgilePlans_Site_Survey_Attached__c}">
+          <apex:pageMessages ></apex:pageMessages>
+          <apex:pageBlockButtons location="bottom">
+              <apex:commandButton value="Back" action="{!back}"/>
+              <apex:commandButton value="Submit" action="{!submit}"/>
+          </apex:pageBlockButtons>
+          <apex:pageBlockSection columns="1">
+              <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Site Survey"></apex:outputLabel>
+                  <apex:inputFile value="{!sitesurvey.body}" fileName="{!sitesurvey.name}"></apex:inputFile>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

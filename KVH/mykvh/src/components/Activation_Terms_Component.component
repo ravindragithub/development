@@ -1,0 +1,32 @@
+<apex:component controller="Act_Terms_Component_Controller" >
+    <apex:attribute name="referencePageName" description="This is the page reference name" type="String" required="required" assignTo="{!strPageReferenceName}"/>
+    <style>
+        .sfdc_richtext ul,.pad-left ul{
+        list-style-type: disc;
+        }
+        .sfdc_richtext b {
+        font-weight: bold          
+        }
+        .sfdc_richtext ul li,.pad-left ul li {
+        padding: 0 0 10px 5px;
+        text-align: left;
+        }
+    </style>
+    <apex:repeat value="{!mapActivationTerms}" var="key">
+        <div data-role="popup" id="{!key}" data-overlay-theme="b" class="ui-popup ui-body-inherit ui-overlay-shadow ui-corner-all">
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+            <div data-role="header" role="banner" class="ui-header ui-bar-inherit">
+                <h1 class="ui-title" role="heading" aria-level="1">{!SUBSTITUTE(key,"_"," ")}</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <div>
+                    <div class="pad-left">
+                        <apex:repeat value="{!mapActivationTerms[key]}" var="activationTerms">
+                            <apex:outputText value="{!activationTerms.Quote_Term__r.SBQQ__Body__c}"  escape="false" /> 
+                        </apex:repeat>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:repeat>
+</apex:component>

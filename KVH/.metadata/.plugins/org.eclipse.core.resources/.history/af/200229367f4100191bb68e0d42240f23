@@ -1,0 +1,86 @@
+<apex:page standardcontroller="Case" showheader="false" extensions="myKVH_TechnicalSupport" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+        <apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+        var $j = jQuery.noConflict();
+        
+        $j(document).ready(function()
+                           {
+                               // $j('.btn').removeClass('btn').addClass('kvhbtn');
+                               
+                           });
+        
+        function setFocusOnLoad() {}        
+        function goB()
+        {
+            goBack();
+        }
+        
+        </script>
+        <apex:pagemessages />
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+        <apex:pageblock rendered="{!firstpage}">          
+            <div class="partner_portal">
+                <h1>Request Installation Support</h1>
+                <div class="width-25 left">
+                    <ul class="support-sidenav">
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-support-landing">Portal Support Main</a></li>
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-airtime-support">Request Information on an Existing Airtime Service</a></li>
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-report-problem">Report a Product or Service Problem</a></li>
+                        <li class="active"><a href="{!$Site.BaseUrl}/s/mykvh-technical-support">Request Installation Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="width-70 right">
+                    <p>Ensure a successful installation of your KVH satellite communications system by requesting support from a KVH Field Services expert. You will benefit from the expertise and capability of the Field Services team, whether you need installation on a single vessel or a global fleet. The team's services include:</p>
+                    <br/>
+                    <ul>
+                        <li>Onboard terminal installation</li>
+                        <li>Installation program management and support</li>
+                        <li>Global logistics support</li>
+                        <li>Onboard IT infrastructure integration</li>
+                        <li>Initial onboard training for vessel representative</li>
+                    </ul>
+                    <apex:commandbutton value="Next"  styleClass="button button-blue right" action="{!nextButton}"/>
+                </div>
+            </div>
+                
+            </apex:pageblock>
+            
+            <apex:pageblock rendered="{!IF(firstpage==false,true,false)}">
+                <div class="page-content partner_portal">
+                    <h1>Request Installation Support</h1><br/>
+                    <div class="width-25 left">
+                    <ul class="support-sidenav">
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-support-landing">Portal Support Main</a></li>
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-airtime-support">Request Information on an Existing Airtime Service</a></li>
+                        <li><a href="{!$Site.BaseUrl}/s/mykvh-report-problem">Report a Product or Service Problem</a></li>
+                        <li class="active"><a href="{!$Site.BaseUrl}/s/mykvh-technical-support">Request Installation Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="width-70 right">
+                    <p>Vessel or installation platform:</p>
+                    <p><apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" style="width:380px; height:30px; padding:5px; font-size: 13px;"/></p>
+                    <p>Requested Installation Date:</p>
+                    <p><apex:inputfield value="{!srvCase.Requested_Installation_Date__c}" style="width:380px; height:30px; padding:5px; font-size: 13px;"/></p>
+                    <p>Port:</p>
+                    <p><apex:inputfield value="{!srvCase.Requested_Port__c}" style="width:380px; height:30px; padding:5px; font-size: 13px;"/></p>
+                    <p>Please enter a subject for your Case:</p>
+                    <p><apex:inputfield value="{!srvCase.Subject}" style="width:380px; height:30px; padding:5px; font-size: 13px;"/></p>
+                    <p>Please add any additional details:</p>
+                    <p><apex:inputfield style="width:380px; height:100px; padding:5px; font-family:arial; font-size: 13px;" value="{!srvCase.Description}"/></p>
+                    <br/>
+                    <apex:outputpanel >
+                        <apex:outputText value="Attach a File:" />
+                        &nbsp;&nbsp;
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        <br/><br/>
+                        <p style="text-align:right;width:390px"><apex:commandButton value="Previous"  styleClass="left button button-blue" onclick="goB(); return false;"/><apex:commandButton value="Finish"  styleClass="right button button-blue" action="{!CreateCasePartner}" /></p>
+                    </apex:outputpanel>
+                </div>
+                </div>
+            </apex:pageblock>
+        </apex:form>
+    </apex:page>

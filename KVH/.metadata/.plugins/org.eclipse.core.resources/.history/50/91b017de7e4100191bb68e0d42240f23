@@ -1,0 +1,28 @@
+<aura:component >
+    <!-- Tree component required attributes and handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- Application Event Hander has different syntax -->
+    <aura:handler event="c:HTS_terminals_application_evt" action="{!c.handleAppEvent}" />
+    <aura:handler name="cmpDataUpdated" event="c:HTS_terminals_bubbling_evt" action="{!c.handleCmpEvent}" />
+
+        <div aura:id="spinner_div" style="position: static; z-index: 9002;" >
+            <lightning:spinner variant="brand" size="large" alternativeText="Calling Server..."/>
+        </div>
+        <div aura:id="search_div" >
+            <c:HTS_search_Terminal aura:id="search"/>
+        </div>
+
+        <div aura:id="insert_div" >
+            <c:HTS_createI2CM_assets aura:id="insert"/>
+        </div>
+        
+        <div aura:id="exception_div" >
+            <c:HTS_exceptionTerminal_cmp aura:id="exception" />
+        </div>
+        
+        <div aura:id="success_div" >
+            <c:HTS_successTerminal_cmp aura:id="success" />
+        </div>
+
+</aura:component>

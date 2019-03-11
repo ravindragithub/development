@@ -1,0 +1,16 @@
+<apex:page standardController="WorkOrder" standardStylesheets="false">
+  
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+        $Lightning.use("c:AddProducts_WorkOrder_app", function() {
+            $Lightning.createComponent(
+                "c:AddProducts_WorkOrder_MainCmp",
+                {"workOrderId" : '{!WorkOrder.Id}',"workOrderNumber" : '{!WorkOrder.WorkOrderNumber}'},
+                "lightning",
+                function(cmp) {
+                    console.log("Component created!");
+                });
+            });
+    </script>
+    <div id="lightning"></div>
+</apex:page>

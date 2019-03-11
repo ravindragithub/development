@@ -1,0 +1,35 @@
+<aura:component >
+	<aura:attribute name="message" type="String"/>
+    <aura:attribute name="continueclicked" type="boolean" default="false"/>
+    <aura:attribute name="showFileUpload" type="boolean" default="false"/>
+    <aura:attribute name="buttonName" type="String" default=""/>
+    <aura:attribute name="newdocumentId" type="String" default=""/>    
+    <aura:attribute name="recordID" type="String" default=""/>
+    
+    <aura:attribute name="accept" type="List" default="{!$Label.c.admTol_Acceptable_File_Types}"/>
+    <aura:attribute name="multiple" type="Boolean" default="false"/>
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib2"/>
+    
+	<aura:if isTrue="{!not(v.showFileUpload)}">       
+        <lightning:icon iconName="action:info" alternativeText="Info" size="small"/>
+        <span style="font-size: 18px;font-weight: bold;padding: 5px;">Please Note</span>
+        <p style=" font-size: 14px;font-weight: bold;line-height: 1.5;padding: 10px;margin-bottom:10%">{!v.message}</p>
+        <div class="slds-align_absolute-center">
+            <a href="javascript:void(0)" onclick="{!c.cancelclick}">Cancel</a>
+            <lightning:button class="slds-m-left_small custombrandbutton" variant="brand" label="CONTINUE" title="Continue" onclick="{!c.continueclick}" />
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showFileUpload}">     
+     <div style="margin-left: 25%;">
+         <lightning:fileUpload  name="fileUploader"
+                               label= "{!v.buttonName}"
+                               multiple="{!v.multiple}"
+                               accept="{!v.accept}"
+                               recordId="{!v.recordID}"
+                               onuploadfinished="{! c.handleUploadFinished }"/>
+      </div>
+    </aura:if>
+</aura:component>

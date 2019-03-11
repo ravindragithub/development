@@ -1,0 +1,57 @@
+<aura:component >
+    <aura:attribute name="arrowIcon" type="String" default="utility:chevrondown"/>
+    <aura:attribute name="showDetail" type="boolean" default="true"/>    
+    <aura:attribute name="product" type="Object"/>
+    <aura:attribute name="assetobj" type="Object"/>
+
+    <div>
+        <div class="slds-grid slds-wrap slds-m-top_x-small productHeader">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12 productname slds-truncate" title="{!v.assetobj.productDisplayName}" >
+                <lightning:buttonIcon iconName="{!v.arrowIcon}" alternativeText="down" size="medium" variant="bare-inverse" onclick="{!c.toggelDetails}" />
+                <span class="productNameText">{!v.assetobj.productDisplayName}</span>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12" >
+                <p class="subheading">onBorad: <b>{!v.assetobj.onBorad}</b></p>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12" >
+                <p class="subheading">Fleet: <b>{!v.assetobj.fleet}</b></p>
+            </div>
+        </div>
+        <aura:if isTrue="{!v.showDetail}">
+            <div class="slds-grid slds-wrap slds-m-top_x-small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small">
+                    <div class="label">Antenna Serial No.:</div>
+                    <div class="value">{!v.assetobj.serialNumber}</div>                    
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small" >
+                    <div class="label">Warranty: </div>
+                    <div class="value">2 Years Parts, 2 Year Labor <a href="#">(Details)</a></div>
+                </div>
+                 <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small">
+                     <div class="label">ICM Serial No.:</div>
+                     <div class="value">977798</div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small" >
+                    <div class="label">Warranty Status:</div>
+                    <div class="value">Active untill Decemeber 2019</div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small">
+                    <div class="label">Activation Date :</div>
+                    <div class="value">12 Decemeber 2017</div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small" >
+                    <div class="label">Additiona Warranty:</div>
+                    <div class="value">KVH OneCare <a href="#">(Details)</a></div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-m-top_small">
+                    <div class="label">Purchased From :</div>
+                    <div class="value">Boat Dealer Inc.</div>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.product.cases.length > 0}">
+                <c:myKVH_MyRegisteredProductCases cases="{!v.product.cases}"></c:myKVH_MyRegisteredProductCases>
+            </aura:if>            
+        </aura:if>
+        
+    </div>
+</aura:component>

@@ -1,0 +1,13 @@
+.THIS .customKVH .ui-widget{
+    margin: 0px !important ;
+}
+.THIS html, .THIS body {
+   margin:0;
+   padding:0;
+   height:100%;
+}
+.THIS.footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+}

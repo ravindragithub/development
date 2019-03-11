@@ -1,0 +1,136 @@
+/* Documents Table 
+---------------------------------------------------- */
+.THIS table.documents {
+    border-collapse: collapse;
+}
+
+.THIS .documents td.heading {
+    background:#ddd;
+}
+
+.THIS .documents h3,.THIS .documents h4 {
+   margin:0; 
+}
+
+.THIS .documents th {
+    background:#f3f3f3;
+    font-weight:bold;
+    padding:5px 10px;
+    font-size:85%;
+    text-align:left;
+}
+
+.THIS td {
+    padding:10px;
+    vertical-align: top;
+    border:none;
+}
+
+.THIS .documents img {
+    width:100%;
+}
+
+.THIS .documents img.prod-search {
+    width:20%;
+    height:auto;
+}
+
+.THIS td.section-cat {
+    font-weight:normal;
+    padding-left:15px;
+    color:#999;
+    border-bottom: 1px solid rgba(31, 131, 173, 0.3);
+}
+
+.THIS table.small-padding td {
+    padding:5px;
+}
+
+.THIS .button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    color: #cc0000;
+    font-size: 95%;
+}
+.THIS .text-right {
+    text-align: right;
+}
+.THIS .button-blue {
+    background: #1f83ad;
+    color: #fff;
+    border: transparent;
+}
+.THIS .button-red {
+    background: #cc0000;
+    color: #fff;
+    border: transparent;
+}
+.THIS p,.THIS li,.THIS a {
+    color: #555;
+    line-height: 125%;
+}
+.THIS a {
+    color: #1f83ad;
+    text-decoration: underline;
+}
+.THIS p,.THIS li {
+    margin-bottom: 15px;
+    line-height: normal;
+}
+.THIS .pad-15 {
+    padding: 15px;
+}
+.THIS h2 {
+    font-size: 1.5em;
+    font-weight: lighter;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: normal;
+}
+.THIS .text-left {
+    text-align: left;
+}
+.THIS h4 {
+    font-size: 1em;
+    font-weight: bold;
+}
+.THIS .pad-left {
+    margin-left: 20px;
+}
+.THIS label {
+    font-weight: bold;
+    color: #444;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    _overflow: hidden;
+    margin: 10px 0 3px 0;
+}
+.THIS .pad-top {
+    margin-top: 20px;
+}
+.THIS .button-bar {
+    border-top: 1px solid #ddd;
+    width: 100%;
+    margin: 40px 0 0 0;
+    padding: 15px 0;
+}
+.THIS .left {
+    float: left;
+}
+.THIS .pad-right {
+    margin-right: 20px;
+}
+.THIS .slds-spinner_container{
+    z-index: 1000000000;
+}
+.THIS .remodal-wrapper{
+    z-index: 10000;
+}
+.THIS .mt-8{
+    margin-top : 8px;
+}

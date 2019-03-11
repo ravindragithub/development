@@ -1,0 +1,12 @@
+.THIS .topToast{
+    top: 0;
+    position: fixed;
+    right: 0;
+    left: 0;
+}
+.THIS .topContainer{
+    position: relative;
+}
+.THIS .errorToast {
+    display: none;
+}

@@ -1,0 +1,53 @@
+<apex:page showChat="false" showheader="false" sidebar="false" standardStylesheets="false" cache="false">
+
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    
+
+    <div class="page-content home">
+        
+        <h1>Welcome to MyKVH</h1>
+        
+        <p>KVH’s support center is designed to help you get the most from your KVH products and services. </p>
+        <p>myKVH Fleet is a comprehensive Fleet monitoring portal. </p>
+        <h2>Please choose an option:</h2>
+        
+        <div class="section">
+            
+            <div class="block">
+            
+                <a href="../idp/login?app=0sp13000000CaVa" target="_blank">
+                    <div class="inner-block">
+                        <h4>Launch myKVH Fleet</h4>
+                        <p>Your Fleet Monitoring Portal</p>
+                    </div>
+                    <a href="../idp/login?app=0sp13000000CaVa" class="started" target="_blank">myKVH Fleet</a>
+
+                </a>
+            </div>
+            
+            <div style="clear:both"></div>
+        
+        </div><!--section-->
+<!--        
+        <div class="section">
+            
+            <div class="block">
+                
+                <a href="apex/CustomerPortalHome" target="_self">
+                    <div class="inner-block">
+                        <h4>myKVH Support</h4>
+                        <p>KVH’s support center is designed to help you get the most from your KVH products and airtime services.</p>
+                    </div>
+                    <a href="apex/CustomerPortalHome" class="started" target="_self">Get Started</a>
+                </a>
+            </div>
+            
+            <div style="clear:both"></div>
+        
+        </div><!--section-->
+      
+    
+    </div><!--page-content-->
+
+     
+</apex:page>

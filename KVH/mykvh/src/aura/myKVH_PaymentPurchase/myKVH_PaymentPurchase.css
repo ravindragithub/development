@@ -1,0 +1,19 @@
+@media (min-width: 60em) {
+    .THIS .leftPanel{
+        padding: 0 .5rem 0 0;
+    }
+    .THIS .rightPanel{
+        padding: 0 0 0 .5rem;
+    }
+}
+.THIS .purchaseDate button {
+    padding: 0!important;
+    background-color: transparent!important;
+}
+.THIS .noAttach{
+    background: #ddd;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,.2);
+    padding: 1rem;
+    text-align: center;
+}

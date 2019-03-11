@@ -1,0 +1,8 @@
+.THIS .slds-spinner_container{
+    background-color: rgba(255, 255, 255, 0.11);
+}
+.THIS .slds-modal__contentr{
+    border: .5px solid grey;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.2);
+}

@@ -1,0 +1,11 @@
+.THIS .noAttach{
+    background: #ddd;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,.2);
+    padding: 1rem;
+    text-align: center;
+}
+.THIS.instalChecklist .slds-card__header{
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}

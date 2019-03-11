@@ -1,0 +1,94 @@
+<apex:page controller="GenerateTVROHTML" showHeader="false" sidebar="false" title="TVRO HTML" standardStylesheets="false" contentType="text/csv#TVROHTML.html; charset=utf-8" readOnly="true">
+   <p><strong><em>Last updated: {!dayDate} {!dayMonth} {!dayYear}</em></strong><hr />
+   </p>
+
+    <table cellspacing="0" cellpadding="3" border="0" align="center" width="95%">
+        <tbody>
+            <tr>
+                <td align="center" valign="top"><strong>M9 WWTV</strong></td>
+                <td align="center" valign="top"><strong>M5/7</strong></td>
+                <td align="center" valign="top"><strong>M3</strong></td>
+                <td align="center" valign="top"><strong>Satellite</strong></td>
+                <td align="center" valign="top"><strong>Frequency</strong></td>
+                <td align="center" valign="top"><strong>Symbol Rate</strong></td>
+                <td align="center" valign="top"><strong>Code Rate</strong></td>
+                <td align="center" valign="top"><strong>Network ID</strong></td>
+                <td align="center" valign="top"><strong>Polarization</strong></td>
+                <td align="center" valign="top"><strong>Band</strong></td>
+                <td align="center" valign="top"><strong>Decoder Type</strong></td>
+                <td align="center" valign="top"><strong>Orbital Position</strong></td>
+            </tr>
+            <apex:repeat value="{!satInfo}" var="withInstallValues">
+            <tr>
+                <td style="width: 10%;">{!withInstallValues.Install_Name_M9__c}</td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Install_Name_M7__c}</td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Install_Name_M3__c}</td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Name__c}</td>
+                <apex:repeat value="{!withInstallValues.Tuner1_2__r}" var="VHValues">
+                    <td align="center" style="width: 10%;">{!VHValues.FrequencyVH__c}</td>
+                    <td align="center" style="width: 10%;">{!VHValues.symbolRateVH__c}</td>
+                    <td align="center" style="width: 10%;">{!VHValues.FEC_Code_VH__c}</td>
+                    <td align="center" style="width: 10%;">{!VHValues.NetworkidVH__c}</td>
+                    <td align="center" style="width: 10%;">{!VHValues.PolarizationVH__c}</td>
+                    <td align="center" style="width: 5%;">{!VHValues.bandVH__c}</td>
+                    <td align="center" style="width: 12%;">{!VHValues.decodetypeVH__c}</td>
+                </apex:repeat>
+                <td align="center" style="width: 12%;">{!withInstallValues.Orbital_Position__c}</td>
+            </tr>
+            <tr>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Name__c}</td>
+                <apex:repeat value="{!withInstallValues.Tuner1_2__r}" var="VLValues">
+                    <td align="center" style="width: 10%;">{!VLValues.FrequencyVL__c}</td>
+                    <td align="center" style="width: 10%;">{!VLValues.symbolRateVL__c}</td>
+                    <td align="center" style="width: 10%;">{!VLValues.FEC_Code_VL__c}</td>
+                    <td align="center" style="width: 10%;">{!VLValues.NetworkidVL__c}</td>
+                    <td align="center" style="width: 10%;">{!VLValues.PolarizationVL__c}</td>
+                    <td align="center" style="width: 5%;">{!VLValues.bandVL__c}</td>
+                    <td align="center" style="width: 12%;">{!VLValues.decodetypeVL__c}</td>
+                </apex:repeat>
+                    <td align="center" style="width: 12%;">{!withInstallValues.Orbital_Position__c}</td>
+            </tr>
+            <tr>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Name__c}</td>
+                <apex:repeat value="{!withInstallValues.Tuner1_2__r}" var="HHValues">
+                    <td align="center" style="width: 10%;">{!HHValues.FrequencyHH__c}</td>
+                    <td align="center" style="width: 10%;">{!HHValues.symbolRateHH__c}</td>
+                    <td align="center" style="width: 10%;">{!HHValues.FEC_Code_HH__c}</td>
+                    <td align="center" style="width: 10%;">{!HHValues.NetworkidHH__c}</td>
+                    <td align="center" style="width: 10%;">{!HHValues.PolarizationHH__c}</td>
+                    <td align="center" style="width: 5%;">{!HHValues.bandHH__c}</td>
+                    <td align="center" style="width: 12%;">{!HHValues.decodetypeHH__c}</td>
+                </apex:repeat>
+                    <td align="center" style="width: 12%;">{!withInstallValues.Orbital_Position__c}</td>
+                
+            </tr>
+            <tr>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;"></td>
+                <td align="center" style="width: 10%;">{!withInstallValues.Name__c}</td>
+                <apex:repeat value="{!withInstallValues.Tuner1_2__r}" var="HLValues">
+                    <td align="center" style="width: 10%;">{!HLValues.FrequencyHL__c}</td>
+                    <td align="center" style="width: 10%;">{!HLValues.symbolRateHL__c}</td>
+                    <td align="center" style="width: 10%;">{!HLValues.FEC_Code_HL__c}</td>
+                    <td align="center" style="width: 10%;">{!HLValues.NetworkidHL__c}</td>
+                    <td align="center" style="width: 10%;">{!HLValues.PolarizationHL__c}</td>
+                    <td align="center" style="width: 5%;">{!HLValues.bandHL__c}</td>
+                    <td align="center" style="width: 12%;">{!HLValues.decodetypeHL__c}</td>
+                </apex:repeat>
+                <td align="center" style="width: 12%;">{!withInstallValues.Orbital_Position__c}</td>
+            </tr>
+            <tr>
+                <td colspan="12"><hr />
+                </td>
+            </tr>
+            </apex:repeat>
+        </tbody>
+   </table>
+</apex:page>

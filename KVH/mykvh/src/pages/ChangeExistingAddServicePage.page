@@ -1,0 +1,193 @@
+<apex:page standardcontroller="Case" extensions="ChangeExistingAddServiceController" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+    <apex:stylesheet value="{!URLFOR($Resource.portal_styles)}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var $j = jQuery.noConflict();
+        
+        $j(document).ready(function(){
+                    console.log(valueSelect);
+                    var radios = $j("input[type='radio']");
+                    radios.attr('name', 'singleRadio');
+                    
+                    //if none selected select the first..
+                    if(valueSelect==undefined && radios.size()>0 )
+                    {
+                        radios[0].checked=true;
+                        valueSelect='Reactivate a suspended service';
+                    }
+                    
+                    // $j('.btn').removeClass('btn').addClass('kvhbtn');
+                                
+                }); 
+    
+        var valueSelect; 
+        function setSelectionLocal(x) 
+        {
+            valueSelect = x;        
+        }
+        
+        function setIt()
+        {
+            setSelection(valueSelect);
+        }
+        
+        function goB()
+        {
+            goBack();
+        }
+        
+    </script>
+    <apex:pagemessages />
+        
+        <apex:actionFunction name="setSelection" action="{!setSelection}" rerender="form">
+            <apex:param name="valueSelect" value="valueSelect" assignTo="{!valueSelected}" />
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+        
+        <apex:pageblock rendered="{!And(firstpage, NOT(secondPage))}">
+            <div class="page-content">
+                 <h1>Change or Add an Existing Airtime Service</h1>
+                            <br></br>
+                            <p>Our Airtime Services department can help you with issues related to your existing airtime service whether it is mini-VSAT Broadband, Iridium OpenPort, or Inmarsat. We can also assist if you are interested in adding an optional service such as GlobalCare. The Airtime Services department is open 24 hours/day, 5 days/week, from Sunday afternoon to Friday evening EST (U.S. East Coast time).</p>
+                            <br></br>
+                            <h2>Create your Case for Airtime Services by clicking on the button that pertains to your needs:</h2>
+                            <br></br><br></br>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="header-row">
+                                <h3>Airtime Services Change</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <apex:selectRadio onclick="setSelectionLocal(this.value);" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio1}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="header-row">
+                                <h3>Add Authorized Representative(s)</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td> 
+                                <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio2}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="header-row">
+                                <h3>Administrative Account Change</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio3}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="header-row">
+                                <h3>Purchase Prepaid Services Cards</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio4}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="header-row">
+                                <h3>Other Changes</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                                    <apex:selectOptions value="{!radio5}"/>
+                                </apex:selectRadio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <apex:commandbutton value="Next" onclick="setIt(); return false;"/><br/><br/>
+        </apex:pageblock>
+        
+        <apex:pageblock rendered="{!IF(AND(secondpage==true,firstpage==false),true,false)}">
+            <div class="page-content">
+                <h1>Change or Add an Existing Airtime Service</h1><br/><br></br>
+                <h2>To add an authorized Airtime Representative, just follow the steps below:</h2><br/>
+                <p>
+                1. Download and fill out the <a target='_blank' href='https://kvh.com/~/media/BB800DF6D56241DAAA7649417F3E15EC.aspx'>Additional Authorized Reps Form</a><br/>
+ 
+                2. Save the completed file to your desktop.<br/>
+
+                3. Hit next to create your Case, and then upload your completed authorization form as an attachment.<br/>
+                </p>
+                <br/><br/>
+                <p style="text-align:right;width:390px">
+                <apex:commandButton value="Previous" styleClass="left" onclick="goB(); return false;"/>
+                <apex:commandbutton value="Next" onclick="setIt(); return false;"/><br/><br/>
+                </p>
+            </div>
+            
+        </apex:pageblock>
+        
+        <apex:pageblock rendered="{!IF(AND(secondpage==false, firstpage==false),true,false)}">
+            <div class="page-content">
+                <h1>Change or Add an Existing Airtime Service</h1><br/>
+                <h5>{!valueSelected}</h5>
+                <br/><br/>
+                <h2>Please select your vessel or installation platform:</h2><br/>
+                <!--<p><apex:inputfield value="{!srvCase.Platform_Account__c}" style="width:380px; height:20px; padding:5px;"/></p><br/>-->
+                <p><apex:selectList value="{!srvCase.Platform_Asset_Account__c}" styleClass="inputbox" multiselect="false" size="1" required="false">
+                   <apex:selectOptions value="{!accounts}" />
+                </apex:selectList></p>  
+                <br/>
+                <h2>Add New vessel or installation platform:</h2><br/>
+                <p><apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please enter a subject for your Case:</h2>
+                <p><apex:inputfield value="{!srvCase.Subject}" style="width:380px; height:20px; padding:5px;"/></p>
+                <br/>
+                <h2>Please add any additional details:</h2>
+                <p><apex:inputfield style="width:380px; height:200px; padding:5px;" value="{!srvCase.Description}"/></p>
+                <br/>
+                <apex:outputpanel >
+                        <apex:outputText value="Attach a File:" />
+                        &nbsp;&nbsp;
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                        <br/>
+                        <p style="text-align:right;width:390px"><apex:commandButton value="Previous" styleClass="left"  onclick="goB(); return false;"/><apex:commandButton value="Finish"  action="{!CreateCase}"/></p>
+                </apex:outputpanel>
+            </div>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

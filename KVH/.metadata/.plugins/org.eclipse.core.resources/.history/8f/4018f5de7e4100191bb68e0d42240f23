@@ -1,0 +1,31 @@
+<aura:component controller="HTS_ltgsvc_subscriptions">
+  <aura:attribute name="identifier" type="String" default="" description="This is the record ID of the subscription to be serviced" />
+  <aura:attribute name="subscriptionList" type="HTS_ltgsvc_subscriptions" description="A list of SBQQ Subscriptions returned from the server, typically only one" />
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  <!--PUBLISHER -->
+
+  <!--EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:if isTrue="{!v.subscriptionList.subscriptions.length > 0}">
+      <div>
+      <!-- insert wrapped table.... -->
+        <table class="slds-table slds-table--bordered slds-table--striped">
+          <tbody>
+            <aura:iteration items="{!v.subscriptionList.subscriptions}" var="sub">
+              <aura:if isTrue="{!sub.SBQQ__Product__r.HTS_Subscriber_Plan__r.Name != null}">
+              <!-- This is an HST subscription -->
+                <tr>
+                  <td><c:HTS_subscription_card_cmp subscription="{!sub}" /></td>
+                </tr>
+                <aura:set attribute="else">
+                  {!sub.Name} is not an HTS Subscription
+                </aura:set>
+              </aura:if>
+            </aura:iteration>
+          </tbody>
+        </table>
+        <!-- end insert wrapped table -->
+      </div>
+    </aura:if>
+</aura:component>

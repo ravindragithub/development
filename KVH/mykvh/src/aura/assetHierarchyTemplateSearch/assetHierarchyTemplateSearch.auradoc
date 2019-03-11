@@ -1,0 +1,14 @@
+<aura:documentation>
+	<aura:description>Documentation</aura:description>
+	<aura:example name="ExampleName" ref="exampleComponentName" label="Label">
+    States:
+    <ul>
+      <li>INIT      - Component is ready to search</li>
+      <li>SEARCHING - Component is waiting for results from server</li>
+      <li>FOUND     - Server returned single found Asset Hierarchy Template</li>
+      <li>NOT_FOUND - Server did not find Asset Hierarchy Template matching search string</li>
+      <li>ASSETS_CREATED - Server successfully created the Asset Hierarchy</li>
+      <li>ERROR     - Component error</li>
+    </ul>
+	</aura:example>
+</aura:documentation>

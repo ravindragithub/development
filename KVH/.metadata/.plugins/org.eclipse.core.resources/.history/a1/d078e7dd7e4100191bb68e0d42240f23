@@ -1,0 +1,10 @@
+<!--
+ - Created by Jai Chaturvedi on 10/04/2017.
+ -->
+
+<aura:event type="APPLICATION"
+            description="GetPortalFromHeader. Used to manage the selected portal view.
+Other components will this event the selected and stored portal view from header">
+
+    <aura:attribute name="storedOption" type="String"/>
+</aura:event>

@@ -1,0 +1,58 @@
+<aura:component controller="Update_AssetSubscriptionController">
+    
+    <aura:attribute name="caseId" type="string" />
+    <aura:attribute name="assetId" type="string" />
+    <aura:attribute name="AssetCaseMoveList" type="Case_Asset_Moves__c[]" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:registerEvent name="cmpEvnt" type="c:Update_AssetSubscription_Evt"/>
+    
+    <div>
+        
+        <aura:if isTrue="{! !empty(v.AssetCaseMoveList)}" >
+            <table class="slds-table slds-table--bordered slds-max-medium-table--stacked">
+                <thead>
+                    <tr class="slds-text-heading--label">
+                        <th scope="col" class="nobordertop" title="Case Asset Move">
+                            <div>Case Asset Move</div>
+                        </th>
+                        <th scope="col" class="nobordertop" title="Asset Being Removed">
+                            <div>Asset Being Removed</div>
+                        </th>
+                        <th scope="col" class="nobordertop" title="Asset Being Removed KVH P/N">
+                            <div>Asset Being Removed KVH P/N</div>
+                        </th>
+                        <th scope="col" class="nobordertop" title="Asset Being Installed">
+                            <div>Asset Being Installed</div>
+                        </th>
+                        <th scope="col" class="nobordertop" title="Start Date">
+                            <div>Asset Installed KVH P/N</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.AssetCaseMoveList}" var="assetReplaced" indexVar="index">
+                        <tr class="slds-hint-parent">
+                            <td data-label="Case Asset Move" scope="col">
+                                <div class="rowDataClass"><a href="{! '/'+assetReplaced.Id}" target="_blank">{!assetReplaced.Name}</a></div>
+                            </td>
+                            <td data-label="Asset Being Removed" scope="col">
+                                <div class="rowDataClass">{!assetReplaced.Asset_Being_Removed__r.Name}</div>
+                            </td>
+                            <td data-label="Asset Being Removed KVH P/N" scope="col">
+                                <div class="rowDataClass">{!assetReplaced.Asset_Being_Removed_KVH_P_N__c}</div>
+                            </td>
+                            <td data-label="Asset Being Installed" scope="col">
+                                <div class="rowDataClass">{!assetReplaced.Asset_Being_Installed__r.Name}</div>
+                            </td>
+                            <td data-label="Asset Installed KVH P/N" scope="col">
+                                <div class="rowDataClass">{!assetReplaced.Asset_Installed_KVH_P_N__c}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            
+        </aura:if>
+    </div>
+</aura:component>

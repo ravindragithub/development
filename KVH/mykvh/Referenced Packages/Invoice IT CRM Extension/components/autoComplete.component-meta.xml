@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>30.0</apiVersion>
+    <description>This component is used in quote and order wizard for searching products.(for crmVersion)</description>
+    <label>autoComplete</label>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>6</minorNumber>
+        <namespace>invoiceit_s</namespace>
+    </packageVersions>
+</ApexComponent>

@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="Event is fired when HTS related search is initiated (used to clear tables/attributes)" >
+  <aura:attribute name="statusMessage" type="String" default="Search Complete..." />
+  <aura:attribute name="stateChange" type="String" default="UNKNOWN" />
+  <aura:attribute name="assetList" type="List"/>
+  <aura:attribute name="satRouterMap" type="Map"/>
+</aura:event>

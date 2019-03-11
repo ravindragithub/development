@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Email_Html_Body__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores html body of email to be accessed in SF templates.</description>
+        <externalId>false</externalId>
+        <label>Last Email Html Body</label>
+        <length>131072</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Subject__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Subject</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Text_Body__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores text body of email to be accessed in SF templates.</description>
+        <externalId>false</externalId>
+        <label>Last Email Text Body</label>
+        <length>131072</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+</CustomObject>

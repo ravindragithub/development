@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <letterhead>SiT_Letterhead</letterhead>
+    <name>SiT Email Template</name>
+    <style>formalLetter</style>
+    <subject>Getting back in touch by {!SiT_Email__c.Owner_First_Name__c}</subject>
+    <textOnly>Dear {!SiT_Email__c.First_Name__c},
+I&apos;m currently updating my contact database and want to make sure I have your current data right.
+
+Could you have a quick look at below info? If you would like to change or update certain information, just click the &apos;Update Now&apos; link on the bottom of the email and save your changes when done.
+
+Salutation: {!SiT_Email__c.Salutation__c}
+Firstname: {!SiT_Email__c.First_Name__c}
+Lastname: {!SiT_Email__c.Last_Name__c}
+Email address: {!SiT_Email__c.Email__c}
+Current company: {!SiT_Email__c.Company__c}
+Current title: {!SiT_Email__c.Title__c}
+Phone: {!SiT_Email__c.Phone__c}
+Mobile: {!SiT_Email__c.MobilePhone__c}
+Fax: {!SiT_Email__c.Fax__c}
+Street: {!SiT_Email__c.MailingStreet__c}
+Postalcode: {!SiT_Email__c.MailingPostalCode__c}
+City:{!SiT_Email__c.MailingCity__c}
+State/Province: {!SiT_Email__c.MailingState__c}
+Country: {!SiT_Email__c.MailingCountry__c}
+
+Update Now: {!SiT_Email__c.Link__c}
+
+Many thanks in advance,
+{!SiT_Email__c.Owner_First_Name__c} {!SiT_Email__c.Owner_Last_Name__c}</textOnly>
+    <type>html</type>
+</EmailTemplate>

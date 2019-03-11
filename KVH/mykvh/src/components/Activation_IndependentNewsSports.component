@@ -1,0 +1,106 @@
+<apex:component controller="Act_IndependentNewsSports_Controller" allowDML="true" id="Independent_Comp_Id">
+    
+    <apex:attribute name="IndependentActivationService" description="This is the Activation Order Service record for the the Activation Order Master record"
+                    type="Activation_Service__c" required="required" assignTo="{!objActivationService}"/>
+    
+    <script> 
+    
+    function IndependentValidate(param){
+        var currentcomp  = document.getElementById(param);
+        console.log(currentcomp);
+        j$(currentcomp).find('.kvh-show-errormsg-here').empty();
+        
+        var strHeadersIdsIndependent = '';
+        var strHeadersIdsSpecial = '';
+
+        j$(currentcomp).find('input[type=checkbox].selectedproduct:checked,input[type=radio].radiovld:checked').each(function(){
+            var varId = j$(this).closest('td').find('input[type=hidden].selectedproductId').val();
+            var varHeader = j$(this).closest('td').find('input[type=hidden].selectedproductHeader').val();
+            var varName = j$(this).closest('td').find('input[type=hidden].selectedproductName').val();
+            if(varHeader.toUpperCase().indexOf('INDEPENDENT') >= 0){
+                strHeadersIdsIndependent = strHeadersIdsIndependent == '' ? (varName +'<-->'+ varId) : (strHeadersIdsIndependent +' ; \n '+ (varName +'<-->'+ varId));
+            }
+            if(varHeader.toUpperCase().indexOf('SPECIAL') >= 0){
+                strHeadersIdsSpecial = strHeadersIdsSpecial == '' ? (varName +'<-->'+ varId) : (strHeadersIdsSpecial +' ; \n '+ (varName +'<-->'+ varId));
+            }
+        });
+        
+        //console.log(strHeadersIdsIndependent);
+        //console.log(strHeadersIdsSpecial);
+        showLoadingDiv();
+        updateServiceMethodIndependentSave(strHeadersIdsIndependent,strHeadersIdsSpecial);
+    }
+    
+    function IndependentClearValidate(param){
+        var setcontent = 'Are you sure want to clear the form?';
+        removeduplicatepopup('[data-remodal-id=clearconfirmIndependent]');
+        var instmodel = j$('[data-remodal-id=clearconfirmIndependent]').remodal(options);
+        j$("#kvh-remodelcontentmessageclearconfirmIndependent").html(setcontent);
+        instmodel.open();
+        j$('[data-remodal-id=clearconfirmIndependent]').find('.remodal-close').hide();
+        j$('[data-remodal-id=clearconfirmIndependent]').css('width', '20%').css('padding', '20px 20px').find('div:first').css('width', '100%');
+        
+    }
+    </script>
+    
+    <apex:actionFunction name="updateServiceMethodIndependentSave" action="{!updateActivationServiceValueIndependent}" oncomplete="btnSelectednavigateNext('IP_MobileCast');" reRender="IndependentId, IndependentIdButton">
+        <apex:param name="param1" assignTo="{!objActivationService.Independent_Entertainment_Channels__c}" value="" />
+        <apex:param name="param2" assignTo="{!objActivationService.Special_Event_Channels__c}" value="" />
+    </apex:actionFunction>
+    
+    <apex:outputPanel id="IndependentMainId">
+        <div data-role="collapsible" data-collapsed-icon="carat-r" data-expanded-icon="carat-d" data-inset="false" class="ui-collapsible ui-collapsible-inset ui-corner-all ui-collapsible-themed-content ui-collapsible-collapsed">
+            <h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"> 
+                Independent News and Sports Channels
+                <apex:outputPanel id="IndependentIdButton" style="pointer-events:none;">
+                    <apex:outputPanel rendered="{!OR(objActivationService.Independent_Entertainment_Channels__c == null, objActivationService.Independent_Entertainment_Channels__c == '')}">
+                        <apex:commandLink html-data-role="none" id="addbutton" styleClass="button collapse-button right ui-link ">
+                            Add
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!AND(objActivationService.Independent_Entertainment_Channels__c != null, objActivationService.Independent_Entertainment_Channels__c != '')}">
+                        <apex:commandLink html-data-role="none" id="addedbutton"  styleClass="button added collapse-buttonstl right ui-link">
+                            <i class="fa fa-check fa-lg"></i>Added
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <p class="collapse-p">Get news and sports from around the world. Channels may be added independently, or along with an IP-MobileCast Entertainment and News Package.</p>
+                
+            </h2> 
+            <div aria-hidden="true">
+                <div class="panel-contents">
+                    <a href="#Independent_News_and_Sports_Channels" data-rel="popup" data-position-to="window" data-transition="fade" class="right pad-bottom ui-link" aria-haspopup="true" aria-owns="Independent_News_and_Sports_Channels" aria-expanded="false"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> View terms</a>
+                    <c:Activation_Individual_Plan_Table id="IndependentId" lstIndividualBundles="{!setIndividualBundles}" activationServices="{!objActivationService}" planTypepopupId="Independent_News_and_Sports_Channels" planType="Channel" />
+                    
+                    <div style="width:40%; text-align:right;" class="right">
+                        <apex:commandLink styleClass="pad-right ui-link" id="IndependentclearBtn" value="Clear Form" onclick="IndependentClearValidate('{!$Component.IndependentId}'); return false;">
+                        </apex:commandLink>
+                        <apex:commandLink style="margin:0;" styleClass="button right pad-left ui-link" id="IndependentBackBtn" value="Save" onclick="IndependentValidate('{!$Component.IndependentId}'); return false;">
+                            <apex:param value="IP_MobileCast" assignTo="{!selectedTab}" /> 
+                        </apex:commandLink>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        
+    </apex:outputPanel>
+    
+    <!-- ** remodal popup Start ** -->
+    <div class="remodal" data-remodal-id="clearconfirmIndependent" id="clearconfirmIndependent"  data-remodal-options='{ "hashTracking": false, "closeOnAnyClick": false }' >
+        <div style="display: inherit; width:100%;text-align:center;" >
+            <div style="display: inline-block;"> <img id="thecautionImage" style="margin-right: 5%;" src="{!URLFOR($Resource.ActivationOrders, 'www/images/caution.png')}" width="20" height="20"/></div>
+            <div style="display: inline-block;vertical-align: super;" id="kvh-remodelcontentmessageclearconfirmIndependent"></div>
+        </div>
+        <div style="text-align:center;">
+            <apex:commandLink html-data-remodal-action="cancel" styleClass="Button pad-right ui-link remodal-cancel" id="Okbuttonremodel" value="Yes" action="{!updateActivationServiceValueIndependent}" onclick="showLoadingDiv();" oncomplete="btnSelectednavigateNext('IP_MobileCast');" reRender="IndependentId, IndependentIdButton">
+                <apex:param name="param3" assignTo="{!objActivationService.Independent_Entertainment_Channels__c}" value="" />
+                <apex:param name="param4" assignTo="{!objActivationService.Special_Event_Channels__c}" value="" />
+            </apex:commandLink>
+            <a data-remodal-action="cancel" id="Cancelbuttonremodel" class="remodal-cancel" style="text-decoration: underline;cursor:pointer;" >No</a>
+        </div>
+    </div>
+    <!-- ** remodal popup End ** -->
+    
+    
+</apex:component>

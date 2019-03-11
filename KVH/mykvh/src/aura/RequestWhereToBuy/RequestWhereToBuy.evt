@@ -1,0 +1,13 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="accountSelected" type="Boolean"/>
+    <aura:attribute name="AccountName" type="String"/>
+    <aura:attribute name="ContactName" type="String"/>
+    <aura:attribute name="Phone" type="String"/>
+    <aura:attribute name="Email" type="String"/>
+    <aura:attribute name="Website" type="String"/>
+    <aura:attribute name="Street" type="String"/>
+    <aura:attribute name="State" type="String"/>
+    <aura:attribute name="City" type="String"/>
+    <aura:attribute name="PostalCode" type="String"/>
+    <aura:attribute name="Country" type="String"/>
+</aura:event>

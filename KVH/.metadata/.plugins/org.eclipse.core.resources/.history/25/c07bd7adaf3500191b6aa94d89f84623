@@ -1,0 +1,15 @@
+.THIS .custominput{
+    background-color: #f9f9f9;
+}
+.THIS .searchicon{    
+    background-position: 98% 5px;
+    background-repeat: no-repeat;
+    background-image: url('/myKVH/resource/icons/icon_search.png');
+   
+}
+
+.THIS .searchicon::-webkit-input-placeholder{
+    color: #aaa;
+    font-style: italic;
+    font-size : 11.5px;
+}

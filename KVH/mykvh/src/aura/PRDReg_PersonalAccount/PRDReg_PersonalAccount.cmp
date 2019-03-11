@@ -1,0 +1,147 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="perAccRequired" type="boolean"/>
+    <aura:attribute name="SatelliteTVProvider" type="string"/>
+    <aura:attribute name="DirectTVCheck" type="boolean" default="false"/>
+    <lightning:card title="">
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{! v.perAccRequired}">
+                <lightning:icon iconName="action:remove" title="Atleast one credit card information is required." size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>     
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">        
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-6">
+                    <span class="slds-form-element__label" >
+                        Satellite TV Provider	
+                    </span><abbr title="required" class="slds-required"  style="float: none;">*</abbr>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-6">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4"> 
+                            <lightning:input type="radio" aura:id="r1" 
+                                             label="DISH Network" name="Satellite" 
+                                             onchange="{!c.handleSatelliteTV}"/>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4"> 
+                            <lightning:input type="radio" aura:id="r2" 
+                                             label="DirectTV" name="Satellite" 
+                                             onchange="{!c.handleSatelliteTV}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-6">
+                </div>
+            </div>           
+            
+            <aura:if isTrue="{!v.simpleLTEActivation.Satellite_TV_Provider__c == 'DISH Network'}">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-1">
+                        <span class="slds-form-element__label">
+                            <b>DISH Network</b>
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-6">
+                        <span class="slds-form-element__label" >
+                            Subscriber Status
+                            <abbr title="required" class="slds-required"  style="float: none;">*</abbr>
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-6">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-8"> 
+                                <lightning:input type="radio" aura:id="r5" 
+                                                 label="" name="dish" 
+                                                 onchange="{!c.handleDISHNetwork}" title="New"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-8">                                
+                                <p class="slds-form-element__label" >
+                                    NEW - I need to setup a new DISH account
+                                </p>
+                                <p class="slds-form-element__label" >
+                                    Call Dish Mobile Activation Center at 800-970-9623 to set up your new DISH Network Account. 
+                                </p>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-8"> 
+                                <lightning:input type="radio" aura:id="r6" 
+                                                 label="" name="dish" 
+                                                 onchange="{!c.handleDISHNetwork}" title="Existing"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-8">                                
+                                <p class="slds-form-element__label" >
+                                    EXISTING - I have a DISH account already
+                                </p>
+                                <p class="slds-form-element__label" >
+                                    Call Dish Mobile Activation Center at 800-333-DISH(8474) to add your new receiver to your DISH account when you receive it.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-6">
+                    </div>
+                    
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.simpleLTEActivation.Satellite_TV_Provider__c == 'DirectTV'}">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-1">
+                        <span class="slds-form-element__label">
+                            <b>DirectTV</b>
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-6">
+                        <span class="slds-form-element__label" >
+                            Subscriber Status
+                        </span><abbr title="required" class="slds-required"  style="float: none;">*</abbr>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-6">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-8"> 
+                                <lightning:input type="radio" aura:id="r3" 
+                                                 label="" name="directtv" 
+                                                 onchange="{!c.handleDirectTV}" title="New"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-8">                                
+                                <p class="slds-form-element__label" >
+                                    NEW - I need to setup a new DIRECTV account
+                                </p>
+                                <p class="slds-form-element__label" >
+                                    Contact KVH to set up your account at 866-551-8004 or <a href="">direct@kvh.com</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-8">
+                                <lightning:input type="radio" aura:id="r4" 
+                                                 label="" name="directtv" 
+                                                 onchange="{!c.handleDirectTV}" title="Existing"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-8">                                
+                                <p class="slds-form-element__label" >
+                                    EXISTING - I have a DIRECTV account already
+                                </p>
+                                <aura:if isTrue="{!v.DirectTVCheck}">
+                                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-1">                            
+                                        <lightning:input aura:id="accNum" label="DIRECTV Account Number"
+                                                         value="{!v.simpleLTEActivation.DIRECTV_Account_Number__c}"
+                                                         onblur="{!c.perAccValidation}"/>
+                                    </div>
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-6">
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+    </lightning:card>
+</aura:component>

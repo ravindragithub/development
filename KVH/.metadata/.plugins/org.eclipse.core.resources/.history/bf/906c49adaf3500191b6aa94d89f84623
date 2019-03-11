@@ -1,0 +1,39 @@
+<aura:component >
+
+	<aura:attribute name="filterHeading" type="String" description="heading for filter dropdown"/>
+	<aura:attribute name="searchoptions" type="String[]" description="options selected before search operation" />
+
+	<aura:handler event="c:SearchBoxComponentEvent" action="{!c.hanldeSearchBoxEvent}"/>
+	
+		
+			<li class="slds-context-bar__item slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger--hover" aria-haspopup="true">
+				<a href="javascript:void(0);" class="slds-context-bar__label-action" title="{!v.filterHeading}">
+					<span class="slds-truncate">{!v.filterHeading}</span>
+				</a>
+				<div class="slds-context-bar__icon-action slds-p-left--none" tabindex="0">
+					<span class="slds-icon_container" >
+						<c:svgIcon class="slds-icon--small" xlinkHref="/myKVH/resource/SLDS/assets/icons/utility-sprite/svg/symbols.svg#chevrondown" />
+					</span>
+				</div>
+				<div class="slds-dropdown ">
+					<ul class="slds-dropdown__list slds-m-horizontal--small slds-m-bottom--small" role="menu">
+						<li class="slds-dropdown__item" role="presentation">
+							<span class="slds-text-title--caps">{!v.filterHeading} SELECTED</span>
+						</li>
+						<li class="slds-dropdown__header slds-has-divider--top-space" role="separator">							
+						</li>
+						<aura:iteration items="{!v.searchoptions}" var="label" indexVar="index">
+							<li class="slds-dropdown__item" role="presentation">
+								<lightning:input type="checkbox" 
+									label="{!label}"
+									name="{!label}" 
+									checked="true"
+									onchange="{!c.fireSearchEvent}"/>
+								</li>
+							</aura:iteration>
+						</ul>
+					</div>
+				</li>
+			
+		
+	</aura:component>

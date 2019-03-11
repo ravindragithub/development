@@ -1,0 +1,48 @@
+<aura:component controller="HTS_ltgsvc_hybrids">
+  <aura:attribute name="hybridPair" type="SBQQ__Subscription__c[]" description="These are the two Subscriptions that constitute a Hybrid Pair" />
+  <aura:attribute name="terminalId" type="String" description="This is the Virtual Terminal Id - Effectively the Asset.Name for both subscriptions" />
+  <aura:attribute name="hybridComponents" type="Object[]" description="On part of a Hybrid Pair and it's related subscriptions" />
+  <aura:attribute name="statusMessage" type="String" description="This is a status message returned from the server, and is used to drive client-side logic" />
+  
+  <!-- PUBLISHER -->
+  <aura:registerEvent name="termination" type="c:HTS_hybrids_component_evt" />
+  <!-- EVENT LISTENER -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler name="change" value="{!v.hybridPair}" action="{!c.handlePairChange}"/>
+  <aura:handler name="termination" event="c:HTS_hybrids_component_evt" action="{!c.handleCmpEvent}" />
+  <!-- MARKUP -->
+
+  <div class="slds-grid slds-wrap slds-grid_pull-padded">
+
+    <div class="slds-col slds-p-horizontal_small slds-size_1-of-3">
+      <div class="slds-box slds-box_x-small slds-m-around_x-small">
+        <c:HTS_assetValidation_cmp vtid="{!v.terminalId}" />
+      </div>
+    </div>
+
+    <div class="slds-col slds-p-horizontal_small slds-size_2-of-3">
+      <div class="slds-box slds-box_x-small slds-m-around_x-small slds-is-relative">
+        <div class="slds-button-group" role="group">
+          <lightning:button label="Terminate..." 
+                  iconName="action:delete" 
+                  iconPosition="left" 
+                  onclick="{!c.terminateService}"/>
+          <button class="slds-button slds-button_neutral" disabled="true">Suspend...</button>
+          <button class="slds-button slds-button_neutral" disabled="true">Change Region...</button>
+        </div>
+        <div aura:id="spinner_div" style="position: static; z-index: 9002;" >
+          <lightning:spinner variant="brand" size="medium" alternativeText="Calling Server..."/>
+        </div>
+        <aura:iteration items="{!v.hybridComponents}" var="sub">
+          <div class="slds-box slds-box_x-small slds-m-around_x-small">
+            <c:HTS_hybrid_control_single_sub singleSub="{!sub.parentSub}" relatedSubs="{!sub.childSubs}"/> 
+          </div>
+        </aura:iteration>
+      </div>
+
+
+
+    </div>
+  </div>
+
+</aura:component>

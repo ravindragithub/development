@@ -1,0 +1,64 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <lightning:card title="Rate Plan">
+        <div class="slds-p-horizontal--small"> 
+            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal rate-plan">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <div class="slds-truncate" title="PLAN">PLAN</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="$/MONTH">$/MONTH</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="GB MONTH">GB MONTH</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="$GB OVER PLAN">$GB OVER PLAN</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--
+                    <tr>
+                        <th scope="row" data-label="PLAN" style="background:rgba(25,132,199,.1);padding:.5rem;font-size:100%;">
+                            <div style="display: flex;">
+                                <lightning:input type="radio" name="options" onchange="{!c.selectRatePlan}" value="LTE 10GB"/>
+                                <div class="slds-truncate" title="LTE10GB" style="padding-left: .5rem;"><strong>LTE10GB</strong></div>
+                            </div>
+                        </th>
+                        <td data-label="$/MONTH">
+                            <div class="slds-truncate" title="$199">$199</div>
+                        </td>
+                        <td data-label="GB/MONTH">
+                            <div class="slds-truncate" title="10 GB">10 GB</div>
+                        </td>
+                        <td data-label="$GB OVER PLAN">
+                            <div class="slds-truncate" title="$ 9.99">$ 9.99</div>
+                        </td>
+                    </tr>	
+-->
+                    <tr>
+                        <th scope="row" data-label="PLAN" style="background:rgba(25,132,199,.1);padding:.5rem;font-size:100%;">
+                            <div style="display: flex;">
+                                <lightning:input type="radio" name="options" onchange="{!c.selectRatePlan}" value="LTE 20GB"/>
+                                <div class="slds-truncate" title="LTE20GB" style="padding-left: .5rem;"><strong>LTE20GB</strong></div>
+                            </div>
+                        </th>
+                        <td data-label="$/MONTH">
+                            <div class="slds-truncate" title="$199">$199</div>
+                        </td>
+                        <td data-label="GB/MONTH">
+                            <div class="slds-truncate" title="20 GB">20 GB</div>
+                        </td>
+                        <td data-label="$GB OVER PLAN">
+                            <div class="slds-truncate" title="$ 9.99">$ 9.99</div>
+                        </td>
+                    </tr>	
+                </tbody>
+            </table>
+            <br/>
+        </div>
+    </lightning:card>
+</aura:component>

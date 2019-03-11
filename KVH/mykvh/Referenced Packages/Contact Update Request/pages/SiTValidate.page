@@ -1,0 +1,50 @@
+<apex:page controller="AcuerdoCUR.SiTValidateController" tabStyle="SiT_Settings__tab"
+           title="Validate" showHeader="true" sidebar="true">
+       <style> 
+            .changed{
+                background: #ffffff;
+                font-weight: bold;
+                color: blue;
+            }
+       </style>
+       
+    <apex:form >
+        <apex:pageBlock title="Validate the user input" mode="edit">
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton action="{!Save}" value="Accept Changes"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+             
+
+            <apex:pageMessages id="msgs"/>
+
+            <apex:pageBlockSection columns="1" collapsible="true" showHeader="true" >
+                <apex:pageBlockSectionItem >
+                    In the table below you can see the updated contact information of {!OldContact.Name}. On the left side you can see the current value of all relevant fields, on the right side
+                    all updated values are listed. <br/>
+                    When a change has been made by {!OldContact.Name}, the Save checkbox will be checked. Only those checked values will be used when accepting the changes. <br/>
+                    When the company name has been adpated by the contact, this will not automaticlly be saved. Do some research and attach that new or existing account in the standard interface.  
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+
+            <apex:pageBlockSection columns="1" collapsible="true" title="Differences" showHeader="true" >
+
+                
+                    <apex:pageBlockTable value="{!Diff}" var="d">
+                        
+                        <apex:column headerValue="Field" value="{!d.Label}" styleClass="{!IF(d.SaveThis,'changed','')}"/>
+                        <apex:column headerValue="Current value" value="{!d.OldValue}" styleClass="{!IF(d.SaveThis,'changed','')}"/>
+                        <apex:column headerValue="Updated value" value="{!d.NewValue}" styleClass="{!IF(d.SaveThis,'changed','')}"/>
+                            
+                        <apex:column headerValue="Save" styleClass="{!IF(d.SaveThis,'changed','')}">
+                            <apex:inputCheckbox value="{!d.SaveThis}" rendered="{!!d.IsCompany}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+               
+         
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

@@ -1,0 +1,40 @@
+.THIS.toggle {
+    display: none;
+}
+.THIS .bluespin{
+    position: fixed;
+}
+.THIS .buttonicon{
+    padding: 1px 10px;
+    border: none;
+    outline: none;
+    float : left;
+}
+.THIS .pad-2{
+    padding: 2px 10px;
+}
+.THIS h1{
+    font-size: 1.7em;
+    padding-bottom: 10px;
+    font-weight: 70;
+    margin-bottom: 15px;
+    line-height: normal;
+    font-family: sans-serif
+}
+.THIS .heading {
+    background:#999999;
+    margin:0; 
+    font-weight: lighter;
+    cursor: pointer;
+}
+.THIS h3{
+    font-size: 1.3em;
+    font-weight: 100;
+    line-height: normal;
+    font-family: sans-serif;
+}
+.THIS .backbutton{
+    color: #000;
+    border: 1px solid black;
+    border-radius: 0px;
+}

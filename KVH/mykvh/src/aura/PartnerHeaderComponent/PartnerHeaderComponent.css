@@ -1,0 +1,59 @@
+.THIS.header {
+          color:#fff;
+          height:56px;
+          background:#cc0000;
+ }
+.THIS .side {
+    display: none;
+}
+.THIS .slds-dropdown{
+    border-radius: 0px;
+    text-align : left;
+}
+.THIS .slds-dropdown__item {
+    line-height: 1.2;
+}
+ 
+@media (min-width: 480px)  {
+   .THIS .side {
+         display: block;
+    }
+    
+}
+@media only screen and (max-width: 768px) {
+    .THIS .imagetopmargin{
+        margin-top : 22px;
+    }
+}
+.THIS .width100{
+    width: 100%;
+}
+.THIS .sideSmall{
+    display: none;
+}
+@media (min-width: 1024px)  {
+   .THIS .sideSmall {
+        display: inline-block;
+    }
+}
+.THIS .header1{
+    font-weight: normal;
+    
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    letter-spacing: .03em;
+    font-size : 24px;
+}
+@media only screen and (max-width: 448px) {
+    
+    .THIS .header1{
+        font-size : 16px;
+        padding-top :2%;
+    }
+    .THIS .slds-icon_small, .THIS .slds-icon--small{
+        width : 1rem;
+    }
+}
+.THIS .slds-icon_small,.THIS .slds-icon--small{
+    height : 1.2rem;
+}

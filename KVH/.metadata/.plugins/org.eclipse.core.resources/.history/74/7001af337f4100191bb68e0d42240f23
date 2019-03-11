@@ -1,0 +1,47 @@
+<apex:page renderAs="pdf" showHeader="false" sidebar="false" 
+           standardStylesheets="false" applyBodyTag="false"
+           applyHtmlTag="false" controller="QRLabelController">
+  <html>
+    <head>
+      <style>
+        @page {
+          size: 3in 2in;
+          margin: .067in;
+        }
+        body {
+           font-family: Arial Unicode MS;
+        }
+      </style>
+    </head>
+    <body>
+<table>
+  <tr>
+    <td width="1.9in" style="font-size: .6em; font-weight: bold; text-align: center;">
+      Can't scan? Go to:<br/>
+      www.kvh.com/LTEactivate
+    </td>
+    <td width="1.1in"  style="text-align: left;">
+        <apex:image url="{!$Resource.KVH_logo}" height="75%" width="75%"/>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td width="1.75in" style="font-size: .7em; font-weight: bold; text-align: center;">
+      Serial No. {!$CurrentPage.parameters.sn}<br/>
+      <br/>
+      Wi-Fi Name (SSID):<br/>
+      {!default_ssid}<br/>
+      <br/>
+      Wi-Fi Password:<br/>
+      {!default_wifi_password}
+    </td>
+    <td width="1.25in" style="text-align: center;">
+      <!-- API sourced from http://goqr.me/ -->
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data={!urlContent}&ECC=H" alt="qrtag"/>
+    </td>
+  </tr>
+</table>
+    </body>
+  </html>
+</apex:page>

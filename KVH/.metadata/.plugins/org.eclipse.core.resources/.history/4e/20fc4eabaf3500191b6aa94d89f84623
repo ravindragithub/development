@@ -1,0 +1,18 @@
+<aura:component controller="LTE_devices_mfg">
+  <aura:attribute name="identifier" type="String" default=""/>
+  <aura:attribute name="lteDevices" type="LTE_devices_mfg" Description="This is returned from the Server Side controller" />
+  <aura:attribute name="results" type="String" Description="This is the summarized results from the Service Class invoked by the Component" />
+  <aura:attribute name="qrLabel" type="String" Description="This is the link to QR Label page" default="/apex/QRLabel_LTE"/>
+  <aura:attribute name="enableLink" type="Boolean" default="true" Description="This will inhibit the link if the system is not an LTE-1"/>
+  <!-- event publishers -->
+
+  <!-- event listeners -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+  <aura:if isTrue="{!v.enableLink}">
+    <ui:outputURL value="{!v.qrLabel}" label="Print QR label" target="_blank"/>
+    <aura:set attribute="else">
+      <p>This Asset does not appear to be part of an LTE-1 system... nothing to print!</p>
+    </aura:set>
+  </aura:if>
+</aura:component>

@@ -1,0 +1,10 @@
+.THIS .mainContent{
+    text-align : center;
+}
+.THIS .enlargeSection{
+    height:100%;
+}
+.THIS .slds-button--neutral{
+    background-color: rgb(0, 112, 210)!Important;
+    color: white!Important;
+}

@@ -1,0 +1,61 @@
+<aura:component >
+    
+    <aura:attribute name="prodRegistration" type="Object"/>
+    <aura:attribute name="accountRequired" type="boolean"/>
+    
+    <lightning:card title="Customer Information">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="Main Contact First/Given Name"
+                                 value="{!v.prodRegistration.Subscriber_First_Name__c}"
+                                 required="true" 
+                                 onblur="{!c.validateInfo}"   
+                                 disabled="{!v.prodRegistration.Subscriber_First_Name__c!=''}"/>
+                <lightning:input label="Main Contact Last/Family Name/Surname"
+                                 value="{!v.prodRegistration.Subscriber_Last_Name__c}"
+                                 required="true" 
+                                 onblur="{!c.validateInfo}" 
+                                 disabled="{!v.prodRegistration.Subscriber_Last_Name__c!=''}"/>                  
+                <lightning:input label="Company Name (if applicable)" 
+                                 value="{!v.prodRegistration.Subscriber_Company_Name__c}"/>                    
+                <lightning:input type="email" 
+                                 label="Email" 
+                                 value="{!v.prodRegistration.Subscriber_Email__c}"
+                                 required="true"
+                                 onblur="{!c.validateInfo}" 
+                                 disabled="{!v.prodRegistration.Subscriber_Email__c!=''}"/>
+                <lightning:input type="tel" 
+                                 label="Mobile Phone Number" 
+                                 required="true"
+                                 value="{!v.prodRegistration.Subscriber_Phone__c}" 
+                                 onblur="{!c.validateInfo}"
+                                 disabled="{!v.prodRegistration.Subscriber_Phone__c!=''}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" class="slds-p-horizontal_small">
+                <lightning:input label="Address" 
+                                 value="{!v.prodRegistration.Subscriber_Address__c}"
+                                 required="true"
+                                 onblur="{!c.validateInfo}"/>
+                <lightning:input label="City"
+                                 value="{!v.prodRegistration.Subscriber_City__c}"
+                                 required="true"
+                                 onblur="{!c.validateInfo}"/>  
+                <lightning:input label="Country"
+                                 value="{!v.prodRegistration.Subscriber_Country__c}"
+                                 required="true"
+                                 disabled="{!v.prodRegistration.Subscriber_Country__c!=''}"/>
+                <lightning:input label="State/Province/Territory"
+                                 value="{!v.prodRegistration.Subscriber_State_Province_Territory__c}"
+                                 required="true"
+                                 disabled="{!v.prodRegistration.Subscriber_State_Province_Territory__c!=''}"/>           
+                <lightning:input label="Postal/Zip Code" 
+                                 value="{!v.prodRegistration.Subscriber_Postal_Zip_Code__c}"
+                                 required="true"
+                                 onblur="{!c.validateInfo}"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <div class="button-bar">
+            <lightning:button label="Next" variant="brand" class="slds-float_right slds-m-top_medium"/>
+        </div>
+    </lightning:card>
+</aura:component>

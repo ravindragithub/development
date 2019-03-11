@@ -1,0 +1,10 @@
+<apex:page showHeader="false" sidebar="false" title="Icon Help">
+    <apex:image id="Icon_start" url="/img/icon/custom51_100/globe24.png"/> =  Top node of Hierarchy<p/>
+    <apex:image id="Dir_Cust_Acct" url="/img/icon/radarDish24.png"/> = Direct Customer<p/>
+    <apex:image id="Dir_Part_Acct" url="/img/icon/sack24.png"/> = Direct Partner<p/>
+    <apex:image id="Prospect_Acct" url="/img/icon/hands24.png"/> = Prospect<p/>
+    <apex:image id="Platform_Maritime" url="/img/icon/custom51_100/ship24.png"/> = Platform – Maritime<p/>
+    <apex:image id="Platform_Leisure" url="/img/icon/custom51_100/sailboat24.png"/> = Platform – Leisure<p/>
+    <apex:image id="Affiliated_Party" url="/img/icon/desk24.png"/> = Affiliated Party<p/>
+    <apex:image id="Network" url="/img/icon/lightning24.png"/> = Network
+</apex:page>

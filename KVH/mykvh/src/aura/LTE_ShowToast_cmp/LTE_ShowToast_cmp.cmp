@@ -1,0 +1,29 @@
+<aura:component >
+    <aura:attribute name="title" type="String" />
+    <div>
+        <div class="topToast" aura:id="showError">
+            <div class="errorMessage" aura:id="errorTag" style="height: 4rem;">
+                <div class="slds-notify_container slds-is-relative">
+                    <div class="slds-notify slds-notify_toast slds-theme_error topContainer" role="alert">
+                        <span class="slds-assistive-text">error</span>
+                        <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" >
+                            <lightning:icon iconName="utility:error" title="Error in section.Please validate the fields" size="small"/>
+                        </span>
+                        <div class="slds-align-middle slds-hyphenate">
+                            <div class="toastTitle slds-text-heading--small">
+                                Error
+                            </div>
+                            <div class="slds-notify__content">
+                                <h1 class="slds-text-heading_small ">{!v.title}</h1>
+                            </div>
+                        </div>                        
+                        <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close" onclick="{!c.closeBtn}">
+                            <lightning:icon iconName="utility:close" title="Close" size="small"/>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

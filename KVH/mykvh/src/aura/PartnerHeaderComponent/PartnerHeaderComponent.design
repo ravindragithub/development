@@ -1,0 +1,3 @@
+<design:component >
+    <design:attribute name="applicationheading" label="Heading Label" description="label for community header" />
+</design:component>

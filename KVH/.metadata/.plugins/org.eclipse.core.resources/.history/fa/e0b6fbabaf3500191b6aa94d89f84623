@@ -1,0 +1,111 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/> 
+    <aura:attribute name="payInfoRequired" type="boolean"/>
+    <aura:attribute name="creditInfoRequired" type="boolean"/>
+    <aura:attribute name="subInfoRequired" type="boolean"/>
+    <aura:attribute name="validatePrimaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="validateSecondaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="invalidPrimaryCC" type="boolean" default ="false"/>
+    <aura:attribute name="invalidSecondaryCC" type="boolean" default ="false"/> 
+    <aura:attribute name="billingInfoFlag" type="boolean"/>
+    <aura:attribute name="billingCheckFlag" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedState}" action="{!c.handleStateValue}"/>
+    <aura:handler name="change" value="{!v.billingInfoFlag}" action="{!c.handlebillingInfoFlag}"/>
+    <lightning:card title="Credit Card Information">
+        <div class="note">Required for receiver's one-time $29 shipping and handling fees</div>
+        <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{! v.payInfoRequired}">
+                <lightning:icon iconName="action:remove" title="Atleast one credit card information is required." size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>     
+        </aura:set>
+        4111111111111111
+-->
+        <div class="slds-p-horizontal--small"><!--slds-input__icon_right slds-icon-text-default-->
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <div aura:id="ccSecure" class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right ccSecure1">
+                        <lightning:icon iconName="utility:lock" alternativeText="Secure" class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"/>
+                        <ui:inputText aura:id="PrimaryCC" label="Credit Card No." class="slds-input"
+                                      value="{!v.simpleLTEActivation.Credit_Card_No__c}"
+                                      blur="{!c.validatePrimaryPayInfo}"/>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">  
+                    <ui:inputText aura:id="PrimaryCCDate" label="Exp. Date" class="slds-input"
+                                     value="{!v.simpleLTEActivation.Exp_Date__c}"
+                                     blur="{!c.validatePrimaryDateInfo}" required="true"
+                                     placeholder="(MM/YYYY)"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 longPanel"> 
+                    <ui:inputText aura:id="PrimaryCCName" label="Name on Card" class="slds-input"
+                                     value="{!v.simpleLTEActivation.Name_on_Card__c}"
+                                     blur="{!c.validatePrimaryNameInfo}" required="true"/>
+                </div>
+            </div>
+        </div>
+    </lightning:card>
+    <lightning:card title="Credit Card Billing Address">
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">                
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2"> 
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-5"> 
+                            <span class="slds-form-element__label" >
+                                Same as
+                            </span> &nbsp;
+                        </div>                  
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-5">                            
+                            <lightning:input label="Customer Information" type="checkbox" aura:id="subCheckFlag"
+                                             class="checkBoxSideBar" onchange="{!c.updateBillingInfo}" 
+                                             checked="{!v.billingCheckFlag}"/>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-5">  
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2"> </div>                
+            </div>
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 longPanel">  
+                    <lightning:input aura:id="LTEBillingField" label="Address" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Address__c}"
+                                     onblur="{!c.billingValidation}"/>                    
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">
+                    <lightning:input aura:id="LTEBillingField" label="City" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_City__c}"
+                                     onblur="{!c.billingValidation}"/>
+                    <lightning:input aura:id="LTEBillingField" label="Postal/Zip Code" required="true" 
+                                     value="{!v.simpleLTEActivation.Billing_Postal_Zip_Code__c}"
+                                     onblur="{!c.billingValidation}"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel">
+                    <aura:if isTrue="{!v.billingCheckFlag}">
+                        <lightning:input aura:id="LTEBillingField" label="Country" required="true" 
+                                         value="{!v.simpleLTEActivation.Billing_Country__c}"
+                                         onblur="{!c.billingValidation}"/>
+                        <lightning:input aura:id="LTEBillingField" label="State/Province/Territory" required="true" 
+                                         value="{!v.simpleLTEActivation.Billing_State_Province_Territory__c}"
+                                         onblur="{!c.billingValidation}"/>
+                        <aura:set attribute="else">
+                            <c:Country_Picklist_cmp countryList="{!v.countryList}"
+                                                    selectedCountry="{!v.selectedCountry}" 
+                                                    selectedState="{!v.selectedState}" 
+                                                    componentID="BillingCountryState"/>          
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,14 @@
+<!--
+ - Created by Jai Chaturvedi on 13/03/2017.
+ -->
+
+<design:component >
+    <design:attribute name="newsHeader" label="Header" description="Header" />
+    <design:attribute name="serviceName" label="Service Name" description="service name" />
+    <design:attribute name="headerValue" label="Header" description="Header" />
+    <design:attribute name="subHeader" label="Sub Header" description="Sub Header" />
+    <design:attribute name="description" label="Description" description="Description" />
+    <design:attribute name="logonames" label="Logo Names" description="give comma seprated logo names" />
+    <design:attribute name="url" label="URL" description="redirect URL" />
+    <design:attribute name="videourl" label="Video Url" description="Video URL" />
+</design:component>

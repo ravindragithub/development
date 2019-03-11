@@ -1,0 +1,18 @@
+/**
+ * Created by Jai Chaturvedi on 12/03/2017.
+ */
+.THIS td{
+    border-bottom-color: #ddd;
+    border-bottom-style: solid;
+        border-bottom-width: thin;
+    text-align: left;
+    padding: 5px;
+}
+
+.THIS th{
+    border-bottom-color: #ddd;
+    border-bottom-style: solid;
+        border-bottom-width: thin;
+    text-align: left;
+    padding: 5px;
+}

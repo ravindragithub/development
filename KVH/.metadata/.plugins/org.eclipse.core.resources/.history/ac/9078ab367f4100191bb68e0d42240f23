@@ -1,0 +1,36 @@
+<apex:page standardController="invoiceit_s__Quote__c" extensions="controllerSyncQuote">
+ <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, 'js/jquery-1.5.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.invoiceit_s__jQuery, 'js/jquery-ui-1.8.14.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.invoiceit_s__jQuery,'css/smoothness/jquery-ui-1.8.14.custom.css')}"/>
+    <script>
+        var isSaving;
+        isSaving = false;
+        $j = jQuery.noConflict();
+       function disableBtn() {
+            isSaving = true;
+            $j('.disablebutton').addClass('btnDisabled');
+            $j('.disablebutton').attr({value:'Processing...',disabled:'disabled'});
+            $j('.disablebuttonSave').addClass('btnDisabled');
+            $j('.disablebuttonSave').attr('value','Processing...');
+            
+        }
+  </script>
+    <apex:pageMessages id="messages"/>
+    <apex:form id="form">
+        <apex:pageBlock title="Sync Quote to Opportunity">
+                {!$Label.invoiceit_s__startHere_Note}: You are about to sync a new quote record to the Opportunity that you selected on quote.The products from the Quote record will be synchronized to the related Opportunity record.
+                <br/> Please confirm that you wish to proceed
+        </apex:pageBlock>
+
+        <apex:actionStatus id="saveStatus">
+            <apex:facet name="stop">
+                <apex:commandButton action="{!SyncQuote}" value="{!$Label.invoiceit_s__ButtonConfirm}" reRender="messages,form" onclick="disableBtn();"  styleClass="disablebutton" status="saveStatus"/>
+            </apex:facet>
+            <apex:facet name="start">
+                <apex:commandButton value="Processing..." disabled="true" status="saveStatus"/>
+            </apex:facet>
+        </apex:actionStatus>
+        
+        <apex:commandButton action="{!cancel}" value="{!$Label.invoiceit_s__ButtonCancel}" styleClass="disablebutton"/>         
+    </apex:form>
+</apex:page>

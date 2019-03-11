@@ -1,0 +1,208 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+    
+
+	<div class="white-bg pad-inside containerdiv" style="max-width:1000px;margin:auto;background: #fff;padding:2%;">
+    	<h1 class="left">KVH Trademarks</h1>
+        <div class="clear"></div>
+        <p style="margin-bottom: 1%;text-align: justify;">A trademark can be a word, phrase, symbol, or design that distinguishes the source of the goods or services. Also, as trade dress, it can be the appearance of a product or its packaging, including size, shape, color, texture, graphics, and appearance (e.g., retail store or website).</p>
+        <p style="margin-bottom: 1%;text-align: justify;">The following is a non-exhaustive list of KVH’s trademarks and service marks.</p>
+        <p style="margin-bottom: 1%;text-align: justify;">The list also includes a suggested generic term for each trademark. For all publications, include an appropriate generic term after the trademark the first time it appears. Thereafter, the generic term should appear frequently with the trademark. (These generic terms are only suggestions, and there may be other words that are equally appropriate.)</p>
+        <p style="margin-bottom: 1%;text-align: justify;">The absence of a product or service name or logo from this list does not constitute a waiver of KVH’s trademark or other intellectual property rights concerning that name or logo.</p>
+        <p style="margin-bottom: 1%;text-align: justify;">The following is a list of KVH's standard trademarks. When listing them in a document, the sentence should read "[Trademark] is a trademark of KVH Industries, Inc."</p>
+        <div class="clear"></div>
+        
+        <table class="dashboard">
+            <tbody>               
+                <tr>
+                    <td style="width:30%">ActiveFiber™</td>
+                    <td style="width:70%">Optical fiber with integrated optical networking components</td>                    
+                </tr>
+                <tr>
+                    <td>AgilePlans™</td>
+                    <td>Connectivity as a Service all-inclusive, no commitment satellite communication product</td>                    
+                </tr>
+                <tr>
+                    <td>Autocomp™</td>
+                    <td>Digital compass</td>                    
+                </tr>
+                <tr>
+                    <td>C100™</td>
+                    <td>Digital compass</td>                    
+                </tr>
+                <tr>
+                    <td>CHARTlink™</td>
+                    <td>Digital chart delivery system</td>                    
+                </tr>
+                <tr>
+                    <td>CommBox™</td>
+                    <td>Integrated network management system and software</td>                    
+                </tr>
+                <tr>
+                    <td>CREWlink™</td>
+                    <td>Crew data access service</td>                    
+                </tr>
+                <tr>
+                    <td>Crewtoo™</td>
+                    <td>Social media site for mariners</td>                    
+                </tr>
+                <tr>
+                    <td>eTrac™</td>
+                    <td>mini-C/GPS satcom system</td>                    
+                </tr>
+                <tr>
+                    <td>FORECASTlink™</td>
+                    <td>Weather data and route planning data delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>GEO-FOG™</td>
+                    <td>Inertial navigation system</td>                    
+                </tr>
+                <tr>
+                    <td>GyroTrac™</td>
+                    <td>Digital compass and gyro-based heading system</td>                    
+                </tr>
+                <tr>
+                    <td>High-Performance (HP™)</td>
+                    <td>Reference to prior HP-family of TracVision systems</td>                    
+                </tr>
+                <tr>
+                    <td>IP-MobileCast™</td>
+                    <td>Multicast-based content delivery system</td>                    
+                </tr>
+                <tr>
+                    <td>KVH OneCare™</td>
+                    <td>A suite of support services designed to help a customer through their full life cycle experience with KVH.</td>                    
+                </tr>
+                <tr>
+                    <td>MAINTENANCElink™</td>
+                    <td>Vessel maintenance and troubleshooting content delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>MOVIElink™</td>
+                    <td>Movie delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>MUSIClink™</td>
+                    <td>Music delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>NEWSlink™</td>
+                    <td>News delivery service for print and TV content</td>                    
+                </tr>
+                <tr>
+                    <td>N•FOG™</td>
+                    <td>Northfinding fiber optic gyro-based system for military applications</td>                    
+                </tr>
+                <tr>
+                    <td>Power of One™</td>
+                    <td>KVH’s end-to-end satellite communications solution</td>                    
+                </tr>
+                <tr>
+                    <td>RingFire™</td>
+                    <td>High-performance TV antenna reflector design</td>                    
+                </tr>
+                <tr>
+                    <td>SPORTSlink™</td>
+                    <td>Sports content delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>T•FOG™</td>
+                    <td>Fiber optic gyro upgrade for digital compass-based TACNAV systems</td>                    
+                </tr>
+                <tr>
+                    <td>TracNet™</td>
+                    <td>Mobile Internet access system</td>                    
+                </tr>
+                <tr>
+                    <td>TVlink™</td>
+                    <td>TV content delivery service</td>                    
+                </tr>
+                <tr>
+                    <td>Videotel™</td>
+                    <td>KVH subsidiary focused on seafarer training</td>                    
+                </tr>
+                <tr>
+                    <td>Whisper Drive™</td>
+                    <td>Quiet motors used in smaller TacVision systems</td>                    
+                </tr>
+                <tr>
+                    <td>YOURlink™</td>
+                    <td>Customer-generated content delivery service</td>                    
+                </tr>
+            </tbody>
+        </table>
+        <h1 class="left">KVH Servicemarks</h1>
+        <div class="clear"></div>
+        <table class="dashboard">
+            <tbody>               
+                <tr>
+                    <td style="width:30%">mini-VSAT Broadband™</td>
+                    <td style="width:70%">KVH’s global VSAT service</td>                    
+                </tr>
+            </tbody>
+        </table>
+        
+        <h1 class="left">KVH Registered Trademarks</h1>
+        <div class="clear"></div>
+        <p style="margin-bottom: 1%;text-align: justify;">The following is a list of KVH’s registered trademarks. When listing them in a document, the sentence should read “[Trademark] is a registered trademark of KVH Industries, Inc.”</p>
+        <div class="clear"></div>
+        <table class="dashboard">
+            <tbody>               
+                <tr>
+                    <td style="width:30%">Autogyro®</td>
+                    <td style="width:70%">Fiber optic gyro-based navigation system</td>                    
+                </tr>
+                <tr>
+                    <td>Azimuth®</td>
+                    <td>Heading and pointing system</td>                    
+                </tr>
+                <tr>
+                    <td>DataScope®</td>
+                    <td>Handheld digital fluxgate compass and rangefinder </td>                    
+                </tr>
+                <tr>
+                    <td>E•Core®</td>
+                    <td>Elliptical core fiber</td>                    
+                </tr>
+                <tr>
+                    <td>KVH®</td>
+                    <td>KVH Industries, Inc.</td>                    
+                </tr>
+                <tr>
+                    <td>mini-VSAT®</td>
+                    <td>KVH’s global VSAT service; used with services like mini-VSAT Manager</td>                    
+                </tr>
+                <tr>
+                    <td>Sailcomp®</td>
+                    <td>Digital compassed-based sailing compass</td>                    
+                </tr>
+                <tr>
+                    <td>TACNAV®</td>
+                    <td>Military tactical navigation system</td>                    
+                </tr>
+                <tr>
+                    <td>TracPhone®</td>
+                    <td>Mobile communications systems (may be satellite or cellular)</td>                    
+                </tr>
+                <tr>
+                    <td>TracVision®</td>
+                    <td>Mobile satellite TV systems</td>                    
+                </tr>
+                <tr>
+                    <td>Tri-Americas®</td>
+                    <td>Multi-region low noise block for satellite TV</td>                    
+                </tr>
+                <tr>
+                    <td style="width: 25%;">The unique light-colored dome with dark contrasting baseplate, Registered Trademark No. 2,864,752</td>
+                    <td>KVH’s standard dome design for TracPhone and TracVision systems</td>                    
+                </tr>                
+            </tbody>
+        </table>
+        
+        <h1 class="left">Listing KVH Standard and Registered Trademarks Together</h1>
+        <div class="clear"></div>
+        <p style="margin-bottom: 1%;text-align: justify;">When listing both KVH standard and registered trademarks in the same sentence, use the phrase, “[Trademarks] are trademarks of KVH Industries, Inc.”</p>
+        <p style="margin-bottom: 1%;text-align: justify;">Example:</p>
+        <p style="margin-bottom: 1%;text-align: justify;margin-left:6%">KVH, TracVision, RingFire, and the unique light-colored dome with dark contrasting baseplate are trademarks of KVH Industries, Inc.</p>        
+    </div>
+</aura:component>

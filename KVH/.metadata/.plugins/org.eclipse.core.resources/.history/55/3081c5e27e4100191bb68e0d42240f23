@@ -1,0 +1,36 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" 
+                controller="myKVHprofileController">
+    
+    <aura:attribute name="userdetail"
+                    type="myKVHprofileController.ProfileWrapper"
+                    description="User Details"/>
+    
+    <aura:attribute name="showspinner"
+                    type="String"
+                    description="show/hide spinner" default="slds-show"/>
+    
+    <aura:attribute name="showview" type="Boolean" description="show profile view section." default="true" />
+    <aura:attribute name="showedit" type="Boolean" description="show profile edit section." default="false" />
+    <aura:attribute name="showThankyou" type="Boolean" description="show profile thankyou section." default="false" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:handler event="c:myKVH_profileEditClickEvent"
+                  action="{!c.showhideEditSection}"
+                  description="hide or show the edit component."/>
+    
+    <aura:handler event="c:myKVH_profileSpinnerEvent"
+                  action="{!c.showhideSpinner}"
+                  description="hide or show the edit component."/>
+    <ltng:require styles="{!$Resource.MASTERAppsStyles}"/>
+    
+    <div class="slds">   
+        <aura:renderIf isTrue="{!or(v.showview,v.showThankyou)}">
+            <c:myKVH_profileView userdetail="{!v.userdetail}" showThankyou="{!v.showThankyou}" ></c:myKVH_profileView>       
+        </aura:renderIf> 
+        <aura:renderIf isTrue="{!v.showedit}">
+            <c:myKVH_profileEdit ></c:myKVH_profileEdit>
+        </aura:renderIf>    
+        <lightning:spinner variant="brand" aura:id="mySpinner" size="large" class="{!v.showspinner}" />
+    </div>
+</aura:component>

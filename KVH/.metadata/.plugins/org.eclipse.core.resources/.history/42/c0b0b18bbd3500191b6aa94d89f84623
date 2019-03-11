@@ -1,0 +1,562 @@
+<!--
+***********************************************************************************************************************
+Name: Create_addorUpdateContractRoles
+Copyright © 2014 KVH Industries | Salesforce Instance : 
+========================================================================================================================
+Purpose: 1) This is used to create new child Asset for existing case Asset.
+------------------------------------------------------------------------------------------------------------------------
+Utilized in(Called in):
+-----------------------
+
+========================================================================================================================
+REQUIREMENT INFORMATION & DEVELOPMENT INFORMATION:                                                        
+------------------------------------------------------------------------------------------------------------------------
+VERSION    AUTHOR              DATE             DETAIL                                Mercury Request #
+------------------------------------------------------------------------------------------------------------------------
+1.0     Gopi Kishore. K      21/05/2014       Initial Development
+1.1     Gopi Kishore. K      11/09/2014       Modified due to contractServices Contracts Not Visible when pageLoads.                        
+***********************************************************************************************************************/
+
+-->
+<apex:page controller="Create_addorUpdateContractRoles" sidebar="false" tabStyle="Case" id="page">
+    <style>
+        .AccountTable{
+        background-color:white;
+        }
+        .AccountTable td{
+        border-spacing: 0;
+        padding: 6px;
+        border-color: #D0D0D0 -moz-use-text-color;
+        border-image: none;
+        border-style: solid none;
+        border-width: 1px 0;
+        }
+        .AccountTable th{
+        background: none repeat scroll 0 0 #1797C0;
+        border: 1px solid #1797C0;
+        color: #FFFFFF;
+        font-family: Arial,Helvetica,sans-serif;
+        padding: 6px;
+        }
+        .AccountTable table{
+        border-collapse:collapse;
+        width:100%;
+        border: 1px solid #D0D0D0;
+        }
+        .NewpopupContainer {
+        background-color: #fefefe;
+        margin: auto;
+        border: 1px solid #888;
+        width: 80%;
+        }
+        .Newoverlay{display:block!important;}
+        .Newoverlay{
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        .modal__header{
+        position: relative;
+        border-top-right-radius: .25rem;
+        border-top-left-radius: .25rem;
+        border-bottom: 2px solid rgb(217, 219, 221);
+        padding: 1rem;
+        text-align: center;
+        }
+        .modal__content{
+        padding: 1rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        height: 250px;
+        overflow: scroll;
+        }
+        .modal__footer{
+        border-top: 2px solid rgb(217, 219, 221);
+        border-bottom-right-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+        padding: .75rem 1rem;
+        background-color: rgb(249, 249, 250);
+        text-align: right;
+        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+        }
+        .customBtn{
+        font-size: 13px;
+        padding: 0 1rem;
+        background-color: rgb(0, 112, 210)!important;
+        color: white!important;
+        background: transparent;
+        line-height: 1.875rem;
+        cursor: pointer;
+        }
+        .tableHeader{
+        font-weight: 300;
+        font-size: 1.25rem;
+        color: rgb(22, 50, 92);
+        }
+        #datatable{
+        width: 100%;
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        }
+        .headerRow{
+        border-bottom: 1px solid #ddd;
+        color: #000!important;
+        background-color: #f1f1f1!important;
+        }
+        .rowClass{
+        padding: 8px 8px;
+        }
+        #datatable tr:nth-child(even) {
+        background-color: #f1f1f1;
+        }
+    </style>
+    <script type="text/javascript">
+    var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+    <apex:includescript value="{!URLFOR($Resource.jquery, '/jquery/js/jquery-1.10.2.js')}" ></apex:includescript>
+    <script>
+    var standardPrice;
+    function ChargePopulate(param){
+        try{
+            var query = "select id,name,Standard_Pricebook_Price__c from product2 where ID = '" + param + "'";
+            result = sforce.connection.query(query);
+            records = result.getArray("records");
+            standardPrice = records[0].Standard_Pricebook_Price__c;
+            document.getElementById('page:frm:thisBlock:PBS:charge').value = records[0].Standard_Pricebook_Price__c+'0';
+            document.getElementById('page:frm:thisBlock:PBS:theText').innerHTML = '$'+records[0].Standard_Pricebook_Price__c+'0';
+            document.getElementById('page:frm:thisBlock:PBS:check').innerHTML = '<img width="21" height="16" title="Not Checked" class="checkImg" alt="Not Checked" src="/img/checkbox_checked.gif">';
+        }
+        catch(e){
+            alert('An Error has Occured. Error:' +e);
+        }
+    }
+    
+    
+    
+    function NewContractedService(){
+        alert('Work in progress');
+    }
+    
+    function NewContractRecord(){
+        var r = confirm("Are you sure you want to create this new contract ?");
+        if (r == true) {
+            newContractCallJSFunction();
+        }
+    }
+    
+    function NewContractedServiceRecord(){
+        var r = confirm("Are you sure you want to create this new contracted service ?");
+        if (r == true) {
+            newContractedServiceCallJSFunction();
+        }
+    }
+    
+    var ContractIDSelection;
+    var contractStatus;
+    function contractSelection(contractID){
+        ContractIDSelection = contractID;
+        var soql = "SELECT Id,status FROM Contract WHERE ID = '" + contractID + "'";
+        result = sforce.connection.query(soql);
+        records = result.getArray("records");
+        contractStatus = records[0].Status;
+    }
+    
+    function ActivateContract(){
+        if(contractStatus != 'Activated'){
+            if(ContractIDSelection != null){
+                var r = confirm("Are you sure you want to activate this Contract?");
+                if (r == true) {
+                    updateContractStatus(ContractIDSelection);
+                }
+            }else{
+                alert("please select atleast one contract");
+            }
+        }else{
+            alert("This contract has been previously activated!");
+        }
+    }
+    
+    
+    function NewContractedServices(){
+        if(ContractIDSelection != null){
+            var r = confirm("Are you sure you want to create new contracted services?");
+            if (r == true) {
+                newContractedServices(ContractIDSelection);
+            }
+        }else{
+            alert("please select atleast one contract");
+        }
+    }
+    
+    function contractApproved(approvedValue){
+        if(approvedValue != standardPrice+'0'){
+            document.getElementById('page:frm:thisBlock:PBS:check').innerHTML = '<img class="checkImg" width="21" height="16" title="Not Checked" alt="Not Checked" src="/img/checkbox_unchecked.gif">';
+        }else{
+            document.getElementById('page:frm:thisBlock:PBS:check').innerHTML = '<img width="21" height="16" title="Not Checked" class="checkImg" alt="Not Checked" src="/img/checkbox_checked.gif">';
+        }
+    } 
+    
+    
+    function ORPChargeApproved(approvedValue){
+        if(approvedValue != {!ORPChargeInital}+'0'){
+            document.getElementById('page:frm:thisBlock:PBS:check').innerHTML = '<img class="checkImg" width="21" height="16" title="Not Checked" alt="Not Checked" src="/img/checkbox_unchecked.gif">';
+        }else{
+            document.getElementById('page:frm:thisBlock:PBS:check').innerHTML = '<img width="21" height="16" title="Not Checked" class="checkImg" alt="Not Checked" src="/img/checkbox_checked.gif">';
+        }
+    }
+    </script>
+    <script type="text/javascript"> 
+    function CustomCancel(){
+        var final = confirm("Are you sure you want to cancel?");
+        if (final == true) {
+            var CurrentPageID = '{!CaseID}';
+            window.location.href = '/'+CurrentPageID;
+        }
+    }
+    
+    function AssetPopulateValues(param){
+        var query = "select id,Product2.Identifier_Type__c,product2.Name from Asset where ID = '" + param + "'";
+        result = sforce.connection.query(query);
+        records = result.getArray("records");
+        document.getElementById('page:frm:thisBlock:PBS:SI').value = records[0].Product2.Identifier_Type__c;
+    } 
+    function openLookup(baseURL, width, modified, searchParam){ 
+        var originalbaseURL = baseURL;
+        var originalwidth = width;
+        var originalmodified = modified;
+        var originalsearchParam = searchParam;
+        var lookupType = baseURL.substr(baseURL.length-3, 3);
+        if (modified == '1') baseURL = baseURL + searchParam;
+        var isCustomLookup = false;
+        // Following "001" is the lookup type for Account object so change this as per your standard or custom object
+        if(lookupType == "003"){ 
+            var urlArr = baseURL.split("&");
+            var txtId = '';
+            if(urlArr.length > 2) {
+                urlArr = urlArr[1].split('=');
+                txtId = urlArr[1];
+            }
+            // Following is the url of Custom Lookup page. You need to change that accordingly
+            baseURL = "/apex/ContactRoleWindow?txt=" + txtId;
+            // Following is the id of apex:form control "myForm". You need to change that accordingly
+            baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.myForm}");
+            if (modified == '1') {
+                baseURL = baseURL + "&lksearch=" + searchParam;
+            }
+            var accID = '{!AccountID}';
+            baseURL = baseURL + "&accId=" + accID;
+            try{      
+                baseURL += '&empid='+ document.getElementById('pg:form:entryBlock:theHiddenInput').value;
+            }catch(err){}
+            // Following is the ID of inputField that is the lookup to be customized as custom lookup
+            if(txtId.indexOf('contactWindow') > -1 ){
+                isCustomLookup = true;
+            }
+        }
+        if(lookupType == "01t"){ 
+            var urlArr = baseURL.split("&");
+            var txtId = '';
+            if(urlArr.length > 2) {
+                urlArr = urlArr[1].split('=');
+                txtId = urlArr[1];
+            }
+            // Following is the url of Custom Lookup page. You need to change that accordingly
+            baseURL = "/apex/ProductRoleWindow?txt=" + txtId;
+            // Following is the id of apex:form control "myForm". You need to change that accordingly
+            baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.myForm}");
+            if (modified == '1') {
+                baseURL = baseURL + "&lksearch=" + searchParam;
+            }
+            var accID = '{!AccountID}';
+            baseURL = baseURL + "&accId=" + accID;
+            try{      
+                baseURL += '&empid='+ document.getElementById('pg:form:entryBlock:theHiddenInput').value;
+            }catch(err){}
+            // Following is the ID of inputField that is the lookup to be customized as custom lookup
+            if(txtId.indexOf('contactWindow') > -1 ){
+                isCustomLookup = true;
+            }
+        }
+        if(lookupType == "02i"){ 
+            var urlArr = baseURL.split("&");
+            var txtId = '';
+            if(urlArr.length > 2) {
+                urlArr = urlArr[1].split('=');
+                txtId = urlArr[1];
+            }
+            // Following is the url of Custom Lookup page. You need to change that accordingly
+            baseURL = "/apex/AssetWindow?txt=" + txtId;
+            // Following is the id of apex:form control "myForm". You need to change that accordingly
+            baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.myForm}");
+            if (modified == '1') {
+                baseURL = baseURL + "&lksearch=" + searchParam;
+            }
+            var assetID = '{!assetID}';
+            baseURL = baseURL + "&assetId=" + assetID;
+            try{      
+                baseURL += '&empid='+ document.getElementById('pg:form:entryBlock:theHiddenInput').value;
+            }catch(err){}
+            // Following is the ID of inputField that is the lookup to be customized as custom lookup
+            if(txtId.indexOf('contactWindow') > -1 ){
+                isCustomLookup = true;
+            }
+        }
+        if(isCustomLookup == true){
+            openPopup(baseURL, "lookup", 350, 480, "width="+width+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+        }else {
+            if (modified == '1') originalbaseURL = originalbaseURL + originalsearchParam;
+            openPopup(originalbaseURL, "lookup", 350, 480, "width="+originalwidth+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+        } 
+    } 
+    $(document).ready(function() {
+        var scroll = $('body').height();
+        var wHeight = $(window).height();
+        if(wHeight > scroll ) {
+            $("#pbButtons").css({"position":"absolute","margin-top":"0px"});
+        }
+    }); 
+    function openLookupPopup(text){
+        $("#modalWindow").show();
+    } 
+    function closeModal(){
+        $("#modalWindow").hide();
+    }
+    function submitModal(){
+        $('[id$=MSA').val(contractValue);
+        $('[id$=msaavalue').val(contractId);
+        $("#modalWindow").hide();
+    }
+    var contractId;
+    var contractValue;
+    function checkContract(element,contId,contVal){
+        contractId = contId;
+        contractValue = contVal;
+        if ($('.abcCheck:checked').length > 1) {
+            alert('Please check only one Master Services Agreement Contract');
+            $(element).attr('checked', false);
+        }
+    }
+    function changeMSA(text){
+        changeMSAAF(text);
+    }
+    </script>  
+    <apex:form id="frm">
+        <apex:actionFunction name="updateContractStatus" action="{!SelectedContractService}" reRender="frm" oncomplete="location.reload();" status="activateStatus">
+            <apex:param assignto="{!enteredText1}" name="firstParam" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="changeMSAAF" action="{!MSAContractMethod}" reRender="modalContract" >
+            <apex:param assignto="{!enteredText2}" name="billingAccount" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="newContractedServices" action="{!NewContractedService}" reRender="frm">
+            <apex:param assignto="{!enteredText1}" name="secondParam" value=""/>
+        </apex:actionFunction>
+      <apex:actionFunction name="newContractCallJSFunction" action="{!insertContractFunction}" rerender="frm"/>
+      <apex:actionFunction name="newContractedServiceCallJSFunction" action="{!insertContractedServiceFunction}" rerender="frm"/>
+      <apex:pagemessages ></apex:pagemessages>
+     
+      <apex:pageBlock rendered="{!contractSubscriberBlock}">
+        <div style="position:fixed;height:40px;left:0px;padding-top:10px;text-align:center;top:100%;width:100%;margin-top:-50px;">
+           <apex:actionStatus id="activateStatus" stopText="">
+               <apex:facet name="start" >
+                 <img src="/img/loading.gif" />                   
+               </apex:facet>
+           </apex:actionStatus>
+         </div>  
+        <div class="AccountTable">
+          <apex:repeat value="{!subscriberContracts}" var="subscribers">
+          <table>
+                <tr>
+                    <th style="width:5%;">Select</th>
+                    <th style="width:10%;">Contract</th>
+                    <th style="width:10%;">Account  Name</th>
+                    <th style="width:10%;">Custom Call  Acct ID</th>
+                    <th style="width:10%;">Status</th>
+                    <th style="width:10%;">Contract RecordType</th>
+                    <th style="width:10%;">Start Date</th>
+                    <th style="width:10%;">End Date</th>
+                </tr>
+                <tr>
+                    <td>
+                     <input type="radio" name="selectRadio" id="{!subscribers.ID}" onclick="contractSelection(this.id);">
+                          <apex:actionSupport event="onclick" action="{!SelectedContractService}" reRender="frm" status="activateStatus">
+                               <apex:param name="enteredText1" value="{!subscribers.ID}"/>
+                          </apex:actionSupport>
+                     </input>
+                    </td>
+                    <td><a href="/{!subscribers.id}" target="_blank">{!subscribers.ContractNumber}</a></td>
+                    <td>{!subscribers.Account.Name}</td>
+                    <td>{!subscribers.Account.Custom_Call_Acct_ID__c}</td>
+                    <td>{!subscribers.status}</td>
+                    <td>{!subscribers.RecordType.Name}</td>
+                    <td><apex:outputField value="{!subscribers.StartDate}"/></td>
+                    <td><apex:outputField value="{!subscribers.EndDate}"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="13">
+                        <apex:pageBlockTable value="{!subscribers.Contracted_Service__r}" var="ContractService">
+                            <apex:column headerValue="Select" style="width:5%;">
+                                 <input type="radio" name="selectRadio" id="radio">
+                                     <!-- <apex:actionSupport event="onclick" action="{!SelectedContractService}" rerender="thisblock">
+                                           <apex:param name="contractservice" value="{!ContractService.ID}"/>
+                                      </apex:actionSupport> -->
+                                </input>
+                            </apex:column>
+                            <apex:column headerValue="Service" style="width:20%;">
+                                <a href="/{!ContractService.id}" target="_blank">{!ContractService.Name}</a>
+                            </apex:column>
+                            <apex:column value="{!ContractService.BTN__c}" headerValue="BTN" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Asset__c}" headerValue="Asset" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Line_Type__c}" headerValue="Line Type" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Service_Std_Price__c}" headerValue="Service Std.Price" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Charge__c}" headerValue="Charge" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Overage_Rate_Plan__c}" headerValue="Overage Rate Plan" style="width:20%;"/>
+                            <apex:column value="{!ContractService.Overage_Std_Price__c}" headerValue="Overage Std. Price" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Overage_Rate__c}" headerValue="Overage Rate" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Effective_Date__c}" headerValue="Start Date" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Service_End_Date__c}" headerValue="End Date" style="width:10%;"/>
+                            <apex:column value="{!ContractService.Approved__c}" headerValue="Approved" style="width:10%;"/>
+                        </apex:pageBlockTable>
+                    </td>
+                </tr>
+           </table>
+           </apex:repeat>   
+         </div>
+         <div id="pbButtons" style="position:fixed;background:#1797c0;height:40px;left:0px;padding-top:10px;text-align:center;top:100%;width:100%;margin-top:-50px;">
+         <!--<apex:pageBlockButtons location="Bottom">-->
+             <apex:commandButton value="Return To Case" action="{!returnToCase}"/>
+             <apex:commandButton value="Create New Contract" action="{!newContractBlockFunction}" reRender="frm"/>
+             <apex:commandButton value="Activate Contract" onclick="ActivateContract(); return false;"/>
+             <apex:commandButton value="Create new Contracted Service" onclick="NewContractedServices(); return false;" reRender="frm"/>
+             <!-- <apex:commandButton value="Create New Contracted Service" onclick="NewContractedService();" reRender="noRender"/> -->
+        <!--</apex:pageBlockButtons>-->
+         </div>
+       </apex:pageBlock>
+
+       <apex:pageBlock title="Create New Contract" rendered="{!newContractBlock}">
+           <apex:pageBlockSection columns="1">
+               <apex:outputtext label="Contract RecordType:" value="{!recordTypeName}"/>
+               <apex:outputtext label="Account Name:" value="{!accountName}"/>
+               <!-- New code for SSA-212-->
+               <apex:inputfield label="Billing Account:" value="{!newContractRecord.Billing_Account__c}" />
+               <apex:outputtext label="Subscriber Custom Call Acct ID:" value="{!BillingAccountID}"/>
+               <apex:inputfield label="Installation:" value="{!newContractRecord.Installation__c}"/>
+               <apex:outputPanel >
+                   <apex:inputHidden value="{!newContractRecord.MSA__c}" id="msaavalue"/>
+                   <apex:outputLabel value="MSA:" for="MSA" style="font-size: 88%;font-weight: 700;padding-left: 11.4rem"/>
+                   <apex:inputText id="MSA" style="margin-left: 1.3rem;"/>
+                   <img src="/s.gif" onclick="openLookupPopup('{!newContractRecord.Billing_Account__c}'); return false" class="lookupIcon" onmouseout="this.className='lookupIcon';" alt="Account Name Lookup (New Window)" onmouseover="this.className='lookupIconOn';"/> 
+               </apex:outputPanel>
+               <!-- End of new Code -->
+               <apex:outputtext label="Contract Owner:" value="{!contractOwner}"/>
+               <apex:inputfield label="Contract Term (Mo.):" value="{!newContractRecord.ContractTerm}" required="true"/>
+               <apex:inputfield label="Contract Start Date:" value="{!newContractRecord.StartDate}" required="true"/>
+               <apex:inputfield value="{!newContractRecord.Number_of_Suspension_Days_Allowed__c}"/>
+               <apex:inputfield value="{!newContractRecord.Auto_Renewal__c}"/>
+               <apex:inputfield label="Customer Signed By:" value="{!newContractRecord.CustomerSignedID}" required="true" id="contactWindow">
+               </apex:inputfield>
+               <apex:inputfield label="Customer Signed by Date:" value="{!newContractRecord.CustomerSignedDate}" required="true"/>
+               
+           </apex:pageBlockSection>
+           <apex:pageBlockButtons location="bottom">
+               <apex:commandButton value="Submit" onclick="NewContractRecord();return false" reRender="frm" /> 
+               <apex:commandButton value="Cancel" onclick="CustomCancel();" rerender="Final"/>
+           </apex:pageBlockButtons>
+       </apex:pageBlock>
+       
+       
+       
+        
+        <apex:pageBlock title="Create New Contracted Service" rendered="{!newContractedServiceBlock}" id="thisBlock">
+           <apex:pageBlockSection columns="1" id="PBS">
+               <apex:inputfield value="{!newContractedService.BTN_Ref_c__c}" Label="BTN" id="contactWindow"/>
+               <apex:inputfield value="{!newContractedService.Service_Item__c}" id="contactWindowchk">
+                   <!-- <apex:actionsupport event="onchange" action="{!populateCharge}" rerender="thisBlock" status="contractedServices"/>-->
+                   <!-- <apex:actionSupport event="onchange" reRender="someArea" oncomplete="ChargePopulate()"/>-->
+                   <apex:actionSupport event="onchange" oncomplete="ChargePopulate('{!newContractedService.Service_Item__c}');" reRender="none" status="serviceItem"/>
+                   <apex:actionStatus id="serviceItem" startText="please wait...."></apex:actionStatus>
+               </apex:inputfield>
+               <!----------------------------->
+             <!-- <apex:inputfield value="{!newContractedService.Service_Item__c}" id="contactWindow" onchange="ChargePopulate(this.contactWindow)"/>-->
+               
+               <!----------------------------->
+               <apex:outputtext label="Service Std. Price" id="theText"></apex:outputtext>
+               <apex:inputfield value="{!newContractedService.Charge__c}" id="charge">
+                   <apex:actionSupport event="onchange" rerender="None" oncomplete="contractApproved('{!newContractedService.Charge__c}');" status="contractedServicesCharge"/>
+                   <apex:actionStatus id="contractedServicesCharge" startText="please wait...."></apex:actionStatus>
+               </apex:inputfield>
+               <apex:inputfield value="{!newContractedService.Asset__c}" Label="Asset" id="contactWindow2">
+                   <!-- <apex:actionSupport event="onchange" oncomplete="AssetPopulateValues('{!newContractedService.Asset__c}');" reRender="none"/> populateORP-->
+                   <apex:actionSupport event="onchange" rerender="SI,ORP,SP,ORPC,contractedServices" action="{!populateORP}" status="contractedServices"/>
+                   <apex:actionStatus id="contractedServices" startText="please wait...."></apex:actionStatus>
+               </apex:inputfield>
+               
+               <apex:inputfield value="{!productIT.Identifier_Type__c}" id="SI"/>
+               <apex:inputfield value="{!newContractedService.Overage_Rate_Plan__c}" id="ORP" Label="Overage Rate Plan"/>
+               <apex:outputtext value="{!OverageRatePlan}" label="Overage Std. Price" id="SP"/>
+               
+               <apex:inputfield value="{!newContractedService.Overage_Rate__c}" label="ORP Charge" id="ORPC">
+                   <apex:actionSupport event="onchange" rerender="None" oncomplete="ORPChargeApproved('{!newContractedService.Overage_Rate__c}');" status="contractedServicesOverageRate"/>
+                   <apex:actionStatus id="contractedServicesOverageRate" startText="please wait...."></apex:actionStatus>
+               </apex:inputfield>
+               
+               <apex:inputfield value="{!newContractedService.Effective_Date__c}" label="Service Start date"/>
+               <apex:inputfield value="{!newContractedService.Service_End_Date__c}"/>
+               <apex:outputfield id="check" value="{!newContractedService.Approved__c}"/>
+           </apex:pageBlockSection>
+           <apex:pageBlockButtons location="bottom">
+               <apex:commandButton value="submit" onclick="NewContractedServiceRecord();" reRender="frm" oncomplete="window.location.href=window.location.href"/>
+               <apex:commandButton value="Cancel" onclick="CustomCancel();" rerender="Final"/>
+           </apex:pageBlockButtons>
+       </apex:pageBlock>
+		<div id="modalWindow" style="display:none;">
+            <div class="Newoverlay">
+                <div class="NewpopupContainer">
+                        <div class="modal__header">
+                            <center><span class="tableHeader">Master Services Agreement Contract</span></center>
+                        </div> 
+                        <div class="modal__content">
+                            <table id="datatable">
+                                <thead>
+                                    <tr class="headerRow">
+                                        <th class="rowClass">Action</th>
+                                        <th class="rowClass">Contract Number</th>
+                                        <th class="rowClass">Account Name</th>
+                                        <th class="rowClass">Contract Record Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!lstContract}" var="cont">
+                                        <tr class="dataRow">
+                                            <td class="rowClass"><apex:inputCheckbox styleclass="abcCheck" onchange="checkContract(this,'{!cont.id}','{!cont.ContractNumber}');"/></td>
+                                            <td class="rowClass">{!cont.ContractNumber}</td>
+                                            <td class="rowClass">{!cont.Account.Name}</td>
+                                            <td class="rowClass">{!cont.RecordType.Name}</td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal__footer">
+                            <button class="customBtn" onclick="submitModal();return false;">
+                                Select
+                            </button>
+                            <button class="customBtn" onclick="closeModal();return false;">
+                                Cancel
+                            </button>
+                        </div> 
+                </div>
+            </div>
+        </div>
+     </apex:form>
+</apex:page>

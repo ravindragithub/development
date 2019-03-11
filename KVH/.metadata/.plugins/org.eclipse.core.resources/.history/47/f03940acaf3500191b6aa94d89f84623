@@ -1,0 +1,31 @@
+<aura:component >
+    <aura:attribute name="simpleLTEActivation" type="Object"/>
+    <aura:attribute name="recieverInfoRequired" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card title="Receiver Information">
+        <aura:set attribute="actions">
+        </aura:set>
+        <div class="slds-p-horizontal--small">        
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12 leftPanel">
+                    <span class="slds-form-element__label" >Free DIRECTV OR DISH Receiver Requested? ($29 shipping and handling fee applies)
+                        <abbr title="required" class="slds-required"  style="float: none;">*</abbr>
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-12">
+                    <lightning:input type="radio" aura:id="r2" 
+                                     label="Yes" name="receiver" 
+                                     onchange="{!c.onChangeFreeReceiver}"/>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-12">
+                    <lightning:input type="radio" aura:id="r3" 
+                                     label="No" name="receiver" 
+                                     onchange="{!c.onChangeFreeReceiver}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </lightning:card>
+</aura:component>

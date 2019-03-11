@@ -1,0 +1,25 @@
+.THIS .slds-table--bordered{
+    font-size: 12px;
+    border: 1px solid #d8dde6!important;
+}
+.THIS .btnClass{
+    text-align: center;
+    margin: 1% 0 1% 0px;
+    padding-top: 0!Important;
+}
+.THIS .slds-page-header{
+    background-color: #96c8f4!important;
+    color: #0a0a0a;
+    border-bottom: 3px solid #0070D2;
+}
+.THIS .slds-radio{
+    padding-left: 14px;
+}
+.THIS .slds-button--neutral{
+    background-color: rgb(0, 112, 210)!Important;
+    color: white!Important;
+}
+.THIS .nobordertop{
+    background: rgb(240, 248, 252)!important;
+    color: black!Important;
+}

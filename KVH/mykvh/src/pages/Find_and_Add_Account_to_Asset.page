@@ -1,0 +1,17 @@
+<apex:page standardController="case" extensions="CaseAssetPageController">
+    <script>
+        function CheckCase()
+        {
+            if({!AssociateAssetPlatform} || {!platformAssetAccount})
+            {
+                alert("Please confirm that the appropriate platform is in the :Search Platform / Asset Account and the :Search for or create Platform Account is checked. Or you can initiate the Find or Create Platform."); 
+            }else
+            {
+                window.open("/apex/FindandAddAccounttoAsset?caseid="+'{!CaseID}');    
+            }
+        }
+    </script>
+    <apex:form >
+       <apex:commandLink value="Find and Add Account to Asset(opens in new tab)" onclick="CheckCase()"/>
+    </apex:form>
+</apex:page>

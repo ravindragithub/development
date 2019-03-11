@@ -1,0 +1,52 @@
+<apex:page standardController="invoiceit_s__Job__c" extensions="ControllerCloneOrder">
+ <script>
+   function disableAmount(input, sectionid)
+        {
+            if(input.checked)
+            {
+               document.getElementById(sectionid).style.display = 'block';
+                 //document.getElementById(sectionid).style.value = null;
+            }else{
+               document.getElementById(sectionid).style.display = 'none';
+               document.getElementById(sectionid).value = null;
+            }
+        }
+        
+         
+ </script>
+<apex:form >
+   <apex:sectionHeader title="Clone order" subtitle="Order Name : {!orderObj.Name}"/>
+    <div class="bPageTitle">
+        <div class="ptBreadcrumb"> 
+            <a href="/{!orderObj.id}">Back to Order :  {!orderObj.Name}</a>
+        </div>
+    </div>
+  <apex:pageBlock title="Clone Order" id="table" >
+    <apex:pageMessages ></apex:pageMessages>
+     Note :- When you click on Confirm button, it copies the existing order items and Charge Titles. <br/><br/>
+             please select Master Order or Child Order, if Child Order is selected enter the 'No of Child Orders To Create' to create orders
+      
+     <br/> <br/>
+
+     <apex:pageBlockSection title="Order Details" collapsible="false" rendered="{!!isRender}" id="pageBloack">
+         <apex:inputField value="{!orderObj.Name}"/>  
+         <apex:inputcheckbox value="{!isMasterOrder}" label="Master Order" rendered="{!invoiceit_s__Job__c.RecordType.Name == 'Master Order'}" />
+         <apex:inputcheckbox value="{!isChildOrder}" label="Child Order"  onclick="disableAmount(this,'{!$Component.amount}');" id="childOrder" />
+         <apex:outputlabel value="No of Child Orders To Create : " id="amount" style="display:none">
+            <apex:inputText value="{!iCountOfChild}" label="No of Child Orders To Create" />
+   
+         </apex:outputlabel>   
+         
+        <!--  <apex:repeat value="{!$ObjectType.invoiceit_s__Job__c.FieldSets.invoiceit_s__OrderStep1}" var="fieldAPI">
+              <apex:inputField value="{!orderObj[fieldAPI]}"/>
+         </apex:repeat>  -->
+     </apex:pageBlockSection>
+    <apex:pageBlockButtons location="Bottom">
+            <apex:commandButton value="Confirm" action="{!createCloneOrder}" rendered="{!!isRender}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!!isRender}"/>
+            <apex:commandButton value="Back To Order" action="{!cancel}" rendered="{!isRender}"/>
+    </apex:pageBlockButtons>
+
+  </apex:pageBlock>
+ </apex:form>
+</apex:page>

@@ -1,0 +1,56 @@
+<aura:component>
+    <aura:attribute name="simpleLTEActivation" type="Object"/> 
+    <aura:attribute name="vesselInfoRequired" type="boolean"/>
+    <aura:attribute name="countryList" type="List"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    <aura:attribute name="selectedCountry" type="string"/>
+    <aura:attribute name="selectedState" type="string"/>
+    <aura:attribute name="selectedMarket" type="string"/>
+    <aura:attribute name="selectedSector" type="string"/>
+    <aura:attribute name="selectedVesselType" type="string"/>
+    <aura:handler name="change" value="{!v.selectedCountry}" action="{!c.handleCountryValue}"/>
+    <aura:handler name="change" value="{!v.selectedVesselType}" action="{!c.handleVesselTypeValue}"/>
+    <!--<aura:handler name="change" value="{!v.simpleLTEActivation.Sector__c}" action="{!c.handleSectorValue}"/>
+    <aura:handler name="change" value="{!v.simpleLTEActivation.Market__c}" action="{!c.handleMarketValue}"/>
+    
+    <aura:handler name="change" value="{!v.simpleLTEActivation.MMSI__c}" action="{!c.MMSIIValidation}"/>
+    <aura:handler name="change" value="{!v.simpleLTEActivation.IMO_Registration_No__c}" action="{!c.IMOValidation}"/>
+-->
+    <lightning:card title="Vessel/Vehicle Information">
+       <!--
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.vesselInfoRequired}">
+                <lightning:icon iconName="action:remove" title="Error in section.Please validate the fields" size="xx-small"/>
+                <aura:set attribute="else">
+                    <lightning:icon iconName="action:approval" alternativeText="Success" size="xx-small"/>
+                </aura:set>
+            </aura:if>            
+        </aura:set>
+-->
+        <div class="slds-p-horizontal--small">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 leftPanel">                    
+                    <c:LTEAct_PlatformMS_cmp selectedVesselType ="{!v.selectedVesselType}" simpleLTEActivation="{!v.simpleLTEActivation}"/>
+                    <lightning:input aura:id="LTEField" class="slds-hidden" value="{!v.simpleLTEActivation.Contact__c}"/>     
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 rightPanel callout" style="margin-top:0;">
+                    <h3>Vessels Only</h3>
+                    <lightning:input aura:id="LTEField" label="Vessel Name"
+                                     value="{!v.simpleLTEActivation.Vessel_Name__c}" 
+                                     onblur="{!c.vesselInfoValidation}" required="true"/>               
+                    <c:Country_Picklist_cmp countryList="{!v.countryList}" stateMap="{!v.stateMap}" 
+                                            onlyCountry="true" isRequired="true" 
+                                            countryLabel="Flag" selectedCountry="{!v.selectedCountry}" 
+                                            selectedState="{!v.selectedState}"/>
+                    <ui:inputText aura:id="LTEFieldMMSII" label="MMSI" 
+                                  class="slds-input" blur="{!c.FieldValidation}"
+                                  value="{!v.simpleLTEActivation.MMSI__c}" />
+                    <ui:inputText aura:id="LTEFieldIMO" label="IMO Registration No." 
+                                  class="slds-input" blur="{!c.FieldValidation}"
+                                  value="{!v.simpleLTEActivation.IMO_Registration_No__c}"/>
+                </div>
+                
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

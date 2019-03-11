@@ -1,0 +1,41 @@
+.THIS .slds-truncate {
+    white-space: normal;
+}
+
+.THIS .slds-spinner {
+    position: fixed;
+}
+
+.THIS .slds-card {
+    border:0;
+}
+
+.THIS .slds-card__header {
+    padding:0;
+    margin:0 0 15px 0;
+}
+
+.THIS input[type="text"] {
+    padding:3px;
+}
+
+.THIS .slds-select {
+    height:auto;
+    padding:9px;
+}
+
+.THIS  button.sfdc_button,
+.THIS a.button,
+.THIS input[type=submit] {
+    padding:5px 20px !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight:bold;
+    display:inline-block;
+    color:#fff;
+    border-radius:0px;
+    font-size:90%;
+    background:#1984c7;
+    border:none;
+    margin:20px 0;
+}

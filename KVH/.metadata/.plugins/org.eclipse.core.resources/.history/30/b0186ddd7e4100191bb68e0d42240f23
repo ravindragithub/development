@@ -1,0 +1,14 @@
+.THIS .node {
+    margin-left: 2.6em;
+}
+.THIS .uiOutputURL
+{
+    font-weight: bolder;
+}
+.THIS .underlineAsset{
+    text-decoration: underline!important;
+    font-style: italic;
+}
+.THIS .yellowBackground{
+    background-color: yellow;
+}

@@ -1,0 +1,44 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:attribute name="TracVisionURL" type="String" access="global" default="/s/mini-vsat-manager"/>
+    <aura:attribute name="miniVSATBroadbandURL" type="String" access="global"/>
+    <aura:attribute name="InmarsatSATCOMSystemsURL" type="String" access="global"/>
+    <aura:attribute name="miniVSATManagerurl" type="String" access="global"/>
+    <aura:attribute name="miniVSATManagerPageurl" type="String" access="global" default="/s/mini-vsat-manager"/>
+    
+    
+    <aura:attribute name="showTracVision" type="boolean" access="global" default="false"/>
+    <aura:attribute name="showminiVSATBroadband" type="boolean" access="global" default="false"/>
+    <aura:attribute name="showInmarsatSATCOMSystems" type="boolean" access="global" default="false"/>
+    <aura:attribute name="showminiVSATManager" type="boolean" access="global" default="false"/>
+    <aura:attribute name="showservices" type="boolean" access="global" default="false"/>
+   
+    
+    <aura:handler event="c:PlaceAvailableServicesEvent" action="{!c.handlePlaceAvailableServiceEvent}"/>
+<div style="{!if(v.showservices,'','display:none;') + 'padding:20px;'}">
+    <div class="info-box matchheight" style="height: 345px;">
+        <h2 class="info-box-heading">Action on Behalf of Your Customers</h2>
+        <div class="filter-box content"  style="overflow-y: auto;height: 270px;">
+            <table class="dashboard">
+                <tbody>
+                    <!--<tr style="{!if(v.showTracVision,'','display:none;')}">
+                        <td><img src="{! '/' + $Label.c.Community_Prefix + '/resource/registerserviceimages/icons8-test.png'}" class="action-icon"/>TracVision Satellite TV Systems and Compass Products</td>
+                        <td><a href="{!v.TracVisionURL}" class="button right action-button" target="blank">REGISTER</a></td>
+                    </tr>-->
+                    <tr style="{!if(v.showminiVSATBroadband,'','display:none;')}">
+                        <td><img src="/resource/registerserviceimages/icons8-check_file_filled2.png" class="action-icon"/>mini-VSAT Broadband SATCOM Systems</td>
+                        <td><a href="{!v.miniVSATBroadbandURL}" class="button right action-button" target="blank">ACTIVATE</a></td>
+                    </tr>
+                    <tr style="{!if(v.showInmarsatSATCOMSystems,'','display:none;')}">
+                        <td><img src="/resource/registerserviceimages/icons8-check_file_filled2.png" class="action-icon"/>Inmarsat SATCOM Systems</td>
+                        <td><a href="{!v.InmarsatSATCOMSystemsURL}" class="button right action-button" target="blank">ACTIVATE</a></td>
+                    </tr>
+                    <tr style="{!if(v.showminiVSATManager,'','display:none;')}">
+                        <td><img src="/resource/registerserviceimages/icons8-water_transportation.png" class="action-icon"/>mini-VSAT Manager</td>
+                        <td><a href="{!v.miniVSATManagerurl}" class="button right action-button" target="blank">LOGIN</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+ </div>
+</aura:component>

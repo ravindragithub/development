@@ -1,0 +1,18 @@
+<apex:page showHeader="true" tabstyle="Activation_Orders__tab" standardStylesheets="true" sidebar="false">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+    if(window.location.href.indexOf('{!$Label.Portal_User_List_view}') == -1 )
+        window.top.location = "{!URLFOR($Page.Activation_Order_listView,null,['j_id0%3Aj_id2%3Afcf'=$Label.Portal_User_List_view])}";
+    </script> 
+    <apex:ListViews type="Activation_Order__c" /> 
+    
+    <script> 
+    $('.actionColumn').remove(); 
+    $('.listHeader').remove();
+    $('.bFilterView').remove();
+    $('.list tr:not(:first-child) td a,.list tr:not(:first-child) th a').each(function() {
+        if($(this).text() != 'Continue Activation Order')
+            $(this).removeAttr('href').css("color", "black").css("text-decoration","none");
+    });
+    </script>
+</apex:page>

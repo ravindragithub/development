@@ -1,0 +1,181 @@
+<apex:page standardcontroller="Case" showheader="false" extensions="RequestInfoExistingServiceController" standardstylesheets="false" cache="false">
+    <apex:form id="form">
+        <apex:stylesheet value="{!URLFOR($Resource.partner_portal_0817)}" />
+        
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="{!URLFOR($Resource.documentupload, 'js/jquery-1.12.4.js')}"></script>
+        <script src="{!URLFOR($Resource.documentupload, 'js/jquery-ui.js')}"></script>
+        
+        <link rel="stylesheet" href="{!URLFOR($Resource.documentupload, 'css/jquery-ui.css')}"/>
+            <script>
+            var $j = jQuery.noConflict();
+        
+        $j(document).ready(function(){
+            console.log(valueSelect);
+            var radios = $j("input[type='radio']");
+            radios.attr('name', 'singleRadio');
+            
+            //if none selected select the first.. 
+            /*if(valueSelect==undefined && radios.size()>0 )
+            {
+                radios[0].checked=true;
+                valueSelect='Questions about policies (such as suspension or plan change policies)';
+            }*/
+            
+            // $j('.btn').removeClass('btn').addClass('kvhbtn');
+            
+            
+        }); 
+        
+        var valueSelect; 
+        function setSelectionLocal(x) 
+        {
+            valueSelect = x;  
+            $('[id$="symptom"]').val(valueSelect);
+        }
+        function setIt()
+        {
+            setSelection(valueSelect);
+        }
+        function goB()
+        {
+            goBack();
+        }
+        
+       
+        
+        </script>
+         <c:spinner />
+        <apex:pagemessages />
+        
+        <apex:actionFunction name="setSelection" action="{!setSelection}" rerender="form">
+            <apex:param name="valueSelect" value="valueSelect" assignTo="{!valueSelected}" />
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="goBack" action="{!backButton}" />
+        
+        <apex:pageblock rendered="{!firstpage}">
+            
+            <style>
+                body {
+                background-color:#f3f3f3;
+                }
+            </style>
+            
+            <div class="partner_portal">
+                
+                <div class="width-20 left">
+                    <ul class="support-sidenav">
+                        <li><a href="{!$Label.Community_URL + '/s/supportlanding'}" target="_parent">Portal Support Main</a></li>
+                        <li class="active"><a href="{!$Label.Community_URL + '/s/requestinfo'}" target="_parent">Airtime Services Support</a></li>
+                        <li><a href="{!$Label.Community_URL + '/s/reportproblem'}" target="_parent">Technical Support</a></li>
+                        <li><a href="{!$Label.Community_URL +  '/s/partnersupportcase'}" target="_parent">Portal Help and Feedback</a></li>
+                    </ul>
+                </div>
+                
+                <div class="width-75 right">
+                    <a href="{!$Label.Community_URL}/s/supportlanding" class="button right">BACK</a>
+                    
+                    <h1>Airtime Services Support</h1>
+                    <apex:pageBlock rendered="{!serviceProvider}">
+                        <p>Our Airtime Services Team is happy to help you with any questions you may have about your KVH mini-VSAT Broadband Airtime accounts or any of its add-on services such as IP-MobileCast, OneCare, Crew Calling, Iridium Back-up, Vessel Tracking, etc.</p>
+                        
+                        <p>KVH's Airtime Services Department is open 24 hours/day, 5 days/week, from 
+                            18:00 Sunday to 17:00 Friday (U.S. ET).</p>
+                        
+                        <h3 class="pad-top">General Account or Service Inquiry</h3>
+                        <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                            <apex:selectOptions value="{!radio3}" />
+                        </apex:selectRadio>
+                        <h3 class="pad-top">High Usage Alert Inquiry</h3>
+                        
+                        <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                            <apex:selectOptions value="{!radio4}"/>
+                        </apex:selectRadio>
+                    </apex:pageBlock>
+                    <apex:pageBlock rendered="{!!serviceProvider}">
+                        <h3 class="pad-top">General Account or Service Inquiry</h3>
+                        <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                            <apex:selectOptions value="{!radio3}" />
+                        </apex:selectRadio>
+                        <h3 class="pad-top">Log issue on behalf of KVH Customer</h3>
+                        <apex:selectRadio onclick="setSelectionLocal(this.value)" value="{!valueSelected}" layout="pageDirection">
+                            <apex:selectOptions value="{!radio5}" />
+                        </apex:selectRadio>
+                    </apex:pageBlock>
+                    <div class="button-bar">
+                        <a href="{!$Label.Community_URL}/s/supportlanding" class="button left">BACK</a>
+                        <apex:commandbutton value="Next" styleClass="button button-blue right" onclick="setIt(); return false;"/>
+                    </div>
+                </div>
+                
+            </div>
+        </apex:pageblock>
+        
+        <apex:pageblock rendered="{!IF(firstpage==false,true,false)}">
+            
+            <style>
+                body {
+                background-color:#f3f3f3;
+                }
+            </style>
+            
+            <div class="partner_portal">
+                
+                <div class="width-20 left">
+                    <ul class="support-sidenav">
+                        <li><a href="{!$Label.Community_URL +'/s/supportlanding'}" target="_parent">Portal Support Main</a></li>
+                        <li class="active"><a href="{!$Label.Community_URL + '/s/requestinfo'}" target="_parent">Airtime Services Support</a></li>
+                        <li><a href="{!$Label.Community_URL +  '/s/reportproblem'}" target="_parent">Technical Support</a></li>
+                        <li><a href="{!$Label.Community_URL +  '/s/partnersupportcase'}" target="_parent">Portal Help and Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="width-75 right">
+                   
+                    <h1>Airtime Services Support</h1>
+                    <h3>Create a case:</h3>
+                    <h4 class="pad-bottom">
+                        {!valueSelected}
+                    </h4>
+                    
+                    <p class="width-70">
+                        <strong>Vessel or Installation Platform:</strong>
+                        <apex:inputfield value="{!srvCase.New_Vessel_or_Platform__c }" />
+                    </p>
+                    <p class="width-70">
+                        <strong>Service Account Number (if applicable):</strong>
+                        <apex:inputfield value="{!srvCase.Account_Number__c}" />
+                    </p>
+                    <p class="width-70">
+                        <strong>Case Subject:</strong>
+                        <apex:inputfield value="{!srvCase.Subject}" />
+                    </p>
+                    <p class="width-70">
+                        <strong>Case Description:</strong>
+                        <apex:inputfield value="{!srvCase.Description}" />
+                    </p>
+                    <p>
+                        <strong>Attach File:</strong>  <span style="font-style: italic; font-size: smaller;"> (attachments must be less than 25Mb)</span>:
+                    </p>
+                    <p>
+                        <apex:inputFile value="{!attach.body}" filename="{!attach.name}"/>
+                    </p>
+                    <div class="button-bar" style="margin-top: 20px;">
+                        <a href="#" class="button left">BACK</a>
+                        <apex:commandButton value="Submit" styleClass="right button button-blue" onclick="submitclick('CreateCasePartner()'); return false;"/>
+                        <apex:actionFunction name="CreateCasePartner" action="{!CreateCasePartner}"/>
+                        <apex:inputHidden id="symptom" value="{!srvCase.Case_Symptom__c}"/>
+                    </div>
+                </div>
+            </div>
+        </apex:pageblock>
+    </apex:form>
+    <script>
+    var childNodeElms = window.parent.document.getElementById('containerdiv').childNodes;
+    
+    childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].style.height = childNodeElms[0].childNodes[0].childNodes[2].childNodes[2].contentWindow.document.body.offsetHeight + 'px';
+    //alert(containerdiv);
+    
+    </script>
+</apex:page>

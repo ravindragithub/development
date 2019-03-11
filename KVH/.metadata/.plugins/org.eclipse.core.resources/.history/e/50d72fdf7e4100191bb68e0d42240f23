@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="This event bubbles up from the components to the parent container and includes state change event" >
+    <aura:attribute name="stateChange" type="String" default="UNKNOWN" />
+    <aura:attribute name="statusMessage" type="String" default="Search Complete..." />
+    <aura:attribute name="listLength" type="Integer" default="0" />
+    <aura:attribute name="assetList" type="List"/>
+</aura:event>

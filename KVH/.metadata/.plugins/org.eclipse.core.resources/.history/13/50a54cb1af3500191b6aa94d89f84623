@@ -1,0 +1,134 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global"  >
+    <ltng:require styles="{!join(',', 
+    
+    $Resource.gridcss)}" />
+    
+    <aura:attribute name="showThankyou" type="Boolean" description="show profile thankyou section." default="true" />
+    <aura:attribute name="userdetail"
+                    type="MyProfileController.ProfileWrapper"
+                    description="User Details"/>
+    
+	<div class="white-bg pad-inside" style="max-width:1000px; margin:auto;">
+
+            <ul class="breadcrumb">
+                <li><a href="{!$Label.c.OrgURL + '/' + $Label.c.Community_Prefix}">Home</a></li>
+                <li>My Profile</li>
+            </ul>
+
+            <div class="content">
+                <aura:if isTrue="{!v.showThankyou}">
+                    <h1>Thank You for Updating Your Profile!</h1>
+                    <aura:set attribute="else">
+                        <h1>My Profile</h1>
+                    </aura:set>
+                </aura:if> 
+                
+            
+            
+            <div class="section group">
+                <div class="col span_9_of_12" style="padding-right:30px;">
+                    <aura:if isTrue="{!v.showThankyou}">
+                    	<h2 class="pad-top">Contact Information</h2>
+                    </aura:if>
+                    <!-- form -->
+                    
+                    <table class="profile">
+                        <tbody><tr>
+                            <th>Salutation:</th>
+                            <td>{!v.userdetail.con.Salutation}</td>
+                        </tr>
+                        <tr>
+                            <th>First/Given Name:</th>
+                            <td>{!v.userdetail.con.FirstName}</td>
+                        </tr>
+                        <tr>
+                            <th>Last/Family/Surname:</th>
+                            <td>{!v.userdetail.con.LastName}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{!v.userdetail.con.Email}</td>
+                        </tr>
+                        <tr>
+                            <th>Phone Number:</th>
+                            <td>{!v.userdetail.con.Phone}</td>
+                        </tr>
+                        <tr>
+                            <th>Job Title:</th>
+                            <td>{!v.userdetail.con.Title}</td>
+                        </tr>
+                        <tr>
+                            <th>Job Function:</th>
+                            <td>{!v.userdetail.con.Job_Function__c}</td>
+                        </tr>
+                        <tr>
+                            <th>Address:</th>
+                            <td>{!v.userdetail.con.MailingStreet}</td>
+                        </tr>
+                        <!--<tr>
+                            <th>Address 2:</th>
+                            <td></td>
+                        </tr>-->
+                        <tr>
+                            <th>City:</th>
+                            <td>{!v.userdetail.con.MailingCity}</td>
+                        </tr>
+                        <tr>
+                            <th>Country:</th>
+                            <td>{!v.userdetail.con.MailingCountry}</td>
+                        </tr>
+                        <tr>
+                            <th>State/Province/Territory/Region:</th>
+                            <td>{!v.userdetail.con.MailingState}</td>
+                        </tr>
+                        <tr>
+                            <th>Zip/Postal Code:</th>
+                            <td>{!v.userdetail.con.MailingPostalCode}</td>
+                        </tr>
+                        <tr>
+                            <th>Portal(s) Access:</th>
+                            <td>
+                                <aura:iteration items="{!v.userdetail.portalViews}" var="pv">
+                                    {!pv}<br/>
+                                </aura:iteration>
+                            </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                	<a href="javascript:void(0);" onclick="{!c.showeditsection}" class="button button-blue pad-top" style="margin-right:30px;">Edit Profile</a>
+                    
+                    <aura:if isTrue="{!not(v.showThankyou)}">
+                        <a href="{!'/' + $Label.c.Community_Prefix + '/s/changepassword'}" class="button pad-top">Change your password</a>
+                    </aura:if>
+                    
+                </div>
+                
+                <!-- sidebar -->
+                <div class="col span_3_of_12">
+                    <div class="callout">
+                        <h4 class="pad-bottom">Your Company</h4>
+                        <p>
+                            <strong>{!v.userdetail.accountName}</strong><br/>
+                            {!v.userdetail.accAddressStreet}<br/>
+                            {!v.userdetail.accAddressCity}, {!v.userdetail.accAddressState}  {!v.userdetail.accAddressPostalCode}<br/>
+                            {!v.userdetail.accAddressCountry}
+                        </p>
+                        <p>
+                            Phone: {!v.userdetail.accPhone}<br/>
+                            E-mail: {!v.userdetail.accEmail}<!--<a href="{!'mailto:' + v.userdetail.accEmail}"></a>-->
+                        </p>
+                        <div class="side-callout">
+                            <p><strong>Updates to this info?</strong></p>
+                            <a href="./partnersupportcase">Let us know!</a>
+                        </div>
+                    </div>
+                    <aura:if isTrue="{!v.showThankyou}">
+                        <a href="{!'/' + $Label.c.Community_Prefix + '/s/changepassword'}" class="button pad-top" style="width:100%;text-align: center;">Change your password</a>
+                    </aura:if>
+                </div>
+            </div>
+              
+        </div>
+            
+        </div>
+</aura:component>
